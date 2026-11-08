@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pirámide de ecuaciones · Órbita Matemática</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Righteous&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --crema:#DEDED2;
+    --crema-2:#E9E9DF;
+    --azul:#2C395C;
+    --azul-2:#3B4A72;
+    --naranja:#FF5500;
+    --oxido:#A92717;
+    --mostaza:#B9A727;
+    --verde:#3E7D5A;
+    --hex: clamp(64px, 15vw, 104px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--crema);color:var(--azul);min-height:100vh}
+  a{color:inherit}
+  [hidden]{display:none !important}
+
+  /* ---------- Encabezado ---------- */
+  header{background:var(--azul);color:var(--crema);border-bottom:6px solid var(--naranja)}
+  .barra{max-width:1150px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .marca{display:flex;align-items:center;gap:12px;text-decoration:none}
+  .logo{width:40px;height:40px;border-radius:50%;border:3px solid var(--mostaza);position:relative;flex-shrink:0}
+  .logo::before{content:"";position:absolute;inset:9px;border-radius:50%;background:var(--naranja)}
+  .logo::after{content:"";position:absolute;left:-8px;right:-8px;top:15px;height:4px;border-radius:4px;background:var(--crema);transform:rotate(-22deg)}
+  .marca span{font-family:'Righteous',sans-serif;font-size:1.25rem;letter-spacing:.5px}
+  .volver{font-size:.9rem;text-decoration:none;border:2px solid var(--crema);padding:6px 14px;border-radius:20px}
+  .volver:hover{background:var(--crema);color:var(--azul)}
+
+  .titulo{max-width:1150px;margin:0 auto;padding:22px 20px 6px;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  h1{font-family:'Righteous',sans-serif;font-size:clamp(1.7rem,4vw,2.5rem);line-height:1.05}
+  h1 small{display:block;font-family:'Space Grotesk';font-size:.95rem;font-weight:500;color:var(--oxido);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+
+  .controles{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .btn{font-family:'Space Grotesk';font-weight:700;font-size:.92rem;border:2px solid var(--azul);background:transparent;color:var(--azul);padding:8px 14px;border-radius:22px;cursor:pointer}
+  .btn:hover{background:var(--azul);color:var(--crema)}
+  .btn.cta{background:var(--naranja);border-color:var(--naranja);color:#fff}
+  .btn.cta:hover{background:var(--oxido);border-color:var(--oxido)}
+  .btn:disabled{opacity:.4;cursor:default;background:transparent;color:var(--azul)}
+  .btn.claro{border-color:var(--crema);color:var(--crema)}
+  .btn.claro:hover{background:var(--crema);color:var(--azul)}
+
+  .niveles-mini{display:flex;border:2px solid var(--azul);border-radius:22px;overflow:hidden}
+  .niveles-mini button{font-family:'Space Grotesk';font-weight:700;font-size:.88rem;border:none;background:transparent;color:var(--azul);padding:8px 14px;cursor:pointer}
+  .niveles-mini button+button{border-left:2px solid var(--azul)}
+  .niveles-mini button.activo{background:var(--azul);color:var(--crema)}
+
+  main{max-width:1150px;margin:0 auto;padding:10px 20px 40px}
+
+  /* ---------- Pantalla de inicio ---------- */
+  .inicio{display:grid;grid-template-columns:1.15fr 1fr;gap:22px;margin-top:10px}
+  .tarjeta{background:var(--crema-2);border:2px solid var(--azul);border-radius:16px;padding:20px 22px}
+  .tarjeta h2{font-family:'Righteous';font-size:1.35rem;margin-bottom:12px}
+  .reglas{padding-left:0;list-style:none;counter-reset:r}
+  .reglas li{counter-increment:r;position:relative;padding-left:40px;margin-bottom:12px;line-height:1.45}
+  .reglas li::before{
+    content:counter(r);position:absolute;left:0;top:0;width:28px;height:28px;border-radius:50%;
+    background:var(--naranja);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:.9rem;
+  }
+  .ejemplo{background:var(--azul);color:var(--crema);border-radius:14px;padding:16px 18px;margin-top:6px}
+  .ejemplo h3{font-family:'Righteous';font-weight:400;font-size:1.05rem;color:var(--mostaza);margin-bottom:10px}
+  .ej-fila{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .mini{
+    width:58px;height:65px;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
+    background:var(--crema);color:var(--azul);font-weight:700;font-size:1.15rem;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;
+  }
+  .mini b{font-size:.7rem;color:var(--oxido);margin-bottom:3px}
+  .mini .tach{text-decoration:line-through;opacity:.4}
+  .flecha{color:var(--mostaza);font-weight:700}
+  .ej-calc{font-size:1.05rem;line-height:1.6}
+  .ej-calc .ok{background:var(--verde);color:#fff;padding:1px 10px;border-radius:12px;font-weight:700}
+  .ej-calc .no{background:var(--oxido);color:#fff;padding:1px 10px;border-radius:12px;font-weight:700}
+  .ej-nota{font-size:.85rem;opacity:.8;margin-top:8px}
+
+  .opciones-nivel{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+  .nivel{
+    display:flex;gap:14px;align-items:center;text-align:left;cursor:pointer;
+    border:2px solid var(--azul);border-radius:14px;padding:12px 14px;background:transparent;
+    font-family:'Space Grotesk';color:var(--azul);
+  }
+  .nivel .ico{
+    width:46px;height:46px;border-radius:50%;flex-shrink:0;border:3px solid var(--azul);
+    display:flex;align-items:center;justify-content:center;font-family:'Righteous';font-size:1.2rem;
+  }
+  .nivel .t{font-weight:700;font-size:1.05rem}
+  .nivel .d{font-size:.85rem;opacity:.8}
+  .nivel:hover{background:#fff}
+  .nivel.activo{background:var(--azul);color:var(--crema);border-color:var(--azul);box-shadow:inset 6px 0 0 var(--naranja)}
+  .nivel.activo .ico{border-color:var(--mostaza);color:var(--mostaza)}
+  .despegar{width:100%;font-size:1.25rem;padding:14px;border-radius:30px;font-family:'Righteous';letter-spacing:1px}
+
+  /* ---------- Tablero ---------- */
+  .tablero{background:var(--azul);border-radius:18px;padding:26px 20px 30px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;position:relative;overflow:hidden}
+  .tablero::before{content:"";position:absolute;left:0;right:0;bottom:0;height:10px;background:linear-gradient(90deg,var(--naranja) 0 33%,var(--mostaza) 33% 66%,var(--oxido) 66%)}
+  .piramide{display:flex;flex-direction:column;align-items:center;gap:calc(var(--hex)*-0.13)}
+  .fila{display:flex;gap:calc(var(--hex)*0.07)}
+  .loseta{width:var(--hex);height:calc(var(--hex)*1.12);position:relative;cursor:pointer;border:none;background:none;font-family:'Space Grotesk'}
+  .loseta .cuerpo{
+    position:absolute;inset:0;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
+    background:var(--crema);display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:calc(var(--hex)*0.32);color:var(--azul);transition:background .15s;
+  }
+  .loseta:hover .cuerpo{background:#fff}
+  .loseta .letra{
+    position:absolute;top:calc(var(--hex)*-0.06);left:50%;transform:translateX(-50%);
+    width:calc(var(--hex)*0.34);height:calc(var(--hex)*0.2);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);
+    background:var(--mostaza);color:var(--azul);font-size:calc(var(--hex)*0.13);font-weight:700;
+    display:flex;align-items:center;justify-content:center;z-index:2;
+  }
+  .loseta.sel .cuerpo{background:var(--naranja);color:#fff}
+  .loseta .orden{position:absolute;bottom:calc(var(--hex)*0.1);left:50%;transform:translateX(-50%);font-size:calc(var(--hex)*0.13);font-weight:700;color:#fff;z-index:2;display:none}
+  .loseta.sel .orden{display:block}
+  .bloqueado .loseta{cursor:default}
+
+  .lado{display:flex;flex-direction:column;gap:16px;align-items:center;min-width:180px}
+  .objetivo{width:170px;background:var(--mostaza);border-radius:6px;overflow:hidden;text-align:center}
+  .objetivo .etq{background:#9E8F1F;color:var(--azul);font-weight:700;letter-spacing:3px;font-size:.85rem;padding:7px 0}
+  .objetivo .num{font-family:'Righteous';font-size:4.2rem;color:var(--azul);padding:6px 0 10px}
+  .ranuras{display:flex;gap:6px}
+  .ranura{width:50px;height:50px;border-radius:8px;border:2px dashed var(--crema);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--crema);font-weight:700;font-size:.8rem;line-height:1.1}
+  .ranura.llena{border-style:solid;background:var(--crema);color:var(--azul)}
+  .ranura .l{font-size:1.1rem}
+  .ranura .tach{text-decoration:line-through;opacity:.45}
+  .ayuda-sel{color:var(--crema);font-size:.8rem;opacity:.8;text-align:center;max-width:180px;margin-top:8px}
+
+  /* ---------- Resultado ---------- */
+  .resultado{position:absolute;inset:0;background:rgba(44,57,92,.94);display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:10;color:var(--crema);text-align:center;padding:20px;cursor:pointer}
+  .resultado.ver{display:flex}
+  .resultado .combo{font-family:'Righteous';font-size:1.5rem;letter-spacing:6px;color:var(--mostaza)}
+  .resultado .paso{font-size:clamp(1.3rem,4vw,2.1rem);font-weight:700}
+  .resultado .paso.tenue{opacity:.65;font-size:clamp(1rem,3vw,1.4rem)}
+  .veredicto{font-family:'Righteous';font-size:clamp(1.4rem,4vw,2rem);padding:8px 26px;border-radius:30px}
+  .veredicto.ok{background:var(--verde);color:#fff}
+  .veredicto.mal{background:var(--oxido);color:#fff}
+  .veredicto.rep{background:var(--mostaza);color:var(--azul)}
+  .continuar{margin-top:6px;font-size:.9rem;border:2px solid var(--crema);border-radius:20px;padding:6px 16px}
+
+  /* ---------- Combinaciones ganadoras ---------- */
+  .panel{margin-top:22px;background:var(--crema-2);border:2px solid var(--azul);border-radius:14px;padding:16px 18px}
+  .panel h2{font-family:'Righteous';font-size:1.2rem;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  .contador{font-family:'Space Grotesk';font-size:.95rem;font-weight:700;background:var(--azul);color:var(--crema);padding:4px 12px;border-radius:16px}
+  .tira{display:flex;gap:10px;overflow-x:auto;padding:14px 2px 6px;min-height:84px;scroll-snap-type:x mandatory}
+  .tira::-webkit-scrollbar{height:8px}
+  .tira::-webkit-scrollbar-thumb{background:var(--mostaza);border-radius:4px}
+  .ficha{flex:0 0 auto;scroll-snap-align:start;background:var(--azul);color:var(--crema);border-radius:10px;padding:8px 14px;min-width:120px;border-left:6px solid var(--naranja)}
+  .ficha .c{font-family:'Righteous';font-size:1.25rem;letter-spacing:3px}
+  .ficha .e{font-size:.85rem;opacity:.85;white-space:nowrap}
+  .ficha .q{font-size:.72rem;color:var(--mostaza);font-weight:700;margin-top:2px}
+  .ficha.revelada{background:transparent;color:var(--azul);border:2px dashed var(--azul);border-left:6px solid var(--oxido)}
+  .ficha.revelada .q{color:var(--oxido)}
+  .vacio{color:var(--azul);opacity:.55;font-size:.9rem;align-self:center}
+  .pie-panel{margin-top:10px;display:flex;justify-content:flex-end}
+
+  /* ---------- Cronómetro flotante ---------- */
+  .crono{
+    position:fixed;right:18px;bottom:18px;z-index:50;
+    background:var(--azul);color:var(--crema);border:3px solid var(--mostaza);border-radius:40px;
+    padding:8px 18px 8px 12px;display:flex;align-items:center;gap:10px;
+    box-shadow:0 6px 0 rgba(44,57,92,.25);cursor:grab;user-select:none;touch-action:none;
+  }
+  .crono .dial{width:30px;height:30px;border-radius:50%;border:3px solid var(--crema);position:relative}
+  .crono .dial::after{content:"";position:absolute;left:50%;top:3px;width:3px;height:10px;background:var(--naranja);transform-origin:50% 100%;transform:translateX(-50%) rotate(var(--ang,0deg));border-radius:2px}
+  .crono .t{font-family:'Righteous';font-size:1.6rem;letter-spacing:1px;min-width:78px}
+  .crono.fin{border-color:var(--verde)}
+  .crono.fin .t{color:#BFE3CC}
+  .crono.parado{border-color:var(--oxido)}
+
+  footer{text-align:center;font-size:.8rem;padding:18px;opacity:.7}
+
+  @media (max-width:860px){ .inicio{grid-template-columns:1fr} }
+  @media (max-width:760px){
+    .tablero{grid-template-columns:1fr}
+    .lado{flex-direction:row;flex-wrap:wrap;justify-content:center}
+    .objetivo{width:140px}
+    .objetivo .num{font-size:3.2rem}
+    .crono{right:10px;bottom:10px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="barra">
+    <a class="marca" href="../index.html"><div class="logo"></div><span>Órbita Matemática</span></a>
+    <a class="volver" href="../index.html#juegos">← Volver a Juegos</a>
+  </div>
+</header>
+
+<!-- ===================== PANTALLA DE INICIO ===================== -->
+<section id="pantallaInicio">
+  <div class="titulo">
+    <h1><small>Juegos · Prioridad de operaciones</small>Pirámide de ecuaciones</h1>
+  </div>
+  <main>
+    <div class="inicio">
+      <div class="tarjeta">
+        <h2>¿Cómo se juega?</h2>
+        <ol class="reglas">
+          <li>Verás una pirámide de 10 losetas (A a J) y un <b>número objetivo</b>.</li>
+          <li>Elige <b>3 losetas distintas</b>. Se ubican en el mismo orden en que las eliges.</li>
+          <li>Cada loseta trae la operación que va a su <b>izquierda</b>. En la primera loseta la operación <b>no se usa</b>: solo cuenta su número.</li>
+          <li>Resuelve respetando la <b>prioridad de las operaciones</b>: primero × y ÷ (de izquierda a derecha), después + y −.</li>
+          <li>Si el resultado es el objetivo, ¡encontraste una combinación ganadora! Cada pirámide tiene <b>varias</b>, y el orden importa: CAF y FAC son distintas.</li>
+          <li>El cronómetro corre hasta que encuentres <b>todas</b> las combinaciones.</li>
+        </ol>
+
+        <div class="ejemplo">
+          <h3>Ejemplo · Objetivo 9</h3>
+          <div class="ej-fila">
+            <div class="mini"><b>C</b><span><span class="tach">×</span>3</span></div>
+            <span class="flecha">→</span>
+            <div class="mini"><b>A</b>+1</div>
+            <span class="flecha">→</span>
+            <div class="mini"><b>F</b>×6</div>
+          </div>
+          <div class="ej-calc">
+            3 + 1 × 6 = 3 + 6 = 9 &nbsp;<span class="ok">✔ Gana</span><br>
+            Pero A, C, F: 1 × 3 × 6 = 18 &nbsp;<span class="no">✘ No da 9</span>
+          </div>
+          <p class="ej-nota">Fíjate: el × de la loseta C se ignora porque C va primero, y 1 × 6 se resuelve antes que la suma.</p>
+        </div>
+      </div>
+
+      <div class="tarjeta">
+        <h2>Elige tu nivel</h2>
+        <div class="opciones-nivel" id="opcionesNivel">
+          <button class="nivel" data-nivel="facil">
+            <span class="ico">1</span>
+            <span><span class="t">Básico</span><br><span class="d">Números del 1 al 9 · objetivos hasta 20 · entre 3 y 6 combinaciones</span></span>
+          </button>
+          <button class="nivel activo" data-nivel="medio">
+            <span class="ico">2</span>
+            <span><span class="t">Intermedio</span><br><span class="d">Números hasta 12 · objetivos hasta 30 · entre 2 y 5 combinaciones</span></span>
+          </button>
+          <button class="nivel" data-nivel="dificil">
+            <span class="ico">3</span>
+            <span><span class="t">Avanzado</span><br><span class="d">Números hasta 15 · más × y ÷ · objetivos negativos posibles · 1 a 3 combinaciones</span></span>
+          </button>
+        </div>
+        <button class="btn cta despegar" id="btnDespegar">¡Despegar! 🚀</button>
+      </div>
+    </div>
+  </main>
+</section>
+
+<!-- ===================== PANTALLA DE JUEGO ===================== -->
+<section id="pantallaJuego" hidden>
+  <div class="titulo">
+    <h1><small>Juegos · Prioridad de operaciones</small>Pirámide de ecuaciones</h1>
+    <div class="controles">
+      <div class="niveles-mini" id="nivelesMini">
+        <button data-nivel="facil">Básico</button>
+        <button data-nivel="medio">Intermedio</button>
+        <button data-nivel="dificil">Avanzado</button>
+      </div>
+      <button class="btn cta" id="btnNueva">Nueva pirámide</button>
+      <button class="btn" id="btnInicio" title="Volver a las reglas">Reglas</button>
+    </div>
+  </div>
+
+  <main>
+    <section class="tablero" id="tablero">
+      <div class="piramide" id="piramide"></div>
+      <div class="lado">
+        <div class="objetivo">
+          <div class="etq">· OBJETIVO ·</div>
+          <div class="num" id="objetivo"></div>
+        </div>
+        <div>
+          <div class="ranuras" id="ranuras"></div>
+          <p class="ayuda-sel" id="ayudaSel">Elige 3 losetas en orden</p>
+        </div>
+        <button class="btn claro" id="btnBorrar">Borrar selección</button>
+      </div>
+
+      <div class="resultado" id="resultado">
+        <div class="combo" id="rCombo"></div>
+        <div class="paso tenue" id="rPaso1"></div>
+        <div class="paso" id="rPaso2"></div>
+        <div class="veredicto" id="rVeredicto"></div>
+        <div class="continuar">Toca para continuar</div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Combinaciones ganadoras <span class="contador" id="contador">0 / 0</span></h2>
+      <div class="tira" id="tira"></div>
+      <div class="pie-panel"><button class="btn" id="btnRevelar">Rendirse y ver soluciones</button></div>
+    </section>
+  </main>
+
+  <div class="crono" id="crono" title="Puedes arrastrarlo">
+    <div class="dial" id="dial"></div>
+    <div class="t" id="cronoTxt">00:00</div>
+  </div>
+</section>
+
+<footer>Órbita Matemática · Prof. Fernando J. Aravena Muñoz</footer>
+
+<script>
+(() => {
+  const LETRAS = 'ABCDEFGHIJ';
+  const FILAS = [[0],[1,2],[3,4,5],[6,7,8,9]];
+  const SIM = {'+':'+','-':'−','*':'×','/':'÷'};
+  const TIEMPO_RESULTADO = 7000; // ms
+
+  const NIVELES = {
+    facil:  {maxN:9,  ops:['+','+','-','-','*','/'], tMin:1,  tMax:20, solMin:3, solMax:6},
+    medio:  {maxN:12, ops:['+','-','*','/'],         tMin:1,  tMax:30, solMin:2, solMax:5},
+    dificil:{maxN:15, ops:['+','-','*','*','/','/'], tMin:-10,tMax:50, solMin:1, solMax:3}
+  };
+
+  const estado = {
+    nivel:'medio', losetas:[], objetivo:0, soluciones:[], encontradas:[], seleccion:[],
+    bloqueado:false, revelado:false, terminado:false
+  };
+  let temporizador = null;
+
+  // ---------- Aritmética exacta con fracciones ----------
+  const mcd = (a,b) => { a=Math.abs(a); b=Math.abs(b); while(b){[a,b]=[b,a%b]} return a||1; };
+  const fr = (n,d=1) => { if(d<0){n=-n;d=-d} const g=mcd(n,d); return {n:n/g,d:d/g}; };
+  const sum = (a,b) => fr(a.n*b.d+b.n*a.d, a.d*b.d);
+  const res = (a,b) => fr(a.n*b.d-b.n*a.d, a.d*b.d);
+  const mul = (a,b) => fr(a.n*b.n, a.d*b.d);
+  const div = (a,b) => fr(a.n*b.d, a.d*b.n);
+  const txtNum = n => String(n).replace('-','−');
+  const txtFr = f => (f.n<0?'−':'') + Math.abs(f.n) + (f.d===1 ? '' : '/'+f.d);
+  const decimal = f => (f.n/f.d).toFixed(3).replace(/0+$/,'').replace(/\.$/,'').replace('.',',').replace('-','−');
+
+  function evaluar(trio, losetas){
+    const [a,b,c] = trio.map(i => losetas[i]);
+    const num = [fr(a[1]), fr(b[1]), fr(c[1])];
+    const ops = [b[0], c[0]];
+    const expr = `${a[1]} ${SIM[ops[0]]} ${b[1]} ${SIM[ops[1]]} ${c[1]}`;
+    const terminos = [num[0]], sumOps = [];
+    let huboProducto = false;
+    for (let k=0;k<2;k++){
+      const o = ops[k], n = num[k+1], u = terminos.length-1;
+      if (o==='*'||o==='/'){
+        terminos[u] = o==='*' ? mul(terminos[u],n) : div(terminos[u],n);
+        huboProducto = true;
+      } else { sumOps.push(o); terminos.push(n); }
+    }
+    let intermedio = null;
+    if (huboProducto && terminos.length>1){
+      intermedio = terminos.map((t,i)=> (i? SIM[sumOps[i-1]]+' ':'') + (t.d>1 ? `(${txtFr(t)})` : txtFr(t))).join(' ');
+    }
+    let v = terminos[0];
+    sumOps.forEach((o,i)=>{ v = o==='+' ? sum(v,terminos[i+1]) : res(v,terminos[i+1]); });
+    return {valor:v, expr, intermedio};
+  }
+
+  function recorrerTrios(fn){
+    for (let a=0;a<10;a++) for (let b=0;b<10;b++) for (let c=0;c<10;c++)
+      if (a!==b && b!==c && a!==c) fn([a,b,c]);
+  }
+
+  function todasLasSoluciones(losetas, objetivo){
+    const out = [];
+    recorrerTrios(t=>{ const r = evaluar(t, losetas); if (r.valor.d===1 && r.valor.n===objetivo) out.push(t); });
+    return out;
+  }
+
+  function generar(nivelId){
+    const nv = NIVELES[nivelId];
+    for (let intento=0; intento<3000; intento++){
+      const losetas = [], usados = new Set();
+      while (losetas.length<10){
+        const o = nv.ops[Math.floor(Math.random()*nv.ops.length)];
+        const n = 1 + Math.floor(Math.random()*nv.maxN);
+        if ((o==='*'||o==='/') && n===1) continue;
+        if (usados.has(o+n)) continue;
+        usados.add(o+n); losetas.push([o,n]);
+      }
+      const conteo = new Map();
+      recorrerTrios(t=>{
+        const r = evaluar(t, losetas);
+        if (r.valor.d!==1) return;
+        const v = r.valor.n;
+        if (v<nv.tMin || v>nv.tMax) return;
+        conteo.set(v,(conteo.get(v)||0)+1);
+      });
+      const candidatos = [...conteo].filter(([,k])=> k>=nv.solMin && k<=nv.solMax).map(([v])=>v);
+      if (candidatos.length){
+        return {losetas, objetivo:candidatos[Math.floor(Math.random()*candidatos.length)]};
+      }
+    }
+    // Respaldo: pirámide de referencia
+    return {losetas:[['+',1],['/',4],['*',3],['-',10],['/',5],['*',6],['-',11],['+',7],['/',9],['+',9]], objetivo:9};
+  }
+
+  // ---------- Cronómetro ----------
+  const crono = {inicio:0, acumulado:0, corriendo:false, id:null};
+  const fmt = ms => { const s=Math.floor(ms/1000); return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); };
+  function cronoPintar(){
+    const ms = crono.acumulado + (crono.corriendo ? Date.now()-crono.inicio : 0);
+    $('cronoTxt').textContent = fmt(ms);
+    $('dial').style.setProperty('--ang', ((ms/1000)%60)*6 + 'deg');
+    return ms;
+  }
+  function cronoIniciar(){
+    clearInterval(crono.id);
+    crono.acumulado=0; crono.inicio=Date.now(); crono.corriendo=true;
+    $('crono').className='crono';
+    crono.id = setInterval(cronoPintar, 250); cronoPintar();
+  }
+  function cronoDetener(clase){
+    if (crono.corriendo){ crono.acumulado += Date.now()-crono.inicio; crono.corriendo=false; }
+    clearInterval(crono.id); cronoPintar();
+    $('crono').className = 'crono ' + (clase||'');
+    return crono.acumulado;
+  }
+
+  // Cronómetro arrastrable
+  (function arrastrable(el){
+    let dx=0, dy=0, mov=false;
+    el.addEventListener('pointerdown', e=>{
+      mov=true; el.setPointerCapture(e.pointerId);
+      const r = el.getBoundingClientRect(); dx=e.clientX-r.left; dy=e.clientY-r.top;
+      el.style.cursor='grabbing';
+    });
+    el.addEventListener('pointermove', e=>{
+      if(!mov) return;
+      const x = Math.min(Math.max(0,e.clientX-dx), innerWidth-el.offsetWidth);
+      const y = Math.min(Math.max(0,e.clientY-dy), innerHeight-el.offsetHeight);
+      el.style.left=x+'px'; el.style.top=y+'px'; el.style.right='auto'; el.style.bottom='auto';
+    });
+    el.addEventListener('pointerup', ()=>{ mov=false; el.style.cursor='grab'; });
+  })(document.getElementById('crono'));
+
+  // ---------- Interfaz ----------
+  const $ = id => document.getElementById(id);
+  const txtLoseta = l => `${SIM[l[0]]}${l[1]}`;
+  const nombre = trio => trio.map(i=>LETRAS[i]).join('');
+
+  function marcarNivel(){
+    document.querySelectorAll('#opcionesNivel .nivel').forEach(b=>b.classList.toggle('activo', b.dataset.nivel===estado.nivel));
+    document.querySelectorAll('#nivelesMini button').forEach(b=>b.classList.toggle('activo', b.dataset.nivel===estado.nivel));
+  }
+
+  function nuevaPartida(){
+    cerrarResultado();
+    const p = generar(estado.nivel);
+    estado.losetas = p.losetas;
+    estado.objetivo = p.objetivo;
+    estado.soluciones = todasLasSoluciones(p.losetas, p.objetivo);
+    estado.encontradas = []; estado.seleccion = [];
+    estado.revelado = false; estado.terminado = false;
+    $('objetivo').textContent = txtNum(p.objetivo);
+    $('btnRevelar').disabled = false;
+    $('btnRevelar').textContent = 'Rendirse y ver soluciones';
+    dibujarPiramide(); dibujarRanuras(); dibujarTira();
+    cronoIniciar();
+  }
+
+  function dibujarPiramide(){
+    const cont = $('piramide'); cont.innerHTML = '';
+    FILAS.forEach(fila=>{
+      const f = document.createElement('div'); f.className='fila';
+      fila.forEach(i=>{
+        const b = document.createElement('button');
+        b.className='loseta'; b.dataset.i=i;
+        b.setAttribute('aria-label', `Loseta ${LETRAS[i]}: ${txtLoseta(estado.losetas[i])}`);
+        b.innerHTML = `<span class="letra">${LETRAS[i]}</span><span class="cuerpo">${txtLoseta(estado.losetas[i])}</span><span class="orden"></span>`;
+        b.addEventListener('click', ()=>elegir(i));
+        f.appendChild(b);
+      });
+      cont.appendChild(f);
+    });
+    marcarSeleccion();
+  }
+
+  function marcarSeleccion(){
+    document.querySelectorAll('.loseta').forEach(b=>{
+      const pos = estado.seleccion.indexOf(+b.dataset.i);
+      b.classList.toggle('sel', pos>=0);
+      b.querySelector('.orden').textContent = pos>=0 ? pos+1 : '';
+    });
+  }
+
+  function dibujarRanuras(){
+    const r = $('ranuras'); r.innerHTML='';
+    for (let k=0;k<3;k++){
+      const d = document.createElement('div'), i = estado.seleccion[k];
+      if (i===undefined){ d.className='ranura'; d.textContent = k+1; }
+      else {
+        const l = estado.losetas[i];
+        d.className='ranura llena';
+        d.innerHTML = `<span class="l">${LETRAS[i]}</span><span>${k===0?`<span class="tach">${SIM[l[0]]}</span>${l[1]}`:txtLoseta(l)}</span>`;
+      }
+      r.appendChild(d);
+    }
+    const n = estado.seleccion.length;
+    $('ayudaSel').textContent = estado.terminado ? 'Pirámide terminada' :
+      n===0 ? 'Elige 3 losetas en orden' : `Faltan ${3-n} loseta${3-n===1?'':'s'}`;
+  }
+
+  function elegir(i){
+    if (estado.bloqueado || estado.terminado) return;
+    const pos = estado.seleccion.indexOf(i);
+    if (pos>=0) estado.seleccion = estado.seleccion.slice(0,pos);
+    else estado.seleccion.push(i);
+    marcarSeleccion(); dibujarRanuras();
+    if (estado.seleccion.length===3) resolver();
+  }
+
+  function resolver(){
+    const trio = [...estado.seleccion];
+    const r = evaluar(trio, estado.losetas);
+    const clave = nombre(trio);
+    const correcto = r.valor.d===1 && r.valor.n===estado.objetivo;
+    const repetida = estado.encontradas.some(t=>nombre(t)===clave);
+
+    $('rCombo').textContent = clave;
+    $('rPaso1').textContent = r.intermedio ? r.expr : '';
+    const resTxt = r.valor.d===1 ? txtFr(r.valor) : `${txtFr(r.valor)} ≈ ${decimal(r.valor)}`;
+    $('rPaso2').textContent = (r.intermedio ? `= ${r.intermedio}` : r.expr) + ` = ${resTxt}`;
+
+    const v = $('rVeredicto');
+    if (correcto && repetida){ v.className='veredicto rep'; v.textContent='Ya la encontraste'; }
+    else if (correcto){
+      estado.encontradas.push(trio);
+      dibujarTira();
+      if (estado.encontradas.length===estado.soluciones.length){
+        estado.terminado = true;
+        const ms = cronoDetener('fin');
+        v.className='veredicto ok'; v.textContent=`¡Pirámide resuelta en ${fmt(ms)}!`;
+        $('btnRevelar').disabled = true;
+      } else {
+        v.className='veredicto ok'; v.textContent=`¡Correcto! = ${txtNum(estado.objetivo)}`;
+      }
+    }
+    else { v.className='veredicto mal'; v.textContent=`No da ${txtNum(estado.objetivo)}`; }
+    mostrarResultado();
+  }
+
+  function mostrarResultado(){
+    estado.bloqueado = true;
+    $('tablero').classList.add('bloqueado');
+    $('resultado').classList.add('ver');
+    clearTimeout(temporizador);
+    temporizador = setTimeout(cerrarResultado, TIEMPO_RESULTADO);
+  }
+
+  function cerrarResultado(){
+    clearTimeout(temporizador);
+    $('resultado').classList.remove('ver');
+    estado.bloqueado = false;
+    $('tablero').classList.remove('bloqueado');
+    estado.seleccion = [];
+    marcarSeleccion(); dibujarRanuras();
+  }
+
+  function fichaHTML(trio, revelada){
+    const r = evaluar(trio, estado.losetas);
+    return `<div class="ficha${revelada?' revelada':''}">
+      <div class="c">${nombre(trio)}</div>
+      <div class="e">${r.expr} = ${txtNum(estado.objetivo)}</div>
+      <div class="q">${revelada ? 'no encontrada' : 'encontrada'}</div></div>`;
+  }
+
+  function dibujarTira(){
+    const t = $('tira');
+    let html = estado.encontradas.map(tr=>fichaHTML(tr,false)).join('');
+    if (estado.revelado){
+      const enc = new Set(estado.encontradas.map(nombre));
+      html += estado.soluciones.filter(s=>!enc.has(nombre(s))).map(s=>fichaHTML(s,true)).join('');
+    }
+    t.innerHTML = html || '<span class="vacio">Aún no hay combinaciones encontradas.</span>';
+    t.scrollLeft = t.scrollWidth;
+    $('contador').textContent = `${estado.encontradas.length} / ${estado.soluciones.length}`;
+  }
+
+  function irA(pantalla){
+    $('pantallaInicio').hidden = pantalla!=='inicio';
+    $('pantallaJuego').hidden  = pantalla!=='juego';
+    scrollTo(0,0);
+  }
+
+  // ---------- Eventos ----------
+  document.querySelectorAll('#opcionesNivel .nivel').forEach(b=>b.addEventListener('click',()=>{ estado.nivel=b.dataset.nivel; marcarNivel(); }));
+  document.querySelectorAll('#nivelesMini button').forEach(b=>b.addEventListener('click',()=>{ estado.nivel=b.dataset.nivel; marcarNivel(); nuevaPartida(); }));
+  $('btnDespegar').addEventListener('click', ()=>{ irA('juego'); nuevaPartida(); });
+  $('btnNueva').addEventListener('click', nuevaPartida);
+  $('btnInicio').addEventListener('click', ()=>{ cerrarResultado(); cronoDetener(); irA('inicio'); });
+  $('btnBorrar').addEventListener('click', ()=>{ if(!estado.bloqueado){ estado.seleccion=[]; marcarSeleccion(); dibujarRanuras(); } });
+  $('resultado').addEventListener('click', cerrarResultado);
+  $('btnRevelar').addEventListener('click', ()=>{
+    if (estado.revelado) return;
+    estado.revelado = true; estado.terminado = true;
+    cronoDetener('parado');
+    $('btnRevelar').disabled = true; $('btnRevelar').textContent = 'Soluciones a la vista';
+    dibujarTira(); dibujarRanuras();
+  });
+
+  // Teclado: A–J elige, Retroceso/Esc quita la última, Enter cierra el resultado
+  document.addEventListener('keydown', e=>{
+    if ($('pantallaJuego').hidden) return;
+    if (estado.bloqueado){ if(['Enter',' ','Escape'].includes(e.key)){ e.preventDefault(); cerrarResultado(); } return; }
+    const i = LETRAS.indexOf(e.key.toUpperCase());
+    if (i>=0 && e.key.length===1) elegir(i);
+    if (e.key==='Escape' || e.key==='Backspace'){ estado.seleccion.pop(); marcarSeleccion(); dibujarRanuras(); }
+  });
+
+  marcarNivel();
+})();
+</script>
+</body>
+</html>

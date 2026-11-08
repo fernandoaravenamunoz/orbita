@@ -7,7 +7,7 @@
   <meta name="description" content="Material de matemáticas y física: guías, videos, solucionarios y simulaciones.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Righteous&family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Chakra+Petch:wght@600;700&family=Jost:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
@@ -17,8 +17,10 @@
     <div class="barra__interior">
       <a href="#inicio" class="marca" aria-label="Ir al inicio">
         <svg class="marca__logo" viewBox="0 0 48 48" aria-hidden="true">
-          <circle cx="24" cy="24" r="10" fill="#FF5500"/>
-          <ellipse cx="24" cy="24" rx="21" ry="7" fill="none" stroke="#B9A727" stroke-width="2.5" transform="rotate(-20 24 24)"/>
+          <circle cx="24" cy="24" r="21" fill="none" stroke="#DEDED2" stroke-opacity=".35" stroke-width="1" stroke-dasharray="1.5 3"/>
+          <circle cx="24" cy="24" r="9" fill="#E2571E"/>
+          <ellipse cx="24" cy="24" rx="21" ry="6.5" fill="none" stroke="#B9A727" stroke-width="1.6" transform="rotate(-20 24 24)"/>
+          <circle cx="43" cy="17" r="2.2" fill="#B9A727"/>
         </svg>
         <span class="marca__texto" id="marca-titulo">Órbita Matemática</span>
       </a>
@@ -27,7 +29,7 @@
         <a href="#inicio" data-ruta="inicio">Inicio</a>
         <a href="#cursos" data-ruta="cursos">Cursos</a>
         <a href="#juegos" data-ruta="juegos">Juegos</a>
-        <a href="#difusion" data-ruta="difusion">Difusión científica</a>
+        <a href="#difusion" data-ruta="difusion">Observatorio</a>
         <a href="#tareas" data-ruta="tareas" class="nav__cta">Entregar tarea</a>
       </nav>
     </div>
@@ -39,8 +41,14 @@
   <footer class="pie">
     <div class="franjas franjas--pie" aria-hidden="true"><span></span><span></span><span></span></div>
     <div class="pie__interior">
-      <p class="pie__docente" id="pie-docente"></p>
-      <p class="pie__colegio" id="pie-colegio"></p>
+      <div>
+        <p class="pie__docente" id="pie-docente"></p>
+        <p class="pie__colegio" id="pie-colegio"></p>
+      </div>
+      <div class="pie__ficha">
+        <svg class="pie__barras" viewBox="0 0 120 26" aria-hidden="true"><g fill="#DEDED2"><rect x="0" width="2" height="26"/><rect x="4" width="1" height="26"/><rect x="7" width="3" height="26"/><rect x="12" width="1" height="26"/><rect x="15" width="1" height="26"/><rect x="18" width="4" height="26"/><rect x="24" width="1" height="26"/><rect x="27" width="2" height="26"/><rect x="31" width="1" height="26"/><rect x="35" width="3" height="26"/><rect x="40" width="1" height="26"/><rect x="43" width="2" height="26"/><rect x="47" width="1" height="26"/><rect x="50" width="4" height="26"/><rect x="56" width="1" height="26"/><rect x="59" width="1" height="26"/><rect x="62" width="3" height="26"/><rect x="67" width="2" height="26"/><rect x="71" width="1" height="26"/><rect x="74" width="1" height="26"/><rect x="77" width="3" height="26"/><rect x="82" width="1" height="26"/><rect x="85" width="2" height="26"/><rect x="89" width="4" height="26"/><rect x="95" width="1" height="26"/><rect x="98" width="2" height="26"/><rect x="102" width="1" height="26"/><rect x="105" width="3" height="26"/><rect x="110" width="1" height="26"/><rect x="113" width="2" height="26"/><rect x="117" width="3" height="26"/></g></svg>
+        <p class="pie__coordenadas">38°44′ S · 72°36′ O<br>Matemática y Física · N° 01</p>
+      </div>
     </div>
   </footer>
 

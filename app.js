@@ -6,10 +6,10 @@
   "use strict";
 
   const TIPOS = {
-    guia:         { plural: "Guías de reforzamiento", singular: "Guía",         icono: "▤", accion: "Abrir guía" },
-    video:        { plural: "Videos",                 singular: "Video",        icono: "▶", accion: "Ver video" },
-    solucionario: { plural: "Solucionarios y pautas", singular: "Solucionario", icono: "✓", accion: "Ver pauta" },
-    simulacion:   { plural: "Simulaciones",           singular: "Simulación",   icono: "◎", accion: "Abrir simulación" }
+    guia:         { plural: "Guías de reforzamiento", singular: "Guía",         icono: "G", accion: "Abrir guía" },
+    video:        { plural: "Videos",                 singular: "Video",        icono: "V", accion: "Ver video" },
+    solucionario: { plural: "Solucionarios y pautas", singular: "Solucionario", icono: "S", accion: "Ver pauta" },
+    simulacion:   { plural: "Simulaciones",           singular: "Simulación",   icono: "Σ", accion: "Abrir simulación" }
   };
   const ORDEN_TIPOS = ["guia", "video", "solucionario", "simulacion"];
   const MESES = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
@@ -46,7 +46,101 @@
 
   function cursoPorId(id) { return SITIO.cursos.find((c) => c.id === id); }
 
-  const planetaVacio = `<svg class="vacio__planeta" viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="16" fill="#2C395C"/><ellipse cx="40" cy="40" rx="34" ry="10" fill="none" stroke="#B9A727" stroke-width="3" transform="rotate(-18 40 40)"/><circle cx="66" cy="20" r="4" fill="#FF5500"/></svg>`;
+
+  /* ---------- Lámina del héroe ----------
+     Semitono radial (afiche Atari), haces de órbitas paralelas (afiche Apollo 11)
+     y tramado geométrico en el planeta (alfabeto modular). */
+  function laminaHeroe() {
+    const C = 200;
+    // semitono: puntos que crecen hacia el planeta
+    let puntos = "";
+    for (let y = 10; y < 400; y += 11) for (let x = 10; x < 400; x += 11) {
+      const d = Math.hypot(x - C, y - C);
+      if (d < 70 || d > 196) continue;
+      const r = 2.3 * (1 - (d - 70) / 126);
+      if (r > 0.35) puntos += `<circle cx="${x}" cy="${y}" r="${r.toFixed(2)}"/>`;
+    }
+    // haz de anillos elípticos (mitad trasera completa, mitad delantera sobre el planeta)
+    const anillos = [168, 176, 184, 192].map((rx, i) => ({ rx, ry: 38 + i * 4 }));
+    const trasero = anillos.map((a) => `<ellipse cx="${C}" cy="${C}" rx="${a.rx}" ry="${a.ry}"/>`).join("");
+    const delantero = anillos.map((a) => `<path d="M${C - a.rx} ${C} A${a.rx} ${a.ry} 0 0 0 ${C + a.rx} ${C}"/>`).join("");
+    const orbitas = [140, 146, 152, 158].map((r) => `<circle cx="${C}" cy="${C}" r="${r}"/>`).join("");
+    return `
+      <svg viewBox="0 0 400 400">
+        <defs>
+          <pattern id="trama" width="5" height="5" patternUnits="userSpaceOnUse"><path d="M0 0 V5" stroke="#A92717" stroke-width="1.6"/></pattern>
+          <clipPath id="planeta-mitad"><path d="M136 200 A64 64 0 0 0 264 200 Z"/></clipPath>
+        </defs>
+        <g fill="#DEDED2" fill-opacity=".28">${puntos}</g>
+        <g fill="none" stroke="#DEDED2">
+          <path d="M200 8 V392 M8 200 H392" stroke-opacity=".22"/>
+          <path d="M200 44 v8 M200 348 v8 M44 200 h8 M348 200 h8 M200 74 v6 M200 320 v6 M74 200 h6 M320 200 h6" stroke-opacity=".55"/>
+          <path d="M200 200 L307 93" stroke="#B9A727" stroke-dasharray="3 4"/>
+          <path d="M262 200 A62 62 0 0 0 244 156" stroke="#B9A727"/>
+        </g>
+        <g fill="none" stroke="#B9A727" stroke-width="1.1">${orbitas}</g>
+        <g class="orbita-giro"><circle cx="93" cy="307" r="4" fill="#DEDED2"/></g>
+        <g fill="none" stroke="#E2571E" stroke-width="1"><circle cx="307" cy="93" r="13"/><circle cx="307" cy="93" r="18"/><circle cx="307" cy="93" r="23"/></g>
+        <circle cx="307" cy="93" r="8" fill="#B9A727"/>
+        <g fill="none" stroke="#DEDED2" stroke-width="1.1" stroke-opacity=".85" transform="rotate(-18 ${C} ${C})">${trasero}</g>
+        <circle cx="${C}" cy="${C}" r="64" fill="#E2571E"/>
+        <rect x="136" y="200" width="128" height="64" fill="url(#trama)" clip-path="url(#planeta-mitad)" opacity=".55"/>
+        <path d="M136 200 A64 64 0 0 1 264 200" fill="none" stroke="#A92717" stroke-width="1"/>
+        <g fill="none" stroke="#DEDED2" stroke-width="1.1" stroke-opacity=".85" transform="rotate(-18 ${C} ${C})">${delantero}</g>
+        <g fill="#DEDED2" font-family="Space Mono, monospace" font-size="11">
+          <text x="212" y="22">y</text>
+          <text x="378" y="192">x</text>
+          <rect x="265" y="171" width="54" height="15" fill="#2C395C"/>
+          <text x="269" y="182" fill="#B9A727">θ = 45°</text>
+          <text x="318" y="64" fill="#B9A727">P(1, 1)</text>
+          <text x="210" y="390" fill-opacity=".7">r = 1,0 UA</text>
+          <text x="14" y="390" fill-opacity=".7">38°44′ S</text>
+          <text x="14" y="24" fill-opacity=".7">72°36′ O</text>
+          <text x="300" y="390" fill-opacity=".45" font-size="9">ORB-01 / 2026</text>
+        </g>
+      </svg>`;
+  }
+
+  /* haz de órbitas para las cabeceras de página */
+  function orbitaCabecera() {
+    const haz = [128, 136, 144, 152].map((rx, i) => `<ellipse cx="150" cy="150" rx="${rx}" ry="${46 + i * 4}" transform="rotate(-24 150 150)"/>`).join("");
+    return `
+        ${orbitaCabecera()}`;
+  }
+
+  /* cabecera editorial de cada página */
+  function cabecera(num, etiqueta, titulo, bajada, migas) {
+    return `
+      <section class="titulo-pagina">
+        <div class="contenedor titulo-pagina__interior">
+          ${migas ? `<div class="migas">${migas}</div>` : ""}
+          <p class="rotulo"><span class="rotulo__num">${num}</span>${etiqueta}</p>
+          <h1>${titulo}</h1>
+          ${bajada ? `<p class="titulo-pagina__bajada">${bajada}</p>` : ""}
+        </div>
+        <svg class="titulo-pagina__orbita" viewBox="0 0 300 300" aria-hidden="true">
+          <circle cx="150" cy="150" r="120" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="2 6"/>
+          <ellipse cx="150" cy="150" rx="140" ry="52" fill="none" stroke="currentColor" stroke-width="1" transform="rotate(-24 150 150)"/>
+          <circle cx="150" cy="150" r="34" fill="none" stroke="currentColor" stroke-width="1"/>
+          <circle cx="277" cy="94" r="5" fill="#B9A727" stroke="none"/>
+          <path d="M150 10 v20 M150 270 v20 M10 150 h20 M270 150 h20" stroke="currentColor" stroke-width="1"/>
+        </svg>
+      </section>`;
+  }
+
+  function cabeceraSeccion(num, titulo, nota) {
+    return `<div class="seccion__cabecera">
+      <h2><span class="seccion__num">${num}</span>${titulo}</h2>
+      ${nota ? `<p class="seccion__nota">${nota}</p>` : ""}
+    </div>`;
+  }
+
+  function partesUnidad(nombre) {
+    const m = String(nombre).match(/^\s*Unidad\s+(\d+)\s*[·:\-–—]?\s*(.*)$/i);
+    return m ? { num: "U" + m[1].padStart(2, "0"), texto: m[2] || nombre } : { num: "", texto: nombre };
+  }
+
+  const planetaVacio = `<svg class="vacio__planeta" viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="30" fill="none" stroke="#2C395C" stroke-width="1" stroke-dasharray="2 4"/><circle cx="40" cy="40" r="12" fill="#2C395C"/><ellipse cx="40" cy="40" rx="34" ry="10" fill="none" stroke="#B9A727" stroke-width="1.5" transform="rotate(-18 40 40)"/><circle cx="68" cy="30" r="3.5" fill="#E2571E"/></svg>`;
 
   /* ---------- tarjetas de material ---------- */
   function botonMaterial(m, etiqueta) {
@@ -84,7 +178,7 @@
       const t = TIPOS[m.tipo] || TIPOS.guia;
       return `
         <div class="novedad">
-          <div class="novedad__fecha">${dia || "–"}<small>${mes ? MESES[mes - 1] : ""}</small></div>
+          <div class="novedad__fecha"><span>${dia ? String(dia).padStart(2, "0") : "–"}</span><small>${mes ? MESES[mes - 1] : ""}</small></div>
           <div>
             <div class="novedad__titulo">${esc(m.titulo)}</div>
             <div class="novedad__curso">${t.singular} · ${esc(c.asignatura)} ${esc(c.nombre)} · ${esc(u.nombre)}</div>
@@ -96,45 +190,37 @@
     return `
       <section class="heroe">
         <div class="heroe__interior">
-          <div>
-            <span class="heroe__etiqueta">Matemática · Física</span>
+          <div class="heroe__texto">
             <h1>${esc(SITIO.titulo).replace(/(\S+)$/, "<em>$1</em>")}</h1>
-            <p>${esc(SITIO.subtitulo)}</p>
+            <p class="heroe__bajada">${esc(SITIO.subtitulo)}</p>
             <div class="heroe__botones">
-              <a class="boton" href="#cursos">Buscar mi curso</a>
+              <a class="boton" href="#cursos">Buscar mi curso <span aria-hidden="true">→</span></a>
               <a class="boton boton--claro" href="#tareas">Entregar una tarea</a>
             </div>
           </div>
-          <svg class="heroe__arte" viewBox="0 0 400 400" aria-hidden="true">
-            <g class="estrellas"><circle cx="40" cy="60" r="2.5"/><circle cx="350" cy="40" r="2"/><circle cx="370" cy="300" r="3"/><circle cx="60" cy="340" r="2"/><circle cx="300" cy="370" r="1.8"/><circle cx="20" cy="200" r="1.6"/></g>
-            <circle cx="200" cy="200" r="168" fill="none" stroke="#DEDED2" stroke-opacity=".18" stroke-width="2" stroke-dasharray="4 10"/>
-            <g class="orbita-giro">
-              <circle cx="200" cy="200" r="128" fill="none" stroke="#B9A727" stroke-width="2"/>
-              <circle cx="328" cy="200" r="14" fill="#B9A727"/>
-              <circle cx="110" cy="110" r="9" fill="#DEDED2"/>
-            </g>
-            <circle cx="200" cy="200" r="78" fill="#FF5500"/>
-            <path d="M136 236 h128 M150 254 h100" stroke="#A92717" stroke-width="10"/>
-            <ellipse cx="200" cy="200" rx="150" ry="34" fill="none" stroke="#DEDED2" stroke-width="7" transform="rotate(-16 200 200)"/>
-            <text x="200" y="208" text-anchor="middle" font-family="Righteous, sans-serif" font-size="44" fill="#2C395C">π</text>
-          </svg>
+          <figure class="heroe__arte" aria-hidden="true">
+            ${laminaHeroe()}
+            <figcaption>Fig. 1 — Órbita circular de radio unitario</figcaption>
+          </figure>
         </div>
       </section>
+      <div class="franja-modular" aria-hidden="true"></div>
 
       <section class="seccion">
         <div class="contenedor">
+          ${cabeceraSeccion("§ 01", "Explorar", "Cuatro rutas por el sitio")}
           <div class="accesos">
-            <a class="acceso" href="#cursos"><span class="acceso__icono">▤</span><h3>Material por curso</h3><p>Guías, videos, pautas y simulaciones ordenados por unidad.</p></a>
-            <a class="acceso" href="#juegos"><span class="acceso__icono">✚</span><h3>Juegos</h3><p>Desafíos de cálculo mental, como los Kakoomas matemáticos.</p></a>
-            <a class="acceso" href="#difusion"><span class="acceso__icono">✦</span><h3>Difusión científica</h3><p>Artículos y videos sobre matemáticas y ciencias.</p></a>
-            <a class="acceso" href="#tareas"><span class="acceso__icono">↑</span><h3>Entregar tarea</h3><p>Sube tu trabajo y llega directo al profesor.</p></a>
+            <a class="acceso" href="#cursos"><span class="acceso__icono">01</span><h3>Material por curso</h3><p>Guías, videos, pautas y simulaciones ordenados por unidad.</p></a>
+            <a class="acceso" href="#juegos"><span class="acceso__icono">02</span><h3>Juegos</h3><p>Desafíos de cálculo mental, como los Kakoomas matemáticos.</p></a>
+            <a class="acceso" href="#difusion"><span class="acceso__icono">03</span><h3>Observatorio</h3><p>Artículos y videos sobre matemáticas y ciencias.</p></a>
+            <a class="acceso" href="#tareas"><span class="acceso__icono">04</span><h3>Entregar tarea</h3><p>Sube tu trabajo y llega directo al profesor.</p></a>
           </div>
         </div>
       </section>
 
       <section class="seccion" style="padding-top:0">
         <div class="contenedor">
-          <div class="seccion__cabecera"><h2>Lo más reciente</h2><p class="seccion__nota">Últimos materiales publicados</p></div>
+          ${cabeceraSeccion("§ 02", "Lo más reciente", "Últimos materiales publicados")}
           <div class="novedades">${novedades}</div>
         </div>
       </section>`;
@@ -143,9 +229,9 @@
   function vistaCursos() {
     const secciones = [];
     SITIO.cursos.forEach((c) => { if (!secciones.includes(c.seccion)) secciones.push(c.seccion); });
-    const grupos = secciones.map((s) => `
+    const grupos = secciones.map((s, gi) => `
       <div class="grupo">
-        <h2 class="grupo__titulo">${esc(s)}</h2>
+        <h2 class="grupo__titulo"><span class="grupo__punto" aria-hidden="true"></span>${esc(s)}</h2>
         <div class="rejilla">
           ${SITIO.cursos.filter((c) => c.seccion === s).map((c) => {
             const n = contarMateriales(c);
@@ -163,7 +249,8 @@
       </div>`).join("");
 
     return `
-      <section class="titulo-pagina"><div class="contenedor"><h1>Cursos</h1><p>Elige tu curso para ver el material de cada unidad.</p></div></section>
+      ${cabecera("§ 01", "Índice de cursos", "Cursos", "Elige tu curso para ver el material de cada unidad.")}
+      <div class="franja-modular" aria-hidden="true"></div>
       <section class="seccion"><div class="contenedor">${grupos}</div></section>`;
   }
 
@@ -186,19 +273,14 @@
       }).join("");
       return `
         <details class="unidad" ${i === 0 || mats.length ? "open" : ""}>
-          <summary>${esc(u.nombre)} <span class="insignia ${mats.length ? "" : "insignia--vacia"}">${mats.length || "Pronto"}</span></summary>
+          <summary>${(() => { const pu = partesUnidad(u.nombre); return `${pu.num ? `<span class="unidad__num">${pu.num}</span>` : ""}<span class="unidad__nombre">${esc(pu.texto)}</span>`; })()} <span class="insignia ${mats.length ? "" : "insignia--vacia"}">${mats.length ? `${mats.length} ${mats.length === 1 ? "recurso" : "recursos"}` : "Pronto"}</span></summary>
           <div class="unidad__cuerpo">${porTipo || `<div class="vacio">${planetaVacio}<p>Aún no hay material en esta unidad.</p></div>`}</div>
         </details>`;
     }).join("") : `<div class="vacio">${planetaVacio}<p>Pronto habrá material para este curso.</p></div>`;
 
     return `
-      <section class="titulo-pagina">
-        <div class="contenedor">
-          <div class="migas"><a href="#cursos">← Todos los cursos</a></div>
-          <h1>${esc(c.asignatura)} · ${esc(c.nombre)}</h1>
-          <p>${esc(c.seccion)}</p>
-        </div>
-      </section>
+      ${cabecera("§ 01", esc(c.seccion), `${esc(c.asignatura)} · ${esc(c.nombre)}`, `${unidades.length} unidad${unidades.length === 1 ? "" : "es"} · ${unidades.reduce((n, u) => n + (u.materiales || []).length, 0)} materiales publicados`, `<a href="#cursos">← Todos los cursos</a>`)}
+      <div class="franja-modular" aria-hidden="true"></div>
       <section class="seccion"><div class="contenedor">${cuerpo}</div></section>`;
   }
 
@@ -221,7 +303,8 @@
     }).join("")}</div>` : `<div class="vacio">${planetaVacio}<p>Pronto compartiremos artículos y videos.</p></div>`;
 
     return `
-      <section class="titulo-pagina"><div class="contenedor"><h1>Difusión científica</h1><p>Matemáticas y ciencias más allá de la sala de clases.</p></div></section>
+      ${cabecera("§ 03", "Lecturas y videos", "Observatorio", "Matemáticas y ciencias más allá de la sala de clases.")}
+      <div class="franja-modular" aria-hidden="true"></div>
       <section class="seccion"><div class="contenedor">${lista}</div></section>`;
   }
 
@@ -251,25 +334,81 @@
         </div>`;
     }
     return `
-      <section class="titulo-pagina"><div class="contenedor"><h1>Entregar tarea</h1><p>Tu trabajo llega directamente al profesor.</p></div></section>
+      ${cabecera("§ 04", "Entregas", "Entregar tarea", "Tu trabajo llega directamente al profesor.")}
       <section class="seccion"><div class="contenedor">${cuerpo}</div></section>`;
   }
 
 
+  /* ---------- Sección Juegos: estética arcade ---------- */
+  function rayosArcade() {
+    let l = "";
+    for (let i = 0; i < 96; i++) {
+      const ang = (i / 96) * Math.PI * 2 + (i % 3) * 0.012;
+      const r0 = 150 + (i % 5) * 18, r1 = 1300;
+      const x0 = 500 + Math.cos(ang) * r0, y0 = 300 + Math.sin(ang) * r0 * 0.62;
+      const x1 = 500 + Math.cos(ang) * r1, y1 = 300 + Math.sin(ang) * r1 * 0.62;
+      l += `<line x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}" stroke-width="${i % 4 === 0 ? 1.6 : 0.7}"/>`;
+    }
+    let d = "";
+    for (let y = 6; y < 600; y += 12) for (let x = 6; x < 1000; x += 12) {
+      const dist = Math.hypot((x - 500) / 1.6, y - 300);
+      if (dist > 250) continue;
+      const r = 2.6 * (1 - dist / 250);
+      if (r > 0.3) d += `<circle cx="${x}" cy="${y}" r="${r.toFixed(2)}"/>`;
+    }
+    return `<svg class="arcade__rayos" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <g stroke="#2C395C" stroke-opacity=".22">${l}</g>
+      <g fill="#2C395C" fill-opacity=".5">${d}</g>
+      <g fill="none" stroke="#2C395C" stroke-opacity=".5"><circle cx="500" cy="300" r="118"/><circle cx="500" cy="300" r="126" stroke-dasharray="2 5"/></g>
+      <circle cx="500" cy="300" r="70" fill="#E2571E"/>
+      <path d="M430 318 h140 M436 336 h128" stroke="#A92717" stroke-width="7"/>
+    </svg>`;
+  }
+
+  function barras(ancho = 140) {
+    const anchos = [2, 1, 3, 1, 1, 4, 1, 2, 1, 3, 1, 2, 1, 4, 1, 1, 3, 2, 1, 1, 3, 1, 2, 4, 1, 2, 1, 3, 1, 2, 3, 1, 1, 2, 4, 1, 2, 1, 3];
+    let x = 0, r = "";
+    anchos.forEach((w, i) => { if (i % 2 === 0) r += `<rect x="${x}" width="${w}" height="20"/>`; x += w + 1; });
+    return `<svg class="arcade__barras" viewBox="0 0 ${x} 20" style="width:${ancho}px" aria-hidden="true"><g fill="#2C395C">${r}</g></svg>`;
+  }
+
   function vistaJuegos() {
     const cats = SITIO.juegos || [];
-    const lista = cats.length ? `<div class="accesos">${cats.map((j) => {
+    const lista = cats.length ? `<div class="cartuchos">${cats.map((j, ji) => {
       const href = j.url ? esc(j.url) : `#juego-${encodeURIComponent(j.id)}`;
       const externo = /^https?:/.test(j.url || "") ? ` target="_blank" rel="noopener"` : "";
+      const n = String(ji + 1).padStart(2, "0");
       return `
-      <a class="acceso" href="${href}"${externo}>
-        <span class="acceso__icono">✚</span><h3>${esc(j.nombre)}</h3><p>${esc(j.descripcion || "")}</p>
-        <span class="boton boton--chico" style="align-self:flex-start;margin-top:.6rem">Jugar →</span>
+      <a class="cartucho" href="${href}"${externo}>
+        <span class="cartucho__etiqueta"><span>J${n}</span><span>1 jugador</span></span>
+        <span class="cartucho__cuerpo">
+          <h3 class="cartucho__titulo">${esc(j.nombre)}</h3>
+          <p class="cartucho__desc">${esc(j.descripcion || "")}</p>
+          <span class="cartucho__pie">
+            <span class="cartucho__start">▶ Jugar</span>
+            <span class="cartucho__codigo">ORB-J${n} · 2026</span>
+          </span>
+        </span>
       </a>`;
     }).join("")}</div>` : `<div class="vacio">${planetaVacio}<p>Pronto habrá juegos.</p></div>`;
     return `
-      <section class="titulo-pagina"><div class="contenedor"><h1>Juegos</h1><p>Entrena tu cálculo mental jugando.</p></div></section>
-      <section class="seccion"><div class="contenedor">${lista}</div></section>`;
+      <section class="arcade">
+        ${rayosArcade()}
+        <div class="contenedor arcade__interior">
+          <div class="arcade__datos arcade__datos--izq">SYS.ORBITA // 01<br>θ = 45° · r = 1,0<br>Δt = 60 s</div>
+          <div class="arcade__datos arcade__datos--der">Créditos 00<br>Récord ———<br>Nivel ∞</div>
+          <p class="arcade__sup">Órbita Matemática presenta</p>
+          <h1 class="arcade__titulo" data-texto="Juegos">Juegos</h1>
+          <p class="arcade__bajada">Entrena tu cálculo mental jugando</p>
+          <p class="arcade__ficha">Inserta una ficha<span class="arcade__cursor">_</span></p>
+          <div class="arcade__pie">
+            <span>Cálculo · velocidad · precisión</span>
+            ${barras(120)}
+            <span>Temporada 2026</span>
+          </div>
+        </div>
+      </section>
+      <section class="seccion seccion--arcade"><div class="contenedor">${lista}</div></section>`;
   }
 
   function vistaJuego(id) {
@@ -284,12 +423,7 @@
           <div class="item__acciones"><a class="boton boton--chico" href="${esc(e.url)}" target="_blank" rel="noopener">Jugar</a></div>
         </article>`).join("")}</div>` : "";
     return `
-      <section class="titulo-pagina">
-        <div class="contenedor">
-          <div class="migas"><a href="#juegos">← Todos los juegos</a></div>
-          <h1>${esc(j.nombre)}</h1><p>${esc(j.descripcion || "")}</p>
-        </div>
-      </section>
+      ${cabecera("§ 02", "Juegos", esc(j.nombre), esc(j.descripcion || ""), `<a href="#juegos">← Todos los juegos</a>`)}
       <section class="seccion"><div class="contenedor">
         ${j.integrado === "kakooma" ? `<div id="kakooma"></div>` : ""}
         ${enlaces}
@@ -481,11 +615,12 @@
       html = vistaJuego(ruta.slice(6)); activa = "juegos";
       if (j) titulo = `${j.nombre} · ${SITIO.titulo}`;
     }
-    else if (vista === "difusion") { html = vistaDifusion(); activa = "difusion"; titulo = "Difusión científica · " + SITIO.titulo; }
+    else if (vista === "difusion") { html = vistaDifusion(); activa = "difusion"; titulo = "Observatorio · " + SITIO.titulo; }
     else if (vista === "tareas") { html = vistaTareas(); activa = "tareas"; titulo = "Entregar tarea · " + SITIO.titulo; }
     else html = vistaNoEncontrada();
 
     main.innerHTML = html;
+    main.dataset.vista = vista;
     const k = document.getElementById("kakooma");
     if (k) desmontarJuego = montarKakooma(k);
     document.title = titulo;

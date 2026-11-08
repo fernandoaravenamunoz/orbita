@@ -1,6 +1,6 @@
 # Órbita Matemática
 
-Sitio de material para estudiantes: guías, videos, solucionarios, simulaciones, difusión científica y entrega de tareas.
+Sitio de material para estudiantes: guías, videos, solucionarios, simulaciones, Observatorio (difusión científica) y entrega de tareas.
 
 ## Archivos
 

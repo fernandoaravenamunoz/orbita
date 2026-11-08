@@ -17,7 +17,7 @@ const SITIO = {
   titulo: "Órbita Matemática",
   subtitulo: "Material de matemáticas y física para mis estudiantes",
   docente: "Prof. Fernando Aravena",
-  colegio: "George Chaytor English College · Temuco",
+  colegio: "Temuco, Chile",
 
   /* Enlace al Formulario de Google para entregar tareas.
      Usa el link que da Google Forms en "Enviar" → pestaña "< >" (insertar),
@@ -78,13 +78,18 @@ const SITIO = {
       nombre: "Cálculo mental",
       descripcion: "Contrarreloj, lluvia de meteoritos y cadena mental con las cuatro operaciones.",
       url: "juegos/calculo-mental.html"
+    },
+    {
+      nombre: "Pirámide de ecuaciones",
+      descripcion: "Elige 3 losetas y alcanza el número objetivo respetando la prioridad de las operaciones.",
+      url: "juegos/piramide-ecuaciones.html"
     }
     // Para agregar otro juego: sube su archivo .html a la carpeta "juegos"
     // y copia uno de los bloques de arriba (con su coma).
   ],
 
   /* ---------------------------------------------------------------
-     DIFUSIÓN CIENTÍFICA — artículos y videos de interés general.
+     OBSERVATORIO (difusión científica) — artículos y videos de interés general.
      tipo: "articulo" o "video"
      --------------------------------------------------------------- */
   difusion: [
