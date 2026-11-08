@@ -245,6 +245,14 @@ h3 { font-size: 1.22rem; font-weight: 600; }
 .tipo__titulo::after { content: ""; flex: 1; height: 1px; background: var(--linea); }
 .tipo__icono { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--marino); color: var(--marino); font-family: var(--mono); font-size: .75rem; font-weight: 700; }
 
+/* ---------- Saltos entre secciones de un curso ---------- */
+.saltos { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; padding-top: 1.4rem; padding-bottom: .2rem; }
+.saltos a { font-family: var(--mono); font-size: .8rem; color: var(--marino); text-decoration: none; border-bottom: 1px solid var(--linea); padding: .2rem 0; display: inline-flex; align-items: center; gap: .5rem; }
+.saltos a:hover { color: var(--oxido); border-bottom-color: var(--oxido); }
+.saltos a::before { content: "↓"; color: var(--naranja); }
+.seccion--curso { padding-top: clamp(2rem, 5vw, 3rem); scroll-margin-top: 80px; }
+.seccion--curso + .seccion--curso { padding-top: clamp(1rem, 3vw, 2rem); }
+
 /* ---------- Ítems de material ---------- */
 .lista { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 1rem 1.4rem; }
 .item { display: flex; flex-direction: column; gap: .25rem; padding: .9rem 0 .9rem 1rem; border-left: 2px solid var(--marino); }

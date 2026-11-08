@@ -40,8 +40,24 @@
     return m ? `https://www.geogebra.org/material/iframe/id/${m[1]}/width/1000/height/700/border/888888/rc/false/ai/false/sdz/true/smb/false/stb/false/stbh/false/ld/false/sri/false` : url;
   }
 
+  function embedSimulacion(url) {
+    // PhET: la página de la simulación → la simulación en español para insertar
+    const p = String(url).match(/phet\.colorado\.edu\/(?:[a-z_-]+\/)?simulations?\/([\w-]+)/i);
+    if (p && !/\/sims\/html\//.test(url)) return `https://phet.colorado.edu/sims/html/${p[1]}/latest/${p[1]}_es.html`;
+    return embedGeoGebra(url);
+  }
+
+  /* Guías y solucionarios van por unidad; simulaciones y videos tienen su propia sección. */
+  const esMultimedia = (m) => m.tipo === "video" || m.tipo === "simulacion";
+
+  function recursosDe(curso) {
+    const lista = (curso.recursos || []).map((m) => ({ ...m }));
+    (curso.unidades || []).forEach((u) => (u.materiales || []).filter(esMultimedia).forEach((m) => lista.push({ ...m, unidad: m.unidad || u.nombre })));
+    return lista;
+  }
+
   function contarMateriales(curso) {
-    return (curso.unidades || []).reduce((n, u) => n + (u.materiales || []).length, 0);
+    return (curso.unidades || []).reduce((n, u) => n + (u.materiales || []).length, 0) + (curso.recursos || []).length;
   }
 
   function cursoPorId(id) { return SITIO.cursos.find((c) => c.id === id); }
@@ -147,10 +163,16 @@
     const url = esc(m.url);
     if (m.tipo === "video") {
       const id = idYoutube(m.url);
+      const lista = (String(m.url).match(/[?&]list=([\w-]+)/) || [])[1];
+      if (lista) {
+        // lista de reproducción: se abre con todos sus videos (empieza en el video del enlace, si lo trae)
+        const visor = id ? `https://www.youtube-nocookie.com/embed/${id}?list=${lista}&rel=0` : `https://www.youtube-nocookie.com/embed/videoseries?list=${lista}&rel=0`;
+        return `<button class="boton boton--chico" data-visor="${visor}" data-externo="https://www.youtube.com/playlist?list=${lista}" data-titulo="${esc(m.titulo)}">${etiqueta === "Ver video" ? "Ver lista de videos" : etiqueta}</button>`;
+      }
       if (id) return `<button class="boton boton--chico" data-visor="https://www.youtube-nocookie.com/embed/${id}?rel=0" data-externo="https://www.youtube.com/watch?v=${id}" data-titulo="${esc(m.titulo)}">${etiqueta}</button>`;
     }
     if (m.tipo === "simulacion") {
-      return `<button class="boton boton--chico" data-visor="${esc(embedGeoGebra(m.url))}" data-externo="${url}" data-titulo="${esc(m.titulo)}">${etiqueta}</button>`;
+      return `<button class="boton boton--chico" data-visor="${esc(embedSimulacion(m.url))}" data-externo="${url}" data-titulo="${esc(m.titulo)}">${etiqueta}</button>`;
     }
     return `<a class="boton boton--chico" href="${url}" target="_blank" rel="noopener">${etiqueta}</a>`;
   }
@@ -169,7 +191,10 @@
   /* ---------- vistas ---------- */
   function vistaInicio() {
     const todos = [];
-    SITIO.cursos.forEach((c) => (c.unidades || []).forEach((u) => (u.materiales || []).forEach((m) => todos.push({ m, c, u }))));
+    SITIO.cursos.forEach((c) => {
+      (c.unidades || []).forEach((u) => (u.materiales || []).forEach((m) => todos.push({ m, c, u })));
+      (c.recursos || []).forEach((m) => todos.push({ m, c, u: { nombre: m.unidad || "Simulaciones y videos" } }));
+    });
     todos.sort((a, b) => String(b.m.fecha || "").localeCompare(String(a.m.fecha || "")));
     const recientes = todos.slice(0, 5);
 
@@ -259,8 +284,11 @@
     if (!c) return vistaNoEncontrada();
     const unidades = c.unidades || [];
 
+    const recursos = recursosDe(c);
+    const totalDocs = unidades.reduce((n, u) => n + (u.materiales || []).filter((m) => !esMultimedia(m)).length, 0);
+
     const cuerpo = unidades.length ? unidades.map((u, i) => {
-      const mats = u.materiales || [];
+      const mats = (u.materiales || []).filter((m) => !esMultimedia(m));
       const porTipo = ORDEN_TIPOS.map((tipo) => {
         const lista = mats.filter((m) => (m.tipo || "guia") === tipo);
         if (!lista.length) return "";
@@ -274,14 +302,40 @@
       return `
         <details class="unidad" ${i === 0 || mats.length ? "open" : ""}>
           <summary>${(() => { const pu = partesUnidad(u.nombre); return `${pu.num ? `<span class="unidad__num">${pu.num}</span>` : ""}<span class="unidad__nombre">${esc(pu.texto)}</span>`; })()} <span class="insignia ${mats.length ? "" : "insignia--vacia"}">${mats.length ? `${mats.length} ${mats.length === 1 ? "recurso" : "recursos"}` : "Pronto"}</span></summary>
-          <div class="unidad__cuerpo">${porTipo || `<div class="vacio">${planetaVacio}<p>Aún no hay material en esta unidad.</p></div>`}</div>
+          <div class="unidad__cuerpo">${porTipo || `<div class="vacio">${planetaVacio}<p>Aún no hay guías en esta unidad.</p></div>`}</div>
         </details>`;
     }).join("") : `<div class="vacio">${planetaVacio}<p>Pronto habrá material para este curso.</p></div>`;
 
+    const tarjetaRecurso = (m) => {
+      const t = TIPOS[m.tipo] || TIPOS.simulacion;
+      return `
+        <article class="item item--${esc(m.tipo)}">
+          <span class="insignia" style="align-self:flex-start">${t.singular}</span>
+          <span class="item__titulo">${esc(m.titulo)}</span>
+          ${m.unidad ? `<span class="item__meta">${esc(m.unidad)}</span>` : ""}
+          ${m.descripcion ? `<p class="item__desc">${esc(m.descripcion)}</p>` : ""}
+          <div class="item__acciones">${botonMaterial(m, t.accion)}</div>
+        </article>`;
+    };
+    const multimedia = recursos.length
+      ? `<div class="lista">${recursos.map(tarjetaRecurso).join("")}</div>`
+      : `<div class="vacio">${planetaVacio}<p>Pronto habrá simulaciones y videos para este curso.</p></div>`;
+
     return `
-      ${cabecera("§ 01", esc(c.seccion), `${esc(c.asignatura)} · ${esc(c.nombre)}`, `${unidades.length} unidad${unidades.length === 1 ? "" : "es"} · ${unidades.reduce((n, u) => n + (u.materiales || []).length, 0)} materiales publicados`, `<a href="#cursos">← Todos los cursos</a>`)}
+      ${cabecera("§ 01", esc(c.seccion), `${esc(c.asignatura)} · ${esc(c.nombre)}`, [unidades.length ? `${unidades.length} unidad${unidades.length === 1 ? "" : "es"}` : "", `${totalDocs} ${totalDocs === 1 ? "guía o pauta" : "guías y pautas"}`, `${recursos.length} ${recursos.length === 1 ? "simulación o video" : "simulaciones y videos"}`].filter(Boolean).join(" · "), `<a href="#cursos">← Todos los cursos</a>`)}
       <div class="franja-modular" aria-hidden="true"></div>
-      <section class="seccion"><div class="contenedor">${cuerpo}</div></section>`;
+      <nav class="saltos contenedor" aria-label="Secciones del curso">
+        <a href="#curso-${encodeURIComponent(c.id)}" data-salto="sec-unidades">Guías por unidad</a>
+        <a href="#curso-${encodeURIComponent(c.id)}" data-salto="sec-multimedia">Simulaciones y videos <span class="insignia ${recursos.length ? "" : "insignia--vacia"}">${recursos.length}</span></a>
+      </nav>
+      <section class="seccion seccion--curso" id="sec-unidades"><div class="contenedor">
+        ${cabeceraSeccion("§ A", "Guías por unidad", "Guías de reforzamiento y solucionarios")}
+        ${cuerpo}
+      </div></section>
+      <section class="seccion seccion--curso" id="sec-multimedia"><div class="contenedor">
+        ${cabeceraSeccion("§ B", "Simulaciones y videos", "Para explorar y repasar a tu ritmo")}
+        ${multimedia}
+      </div></section>`;
   }
 
   function vistaDifusion() {
@@ -294,7 +348,7 @@
         : `<a class="boton boton--chico" href="${esc(d.url)}" target="_blank" rel="noopener">Leer artículo</a>`;
       return `
         <article class="item item--${esVideo ? "video" : "articulo"}">
-          <span class="insignia" style="align-self:flex-start">${esVideo ? "Video" : "Artículo"}</span>
+          <span class="insignia" style="align-self:flex-start">${esVideo ? (/[?&]list=/.test(d.url) ? "Lista de videos" : "Video") : "Artículo"}</span>
           <span class="item__titulo">${esc(d.titulo)}</span>
           ${meta ? `<span class="item__meta">${meta}</span>` : ""}
           ${d.descripcion ? `<p class="item__desc">${esc(d.descripcion)}</p>` : ""}
@@ -404,7 +458,6 @@
           <div class="arcade__pie">
             <span>Cálculo · velocidad · precisión</span>
             ${barras(120)}
-            <span>Temporada 2026</span>
           </div>
         </div>
       </section>
@@ -629,6 +682,15 @@
     $("#menu-boton").setAttribute("aria-expanded", "false");
     window.scrollTo(0, 0);
   }
+
+  /* ---------- saltos dentro de la página de un curso ---------- */
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest("[data-salto]");
+    if (!a) return;
+    e.preventDefault();
+    const destino = document.getElementById(a.dataset.salto);
+    if (destino) destino.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
 
   /* ---------- visor de videos y simulaciones ---------- */
   const visor = $("#visor");
