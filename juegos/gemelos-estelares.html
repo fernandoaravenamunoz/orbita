@@ -221,14 +221,14 @@ svg.links line { stroke-width: 2; stroke-dasharray: 6 6; }
         </div>
         <div class="ejemplo">
           <div class="mini" id="exC"></div>
-          <div><h3>Cuidado con los señuelos</h3><p>Desde el nivel 3 hay cantidades <b>sin gemela</b> que engañan con un error típico: 2³ no es 6, porque 2³ = 8.</p></div>
+          <div><h3>Cuidado con los señuelos</h3><p>Desde el nivel <span class="nivS">5</span> hay cantidades <b>sin gemela</b> que engañan con un error típico: 2³ no es 6, porque 2³ = 8.</p></div>
         </div>
       </div>
     </div>
     <div class="tarjeta">
       <h2>Niveles</h2>
       <ul class="niveles" id="lvlist"></ul>
-      <p class="nota-dif">Puedes jugar con 10 a 20 parejas. Desde el nivel 3 aparecen siempre entre 3 y 5 señuelos.</p>
+      <p class="nota-dif">Puedes jugar con 10 a 20 parejas. Desde el nivel <span class="nivS">5</span> aparecen siempre entre 3 y 5 señuelos.</p>
       <button class="despegar full" id="goBtn">Despegar</button>
     </div>
   </section>
@@ -319,6 +319,8 @@ const DOT='<span class="op">·</span>', DIV='<span class="op">:</span>';
 /* ---------------- Niveles ---------------- */
 const LEVELS=[
  {id:0,name:'Números gemelos',course:'Calentamiento de observación',ex:()=>`69 = 69 ≠ 96`},
+ {id:6,name:'Fracciones equivalentes',course:'Sugerido: 5° y 6° básico',ex:()=>`${F(2,3)} = ${F(8,12)} = ${F(10,15)}`},
+ {id:7,name:'Fracciones y decimales',course:'Sugerido: 6° y 7° básico',ex:()=>`${F(3,4)} = ${F(6,8)} = 0,75`},
  {id:1,name:'Fracciones, decimales y porcentajes',course:'Sugerido: 5° a 7° básico',ex:()=>`${F(3,4)} = 0,75 = 75%`},
  {id:2,name:'Potencias',course:'Sugerido: 7° y 8° básico',ex:()=>`${P('2','6')} = ${P('8','2')} = 64`},
  {id:3,name:'Raíces y propiedades de potencias',course:'Sugerido: 8° básico a 1° medio',ex:()=>`${Root(null,'64')} = ${P('2','3')} = 8`},
@@ -326,6 +328,9 @@ const LEVELS=[
  {id:5,name:'Experto: logaritmos y más',course:'Sugerido: 2° a 4° medio',ex:()=>`${Log(2,'8')} = ${Root(3,'27')} = 3`},
 ];
 const PLAIN={int:1,frac:1,dec:1};
+/* Número de nivel que se muestra en pantalla (orden de la lista). El id interno no cambia, así los códigos ya compartidos siguen sirviendo. */
+const numNivel=id=>LEVELS.findIndex(L=>L.id===id);
+const NIVEL_SENUELOS=numNivel(3);
 
 /* ---------------- Catálogo de representaciones ---------------- */
 function makeCat(lim){
@@ -452,9 +457,65 @@ function genL0(cfg,rng){
   const pairs=vals.map(v=>{const f={h:I(v),t:'int',meta:{}};return{r:R(v),a:f,b:f}});
   return{pairs,traps:[],rng};
 }
+/* Niveles 6 y 7: fracciones equivalentes / fracciones y decimales */
+function genFrac(cfg,rng){
+  const eq=cfg.level===6;
+  const dens=eq?[2,3,4,5,6,7,8,9,10,12]:[2,4,5,8,10,20,25,50];
+  // valores candidatos: fracción irreducible p/q (pocas impropias)
+  const vals=[];
+  for(const q of dens)for(let p=1;p<q*2;p++){const r=R(p,q);if(r.d!==q)continue;
+    if(!eq&&!decH(r,3))continue;
+    if(r.n>r.d&&rng()<(eq?.8:.6))continue;
+    vals.push(r)}
+  shuffle(rng,vals);
+  const used=new Set(),pairs=[];
+  const fr=(n,d)=>({h:F(n,d),t:'frac',meta:{p:n,q:d}});
+  for(const r of vals){if(pairs.length>=cfg.pairs)break;
+    const k=key(r);if(used.has(k))continue;
+    if(eq){
+      // dos escrituras distintas del mismo valor; a veces una es la irreducible
+      const ks=[];for(let m=1;m<=6;m++)if(r.n*m<=40&&r.d*m<=48)ks.push(m);
+      if(ks.length<2)continue;shuffle(rng,ks);let [k1,k2]=ks;
+      if(rng()<.45&&k2!==1)k1=1;
+      pairs.push({r,a:fr(r.n*k1,r.d*k1),b:fr(r.n*k2,r.d*k2)});
+    }else{
+      // fracción (a veces sin simplificar) y su decimal
+      let m=1;if(rng()<.35){const ms=[2,3,4,5].filter(x=>r.n*x<=60&&r.d*x<=100);if(ms.length)m=pick(rng,ms)}
+      pairs.push({r,a:fr(r.n*m,r.d*m),b:{h:decH(r,3),t:'dec',meta:{}}});
+    }
+    used.add(k);
+  }
+  // señuelos: errores típicos, sin gemela y sin repetir valores
+  const nT=0,traps=[]; // sin señuelos en estos niveles
+  const T=(list,tr,h,why)=>{if(tr&&tr.d>0&&tr.n>0)list.push({r:tr,h,why})};
+  const errores=(r,shown)=>{const out=[];const p=r.n,q=r.d;
+    if(eq){
+      const s=pick(rng,[1,2,3]);
+      T(out,R(p+s,q+s),F(p+s,q+s),`${F(p,q)} ≠ ${F(p+s,q+s)}: sumar el mismo número al numerador y al denominador cambia el valor de la fracción.`);
+      const m=pick(rng,[2,3]);
+      T(out,R(p*m,q),F(p*m,q),`${F(p,q)} ≠ ${F(p*m,q)}: para amplificar hay que multiplicar el numerador <b>y</b> el denominador por el mismo número.`);
+      if(p!==q&&p!==1)T(out,R(q,p),F(q,p),`${F(p,q)} ≠ ${F(q,p)}: al invertir la fracción se obtiene otro número.`);
+    }else{
+      const L=String(q).length;
+      if(p<10&&q%10!==0)T(out,R(p*Math.pow(10,L)+q,Math.pow(10,L)),`${p},${q}`,`${F(p,q)} ≠ ${p},${q}: una fracción no se convierte a decimal juntando el numerador y el denominador.`);
+      if(p===1&&q<10)T(out,R(q,10),`0,${q}`,`${F(1,q)} ≠ 0,${q}: el denominador no pasa a ser la parte decimal.`);
+      const inv=R(q,p),di=decH(inv,3);
+      if(di&&p!==q)T(out,inv,di,`${F(p,q)} ≠ ${di}: ese es el decimal de ${F(q,p)}, la fracción invertida.`);
+      const d=decH(r,3);
+      if(d&&d.indexOf(',')>-1){const x=R(p*10,q),dx=decH(x,3)||I(x.n);if(x.d===1||decH(x,3))T(out,x,x.d===1?I(x.n):dx,`${F(p,q)} ≠ ${x.d===1?I(x.n):dx}: ojo con la posición de la coma; ${F(p,q)} = ${d}.`)}
+    }
+    return out};
+  const tomar=list=>{shuffle(rng,list);for(const t of list){if(traps.length>=nT)break;const k=key(t.r);if(used.has(k)||traps.some(x=>x.h===t.h))continue;used.add(k);traps.push(t)}};
+  let cands=[];for(const pr of pairs)cands=cands.concat(errores(pr.r));
+  tomar(cands);
+  // si faltan, se toman errores de otras fracciones que no están en juego
+  for(const r of vals){if(traps.length>=nT)break;if(used.has(key(r)))continue;tomar(errores(r))}
+  return{pairs,traps,rng};
+}
 function generate(cfg){
   const rng=mulberry32(cfg.seed*7919+cfg.level*131+cfg.pairs*17);
   if(cfg.level===0)return genL0(cfg,rng);
+  if(cfg.level===6||cfg.level===7)return genFrac(cfg,rng);
   const cat=buildCat(cfg.level);
   const pool=[...cat.m.values()].filter(e=>new Set(e.forms.map(f=>f.t)).size>=2||e.forms.length>=3);
   const W=e=>{const ts=new Set(e.forms.map(f=>f.t));ts.delete('mix');const w=ts.size*ts.size;return(cfg.level===1&&e.r.n>e.r.d)?w*.35:w};
@@ -490,7 +551,7 @@ let G=null,SOLVED=0,BEST=0;
 /* ---------------- UI configuración ---------------- */
 const lv=$('#levels');
 LEVELS.forEach(L=>{const b=document.createElement('button');b.className='lvl';b.dataset.l=L.id;
-  b.innerHTML=`<div class="n">Nivel ${L.id}</div><div class="t">${L.name}</div><div class="c">${L.course}</div><div class="ex">${L.ex()}</div>`;
+  b.innerHTML=`<div class="n">Nivel ${numNivel(L.id)}</div><div class="t">${L.name}</div><div class="c">${L.course}</div><div class="ex">${L.ex()}</div>`;
   b.onclick=()=>{cfg.level=L.id;syncSetup()};lv.appendChild(b)});
 $('#pairs').oninput=e=>{cfg.pairs=+e.target.value;syncSetup()};
 function syncSetup(){
@@ -505,13 +566,14 @@ $('#exA').innerHTML=`<svg class="links"><line x1="28%" y1="42%" x2="72%" y2="60%
   +mk(28,42,-18,'',Root(null,'64'),36,' ok" style="--pc:#B9A727')+mk(72,60,152,'',P('2','3'),30,' ok" style="--pc:#B9A727');
 $('#exB').innerHTML=mk(30,50,0,'#D4C33A','9',54)+mk(70,50,180,'#FF7A3D','6',54);
 $('#exC').innerHTML=mk(28,46,24,'#E9A07F',P('2','3'),38)+mk(72,54,-35,'#A9BFE6','6',42,' trapshow')+`<span class="m" style="left:50%;top:50%;font-size:34px;color:#FF5500;font-family:Righteous,sans-serif">≠</span>`;
-$('#lvlist').innerHTML=LEVELS.map(L=>`<li><span class="ico">${L.id}</span><span><b>${L.name}</b><small>${L.course}</small><span class="e">${L.ex()}</span></span></li>`).join('');
+$('#lvlist').innerHTML=LEVELS.map(L=>`<li><span class="ico">${numNivel(L.id)}</span><span><b>${L.name}</b><small>${L.course}</small><span class="e">${L.ex()}</span></span></li>`).join('');
+document.querySelectorAll('.nivS').forEach(e=>e.textContent=NIVEL_SENUELOS);
 const show=id=>{['intro','setup','game'].forEach(v=>$('#'+v).classList.toggle('hidden',v!==id));$('#bandBottom').classList.toggle('hidden',id!=='game');window.scrollTo(0,0)};
 $('#goBtn').onclick=()=>show('setup');
 $('#introBtn').onclick=()=>show('intro');
 
 const codeOf=c=>`N${c.level}-${c.pairs}-${c.seed}`;
-function parseCode(s){const m=/^N([0-5])-(\d{1,2})-(\d{1,6})$/i.exec(s.trim().replace(/\s+/g,''));
+function parseCode(s){const m=/^N([0-7])-(\d{1,2})-(\d{1,6})$/i.exec(s.trim().replace(/\s+/g,''));
   if(!m)return null;const p=+m[2];if(p<10||p>20)return null;
   return{level:+m[1],pairs:p,seed:+m[3]}}
 
@@ -545,7 +607,7 @@ function startGame(){
     card.addEventListener('click',()=>onTap(t));
     pool.appendChild(el);G.tokens.push(t);
   });
-  $('#lvlName').textContent=`${cfg.level} · ${LEVELS.find(L=>L.id===cfg.level).name}`;
+  $('#lvlName').textContent=`${numNivel(cfg.level)} · ${LEVELS.find(L=>L.id===cfg.level).name}`;
   $('#codeOut').textContent=codeOf(cfg);$('#copyMsg').textContent='';
   updateHud();clearInterval(G.timer);G.timer=setInterval(updateTime,500);updateTime();
   requestAnimationFrame(()=>layout(true));
