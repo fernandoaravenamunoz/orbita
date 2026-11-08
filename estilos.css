@@ -253,6 +253,19 @@ h3 { font-size: 1.22rem; font-weight: 600; }
 .seccion--curso { padding-top: clamp(2rem, 5vw, 3rem); scroll-margin-top: 80px; }
 .seccion--curso + .seccion--curso { padding-top: clamp(1rem, 3vw, 2rem); }
 
+.obs-grupo { margin-bottom: 3.2rem; scroll-margin-top: 80px; }
+/* Miniaturas de video (Observatorio) */
+.item--con-mini { padding-top: 0; }
+.item__mini { position: relative; display: block; width: 100%; padding: 0; margin: 0 0 .7rem; border: 1px solid var(--marino); border-radius: var(--radio); overflow: hidden; background: var(--marino); cursor: pointer; aspect-ratio: 16 / 9; }
+.item__mini img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .25s; }
+.item__mini:hover img { transform: scale(1.04); }
+.item__play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; background: var(--naranja); color: var(--marino); font-size: 1.05rem; padding-left: 3px; border: 2px solid var(--crema); opacity: .92; transition: opacity .15s, transform .15s; }
+.item__mini:hover .item__play { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+.item__dur { position: absolute; right: 6px; bottom: 6px; font-family: var(--mono); font-size: .68rem; background: var(--marino); color: var(--crema); padding: .05rem .4rem; border-radius: 3px; }
+.item__credito { font-family: var(--mono); font-size: .72rem; color: var(--tinta-suave); }
+.item__credito b { color: var(--marino); font-weight: 700; }
+.obs-grupo:last-child { margin-bottom: 0; }
+
 /* ---------- Ítems de material ---------- */
 .lista { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 1rem 1.4rem; }
 .item { display: flex; flex-direction: column; gap: .25rem; padding: .9rem 0 .9rem 1rem; border-left: 2px solid var(--marino); }

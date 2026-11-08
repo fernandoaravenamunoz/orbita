@@ -165,9 +165,14 @@
       const id = idYoutube(m.url);
       const lista = (String(m.url).match(/[?&]list=([\w-]+)/) || [])[1];
       if (lista) {
-        // lista de reproducción: se abre con todos sus videos (empieza en el video del enlace, si lo trae)
-        const visor = id ? `https://www.youtube-nocookie.com/embed/${id}?list=${lista}&rel=0` : `https://www.youtube-nocookie.com/embed/videoseries?list=${lista}&rel=0`;
-        return `<button class="boton boton--chico" data-visor="${visor}" data-externo="https://www.youtube.com/playlist?list=${lista}" data-titulo="${esc(m.titulo)}">${etiqueta === "Ver video" ? "Ver lista de videos" : etiqueta}</button>`;
+        // lista de reproducción. Con "index=N" (posición del video en la lista, desde 1) se abre en ese video.
+        const pos = parseInt((String(m.url).match(/[?&]index=(\d+)/) || [])[1], 10);
+        const visor = id
+          ? `https://www.youtube-nocookie.com/embed/${id}?list=${lista}&rel=0`
+          : `https://www.youtube-nocookie.com/embed/videoseries?list=${lista}${pos ? `&index=${pos - 1}` : ""}&rel=0`;
+        const externo = id ? `https://www.youtube.com/watch?v=${id}&list=${lista}` : `https://www.youtube.com/playlist?list=${lista}`;
+        const texto = etiqueta === "Ver video" && !pos && !id ? "Ver lista de videos" : etiqueta;
+        return `<button class="boton boton--chico" data-visor="${visor}" data-externo="${externo}" data-titulo="${esc(m.titulo)}">${texto}</button>`;
       }
       if (id) return `<button class="boton boton--chico" data-visor="https://www.youtube-nocookie.com/embed/${id}?rel=0" data-externo="https://www.youtube.com/watch?v=${id}" data-titulo="${esc(m.titulo)}">${etiqueta}</button>`;
     }
@@ -339,27 +344,52 @@
   }
 
   function vistaDifusion() {
-    const items = (SITIO.difusion || []).slice().sort((a, b) => String(b.fecha || "").localeCompare(String(a.fecha || "")));
-    const lista = items.length ? `<div class="lista">${items.map((d) => {
+    const items = SITIO.difusion || [];
+    const tarjeta = (d) => {
       const esVideo = d.tipo === "video";
-      const meta = [d.fuente, d.fecha ? fechaLarga(d.fecha) : ""].filter(Boolean).map(esc).join(" · ");
+      const esLista = esVideo && /[?&]list=/.test(d.url) && !/[?&]index=/.test(d.url) && !idYoutube(d.url);
       const boton = esVideo
         ? botonMaterial({ ...d, tipo: "video" }, "Ver video")
         : `<a class="boton boton--chico" href="${esc(d.url)}" target="_blank" rel="noopener">Leer artículo</a>`;
+      // miniatura: la indicada en datos.js o, si es un video con enlace propio, la de YouTube
+      const idv = esVideo ? idYoutube(d.url) : null;
+      const mini = d.miniatura || (idv ? `https://i.ytimg.com/vi/${idv}/hqdefault.jpg` : "");
+      const atributos = (boton.match(/data-visor="[^"]*" data-externo="[^"]*" data-titulo="[^"]*"/) || [""])[0];
+      const figura = mini ? (atributos
+        ? `<button class="item__mini" ${atributos} aria-label="Ver video: ${esc(d.titulo)}"><img src="${esc(mini)}" alt="" loading="lazy"><span class="item__play" aria-hidden="true">▶</span></button>`
+        : `<a class="item__mini" href="${esc(d.url)}" target="_blank" rel="noopener"><img src="${esc(mini)}" alt="" loading="lazy"></a>`) : "";
+      const credito = d.fuente ? `<span class="item__credito">${esVideo ? "Video" : "Fuente"}: <b>${esc(d.fuente)}</b>${esVideo ? " · YouTube" : ""}${d.duracion ? ` · ${esc(d.duracion)}` : ""}</span>` : "";
       return `
-        <article class="item item--${esVideo ? "video" : "articulo"}">
-          <span class="insignia" style="align-self:flex-start">${esVideo ? (/[?&]list=/.test(d.url) ? "Lista de videos" : "Video") : "Artículo"}</span>
+        <article class="item item--${esVideo ? "video" : "articulo"}${mini ? " item--con-mini" : ""}">
+          ${figura}
+          <span class="insignia" style="align-self:flex-start">${esVideo ? (esLista ? "Lista de videos" : "Video") : "Artículo"}</span>
           <span class="item__titulo">${esc(d.titulo)}</span>
-          ${meta ? `<span class="item__meta">${meta}</span>` : ""}
+          ${credito}
           ${d.descripcion ? `<p class="item__desc">${esc(d.descripcion)}</p>` : ""}
           <div class="item__acciones">${boton}</div>
         </article>`;
-    }).join("")}</div>` : `<div class="vacio">${planetaVacio}<p>Pronto compartiremos artículos y videos.</p></div>`;
+    };
+    // agrupar por categoría, en el orden en que aparecen en datos.js
+    const grupos = [];
+    items.forEach((d) => {
+      const cat = d.categoria || "Otros";
+      let g = grupos.find((x) => x.cat === cat);
+      if (!g) grupos.push(g = { cat, items: [] });
+      g.items.push(d);
+    });
+    const indice = grupos.length > 1 ? `<nav class="saltos" aria-label="Temas del Observatorio" style="padding-top:0;margin-bottom:2rem">${grupos.map((g, i) =>
+      `<a href="#difusion" data-salto="obs-${i}">${esc(g.cat)} <span class="insignia insignia--vacia">${g.items.length}</span></a>`).join("")}</nav>` : "";
+    const cuerpo = items.length ? indice + grupos.map((g, i) => `
+      <div class="obs-grupo" id="obs-${i}">
+        ${grupos.length > 1 ? cabeceraSeccion(`§ ${String.fromCharCode(65 + i)}`, esc(g.cat), `${g.items.length} ${g.items.length === 1 ? "recurso" : "recursos"}`) : ""}
+        <div class="lista">${g.items.map(tarjeta).join("")}</div>
+      </div>`).join("")
+      : `<div class="vacio">${planetaVacio}<p>Pronto compartiremos artículos y videos.</p></div>`;
 
     return `
       ${cabecera("§ 03", "Lecturas y videos", "Observatorio", "Matemáticas y ciencias más allá de la sala de clases.")}
       <div class="franja-modular" aria-hidden="true"></div>
-      <section class="seccion"><div class="contenedor">${lista}</div></section>`;
+      <section class="seccion"><div class="contenedor">${cuerpo}</div></section>`;
   }
 
   function vistaTareas() {
