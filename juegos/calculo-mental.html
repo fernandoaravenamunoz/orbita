@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cálculo mental</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Righteous&family=Archivo:wght@400;500;700;800&display=swap">
+<style>
+/* Retrofuturismo / Space Age: crema mate, azul marino, naranja quemado, rojo óxido, mostaza. Misma línea visual que Kakoomas matemáticos. */
+:root{
+  --cream:#DEDED2; --navy:#2C395C; --orange:#FF5500; --rust:#A92717; --mustard:#B9A727;
+  --muted:#535D76; --cell:#C9CAC4; --bad-bg:#D3B9AD;
+  --font-display:"Righteous","Futura","Century Gothic",system-ui,sans-serif;
+  --font-body:"Archivo","Helvetica Neue",Helvetica,Arial,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--cream);color:var(--navy);font-family:var(--font-body);font-size:16px;line-height:1.5}
+.band{background:var(--navy);color:var(--cream);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.band.top{padding-block:22px 18px;border-bottom:6px double var(--mustard)}
+.band.bottom{padding-block:18px calc(28px + env(safe-area-inset-bottom,0px));border-top:6px double var(--mustard);margin-top:32px;font-size:13px}
+.band>*{max-width:980px;margin:0 auto}
+.band .eyebrow{color:var(--mustard)}
+.band p{margin:0}
+.hdr{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:8px 24px}
+h1{font-family:var(--font-display);font-weight:400;font-size:clamp(26px,5vw,40px);line-height:1.05;margin:0}
+.tag{opacity:.85;font-size:14px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+.wrap{max-width:980px;margin:0 auto;padding:24px max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:20px}
+
+/* Configuración */
+.card{border:1px solid var(--mustard);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:16px}
+.group{display:flex;flex-direction:column;gap:8px}
+.group>span{font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg button,.btn{font:inherit;font-size:15px;border:1px solid var(--mustard);background:var(--cream);color:var(--navy);border-radius:999px;padding:9px 16px;cursor:pointer;line-height:1.2}
+.seg button[aria-pressed="true"]{background:var(--rust);border-color:var(--rust);color:var(--cream);font-weight:500}
+.seg button:hover,.btn:hover{border-color:var(--rust)}
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.mode{font:inherit;text-align:left;background:var(--cream);color:var(--navy);border:2px solid var(--mustard);border-radius:14px;padding:14px;cursor:pointer;display:flex;flex-direction:column;gap:4px}
+.mode b{font-family:var(--font-display);font-weight:400;font-size:19px}
+.mode small{font-size:13.5px;color:var(--muted);line-height:1.4}
+.mode[aria-pressed="true"]{border-color:var(--navy);background:var(--navy);color:var(--cream)}
+.mode[aria-pressed="true"] small{color:var(--cream);opacity:.85}
+.mode .ico{font-size:22px;line-height:1}
+.info{background:var(--mustard);color:var(--navy);border-radius:12px;padding:10px 14px;font-size:14px}
+.info b{font-weight:700}
+.go{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.btn.primary{background:var(--orange);border-color:var(--orange);color:var(--navy);font-weight:800;font-size:17px;padding:12px 28px;font-family:var(--font-display);letter-spacing:.02em}
+.btn.primary:hover{border-color:var(--navy)}
+.rec{font-size:14px;color:var(--muted)}
+button:focus-visible{outline:3px solid var(--rust);outline-offset:2px}
+
+/* Juego */
+.hud{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:10px 20px}
+.clock{font-family:var(--font-display);font-size:clamp(24px,4.5vw,34px);color:var(--rust);font-variant-numeric:tabular-nums;line-height:1.1}
+.clock.urgent{color:var(--orange)}
+.lives{letter-spacing:.15em}
+.lives .off{opacity:.25}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid var(--mustard);border-radius:999px;padding:6px 14px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.chip b{color:var(--navy);font-size:17px;margin-left:4px}
+.chip i{font-style:normal;background:var(--orange);color:var(--navy);border-radius:999px;padding:0 7px;margin-left:6px;font-weight:700;font-size:12px}
+.chip i:empty{display:none}
+.arena{border:1px solid var(--mustard);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;min-height:220px;justify-content:center}
+.bigq{font-family:var(--font-display);font-size:clamp(40px,10vw,76px);text-align:center;line-height:1.1;font-variant-numeric:tabular-nums;min-height:1.15em;white-space:nowrap}
+.fb{margin:0;text-align:center;font-weight:700;min-height:1.5em;font-size:17px}
+.fb.ok{color:var(--navy)}
+.fb.bad{color:var(--rust)}
+.tbar,.pbar{height:10px;border-radius:999px;background:var(--cell);overflow:hidden}
+.tbar i,.pbar i{display:block;height:100%;width:100%;background:var(--navy);border-radius:999px}
+.tbar.urgent i{background:var(--orange)}
+.flash-ok{animation:fok .35s ease-out}
+.flash-bad{animation:fbad .35s ease-out}
+@keyframes fok{0%{background:var(--mustard)}100%{background:transparent}}
+@keyframes fbad{0%{background:var(--bad-bg)}100%{background:transparent}}
+
+/* Lluvia de meteoritos */
+.sky{position:relative;height:min(42vh,440px);min-height:240px;border-radius:12px;overflow:hidden;background-color:var(--navy);
+  background-image:radial-gradient(circle at 12% 18%,var(--cream) 1.2px,transparent 1.8px),radial-gradient(circle at 63% 9%,var(--cream) 1px,transparent 1.6px),radial-gradient(circle at 84% 41%,var(--mustard) 1.4px,transparent 2px),radial-gradient(circle at 33% 57%,var(--cream) 1px,transparent 1.6px),radial-gradient(circle at 74% 72%,var(--cream) 1.1px,transparent 1.7px),radial-gradient(circle at 21% 83%,var(--mustard) 1px,transparent 1.6px);
+  background-size:180px 160px}
+.ground{position:absolute;left:0;right:0;bottom:0;height:26px;background:var(--rust);border-top:4px solid var(--mustard)}
+.ground.hit{animation:ghit .5s steps(2) 2}
+@keyframes ghit{0%{background:var(--orange)}50%{background:var(--rust)}}
+.sky.shake{animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.meteor{position:absolute;top:0;will-change:transform}
+.rock{display:block;position:relative;background:var(--mustard);color:var(--navy);border:3px solid var(--cream);font-weight:800;font-size:18px;font-variant-numeric:tabular-nums;white-space:nowrap;
+  padding:10px 14px;border-radius:46% 54% 42% 58% / 58% 44% 56% 42%;box-shadow:0 -10px 0 -4px var(--orange),0 -20px 0 -9px var(--rust)}
+.meteor.low .rock{background:var(--orange)}
+.meteor.boom .rock{animation:pop .35s ease-out forwards}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.35);background:var(--cream)}100%{transform:scale(.2);opacity:0}}
+
+/* Cadena */
+.chainbox{display:flex;flex-direction:column;gap:12px;align-items:stretch;text-align:center}
+.chainbox .eyebrow{margin:0}
+.steps{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center;font-variant-numeric:tabular-nums}
+.steps .n{background:var(--navy);color:var(--cream);border-radius:999px;padding:4px 12px;font-weight:700}
+.steps .o{color:var(--rust);font-weight:700}
+.steps .ar{color:var(--muted)}
+.steps .n.end{background:var(--mustard);color:var(--navy)}
+
+/* Teclado */
+.pad-wrap{display:flex;flex-direction:column;gap:10px;max-width:380px;width:100%;margin:0 auto}
+.disp{font-family:var(--font-display);font-size:34px;text-align:center;border:2px solid var(--navy);border-radius:12px;padding:6px 12px;min-height:60px;font-variant-numeric:tabular-nums;background:#E8E8DE}
+.disp.empty{color:var(--muted);opacity:.55}
+.pad{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;touch-action:manipulation}
+.pad button{font:700 22px var(--font-body);border:1px solid var(--navy);background:var(--cell);color:var(--navy);border-radius:12px;padding:12px 0;cursor:pointer;user-select:none;-webkit-user-select:none}
+.pad button:active{background:var(--mustard)}
+.pad .ok{grid-column:4;grid-row:1 / span 4;background:var(--orange);border-color:var(--orange);font-family:var(--font-display);font-weight:400;font-size:20px}
+.pad .fn{background:var(--cream)}
+.pad.off{opacity:.4;pointer-events:none}
+.hint{font-size:12.5px;color:var(--muted);text-align:center;margin:0}
+.row-end{display:flex;justify-content:center}
+.btn.quiet{font-size:14px;padding:7px 14px;color:var(--muted)}
+
+/* Resultados */
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat{border:1px solid var(--mustard);border-radius:14px;padding:12px 14px}
+.stat span{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.stat b{font-family:var(--font-display);font-weight:400;font-size:30px;font-variant-numeric:tabular-nums}
+.stat.main{background:var(--navy);color:var(--cream);border-color:var(--navy)}
+.stat.main span{color:var(--mustard)}
+.badge{display:inline-block;background:var(--orange);color:var(--navy);font-weight:800;border-radius:999px;padding:3px 12px;font-size:13px;margin-left:8px;vertical-align:middle}
+h2{font-family:var(--font-display);font-weight:400;font-size:24px;margin:0}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:15px}
+th{text-align:left;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;border-bottom:2px solid var(--navy);padding:6px 8px}
+td{padding:7px 8px;border-bottom:1px solid var(--mustard)}
+td.bad{color:var(--rust);font-weight:700}
+td.good{font-weight:700}
+.tablewrap{overflow-x:auto}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+@media (max-width:560px){
+  .rock{font-size:15px;padding:8px 10px}
+  .pad button{padding:10px 0}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<!-- Barra de regreso al sitio Órbita Matemática -->
+<nav class="orbita-volver" style="background:#2C395C;border-bottom:4px solid #FF5500;padding:8px max(16px,env(safe-area-inset-left,0px));font:600 14px/1.4 'Jost','Archivo','Helvetica Neue',Arial,sans-serif;position:relative;z-index:50">
+  <a href="../index.html#juegos" style="color:#DEDED2;text-decoration:none;display:inline-flex;align-items:center;gap:8px">
+    <span style="display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#FF5500;color:#2C395C;font-weight:700">←</span>
+    Volver a Órbita Matemática · Juegos
+  </a>
+</nav>
+
+<header class="band top">
+  <div class="hdr">
+    <div><p class="eyebrow">Juegos · Matemática</p><h1>Cálculo mental</h1></div>
+    <p class="tag">Rapidez y precisión, sin papel ni calculadora</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- CONFIGURACIÓN -->
+  <section id="setup" class="card" aria-label="Configuración">
+    <div class="group"><span>Operación</span>
+      <div class="seg" data-k="cat">
+        <button data-v="sum" aria-pressed="true">Sumas y restas</button>
+        <button data-v="mul" aria-pressed="false">Multiplicación</button>
+        <button data-v="div" aria-pressed="false">División</button>
+        <button data-v="rand" aria-pressed="false">Aleatorio</button>
+      </div>
+    </div>
+    <div class="group"><span>Dificultad</span>
+      <div class="seg" data-k="diff">
+        <button data-v="b" aria-pressed="true">Básico</button>
+        <button data-v="m" aria-pressed="false">Medio</button>
+        <button data-v="d" aria-pressed="false">Difícil</button>
+      </div>
+    </div>
+    <div class="info" id="info"></div>
+    <div class="group"><span>Modo de juego</span>
+      <div class="modes" data-k="mode">
+        <button class="mode" data-v="time" aria-pressed="true"><span class="ico">⏱</span><b>Contrarreloj</b><small>Resuelve todas las que puedas en 60 segundos. Las rachas multiplican tu puntaje.</small></button>
+        <button class="mode" data-v="rain" aria-pressed="false"><span class="ico">☄</span><b>Lluvia de meteoritos</b><small>Escribe el resultado y dispara antes de que el meteorito toque el suelo. Tienes 3 escudos.</small></button>
+        <button class="mode" data-v="chain" aria-pressed="false"><span class="ico">⛓</span><b>Cadena mental</b><small>Retén un número y aplícale operaciones que aparecen una a una. Responde el resultado final. 5 cadenas.</small></button>
+      </div>
+    </div>
+    <div class="go">
+      <p class="rec" id="rec"></p>
+      <button class="btn primary" id="startBtn">Despegar ▸</button>
+    </div>
+  </section>
+
+  <!-- JUEGO -->
+  <section id="game" hidden aria-label="Juego">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="hud">
+        <div><p class="eyebrow" id="hudMode"></p><div class="clock" id="hudMain"></div></div>
+        <div class="chips">
+          <span class="chip">Puntaje <b id="hScore">0</b></span>
+          <span class="chip">Racha <b id="hStreak">0</b><i id="hMult"></i></span>
+        </div>
+      </div>
+      <div class="arena" id="arena"></div>
+      <div class="pad-wrap">
+        <div class="disp empty" id="disp" aria-live="polite">?</div>
+        <div class="pad" id="pad">
+          <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button>
+          <button class="ok" data-k="ok" id="okBtn">OK</button>
+          <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button>
+          <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button>
+          <button class="fn" data-k="neg" aria-label="Cambiar signo">±</button><button data-k="0">0</button><button class="fn" data-k="del" aria-label="Borrar">⌫</button>
+        </div>
+        <p class="hint">En computador puedes usar el teclado: números, «−» y Enter.</p>
+      </div>
+      <div class="row-end"><button class="btn quiet" id="quitBtn">Abandonar partida</button></div>
+    </div>
+  </section>
+
+  <!-- RESULTADOS -->
+  <section id="end" hidden aria-label="Resultados">
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div><p class="eyebrow" id="endMode"></p><h2 id="endTitle">Fin de la misión</h2></div>
+      <div class="summary" id="summary"></div>
+      <div id="errBox"></div>
+      <div class="actions">
+        <button class="btn primary" id="againBtn">Jugar otra vez</button>
+        <button class="btn" id="cfgBtn">Cambiar configuración</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="band bottom">
+  <p>Notación: «·» multiplicación, «:» división, «−» resta. Todas las divisiones son exactas. En Sumas y restas · Difícil aparecen números enteros negativos.</p>
+</footer>
+
+<script>
+(() => {
+const $ = s => document.querySelector(s);
+const S = { cat: 'sum', diff: 'b', mode: 'time' };
+const CAT = { sum: 'Sumas y restas', mul: 'Multiplicación', div: 'División', rand: 'Aleatorio' };
+const DIFF = { b: 'Básico', m: 'Medio', d: 'Difícil' };
+const MODE = { time: 'Contrarreloj', rain: 'Lluvia de meteoritos', chain: 'Cadena mental' };
+const DESC = {
+  sum: { b: 'Sumas y restas con números hasta 20; resultados naturales.', m: 'Sumas y restas con números de dos cifras, con reserva y canje.', d: 'Tres cifras ± dos cifras, y adición y sustracción de números enteros (incluye negativos).' },
+  mul: { b: 'Tablas del 2, 3, 4, 5 y 10.', m: 'Tablas del 6 al 9, hasta el 12.', d: 'Dos cifras por una cifra, y productos por 11, 12, 15 y 25.' },
+  div: { b: 'Divisiones exactas entre 2, 3, 4 y 5.', m: 'Divisiones exactas entre 6 y 12.', d: 'Dividendos de dos y tres cifras; divisores de una cifra o entre 11 y 25.' },
+  rand: { b: 'Mezcla de sumas, restas, multiplicaciones y divisiones en nivel básico.', m: 'Mezcla de las cuatro operaciones en nivel medio.', d: 'Mezcla de las cuatro operaciones en nivel difícil.' }
+};
+const BASE = { b: 10, m: 15, d: 20 };
+
+const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const coin = () => Math.random() < 0.5;
+const fmt = n => (n < 0 ? '−' : '') + Math.abs(n).toLocaleString('es-CL');
+const par = n => n < 0 ? '(' + fmt(n) + ')' : fmt(n);
+const store = {
+  get(k) { try { return Number(localStorage.getItem(k)) || 0; } catch (e) { return 0; } },
+  set(k, v) { try { localStorage.setItem(k, String(v)); } catch (e) {} }
+};
+const recKey = () => `cm-best-${S.mode}-${S.cat}-${S.diff}`;
+
+/* ---------- Generador de operaciones ---------- */
+function gen(cat, diff) {
+  if (cat === 'rand') cat = pick(['sum', 'sum', 'mul', 'div']);
+  let a, b, op, ans;
+  if (cat === 'sum') {
+    if (diff === 'b') {
+      if (coin()) { a = rnd(2, 15); b = rnd(2, 15); op = '+'; }
+      else { a = rnd(6, 20); b = rnd(1, a); op = '−'; }
+    } else if (diff === 'm') {
+      a = rnd(11, 99); b = rnd(11, 99); op = coin() ? '+' : '−';
+      if (op === '−' && b > a) [a, b] = [b, a];
+    } else {
+      if (coin()) {
+        a = rnd(101, 999); b = rnd(11, 99); op = coin() ? '+' : '−';
+      } else {
+        const nz = () => { let x; do { x = rnd(-60, 60); } while (Math.abs(x) < 2); return x; };
+        a = nz(); b = nz(); op = coin() ? '+' : '−';
+        if (a > 0 && b > 0) (coin() ? a = -a : b = -b);
+      }
+    }
+    ans = op === '+' ? a + b : a - b;
+    return { text: `${fmt(a)} ${op} ${par(b)}`, ans };
+  }
+  if (cat === 'mul') {
+    if (diff === 'b') { a = pick([2, 3, 4, 5, 10]); b = rnd(1, 10); }
+    else if (diff === 'm') { a = rnd(6, 9); b = rnd(2, 12); }
+    else if (Math.random() < 0.7) { a = rnd(12, 99); if (a % 10 === 0) a++; b = rnd(3, 9); }
+    else { a = pick([11, 12, 15, 25]); b = rnd(3, 12); }
+    if (coin()) [a, b] = [b, a];
+    return { text: `${fmt(a)} · ${fmt(b)}`, ans: a * b };
+  }
+  let d, q;
+  if (diff === 'b') { d = rnd(2, 5); q = rnd(1, 10); }
+  else if (diff === 'm') { d = rnd(6, 12); q = rnd(2, 12); }
+  else if (coin()) { d = rnd(3, 9); q = rnd(12, 60); }
+  else { d = rnd(11, 25); q = rnd(3, 9); }
+  return { text: `${fmt(d * q)} : ${fmt(d)}`, ans: q };
+}
+function genU() {
+  let q, n = 0;
+  do { q = gen(G.cat, G.diff); n++; } while (n < 8 && (q.text === G.lastText || (G.mode === 'rain' && G.met && G.met.some(m => m.q.ans === q.ans))));
+  G.lastText = q.text;
+  return q;
+}
+
+/* ---------- Generador de cadenas ---------- */
+function genChain(cat, diff) {
+  const n = { b: 4, m: 5, d: 6 }[diff];
+  const SUM = { b: [1, 9, 0, 60], m: [5, 30, 0, 150], d: [11, 60, -60, 300] }[diff];
+  const MUL = { b: [2, 5, 60], m: [2, 9, 150], d: [2, 12, 600] }[diff];
+  const DIV = { b: [2, 5], m: [2, 9], d: [2, 12] }[diff];
+  const sumStep = cur => {
+    for (let i = 0; i < 30; i++) {
+      const v = rnd(SUM[0], SUM[1]), plus = coin(), res = plus ? cur + v : cur - v;
+      if (res >= SUM[2] && res <= SUM[3]) return { op: plus ? '+' : '−', v, res };
+    }
+    return null;
+  };
+  const mulStep = cur => {
+    if (cur <= 0) return null;
+    const opts = []; for (let f = MUL[0]; f <= MUL[1]; f++) if (cur * f <= MUL[2]) opts.push(f);
+    if (!opts.length) return null; const f = pick(opts); return { op: '·', v: f, res: cur * f };
+  };
+  const divStep = cur => {
+    if (cur <= 1) return null;
+    const opts = []; for (let d = DIV[0]; d <= DIV[1]; d++) if (cur % d === 0 && cur / d >= 2) opts.push(d);
+    if (!opts.length) return null; const d = pick(opts); return { op: ':', v: d, res: cur / d };
+  };
+  let start;
+  if (cat === 'mul') start = rnd(2, 9);
+  else if (cat === 'div') start = pick({ b: [24, 30, 36, 40, 48, 60], m: [72, 84, 90, 96, 108, 120], d: [180, 240, 288, 360, 420, 480] }[diff]);
+  else start = diff === 'b' ? rnd(4, 20) : diff === 'm' ? rnd(10, 50) : rnd(20, 99);
+  let cur = start; const steps = [];
+  for (let i = 0; i < n; i++) {
+    let order;
+    if (cat === 'sum') order = [sumStep];
+    else if (cat === 'mul') order = [mulStep, divStep, sumStep];
+    else if (cat === 'div') order = [divStep, mulStep, sumStep];
+    else order = [sumStep, mulStep, divStep].sort(() => Math.random() - 0.5).concat([sumStep]);
+    let s = null; for (const fn of order) { s = fn(cur); if (s) break; }
+    if (!s) s = { op: '+', v: 1, res: cur + 1 };
+    steps.push(s); cur = s.res;
+  }
+  return { start, steps, ans: cur };
+}
+const chainText = c => fmt(c.start) + ' → ' + c.steps.map(s => `${s.op} ${fmt(s.v)}`).join(' → ');
+
+/* ---------- Configuración ---------- */
+document.querySelectorAll('[data-k]').forEach(grp => {
+  if (grp.tagName === 'BUTTON') return;
+  grp.addEventListener('click', e => {
+    const b = e.target.closest('button[data-v]'); if (!b) return;
+    S[grp.dataset.k] = b.dataset.v;
+    grp.querySelectorAll('button[data-v]').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    refreshSetup();
+  });
+});
+function refreshSetup() {
+  $('#info').innerHTML = `<b>${CAT[S.cat]} · ${DIFF[S.diff]}:</b> ${DESC[S.cat][S.diff]}`;
+  const best = store.get(recKey());
+  $('#rec').textContent = best ? `Tu mejor puntaje en ${MODE[S.mode]} con esta configuración: ${fmt(best)}` : `Aún no hay récord en ${MODE[S.mode]} con esta configuración.`;
+}
+refreshSetup();
+
+/* ---------- Estado de partida ---------- */
+let G = null, timers = [], rafId = 0;
+const later = (fn, ms) => { const t = setTimeout(fn, ms); timers.push(t); return t; };
+function clearAll() {
+  timers.forEach(clearTimeout); timers = [];
+  cancelAnimationFrame(rafId);
+  if (G && G.iv) clearInterval(G.iv);
+}
+function show(id) { ['setup', 'game', 'end'].forEach(x => $('#' + x).hidden = x !== id); window.scrollTo({ top: 0 }); }
+
+function startGame() {
+  clearAll();
+  G = { mode: S.mode, cat: S.cat, diff: S.diff, score: 0, streak: 0, bestStreak: 0, hits: 0, shots: 0, errors: [], input: '', accept: true, running: true, phase: 'play' };
+  $('#hudMode').textContent = `${MODE[G.mode]} · ${CAT[G.cat]} · ${DIFF[G.diff]}`;
+  setInput(''); setAccept(true); updateHud();
+  show('game');
+  ({ time: initTime, rain: initRain, chain: initChain })[G.mode]();
+}
+function mult() { return G.streak >= 10 ? 3 : G.streak >= 5 ? 2 : 1; }
+function award(k = 1) {
+  G.streak++; G.hits++; G.bestStreak = Math.max(G.bestStreak, G.streak);
+  const pts = BASE[G.diff] * mult() * k; G.score += pts; updateHud(); return pts;
+}
+function breakStreak() { G.streak = 0; updateHud(); }
+function fail(q, given, ans) { G.errors.push({ q, given, ans }); breakStreak(); }
+function updateHud() {
+  $('#hScore').textContent = fmt(G.score);
+  $('#hStreak').textContent = G.streak;
+  const m = mult(); $('#hMult').textContent = m > 1 ? '×' + m : '';
+}
+function fb(txt, cls) { const el = $('#fb'); if (!el) return; el.textContent = txt; el.className = 'fb ' + (cls || ''); }
+function flash(ok) { const a = $('#arena'); a.classList.remove('flash-ok', 'flash-bad'); void a.offsetWidth; a.classList.add(ok ? 'flash-ok' : 'flash-bad'); }
+
+/* ---------- Entrada ---------- */
+function setInput(s) {
+  G.input = s; const d = $('#disp');
+  d.textContent = s === '' ? '?' : s.replace('-', '−');
+  d.classList.toggle('empty', s === '');
+}
+function setAccept(b) { G.accept = b; $('#pad').classList.toggle('off', !b && G.phase !== 'review'); }
+function keyPress(k) {
+  if (!G || !G.running) return;
+  if (k === 'ok') {
+    if (G.phase === 'review') { const nb = $('#nextBtn'); if (nb) nb.click(); return; }
+    if (G.accept) submitInput(); return;
+  }
+  if (!G.accept) return;
+  if (k === 'del') setInput(G.input.slice(0, -1));
+  else if (k === 'neg') setInput(G.input.startsWith('-') ? G.input.slice(1) : '-' + G.input);
+  else if (/^\d$/.test(k) && G.input.replace('-', '').length < 6) setInput(G.input === '0' ? k : G.input === '-0' ? '-' + k : G.input + k);
+}
+function submitInput() {
+  if (G.input === '' || G.input === '-') return;
+  const v = parseInt(G.input, 10); setInput('');
+  ({ time: submitTime, rain: submitRain, chain: submitChain })[G.mode](v);
+}
+$('#pad').addEventListener('click', e => { const b = e.target.closest('button[data-k]'); if (b) keyPress(b.dataset.k); });
+document.addEventListener('keydown', e => {
+  if ($('#game').hidden) { if (!$('#end').hidden && e.key === 'Enter' && document.activeElement === document.body) { e.preventDefault(); startGame(); } return; }
+  if (/^\d$/.test(e.key)) keyPress(e.key);
+  else if (e.key === '-' || e.key === 'Subtract') keyPress('neg');
+  else if (e.key === 'Backspace') { e.preventDefault(); keyPress('del'); }
+  else if (e.key === 'Enter') { e.preventDefault(); keyPress('ok'); }
+});
+
+/* ---------- Modo contrarreloj ---------- */
+function initTime() {
+  $('#arena').innerHTML = `<div class="tbar" id="tbar"><i id="tfill"></i></div><div class="bigq" id="bigq"></div><p class="fb" id="fb" aria-live="polite">&nbsp;</p>`;
+  G.endAt = Date.now() + 60000;
+  nextTimeQ(); tickTime();
+  G.iv = setInterval(tickTime, 100);
+}
+function tickTime() {
+  const left = Math.max(0, G.endAt - Date.now());
+  const urgent = left <= 10000;
+  $('#hudMain').textContent = Math.ceil(left / 1000) + ' s';
+  $('#hudMain').classList.toggle('urgent', urgent);
+  $('#tfill').style.width = (left / 600) + '%';
+  $('#tbar').classList.toggle('urgent', urgent);
+  if (left <= 0) finish();
+}
+function nextTimeQ() { G.q = genU(); $('#bigq').textContent = G.q.text; }
+function submitTime(v) {
+  G.shots++;
+  if (v === G.q.ans) { const p = award(); fb(`✓ +${p}`, 'ok'); flash(true); }
+  else { fail(G.q.text, v, G.q.ans); fb(`✗ ${G.q.text} = ${fmt(G.q.ans)}`, 'bad'); flash(false); }
+  nextTimeQ();
+}
+
+/* ---------- Modo lluvia de meteoritos ---------- */
+function initRain() {
+  $('#arena').innerHTML = `<div class="sky" id="sky"><div class="ground" id="ground"></div></div><p class="fb" id="fb" aria-live="polite">&nbsp;</p>`;
+  Object.assign(G, { lives: 3, level: 1, met: [], fall: { b: 12, m: 10.5, d: 10 }[G.diff], every: { b: 3.2, m: 3, d: 2.8 }[G.diff], spawnT: 0, last: performance.now() });
+  rainHud();
+  rafId = requestAnimationFrame(rainLoop);
+}
+function rainHud() {
+  $('#hudMain').innerHTML = `<span class="lives">${[0, 1, 2].map(i => `<span class="${i < G.lives ? '' : 'off'}">◆</span>`).join('')}</span> <small style="font-family:var(--font-body);font-size:14px;color:var(--muted)">Nivel ${G.level}</small>`;
+}
+function spawn() {
+  const sky = $('#sky'), q = genU();
+  const lanes = sky.clientWidth < 520 ? 3 : 5;
+  const busy = new Set(G.met.filter(m => m.y < 0.4).map(m => m.lane));
+  const free = [...Array(lanes).keys()].filter(i => !busy.has(i));
+  if (!free.length) return false;
+  const lane = pick(free);
+  const el = document.createElement('div');
+  el.className = 'meteor';
+  el.innerHTML = `<span class="rock">${q.text}</span>`;
+  el.style.left = ((lane + 0.5) / lanes * 100) + '%';
+  el.style.transform = 'translate(-50%, -10px)';
+  sky.appendChild(el);
+  G.met.push({ el, q, y: 0, lane, fall: G.fall * (0.9 + Math.random() * 0.2) });
+  return true;
+}
+function rainLoop(ts) {
+  if (!G || !G.running || G.mode !== 'rain') return;
+  const dt = Math.min(0.1, (ts - G.last) / 1000); G.last = ts;
+  const sky = $('#sky');
+  G.spawnT -= dt;
+  if (G.spawnT <= 0) { if (G.met.length < 5) spawn(); G.spawnT = G.every; }
+  const H = sky.clientHeight - 30 - 50;
+  for (const m of [...G.met]) {
+    m.y += dt / m.fall;
+    m.el.style.transform = `translate(-50%, ${Math.min(m.y, 1) * H}px)`;
+    m.el.classList.toggle('low', m.y > 0.7);
+    if (m.y >= 1) {
+      G.met.splice(G.met.indexOf(m), 1); m.el.remove();
+      G.lives--; fail(m.q.text, '—', m.q.ans);
+      const g = $('#ground'); g.classList.remove('hit'); void g.offsetWidth; g.classList.add('hit');
+      fb(`¡Impacto! ${m.q.text} = ${fmt(m.q.ans)}`, 'bad');
+      rainHud();
+      if (G.lives <= 0) { later(finish, 400); G.running = false; return; }
+    }
+  }
+  rafId = requestAnimationFrame(rainLoop);
+}
+function submitRain(v) {
+  G.shots++;
+  const hits = G.met.filter(m => m.q.ans === v);
+  if (hits.length) {
+    const m = hits.reduce((a, b) => (b.y > a.y ? b : a));
+    G.met.splice(G.met.indexOf(m), 1);
+    m.el.classList.add('boom'); later(() => m.el.remove(), 360);
+    const p = award(); fb(`✓ +${p}`, 'ok');
+    if (G.hits % 5 === 0) {
+      G.level++; G.fall = Math.max(4.5, G.fall * 0.9); G.every = Math.max(1.1, G.every * 0.9);
+      rainHud(); fb(`✓ +${p} · ¡Nivel ${G.level}! Los meteoritos aceleran`, 'ok');
+    }
+  } else {
+    breakStreak(); fb(`Ningún meteorito da ${fmt(v)}`, 'bad');
+    const s = $('#sky'); s.classList.remove('shake'); void s.offsetWidth; s.classList.add('shake');
+  }
+}
+
+/* ---------- Modo cadena mental ---------- */
+function initChain() {
+  $('#arena').innerHTML = `<div class="chainbox"><p class="eyebrow" id="cStep">&nbsp;</p><div class="bigq" id="bigq"></div><div class="pbar"><i id="pfill"></i></div><div id="cRes"></div></div><p class="fb" id="fb" aria-live="polite">&nbsp;</p>`;
+  G.round = 0; G.total = 5;
+  nextChain();
+}
+function runBar(ms) {
+  const f = $('#pfill'); f.style.transition = 'none'; f.style.width = '100%'; void f.offsetWidth;
+  f.style.transition = `width ${ms}ms linear`; f.style.width = '0%';
+}
+function nextChain() {
+  G.round++; G.phase = 'show'; setAccept(false); fb(' ');
+  $('#hudMain').textContent = `Cadena ${G.round} de ${G.total}`;
+  $('#cRes').innerHTML = '';
+  const c = G.chain = genChain(G.cat, G.diff);
+  const T = { b: 3000, m: 2500, d: 2000 }[G.diff];
+  $('#cStep').textContent = 'Número inicial';
+  $('#bigq').textContent = fmt(c.start); runBar(T + 500);
+  let t = T + 500;
+  c.steps.forEach((s, i) => {
+    later(() => { $('#bigq').textContent = ''; }, t);
+    later(() => {
+      $('#cStep').textContent = `Paso ${i + 1} de ${c.steps.length}`;
+      $('#bigq').textContent = `${s.op} ${fmt(s.v)}`; runBar(T - 250);
+    }, t + 250);
+    t += T;
+  });
+  later(() => {
+    G.phase = 'answer'; setAccept(true);
+    $('#cStep').textContent = 'Resultado final';
+    $('#bigq').textContent = '= ?';
+    const f = $('#pfill'); f.style.transition = 'none'; f.style.width = '0%';
+  }, t);
+}
+function submitChain(v) {
+  if (G.phase !== 'answer') return;
+  G.shots++;
+  const c = G.chain, ok = v === c.ans;
+  if (ok) { const p = award(5); fb(`✓ ¡Correcto! +${p}`, 'ok'); flash(true); }
+  else { fail(chainText(c), v, c.ans); fb(`✗ Respondiste ${fmt(v)}; el resultado era ${fmt(c.ans)}`, 'bad'); flash(false); }
+  $('#bigq').textContent = fmt(c.ans);
+  $('#cStep').textContent = 'Así se resolvía';
+  let html = `<div class="steps"><span class="n">${fmt(c.start)}</span>`;
+  c.steps.forEach((s, i) => { html += `<span class="o">${s.op} ${fmt(s.v)}</span><span class="ar">→</span><span class="n${i === c.steps.length - 1 ? ' end' : ''}">${fmt(s.res)}</span>`; });
+  html += `</div><div style="margin-top:14px"><button class="btn primary" id="nextBtn">${G.round < G.total ? 'Siguiente cadena ▸' : 'Ver resultados ▸'}</button></div>`;
+  $('#cRes').innerHTML = html;
+  G.phase = 'review'; G.accept = false; $('#pad').classList.remove('off');
+  $('#nextBtn').addEventListener('click', () => { G.round < G.total ? nextChain() : finish(); });
+}
+
+/* ---------- Fin ---------- */
+function finish() {
+  if (!G) return;
+  G.running = false; clearAll();
+  const key = `cm-best-${G.mode}-${G.cat}-${G.diff}`;
+  const prev = store.get(key), isRec = G.score > prev && G.score > 0;
+  if (isRec) store.set(key, G.score);
+  const prec = G.shots ? Math.round(100 * G.hits / G.shots) : 0;
+  $('#endMode').textContent = `${MODE[G.mode]} · ${CAT[G.cat]} · ${DIFF[G.diff]}`;
+  $('#endTitle').innerHTML = (G.mode === 'rain' ? 'Escudos agotados' : G.mode === 'time' ? '¡Tiempo!' : 'Cadenas completadas') + (isRec ? '<span class="badge">Nuevo récord</span>' : '');
+  const hitLabel = G.mode === 'rain' ? 'Meteoritos destruidos' : G.mode === 'chain' ? `Cadenas correctas (de ${G.total})` : 'Respuestas correctas';
+  $('#summary').innerHTML = `
+    <div class="stat main"><span>Puntaje</span><b>${fmt(G.score)}</b></div>
+    <div class="stat"><span>${hitLabel}</span><b>${G.hits}</b></div>
+    <div class="stat"><span>${G.mode === 'rain' ? 'Precisión de disparo' : 'Precisión'}</span><b>${prec}%</b></div>
+    <div class="stat"><span>Mejor racha</span><b>${G.bestStreak}</b></div>
+    <div class="stat"><span>Récord</span><b>${fmt(Math.max(prev, G.score))}</b></div>`;
+  if (G.errors.length) {
+    const rows = G.errors.slice(0, 20).map(e => `<tr><td>${e.q}</td><td class="bad">${typeof e.given === 'number' ? fmt(e.given) : e.given}</td><td class="good">${fmt(e.ans)}</td></tr>`).join('');
+    $('#errBox').innerHTML = `<h2 style="font-size:20px;margin-bottom:8px">Para revisar</h2><div class="tablewrap"><table><thead><tr><th>Operación</th><th>${G.mode === 'rain' ? 'Tu respuesta' : 'Tu respuesta'}</th><th>Correcta</th></tr></thead><tbody>${rows}</tbody></table></div>${G.errors.length > 20 ? `<p class="rec">y ${G.errors.length - 20} más.</p>` : ''}${G.mode === 'rain' ? '<p class="rec">«—» indica un meteorito que tocó el suelo sin respuesta.</p>' : ''}`;
+  } else {
+    $('#errBox').innerHTML = G.hits ? '<p class="info">Sin errores en esta partida. ¡Prueba subir la dificultad!</p>' : '';
+  }
+  show('end');
+}
+
+$('#startBtn').addEventListener('click', startGame);
+$('#againBtn').addEventListener('click', startGame);
+$('#cfgBtn').addEventListener('click', () => { refreshSetup(); show('setup'); });
+$('#quitBtn').addEventListener('click', () => { clearAll(); if (G) G.running = false; refreshSetup(); show('setup'); });
+})();
+</script>
+</body>
+</html>

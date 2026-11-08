@@ -258,10 +258,15 @@
 
   function vistaJuegos() {
     const cats = SITIO.juegos || [];
-    const lista = cats.length ? `<div class="accesos">${cats.map((j) => `
-      <a class="acceso" href="#juego-${encodeURIComponent(j.id)}">
+    const lista = cats.length ? `<div class="accesos">${cats.map((j) => {
+      const href = j.url ? esc(j.url) : `#juego-${encodeURIComponent(j.id)}`;
+      const externo = /^https?:/.test(j.url || "") ? ` target="_blank" rel="noopener"` : "";
+      return `
+      <a class="acceso" href="${href}"${externo}>
         <span class="acceso__icono">✚</span><h3>${esc(j.nombre)}</h3><p>${esc(j.descripcion || "")}</p>
-      </a>`).join("")}</div>` : `<div class="vacio">${planetaVacio}<p>Pronto habrá juegos.</p></div>`;
+        <span class="boton boton--chico" style="align-self:flex-start;margin-top:.6rem">Jugar →</span>
+      </a>`;
+    }).join("")}</div>` : `<div class="vacio">${planetaVacio}<p>Pronto habrá juegos.</p></div>`;
     return `
       <section class="titulo-pagina"><div class="contenedor"><h1>Juegos</h1><p>Entrena tu cálculo mental jugando.</p></div></section>
       <section class="seccion"><div class="contenedor">${lista}</div></section>`;

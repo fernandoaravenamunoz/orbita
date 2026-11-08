@@ -8,6 +8,7 @@ Sitio de material para estudiantes: guías, videos, solucionarios, simulaciones,
 |---|---|---|
 | `datos.js` | Cursos, unidades y todo el material | **Sí, aquí se agrega todo** |
 | `materiales/` | Carpeta para tus PDF (guías y pautas) | Sí, subes archivos aquí |
+| `juegos/` | Páginas de los juegos (Kakoomas, Cálculo mental) | Solo para agregar juegos nuevos |
 | `index.html`, `estilos.css`, `app.js` | Estructura, diseño y funcionamiento | No hace falta |
 
 ## Publicar en GitHub Pages (una sola vez)

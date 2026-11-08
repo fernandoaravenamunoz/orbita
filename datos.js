@@ -65,20 +65,22 @@ const SITIO = {
   ],
 
   /* ---------------------------------------------------------------
-     JUEGOS — cada subcategoría tiene su página.
-     "integrado": "kakooma" activa el juego que viene programado en el sitio.
-     En "enlaces" puedes agregar juegos externos (tipo "enlace").
+     JUEGOS — cada título lleva directo a la página del juego.
+     url: archivo dentro de la carpeta "juegos" o un enlace externo (https://...).
      --------------------------------------------------------------- */
   juegos: [
     {
-      id: "kakoomas",
       nombre: "Kakoomas matemáticos",
-      descripcion: "Encuentra el número que es la suma (o el producto) de otros dos. Rapidez mental y cálculo.",
-      integrado: "kakooma",
-      enlaces: [
-        // { titulo: "Nombre del juego", url: "https://...", descripcion: "..." }
-      ]
+      descripcion: "Encuentra el número que es la suma de otros dos. Rapidez mental y cálculo.",
+      url: "juegos/kakoomas.html"
+    },
+    {
+      nombre: "Cálculo mental",
+      descripcion: "Contrarreloj, lluvia de meteoritos y cadena mental con las cuatro operaciones.",
+      url: "juegos/calculo-mental.html"
     }
+    // Para agregar otro juego: sube su archivo .html a la carpeta "juegos"
+    // y copia uno de los bloques de arriba (con su coma).
   ],
 
   /* ---------------------------------------------------------------

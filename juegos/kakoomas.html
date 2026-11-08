@@ -1,0 +1,962 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!-- Barra de regreso al sitio Órbita Matemática -->
+<nav class="orbita-volver" style="background:#2C395C;border-bottom:4px solid #FF5500;padding:8px max(16px,env(safe-area-inset-left,0px));font:600 14px/1.4 'Jost','Archivo','Helvetica Neue',Arial,sans-serif;position:relative;z-index:50">
+  <a href="../index.html#juegos" style="color:#DEDED2;text-decoration:none;display:inline-flex;align-items:center;gap:8px">
+    <span style="display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#FF5500;color:#2C395C;font-weight:700">←</span>
+    Volver a Órbita Matemática · Juegos
+  </a>
+</nav>
+
+<title>Kakoomas matemáticos</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Righteous&family=Archivo:wght@400;500;700;800&display=swap">
+<style>
+/* Layout: barra de control arriba (nivel, ronda, hoja, cronómetro), franja de operación, tres panales en fila que se apilan en teléfono, tabla de respuestas abajo */
+/* Retrofuturismo / Space Age: base crema mate, estructura azul marino, acentos naranja quemado y rojo óxido, detalles mostaza. Un solo tema claro, por diseño. */
+:root {
+  --cream: #DEDED2;
+  --navy: #2C395C;
+  --orange: #FF5500;
+  --rust: #A92717;
+  --mustard: #B9A727;
+  --bg: var(--cream);
+  --surface: var(--cream);
+  --ink: var(--navy);
+  --muted: #535D76;
+  --line: var(--mustard);
+  --cell: #C9CAC4;
+  --cell-edge: var(--navy);
+  --center: var(--cream);
+  --center-edge: var(--rust);
+  --accent: var(--rust);
+  --accent-ink: var(--cream);
+  --amber: var(--mustard);
+  --amber-ink: var(--navy);
+  --ok: var(--navy);
+  --ok-bg: var(--mustard);
+  --ok-ink: var(--cream);
+  --badge-ink: var(--navy);
+  --bad: var(--rust);
+  --bad-bg: #D3B9AD;
+  --hl: var(--mustard);
+  --hl-edge: var(--navy);
+  --hl-edge: var(--navy);
+  --pick: var(--orange);
+  --pick-ink: var(--navy);
+  --cta: var(--orange);
+  --cta-ink: var(--navy);
+  --shadow: rgba(44, 57, 92, 0.25);
+  --font-display: "Righteous", "Futura", "Century Gothic", system-ui, sans-serif;
+  --font-body: "Archivo", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.5; padding: 0; margin: 0; }
+.band { background: var(--navy); color: var(--cream); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.band.top { padding-block: 22px 18px; border-bottom: 6px double var(--mustard); }
+.band.bottom { padding-block: 18px 150px; border-top: 6px double var(--mustard); margin-top: 28px; }
+.band > * { max-width: 1100px; margin: 0 auto; }
+.wrap { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-top: 24px; }
+header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; }
+h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(22px, 4vw, 34px); line-height: 1.1; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+.eyebrow { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
+.clock { font-family: var(--font-display); font-size: clamp(22px, 4vw, 30px); font-variant-numeric: tabular-nums; color: var(--accent); display: flex; align-items: baseline; gap: 10px; }
+.stats { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.tally { margin: 0; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
+@media (max-width: 560px) { .stats { align-items: flex-start; } .tally { text-align: left; } }
+.clock small { font-family: var(--font-body); font-size: 12px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+
+.controls { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: end; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+.group { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.group > span { font-size: 12px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+.seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.seg button, .btn {
+  font: inherit; font-size: 14px; border: 1px solid var(--line); background: var(--bg); color: var(--ink);
+  border-radius: 999px; padding: 8px 14px; cursor: pointer; line-height: 1.2;
+}
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 500; }
+.seg button .sub { display: block; font-size: 11px; opacity: 0.8; }
+.btn.primary { background: var(--cta); color: var(--cta-ink); border-color: var(--cta); font-weight: 700; }
+.btn:hover, .seg button:hover { border-color: var(--accent); }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--center-edge); outline-offset: 2px; }
+
+.op { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; background: var(--amber); color: var(--amber-ink); border-radius: 14px; padding: 14px 18px; }
+.op b { font-family: var(--font-display); font-weight: 500; font-size: clamp(17px, 2.6vw, 22px); }
+.op .formula { font-family: var(--font-display); font-size: clamp(17px, 2.6vw, 22px); font-variant-numeric: tabular-nums; }
+.op p { margin: 0; font-size: 14px; flex-basis: 100%; }
+
+.board { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+.kak { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px 14px 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.kak h2 { font-family: var(--font-display); font-weight: 500; font-size: 15px; margin: 0; color: var(--accent); display: flex; justify-content: space-between; align-items: center; }
+.kak h2 .state { font-family: var(--font-body); font-size: 12px; font-weight: 500; padding: 3px 10px; border-radius: 999px; }
+.state.ok { background: var(--ok-bg); color: var(--badge-ink); }
+.state.bad { background: var(--bad-bg); color: var(--bad); }
+.comb { position: relative; width: 100%; max-width: 330px; margin: 0 auto; aspect-ratio: 2.5 / 2.598; }
+.hex { position: absolute; width: 40%; height: 33.333%; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%); background: var(--cell-edge); transform: translate(-50%, -50%); }
+.hex > .face { position: absolute; inset: 2.5px; clip-path: inherit; background: var(--cell); display: grid; place-items: center;
+  font-weight: 700; font-size: clamp(20px, 4.4vw, 28px); font-variant-numeric: tabular-nums; color: var(--ink); }
+.hex.hl { background: var(--hl-edge); z-index: 2; }
+.hex.hl > .face { inset: 4px; background: var(--hl); }
+.hex.center { background: var(--center-edge); z-index: 3; }
+.hex.center > .face { background: var(--center); inset: 3.5px; }
+.hex.center.ok { background: var(--ok); }
+.hex.center.bad { background: var(--bad); }
+.hex.pick { cursor: pointer; transition: background 0.15s; }
+.hex.pick:hover { background: var(--accent); }
+.hex.pick:hover > .face { background: color-mix(in srgb, var(--cell) 75%, var(--cell-edge)); }
+.hex.pick:focus-visible { outline: none; background: var(--center-edge); }
+.hex.sol { background: var(--ok); z-index: 2; }
+.hex.sol > .face { inset: 4px; background: var(--ok); color: var(--ok-ink); }
+.hex.chosen, .hex.pick.chosen:hover { background: var(--pick); z-index: 2; }
+.hex.chosen > .face, .hex.pick.chosen:hover > .face { inset: 4px; background: var(--pick); color: var(--pick-ink); }
+.ctr-val.picked { color: var(--pick); opacity: 1; }
+.hex.center.bad .ctr-val { color: var(--bad); }
+.hex.wrong { background: var(--bad); }
+.hex.wrong > .face { background: var(--bad-bg); color: var(--bad); }
+@media (prefers-reduced-motion: no-preference) {
+  .hex.wrong { animation: blinkEdge 0.24s steps(1) 4; }
+  .hex.wrong > .face { animation: blinkFace 0.24s steps(1) 4; }
+  @keyframes blinkEdge { 0% { background: var(--bad); } 50% { background: var(--cell-edge); } }
+  @keyframes blinkFace { 0% { background: var(--bad-bg); color: var(--bad); } 50% { background: var(--cell); color: var(--ink); } }
+  .hex.hl { animation: glow 0.6s ease-out; }
+  @keyframes glow { 0% { filter: brightness(1.35); } 100% { filter: none; } }
+}
+.ctr-val { font: 700 clamp(20px, 4.4vw, 28px) var(--font-body); font-variant-numeric: tabular-nums; color: var(--muted); opacity: 0.6; }
+.hex.center.ok > .face { background: var(--ok); }
+.hex.center.ok .ctr-val { color: var(--ok-ink); opacity: 1; }
+.hex.center input {
+  width: 74%; border: 0; background: transparent; text-align: center; color: var(--ink);
+  font: 700 clamp(20px, 4.4vw, 28px) var(--font-body); font-variant-numeric: tabular-nums; padding: 4px 0;
+  -moz-appearance: textfield; appearance: textfield;
+}
+.hex.center.ok input { color: var(--ok); }
+.hex.center.bad input { color: var(--bad); }
+.hex.center input::placeholder { color: var(--muted); opacity: 0.6; font-weight: 500; }
+.hex.center input::-webkit-outer-spin-button, .hex.center input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.kak .msg { font-size: 13px; color: var(--muted); min-height: 1.5em; margin: 0; text-align: center; }
+@media (prefers-reduced-motion: no-preference) {
+  .shake { animation: shake 0.35s; }
+  @keyframes shake { 25% { transform: translate(calc(-50% - 5px), -50%); } 75% { transform: translate(calc(-50% + 5px), -50%); } }
+}
+
+.answer { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; display: flex; flex-wrap: wrap; gap: 14px 18px; align-items: end; }
+.lede { margin: -6px 0 0; max-width: 70ch; color: var(--muted); font-size: 15px; }
+.opbox { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.optag { font-size: 14px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+.optag b { color: var(--accent); font-weight: 700; }
+.eq { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; font-family: var(--font-display); font-weight: 700; font-size: clamp(27px, calc(6vw - 3px), 49px); line-height: 1.1; color: var(--ink); font-variant-numeric: tabular-nums; }
+.answer input { font: 700 clamp(27px, calc(6vw - 3px), 49px) var(--font-body); font-variant-numeric: tabular-nums; width: 6ch; max-width: 100%; padding: 4px 14px; border: 3px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); }
+.answer input.ok { border-color: var(--ok); color: var(--ok); }
+.answer input.bad { border-color: var(--bad); color: var(--bad); }
+.answer .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-left: auto; align-self: end; }
+.result { flex-basis: 100%; margin: 0; font-size: 15px; min-height: 1.5em; }
+.result.ok { color: var(--ok); font-weight: 500; }
+.result.bad { color: var(--bad); }
+footer { font-size: 13px; color: var(--muted); }
+@media (max-width: 560px) { .answer .actions { margin-left: 0; } }
+/* Modo proyección: siempre claro, alto contraste, bordes gruesos y números más grandes para el data */
+html.proj:root { --line: var(--navy); --muted: var(--navy); --cell: #C2C4C0; color-scheme: light; }
+html.proj .hex > .face { inset: 4px; font-size: clamp(24px, 5.2vw, 38px); }
+html.proj .hex.hl > .face, html.proj .hex.sol > .face, html.proj .hex.chosen > .face { inset: 6px; }
+html.proj .hex.center > .face { inset: 5px; }
+html.proj .ctr-val { font-size: clamp(24px, 5.2vw, 38px); }
+html.proj .comb { max-width: 400px; }
+html.proj .kak { border: 2px solid var(--line); }
+html.proj .kak h2 { font-size: 18px; }
+html.proj .msg { font-size: 15px; color: var(--ink); }
+html.proj .answer { border: 2px solid var(--line); }
+html.proj .answer input { border-width: 4px; }
+html.proj .lede, html.proj footer { color: var(--ink); }
+
+/* Nivel Énfasis */
+.opbox[hidden] { display: none !important; }
+.board.enf { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); align-items: start; }
+@media (max-width: 880px) { .board.enf { grid-template-columns: minmax(0, 1fr); } }
+.enf-how { margin: 0; font-size: 14px; color: var(--muted); }
+.enf-how b { color: var(--ink); }
+.g9 { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; max-width: 560px; margin: 0 auto; border: 3px solid var(--ink); background: var(--ink); gap: 2px; }
+.g9 .box { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: color-mix(in srgb, var(--ink) 35%, transparent); }
+.g9 .cell { aspect-ratio: 1; display: grid; place-items: center; background: var(--surface); color: var(--ink); font: 700 clamp(13px, 2.4vw, 22px) var(--font-body); font-variant-numeric: tabular-nums; cursor: pointer; user-select: none; }
+.g9 .box.tint .cell { background: var(--cell); }
+.g9 .xbox { display: grid; place-items: center; background: var(--surface); font: 700 clamp(44px, 10vw, 96px) var(--font-display); color: var(--ink); aspect-ratio: 1; }
+.g9 .cell.pick:hover { box-shadow: inset 0 0 0 2px var(--accent); }
+.g9 .cell.chosen, .g3 .fc.chosen { background: var(--pick) !important; color: var(--pick-ink); box-shadow: inset 0 0 0 3px var(--pick); }
+.g3 .fc.chosen .lb { color: var(--pick-ink); }
+.g9 .cell.sol, .g3 .fc.sol { background: var(--ok) !important; color: var(--ok-ink); box-shadow: inset 0 0 0 3px var(--ok); }
+.g3 .fc.sol .lb { color: var(--ok-ink); }
+.g9 .cell.hl, .g3 .fc.hl { background: var(--hl) !important; box-shadow: inset 0 0 0 3px var(--hl-edge); }
+.g9 .cell.wrong, .g3 .fc.wrong { background: var(--bad-bg) !important; color: var(--bad); box-shadow: inset 0 0 0 3px var(--bad); }
+.g9 .cell.locked { cursor: default; }
+.g9 .cell:focus-visible, .g3 .fc:focus-visible { outline: 3px solid var(--center-edge); outline-offset: -3px; }
+.g3 { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; max-width: 300px; margin: 0 auto; border: 3px solid var(--ink); background: var(--ink); gap: 1px; }
+.g3 .fc { position: relative; aspect-ratio: 1; display: grid; place-items: center; background: var(--surface); cursor: pointer; font: 700 clamp(22px, 4vw, 32px) var(--font-body); font-variant-numeric: tabular-nums; color: var(--ink); }
+.g3 .fc.empty { cursor: default; }
+.g3 .fc .lb { position: absolute; top: 4px; left: 7px; font: 500 13px var(--font-body); color: var(--muted); }
+.g3 .plus { display: grid; place-items: center; background: var(--cell); font: 700 clamp(34px, 6vw, 52px) var(--font-display); color: var(--ink); aspect-ratio: 1; }
+svg.flower, svg.mini { width: 100%; height: auto; display: block; margin: 0 auto; }
+svg.flower { max-width: 560px; }
+svg.mini { max-width: 300px; }
+.wedge polygon { fill: var(--surface); stroke: color-mix(in srgb, var(--ink) 45%, transparent); stroke-width: 1; }
+.wedge.tint polygon { fill: var(--cell); }
+.wedge text { font: 700 25px var(--font-body); fill: var(--ink); pointer-events: none; font-variant-numeric: tabular-nums; }
+.wedge.pick { cursor: pointer; }
+.wedge.pick:hover polygon { fill: color-mix(in srgb, var(--accent) 14%, var(--surface)); }
+.wedge.chosen polygon, .wedge.pick.chosen:hover polygon { fill: var(--pick); stroke: var(--pick); stroke-width: 3; }
+.wedge.chosen text { fill: var(--pick-ink); }
+.wedge.sol polygon { fill: var(--ok); stroke: var(--ok); stroke-width: 3.5; }
+.wedge.sol text { fill: var(--ok-ink); }
+.wedge.hl polygon { fill: var(--hl); stroke: var(--hl-edge); stroke-width: 3.5; }
+.wedge.wrong polygon { fill: var(--bad-bg); stroke: var(--bad); stroke-width: 3.5; }
+.wedge.wrong text { fill: var(--bad); }
+.wedge:focus-visible { outline: none; }
+.wedge:focus-visible polygon { stroke: var(--center-edge); stroke-width: 4; }
+.wedge.chosen, .wedge.sol, .wedge.hl, .wedge.wrong { paint-order: stroke; }
+.hub { fill: var(--surface); stroke: var(--ink); stroke-width: 1.5; pointer-events: none; }
+.hub.tint { fill: var(--cell); }
+.hexline { fill: none; stroke: var(--ink); stroke-width: 3.5; stroke-linejoin: round; pointer-events: none; }
+.fhex polygon { fill: var(--surface); stroke: var(--ink); stroke-width: 2.5; stroke-linejoin: round; }
+.fhex.tint polygon { fill: var(--cell); }
+.fhex { cursor: pointer; }
+.fhex.empty { cursor: default; }
+.fhex .lb { font: 500 11px var(--font-body); fill: var(--muted); pointer-events: none; }
+.fhex .fv { font: 700 22px var(--font-body); fill: var(--ink); pointer-events: none; font-variant-numeric: tabular-nums; }
+.fhex.chosen polygon { fill: var(--pick); stroke: var(--pick); stroke-width: 4; }
+.fhex.chosen .fv, .fhex.chosen .lb { fill: var(--pick-ink); }
+.fhex.sol polygon { fill: var(--ok); stroke: var(--ok); stroke-width: 4; }
+.fhex.sol .fv, .fhex.sol .lb { fill: var(--ok-ink); }
+.fhex.hl polygon { fill: var(--hl); stroke: var(--hl-edge); stroke-width: 4; }
+.fhex.wrong polygon { fill: var(--bad-bg); stroke: var(--bad); stroke-width: 4; }
+.fhex.wrong .fv { fill: var(--bad); }
+.fhex:focus-visible { outline: none; }
+.fhex:focus-visible polygon { stroke: var(--center-edge); stroke-width: 4; }
+.enf-readout { margin: 4px 0 0; display: flex; align-items: center; justify-content: center; gap: 14px; font: 500 14px var(--font-body); color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+.enf-readout span { font: 700 clamp(26px, 4vw, 40px) var(--font-display); color: var(--ink); letter-spacing: 0; text-transform: none; min-width: 3ch; padding: 2px 14px; border: 3px solid var(--line); border-radius: 10px; text-align: center; font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: no-preference) {
+  .g9 .cell.wrong, .g3 .fc.wrong { animation: gblink 0.24s steps(1) 4; }
+  @keyframes gblink { 50% { background: var(--surface); box-shadow: none; } }
+  .wedge.wrong polygon, .fhex.wrong polygon { animation: wblink 0.24s steps(1) 4; }
+  @keyframes wblink { 50% { fill: var(--surface); stroke: var(--ink); } }
+  .g9 .cell.hl, .g3 .fc.hl, .wedge.hl polygon, .fhex.hl polygon { animation: glow 0.6s ease-out; }
+  .hex.sol, .hex.center.ok, .g9 .cell.sol, .g3 .fc.sol, .wedge.sol polygon, .fhex.sol polygon { animation: solpop 0.9s ease-out; }
+  @keyframes solpop { 0%, 40% { filter: brightness(1.6) saturate(1.3); } 100% { filter: none; } }
+}
+html.proj .g9 .cell { font-size: clamp(15px, 2.8vw, 26px); }
+html.proj .wedge text { font-size: 28px; }
+
+/* Reloj flotante */
+.tm-dur[hidden] { display: none !important; }
+
+.timer { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 30;
+  width: 236px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 8px 28px var(--shadow);
+  padding: 8px 12px 12px; display: flex; flex-direction: column; gap: 8px; }
+.tm-bar { display: flex; align-items: center; gap: 8px; cursor: grab; touch-action: none; user-select: none; }
+.tm-bar.drag { cursor: grabbing; }
+.tm-grip { flex: 1; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.tm-grip::before { content: ""; width: 14px; height: 8px; background: radial-gradient(circle, var(--muted) 1.2px, transparent 1.6px) 0 0 / 5px 4px; opacity: 0.8; }
+.tm-icon { font: 700 16px var(--font-body); width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; display: grid; place-items: center; padding: 0; line-height: 1; }
+.tm-mode { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+.tm-mode button { font: 500 12px var(--font-body); padding: 6px 4px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; }
+.tm-mode button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.tm-dur { font: 500 14px var(--font-body); padding: 6px 8px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); width: 100%; }
+.tm-time { font: 700 44px/1 var(--font-display); font-variant-numeric: tabular-nums; text-align: center; color: var(--accent); padding: 2px 0; }
+.tm-time.low { color: var(--bad); }
+.tm-btns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+.tm-btns button { font: 500 13px var(--font-body); padding: 8px 4px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; }
+.tm-btns button.go { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.tm-btns button:disabled { opacity: 0.45; cursor: default; }
+.timer.min { width: auto; flex-direction: row; align-items: center; padding: 6px 8px 6px 12px; gap: 10px; }
+.timer.min .tm-mode, .timer.min .tm-dur, .timer.min .tm-btns, .timer.min .tm-grip { display: none; }
+.timer.min .tm-bar { order: 2; }
+.timer.min .tm-time { font-size: 26px; cursor: grab; touch-action: none; }
+.timer.ended { border-color: var(--bad); box-shadow: 0 0 0 3px var(--bad), 0 8px 28px var(--shadow); }
+.timer.ended .tm-time { color: var(--bad); }
+.timer button:focus-visible, .timer select:focus-visible { outline: 3px solid var(--center-edge); outline-offset: 2px; }
+@media (max-width: 560px) { .timer { width: 208px; } .tm-time { font-size: 38px; } }
+body.timeup::after { content: ""; position: fixed; inset: 0; background: var(--bad); pointer-events: none; z-index: 25; animation: tflash 0.3s steps(1) 6 forwards; }
+@keyframes tflash { 0% { opacity: 0.55; } 50% { opacity: 0; } 100% { opacity: 0; } }
+body.timeup .wrap { animation: tshake 0.6s ease-in-out 3; }
+@keyframes tshake { 0%, 100% { transform: translateX(0); } 15% { transform: translateX(-14px) rotate(-0.4deg); } 30% { transform: translateX(12px) rotate(0.4deg); } 45% { transform: translateX(-10px); } 60% { transform: translateX(8px); } 75% { transform: translateX(-5px); } 90% { transform: translateX(3px); } }
+@media (prefers-reduced-motion: reduce) { body.timeup .wrap { animation: none; } }
+
+/* Ajustes retro */
+header h1 { color: var(--cream); font-weight: 400; letter-spacing: 0.02em; font-size: clamp(26px, 4.6vw, 42px); }
+.band .tally { color: #C4C5BE; }
+.band .tally span { color: var(--mustard); font-weight: 700; }
+.band footer { font-size: 13px; color: #C4C5BE; }
+.controls, .kak, .answer { border: 1.5px solid var(--mustard); }
+.kak h2 { font-family: var(--font-display); font-weight: 400; letter-spacing: 0.02em; color: var(--navy); font-size: 16px; }
+.group > span, .optag, .enf-readout { color: var(--navy); }
+.seg button, .btn { border-color: var(--navy); }
+.seg button[aria-pressed="true"] { font-weight: 700; }
+.eq, .xbox, .plus, .enf-readout span { font-weight: 400; }
+.optag b { color: var(--rust); }
+.answer input { border-color: var(--navy); background: var(--cream); }
+.lede { color: var(--navy); }
+.hex.pick:hover { background: var(--orange); }
+.hex.pick:hover > .face { background: #D9C3B0; }
+.g9 .cell.pick:hover { box-shadow: inset 0 0 0 2px var(--orange); }
+.wedge.pick:hover polygon { fill: #D9C3B0; }
+.wedge polygon { stroke: rgba(44, 57, 92, 0.45); }
+.g9 .box { background: rgba(44, 57, 92, 0.4); }
+/* Reloj: panel azul marino con sombra plana mostaza */
+.timer { background: var(--navy); color: var(--cream); border: 1.5px solid var(--mustard); box-shadow: 5px 5px 0 var(--mustard); }
+.tm-grip { color: #C4C5BE; }
+.tm-grip::before { background: radial-gradient(circle, var(--mustard) 1.2px, transparent 1.6px) 0 0 / 5px 4px; }
+.tm-icon, .tm-mode button, .tm-btns button { background: transparent; color: var(--cream); border-color: var(--mustard); }
+.tm-mode button[aria-pressed="true"] { background: var(--mustard); color: var(--navy); border-color: var(--mustard); font-weight: 700; }
+.tm-dur { background: var(--navy); color: var(--cream); border-color: var(--mustard); }
+.tm-time { color: var(--orange); font-weight: 400; }
+.tm-time.low { color: var(--cream); background: var(--rust); border-radius: 10px; }
+.tm-btns button.go { background: var(--orange); color: var(--navy); border-color: var(--orange); font-weight: 700; }
+.timer.ended { border-color: var(--rust); box-shadow: 0 0 0 3px var(--rust), 5px 5px 0 var(--mustard); }
+.timer.ended .tm-time { color: var(--orange); }
+.timer button:focus-visible, .timer select:focus-visible { outline-color: var(--orange); }
+</style>
+
+<div class="band top"><header>
+    <div>
+      <h1>Kakoomas matemáticos</h1>
+    </div>
+    <div class="stats">
+      <p class="tally">Hojas resueltas: <span id="solved">0</span> · Mejor tiempo: <span id="best">—</span></p>
+    </div>
+  </header></div>
+<div class="wrap">
+
+  <section class="controls" aria-label="Elegir nivel y dificultad">
+    <div class="group"><span>Nivel</span><div class="seg" id="levels"></div></div>
+    <div class="group"><span>Dificultad</span><div class="seg" id="tiers"></div></div>
+    <div class="group"><span>&nbsp;</span><button class="btn primary" id="random" type="button">Nuevos kakoomas</button></div>
+  </section>
+
+  <p class="lede" id="lede">En cada kakooma, un número es la suma de otros dos. Haz clic en ese número para elegirlo (puedes cambiarlo). Calcula la operación con las tres soluciones y pulsa Comprobar: los aciertos iluminan sus sumandos y los errores titilan en rojo.</p>
+
+  <section class="board" id="board" aria-label="Kakoomas"></section>
+
+  <section class="answer" aria-label="Respuesta final">
+    <label for="final" class="opbox"><span class="optag">Operación: <b id="opName">Suma</b></span><span class="eq"><span id="finalLabel">K1 + K2 + K3</span><span aria-hidden="true">=</span><input id="final" type="text" inputmode="numeric" autocomplete="off" placeholder="?"></span></label>
+    <div class="actions">
+      <button class="btn primary" id="check" type="button">Comprobar</button>
+      <button class="btn" id="reveal" type="button">Ver solución</button>
+      <button class="btn" id="restart" type="button">Reiniciar hoja</button>
+    </div>
+    <p class="result" id="result" aria-live="polite"></p>
+  </section>
+
+</div>
+<div class="band bottom"><footer>Cada hoja se genera al momento y se revisa antes de mostrarse: en cada kakooma hay una sola suma válida y la solución nunca es el número mayor. En el nivel 3, cada kakooma trae además sumas distractoras que coinciden en la última cifra o fallan por poco. En Énfasis, cada cuadro, hexágono y kakooma final tiene también una sola solución.</footer></div>
+
+<aside class="timer" id="timer" aria-label="Reloj">
+  <div class="tm-bar" id="tmBar"><span class="tm-grip">Tiempo</span><button class="tm-icon" id="tmMin" type="button" aria-label="Minimizar reloj" title="Minimizar">–</button></div>
+  <div class="tm-mode" role="group" aria-label="Tipo de reloj">
+    <button type="button" id="tmChrono" aria-pressed="true">Cronómetro</button>
+    <button type="button" id="tmDown" aria-pressed="false">Contrarreloj</button>
+  </div>
+  <select class="tm-dur" id="tmDur" aria-label="Duración del contrarreloj" hidden>
+    <option value="30">30 segundos</option><option value="45">45 segundos</option><option value="60" selected>1 minuto</option>
+    <option value="90">1 minuto 30 segundos</option><option value="120">2 minutos</option><option value="150">2 minutos 30 segundos</option>
+    <option value="180">3 minutos</option><option value="240">4 minutos</option><option value="300">5 minutos</option>
+  </select>
+  <div class="tm-time" id="clock" aria-live="off">0:00</div>
+  <div class="tm-btns">
+    <button type="button" class="go" id="tmStart">Iniciar</button>
+    <button type="button" id="tmStop" disabled>Detener</button>
+    <button type="button" id="tmReset">Reiniciar</button>
+  </div>
+</aside>
+
+<script>
+const TIERS = {
+  N1: [ { lo: 1, hi: 30, slo: 8, shi: 28, near: 0 }, { lo: 1, hi: 40, slo: 12, shi: 40, near: 0 }, { lo: 3, hi: 50, slo: 18, shi: 50, near: 0 } ],
+  N2: [ { lo: 4, hi: 60, slo: 12, shi: 45, near: 0 }, { lo: 5, hi: 80, slo: 15, shi: 60, near: 0 }, { lo: 8, hi: 99, slo: 20, shi: 75, near: 0 } ],
+  N3: [ { lo: 12, hi: 220, slo: 45, shi: 130, near: 3 }, { lo: 12, hi: 300, slo: 48, shi: 240, near: 3 }, { lo: 40, hi: 650, slo: 150, shi: 520, near: 3 } ],
+};
+const ri = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+function triples(v) {
+  const out = [];
+  for (let i = 0; i < 6; i++) for (let a = 0; a < 6; a++) for (let b = a + 1; b < 6; b++)
+    if (a !== i && b !== i && v[a] + v[b] === v[i]) out.push([i, a, b]);
+  return out;
+}
+function nearMiss(v) {
+  let c = 0;
+  for (let i = 0; i < 6; i++) for (let a = 0; a < 6; a++) for (let b = a + 1; b < 6; b++) {
+    if (a === i || b === i) continue;
+    const s = v[a] + v[b];
+    if (s !== v[i] && (s % 10 === v[i] % 10 || [1, 2, 10, 100].includes(Math.abs(s - v[i])))) c++;
+  }
+  return c;
+}
+function makeKakooma(p) {
+  for (let n = 0; n < 200000; n++) {
+    const t = ri(p.slo, p.shi), a = ri(p.lo, t - p.lo), b = t - a;
+    if (b < p.lo || b > p.hi || a > p.hi) continue;
+    const v = [a, b, t, ri(p.lo, p.hi), ri(p.lo, p.hi), ri(p.lo, p.hi)];
+    if (new Set(v).size < 6) continue;
+    for (let i = 5; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [v[i], v[j]] = [v[j], v[i]]; }
+    const tr = triples(v);
+    if (tr.length !== 1 || v[tr[0][0]] !== t || t === Math.max(...v)) continue;
+    if (nearMiss(v) < p.near) continue;
+    return { v, s: t };
+  }
+  return null;
+}
+function makeSheet(lv, tier, op) {
+  for (let n = 0; n < 50; n++) {
+    const k = [0, 1, 2].map(() => makeKakooma(TIERS[lv][tier]));
+    if (k.some(x => !x) || new Set(k.map(x => x.s)).size < 3) continue;
+    if (op === 'resta') k.sort((x, y) => y.s - x.s);
+    const S = k.map(x => x.s);
+    const f = op === 'resta' ? S[0] + S[1] - S[2] : S[0] + S[1] + S[2];
+    return { op, f, k };
+  }
+  return null;
+}
+
+const ENF = {
+  GRID: [ { flo: 2, fhi: 9, plo: 12, phi: 54, hi: 72 }, { flo: 2, fhi: 12, plo: 18, phi: 96, hi: 120 }, { flo: 3, fhi: 15, plo: 30, phi: 180, hi: 220 } ],
+  FLOWER: [ { lo: 1, hi: 30, alo: 8, ahi: 25 }, { lo: 1, hi: 60, alo: 12, ahi: 50 }, { lo: 5, hi: 120, alo: 25, ahi: 100 } ],
+};
+const eri = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const epick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+function eshuffle(v) { for (let i = v.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [v[i], v[j]] = [v[j], v[i]]; } return v; }
+function eTriples(v, mul) {
+  const out = [], n = v.length;
+  for (let i = 0; i < n; i++) for (let a = 0; a < n; a++) for (let b = a + 1; b < n; b++) {
+    if (a === i || b === i) continue;
+    if ((mul ? v[a] * v[b] : v[a] + v[b]) === v[i]) out.push([i, a, b]);
+  }
+  return out;
+}
+function eValid(v, t, mul) {
+  if (new Set(v).size !== v.length) return false;
+  const tr = eTriples(v, mul);
+  return tr.length === 1 && v[tr[0][0]] === t && t !== Math.max(...v);
+}
+// conjunto de n números con una sola suma válida; si target es null, la solución se elige en [tlo, thi]
+function eSumSet(n, target, lo, hi, tlo, thi, pool) {
+  for (let k = 0; k < 40000; k++) {
+    const t = target != null ? target : (pool ? epick(pool) : eri(tlo, thi));
+    const a = pool ? epick(pool) : eri(lo, t - lo);
+    const b = t - a;
+    if (b < lo || b > hi || a === b || (pool && !pool.includes(b))) continue;
+    const v = [a, b, t];
+    while (v.length < n) v.push(pool ? epick(pool) : eri(lo, hi));
+    eshuffle(v);
+    if (eValid(v, t, false)) return v;
+  }
+  return null;
+}
+function eProdPool(p) {
+  const pool = [], pairs = {};
+  for (let P = p.plo; P <= p.phi; P++) {
+    const ps = [];
+    for (let y = p.flo; y * y < P; y++) if (P % y === 0 && P / y <= p.fhi) ps.push([y, P / y]);
+    if (ps.length) { pool.push(P); pairs[P] = ps; }
+  }
+  return { pool, pairs };
+}
+function eProdSet(P, pairs, hi) {
+  for (let k = 0; k < 40000; k++) {
+    const [y, z] = epick(pairs[P]);
+    const v = [y, z, P];
+    while (v.length < 9) v.push(eri(2, hi));
+    eshuffle(v);
+    if (eValid(v, P, true)) return v;
+  }
+  return null;
+}
+function makeEnf(tier, kind) {
+  kind = kind || (Math.random() < 0.5 ? 'grid' : 'flower');
+  for (let n = 0; n < 60; n++) {
+    if (kind === 'grid') {
+      const p = ENF.GRID[tier], { pool, pairs } = eProdPool(p);
+      const fin = eSumSet(8, null, 0, Infinity, 0, 0, pool);
+      if (!fin) continue;
+      const pieces = fin.map(P => eProdSet(P, pairs, p.hi));
+      if (pieces.some(x => !x)) continue;
+      return { kind, pieces: pieces.map((v, i) => ({ v, s: fin[i] })), fin, f: fin[eTriples(fin, false)[0][0]] };
+    } else {
+      const p = ENF.FLOWER[tier];
+      const fin = eSumSet(7, null, p.alo, p.ahi, p.alo, p.ahi);
+      if (!fin) continue;
+      const pieces = fin.map(t => eSumSet(7, t, p.lo, p.hi));
+      if (pieces.some(x => !x)) continue;
+      return { kind, pieces: pieces.map((v, i) => ({ v, s: fin[i] })), fin, f: fin[eTriples(fin, false)[0][0]] };
+    }
+  }
+  return null;
+}
+
+const LEVELS = [
+  { id: 'N1', name: 'Nivel 1' },
+  { id: 'N2', name: 'Nivel 2' },
+  { id: 'N3', name: 'Nivel 3' },
+  { id: 'NE', name: 'Énfasis', sub: 'Desafío' },
+];
+const TIER_NAMES = ['Inicial', 'Intermedia', 'Avanzada'];
+const OPS = [{ id: 'suma', label: 'Suma' }, { id: 'resta', label: 'Resta' }, { id: 'azar', label: 'Al azar' }];
+const st = { lv: 'N1', tier: 0, op: 2, sheet: null, start: Date.now(), done: false, revealed: false, solved: 0 };
+const bestKey = () => `kakooma-best-${st.lv}-${st.tier}`;
+function readBest() { try { const v = localStorage.getItem(bestKey()); return v ? Number(v) : null; } catch (e) { return null; } }
+function writeBest(ms) { try { localStorage.setItem(bestKey(), String(ms)); } catch (e) {} }
+function showBest() { const b = readBest(); $('best').textContent = b ? `${fmtTime(b)} (${TIER_NAMES[st.tier].toLowerCase()})` : '—'; }
+let tick = null;
+const LEDE = document.getElementById('lede') ? document.getElementById('lede').textContent : '';
+
+const $ = (id) => document.getElementById(id);
+const fmtTime = (ms) => { const s = Math.floor(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+const thou = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+const sheet = () => st.sheet;
+function addends(v, s) {
+  const i = v.indexOf(s);
+  for (let a = 0; a < 6; a++) for (let b = a + 1; b < 6; b++) if (a !== i && b !== i && v[a] + v[b] === s) return [a, b];
+  return [];
+}
+// Posiciones como en la hoja impresa: arriba, arriba-izq., abajo-izq., abajo, abajo-der., arriba-der.
+const POS = [0, 1, 2, 3, 4, 5].map(i => {
+  const a = (90 + 60 * i) * Math.PI / 180;
+  const c = Math.cos(a);
+  return { x: 50 + (Math.abs(c) < 0.1 ? 0 : Math.sign(c) * 30), y: 50 - Math.sin(a) * 33.333 };
+});
+
+function seg(el, items, current, onPick) {
+  el.innerHTML = '';
+  items.forEach((it, idx) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-pressed', String(idx === current));
+    b.innerHTML = it.sub ? `${it.label}<span class="sub">${it.sub}</span>` : it.label;
+    b.addEventListener('click', () => onPick(idx));
+    el.appendChild(b);
+  });
+}
+function renderControls() {
+  seg($('levels'), LEVELS.map(l => ({ label: l.name, sub: l.sub })), LEVELS.findIndex(l => l.id === st.lv), i => { st.lv = LEVELS[i].id; load(); });
+  seg($('tiers'), TIER_NAMES.map(t => ({ label: t })), st.tier, i => { st.tier = i; load(); });
+}
+function renderBoard() {
+  const g = sheet();
+  const resta = g.op === 'resta';
+  $('opName').textContent = resta ? 'Resta' : 'Suma';
+  $('finalLabel').textContent = resta ? 'K1 + K2 − K3' : 'K1 + K2 + K3';
+  st.ok = [false, false, false]; st.sel = [null, null, null];
+  const board = $('board'); board.innerHTML = '';
+  g.k.forEach((k, ki) => {
+    const card = document.createElement('article'); card.className = 'kak';
+    card.innerHTML = `<h2>Kakooma ${ki + 1}<span class="state" id="st${ki}"></span></h2>`;
+    const comb = document.createElement('div'); comb.className = 'comb';
+    k.v.forEach((val, i) => {
+      const h = document.createElement('div'); h.className = 'hex pick'; h.id = `c${ki}_${i}`;
+      h.setAttribute('role', 'button'); h.tabIndex = 0; h.setAttribute('aria-label', `Elegir ${val} como solución del kakooma ${ki + 1}`);
+      h.style.left = POS[i].x + '%'; h.style.top = POS[i].y + '%';
+      h.innerHTML = `<div class="face">${val}</div>`;
+      h.addEventListener('click', () => pick(ki, i));
+      h.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(ki, i); } });
+      comb.appendChild(h);
+    });
+    const c = document.createElement('div'); c.className = 'hex center'; c.id = `ctr${ki}`;
+    c.style.left = '50%'; c.style.top = '50%';
+    c.innerHTML = `<div class="face"><span class="ctr-val" id="cv${ki}">?</span></div>`;
+    comb.appendChild(c);
+    card.appendChild(comb);
+    const msg = document.createElement('p'); msg.className = 'msg'; msg.id = `msg${ki}`; msg.textContent = 'Haz clic en el número que es la suma de otros dos.';
+    card.appendChild(msg);
+    board.appendChild(card);
+  });
+}
+function markSolved(ki) {
+  const k = sheet().k[ki];
+  const si = k.v.indexOf(k.s), [a, b] = addends(k.v, k.s);
+  st.ok[ki] = true; st.sel[ki] = si;
+  for (let i = 0; i < 6; i++) { const h = $(`c${ki}_${i}`); h.classList.remove('pick', 'wrong', 'chosen'); h.tabIndex = -1; h.setAttribute('aria-disabled', 'true'); }
+  $(`c${ki}_${si}`).classList.add('sol');
+  $(`c${ki}_${a}`).classList.add('hl'); $(`c${ki}_${b}`).classList.add('hl');
+  $(`ctr${ki}`).classList.add('ok'); $(`cv${ki}`).textContent = k.s; $(`cv${ki}`).classList.add('picked');
+  const s = $(`st${ki}`); s.textContent = 'Correcto'; s.className = 'state ok';
+  $(`msg${ki}`).textContent = `${k.s} = ${k.v[a]} + ${k.v[b]}`;
+}
+function pick(ki, i) {
+  if (st.ok[ki]) return;
+  const k = sheet().k[ki];
+  for (let j = 0; j < 6; j++) $(`c${ki}_${j}`).classList.remove('chosen', 'wrong');
+  $(`ctr${ki}`).classList.remove('bad');
+  if (st.sel[ki] === i) {
+    st.sel[ki] = null; $(`cv${ki}`).textContent = '?'; $(`cv${ki}`).classList.remove('picked');
+    $(`msg${ki}`).textContent = 'Haz clic en el número que es la suma de otros dos.';
+  } else {
+    st.sel[ki] = i; $(`c${ki}_${i}`).classList.add('chosen');
+    $(`cv${ki}`).textContent = k.v[i]; $(`cv${ki}`).classList.add('picked');
+    $(`msg${ki}`).textContent = 'Elegido. Puedes cambiarlo antes de comprobar.';
+  }
+  const s = $(`st${ki}`); s.textContent = ''; s.className = 'state';
+}
+function checkAll() {
+  const g = sheet();
+  const fin = $('final'), res = $('result');
+  fin.classList.remove('ok', 'bad'); res.className = 'result';
+  const missing = st.sel.filter((x, ki) => x === null && !st.ok[ki]).length;
+  if (missing) {
+    res.classList.add('bad');
+    res.textContent = missing === 1 ? 'Falta elegir la solución de un kakooma.' : `Falta elegir la solución de ${missing} kakoomas.`;
+    return;
+  }
+  if (fin.value.trim() === '') { res.classList.add('bad'); res.textContent = 'Escribe el resultado de la operación final antes de comprobar.'; return; }
+  let wrong = 0;
+  g.k.forEach((k, ki) => {
+    if (st.ok[ki]) return;
+    const i = st.sel[ki];
+    if (k.v[i] === k.s) { markSolved(ki); return; }
+    wrong++;
+    const h = $(`c${ki}_${i}`); h.classList.remove('chosen', 'wrong'); void h.offsetWidth; h.classList.add('wrong');
+    $(`ctr${ki}`).classList.add('bad');
+    const s = $(`st${ki}`); s.textContent = 'Incorrecto'; s.className = 'state bad';
+    $(`msg${ki}`).textContent = `${k.v[i]} no es la suma de dos números de este kakooma. Elige otro.`;
+  });
+  const good = Number(fin.value) === g.f;
+  fin.classList.add(good ? 'ok' : 'bad');
+  if (!wrong && good) {
+    recordSolve();
+    res.classList.add('ok');
+    res.textContent = st.revealed ? 'Solución mostrada. Pide nuevos kakoomas para seguir.' : `Hoja resuelta${solveTime()}${solveTail()} Pide nuevos kakoomas para seguir.`;
+    return;
+  }
+  res.classList.add('bad');
+  if (wrong) res.textContent = `${wrong === 1 ? 'Un kakooma tiene' : wrong + ' kakoomas tienen'} la solución incorrecta (marcada en rojo). Corrige y vuelve a comprobar.`;
+  else res.textContent = 'Las tres soluciones están bien. Revisa el cálculo final.';
+}
+function reveal() {
+  const g = sheet(); st.revealed = true; timerStop();
+  g.k.forEach((_, ki) => { if (!st.ok[ki]) markSolved(ki); });
+  const S = g.k.map(k => k.s);
+  $('final').value = g.f; $('final').className = 'ok';
+  const res = $('result'); res.className = 'result ok';
+  res.textContent = g.op === 'resta' ? `${S[0]} + ${S[1]} − ${S[2]} = ${thou(g.f)}` : `${S[0]} + ${S[1]} + ${S[2]} = ${thou(g.f)}`;
+}
+// ---------- Nivel Énfasis: interfaz ----------
+const SVGNS = 'http://www.w3.org/2000/svg';
+const LETTERS = 'abcdefgh';
+const GRID_POS = [[0, 0], [0, 1], [0, 2], [1, 0], [1, 2], [2, 0], [2, 1], [2, 2]];
+const GRID_TINT = [1, 3, 4, 6];
+const FLOWER_ANG = [150, 90, 30, -30, -90, -150, null];
+const FLOWER_TINT = [1, 3, 5];
+const rad = (d) => d * Math.PI / 180;
+function svgEl(tag, attrs, parent) { const e = document.createElementNS(SVGNS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+const hexPts = (cx, cy, R) => [0, 60, 120, 180, 240, 300].map(a => [cx + R * Math.cos(rad(a)), cy - R * Math.sin(rad(a))]);
+const ptsStr = (p) => p.map(q => q[0].toFixed(2) + ',' + q[1].toFixed(2)).join(' ');
+function rayHex(cx, cy, R, th) { const A = R * Math.sqrt(3) / 2, n = 30 + 60 * Math.round((th - 30) / 60), d = A / Math.cos(rad(th - n)); return [cx + d * Math.cos(rad(th)), cy - d * Math.sin(rad(th))]; }
+function wedge(cx, cy, R, r0, k) {
+  const step = 360 / 7, t1 = 90 - k * step, t2 = t1 - step, pts = [];
+  pts.push([cx + r0 * Math.cos(rad(t1)), cy - r0 * Math.sin(rad(t1))], rayHex(cx, cy, R, t1));
+  for (let v = Math.floor(t1 / 60) * 60; v > t2; v -= 60) if (v < t1) pts.push([cx + R * Math.cos(rad(v)), cy - R * Math.sin(rad(v))]);
+  pts.push(rayHex(cx, cy, R, t2), [cx + r0 * Math.cos(rad(t2)), cy - r0 * Math.sin(rad(t2))]);
+  const tm = (t1 + t2) / 2;
+  return { pts, tx: cx + 0.62 * R * Math.cos(rad(tm)), ty: cy - 0.62 * R * Math.sin(rad(tm)) };
+}
+function makeClickable(el, label, fn) {
+  el.setAttribute('role', 'button'); el.setAttribute('tabindex', '0'); el.setAttribute('aria-label', label);
+  el.addEventListener('click', fn);
+  el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(); } });
+}
+const eCell = (pi, ci) => document.getElementById(`e${pi}_${ci}`);
+const fCell = (fi) => document.getElementById(`ef${fi}`);
+function setCls(el, cls) {
+  if (!el) return; el.classList.remove('chosen', 'sol', 'hl', 'wrong');
+  if (cls) { void el.getBoundingClientRect(); el.classList.add(cls); if (el instanceof SVGElement && el.parentNode) el.parentNode.appendChild(el); }
+}
+
+function renderEnf() {
+  const g = sheet(), grid = g.kind === 'grid', n = g.pieces.length;
+  st.e = { sel: Array(n).fill(null), ok: Array(n).fill(false), fsel: null, fok: false };
+  const board = $('board'); board.innerHTML = '';
+  // tablero principal
+  const main = document.createElement('article'); main.className = 'kak enf-main';
+  main.innerHTML = grid
+    ? `<h2>Cuadrícula · busca el producto<span class="state" id="estate"></span></h2><p class="enf-how">En cada cuadro de 9 números, uno es el <b>producto</b> de otros dos. Haz clic en él.</p>`
+    : `<h2>Flor · busca la suma<span class="state" id="estate"></span></h2><p class="enf-how">En cada hexágono de 7 números, uno es la <b>suma</b> de otros dos. Haz clic en él.</p>`;
+  if (grid) {
+    const g9 = document.createElement('div'); g9.className = 'g9';
+    const boxes = Array(9).fill(null);
+    g.pieces.forEach((p, pi) => {
+      const [r, c] = GRID_POS[pi];
+      const box = document.createElement('div'); box.className = 'box' + (GRID_TINT.includes(pi) ? ' tint' : '');
+      p.v.forEach((val, ci) => {
+        const b = document.createElement('div'); b.className = 'cell pick'; b.id = `e${pi}_${ci}`; b.textContent = val;
+        makeClickable(b, `Cuadro ${LETTERS[pi]}: elegir ${val}`, () => pickPiece(pi, ci));
+        box.appendChild(b);
+      });
+      boxes[r * 3 + c] = box;
+    });
+    const x = document.createElement('div'); x.className = 'xbox'; x.setAttribute('aria-hidden', 'true'); x.textContent = '×';
+    boxes[4] = x;
+    boxes.forEach(b => g9.appendChild(b));
+    main.appendChild(g9);
+  } else {
+    const R = 100, r0 = 22, D = Math.sqrt(3) * R;
+    const svg = svgEl('svg', { viewBox: '-258 -266 516 532', class: 'flower', role: 'group', 'aria-label': 'Flor de 7 hexágonos' });
+    g.pieces.forEach((p, pi) => {
+      const a = FLOWER_ANG[pi], cx = a === null ? 0 : D * Math.cos(rad(a)), cy = a === null ? 0 : -D * Math.sin(rad(a));
+      const tint = FLOWER_TINT.includes(pi);
+      const grp = svgEl('g', {}, svg);
+      p.v.forEach((val, ci) => {
+        const w = wedge(cx, cy, R, r0, ci);
+        const cell = svgEl('g', { id: `e${pi}_${ci}`, class: 'wedge pick' + (tint ? ' tint' : '') }, grp);
+        svgEl('polygon', { points: ptsStr(w.pts) }, cell);
+        const t = svgEl('text', { x: w.tx.toFixed(1), y: w.ty.toFixed(1), 'text-anchor': 'middle', 'dominant-baseline': 'central' }, cell);
+        t.textContent = val;
+        makeClickable(cell, `Hexágono ${LETTERS[pi]}: elegir ${val}`, () => pickPiece(pi, ci));
+      });
+      svgEl('polygon', { points: ptsStr([0, 1, 2, 3, 4, 5, 6].map(k => { const t = 90 - k * 360 / 7; return [cx + r0 * Math.cos(rad(t)), cy - r0 * Math.sin(rad(t))]; })), class: 'hub' + (tint ? '' : ' tint') }, grp);
+      svgEl('polygon', { points: ptsStr(hexPts(cx, cy, R)), class: 'hexline' }, grp);
+    });
+    main.appendChild(svg);
+  }
+  board.appendChild(main);
+  // kakooma final
+  const fin = document.createElement('article'); fin.className = 'kak enf-final';
+  fin.innerHTML = `<h2>Kakooma final · busca la suma<span class="state" id="fstate"></span></h2><p class="enf-how">Aquí aparecen tus ${n} soluciones (${grid ? 'a–h' : 'a–g'}). Haz clic en la que es la <b>suma</b> de otras dos.</p>`;
+  if (grid) {
+    const g3 = document.createElement('div'); g3.className = 'g3';
+    for (let k = 0; k < 9; k++) {
+      if (k === 4) { const pl = document.createElement('div'); pl.className = 'plus'; pl.setAttribute('aria-hidden', 'true'); pl.textContent = '+'; g3.appendChild(pl); continue; }
+      const fi = GRID_POS.findIndex(([r, c]) => r * 3 + c === k);
+      const c = document.createElement('div'); c.className = 'fc'; c.id = `ef${fi}`;
+      c.innerHTML = `<span class="lb">${LETTERS[fi]}</span><span class="fv" id="efv${fi}"></span>`;
+      makeClickable(c, `Kakooma final, casilla ${LETTERS[fi]}`, () => pickFinal(fi));
+      g3.appendChild(c);
+    }
+    fin.appendChild(g3);
+  } else {
+    const R = 46, D = Math.sqrt(3) * R;
+    const svg = svgEl('svg', { viewBox: '-122 -126 244 252', class: 'mini', role: 'group', 'aria-label': 'Flor final' });
+    for (let fi = 0; fi < 7; fi++) {
+      const a = FLOWER_ANG[fi], cx = a === null ? 0 : D * Math.cos(rad(a)), cy = a === null ? 0 : -D * Math.sin(rad(a));
+      const c = svgEl('g', { id: `ef${fi}`, class: 'fhex' + (FLOWER_TINT.includes(fi) ? ' tint' : '') }, svg);
+      svgEl('polygon', { points: ptsStr(hexPts(cx, cy, R)) }, c);
+      const lb = svgEl('text', { x: (cx - 20).toFixed(1), y: (cy - 24).toFixed(1), class: 'lb', 'text-anchor': 'middle', 'dominant-baseline': 'central' }, c); lb.textContent = LETTERS[fi];
+      const tv = svgEl('text', { x: cx.toFixed(1), y: (cy + 4).toFixed(1), id: `efv${fi}`, class: 'fv', 'text-anchor': 'middle', 'dominant-baseline': 'central' }, c);
+      makeClickable(c, `Flor final, hexágono ${LETTERS[fi]}`, () => pickFinal(fi));
+    }
+    fin.appendChild(svg);
+  }
+  const ro = document.createElement('p'); ro.className = 'enf-readout';
+  ro.innerHTML = `Respuesta final <span id="efinal">?</span>`;
+  fin.appendChild(ro);
+  board.appendChild(fin);
+}
+function refreshFinal() {
+  const g = sheet();
+  g.pieces.forEach((p, pi) => {
+    const v = st.e.sel[pi] === null ? '' : p.v[st.e.sel[pi]];
+    document.getElementById(`efv${pi}`).textContent = v;
+    fCell(pi).classList.toggle('empty', v === '');
+  });
+  if (st.e.fsel !== null && st.e.sel[st.e.fsel] === null) st.e.fsel = null;
+  for (let fi = 0; fi < g.pieces.length; fi++) if (!st.e.fok) setCls(fCell(fi), fi === st.e.fsel ? 'chosen' : null);
+  $('efinal').textContent = st.e.fsel === null ? '?' : thou(g.pieces[st.e.fsel].v[st.e.sel[st.e.fsel]]);
+}
+function pickPiece(pi, ci) {
+  if (st.e.ok[pi]) return;
+  const p = sheet().pieces[pi];
+  st.e.sel[pi] = st.e.sel[pi] === ci ? null : ci;
+  p.v.forEach((_, j) => setCls(eCell(pi, j), j === st.e.sel[pi] ? 'chosen' : null));
+  if (st.e.fok) { st.e.fok = false; }
+  const fs = $('fstate'); fs.textContent = ''; fs.className = 'state';
+  $('estate').textContent = ''; $('estate').className = 'state';
+  refreshFinal();
+}
+function pickFinal(fi) {
+  if (st.e.fok) return;
+  const res = $('result'); res.className = 'result'; res.textContent = '';
+  if (st.e.sel[fi] === null) { res.classList.add('bad'); res.textContent = `Primero elige la solución de la pieza ${LETTERS[fi]}.`; return; }
+  st.e.fsel = st.e.fsel === fi ? null : fi;
+  $('fstate').textContent = ''; $('fstate').className = 'state';
+  refreshFinal();
+}
+function markTriple(cellFn, v, mul, lockCount) {
+  const [i, a, b] = eTriples(v, mul)[0];
+  for (let j = 0; j < lockCount; j++) { const c = cellFn(j); setCls(c, null); c.classList.remove('pick'); c.classList.add('locked'); c.setAttribute('tabindex', '-1'); c.setAttribute('aria-disabled', 'true'); }
+  setCls(cellFn(i), 'sol'); setCls(cellFn(a), 'hl'); setCls(cellFn(b), 'hl');
+  return [i, a, b];
+}
+function markPiece(pi) {
+  const g = sheet(), p = g.pieces[pi];
+  const [i] = markTriple(j => eCell(pi, j), p.v, g.kind === 'grid', p.v.length);
+  st.e.ok[pi] = true; st.e.sel[pi] = i;
+}
+function markFinalOk() {
+  const g = sheet();
+  st.e.fok = true;
+  const [i, a, b] = markTriple(fCell, g.fin, false, g.fin.length);
+  st.e.fsel = i;
+  $('efinal').textContent = thou(g.f);
+  const fs = $('fstate'); fs.textContent = 'Correcto'; fs.className = 'state ok';
+  return `${thou(g.f)} = ${thou(g.fin[a])} + ${thou(g.fin[b])}`;
+}
+function checkEnf() {
+  const g = sheet(), res = $('result'), n = g.pieces.length, nombre = g.kind === 'grid' ? 'cuadro' : 'hexágono';
+  res.className = 'result';
+  const missing = st.e.sel.filter(x => x === null).length;
+  if (missing) { res.classList.add('bad'); res.textContent = missing === 1 ? `Falta elegir la solución de un ${nombre}.` : `Faltan ${missing} ${nombre}s por resolver.`; return; }
+  if (st.e.fsel === null && !st.e.fok) { res.classList.add('bad'); res.textContent = 'Elige en el kakooma final el número que es la suma de otros dos.'; return; }
+  let wrong = 0;
+  g.pieces.forEach((p, pi) => {
+    if (st.e.ok[pi]) return;
+    if (p.v[st.e.sel[pi]] === p.s) { markPiece(pi); return; }
+    wrong++; setCls(eCell(pi, st.e.sel[pi]), 'wrong');
+  });
+  const es = $('estate');
+  if (wrong) {
+    es.textContent = 'Revisa'; es.className = 'state bad';
+    res.classList.add('bad');
+    res.textContent = `${wrong === 1 ? `Un ${nombre} tiene` : `${wrong} ${nombre}s tienen`} la solución incorrecta (en rojo). Corrige y vuelve a comprobar.`;
+    refreshFinal(); return;
+  }
+  es.textContent = 'Correcto'; es.className = 'state ok';
+  if (!st.e.fok && g.fin[st.e.fsel] !== g.f) {
+    setCls(fCell(st.e.fsel), 'wrong');
+    const fs = $('fstate'); fs.textContent = 'Revisa'; fs.className = 'state bad';
+    res.classList.add('bad'); res.textContent = `Las ${n} soluciones están bien. Revisa el kakooma final.`; return;
+  }
+  const eq = markFinalOk();
+  recordSolve();
+  res.classList.add('ok');
+  res.textContent = st.revealed ? `Solución: ${eq}.` : `Desafío resuelto${solveTime()} (${eq})${solveTail()}`;
+}
+function revealEnf() {
+  const g = sheet(); st.revealed = true; timerStop();
+  g.pieces.forEach((_, pi) => { if (!st.e.ok[pi]) markPiece(pi); });
+  refreshFinal();
+  $('estate').textContent = 'Correcto'; $('estate').className = 'state ok';
+  const eq = markFinalOk();
+  const res = $('result'); res.className = 'result ok'; res.textContent = `Solución: ${eq}.`;
+}
+
+function startClock() { st.done = false; st.revealed = false; st.late = false; timerReset(); }
+function load() {
+  if (st.lv === 'NE') { st.sheet = makeEnf(st.tier); reset(); return; }
+  const op = OPS[st.op].id === 'azar' ? (Math.random() < 0.5 ? 'suma' : 'resta') : OPS[st.op].id;
+  st.sheet = makeSheet(st.lv, st.tier, op);
+  reset();
+}
+function reset() {
+  const ne = st.lv === 'NE';
+  renderControls();
+  $('board').classList.toggle('enf', ne);
+  document.querySelector('.opbox').hidden = ne;
+  $('random').textContent = ne ? 'Nuevo desafío' : 'Nuevos kakoomas';
+  $('lede').textContent = !ne ? LEDE : sheet().kind === 'grid'
+    ? 'Desafío Énfasis · Cuadrícula. Resuelve los 8 cuadros buscando el producto. Tus 8 soluciones arman el kakooma final, donde buscas la suma. Pulsa Comprobar al terminar.'
+    : 'Desafío Énfasis · Flor. Resuelve los 7 hexágonos buscando la suma. Tus 7 soluciones arman la flor final, donde vuelves a buscar la suma. Pulsa Comprobar al terminar.';
+  if (ne) renderEnf(); else renderBoard();
+  showBest();
+  $('final').value = ''; $('final').className = ''; $('result').textContent = ''; $('result').className = 'result';
+  startClock();
+}
+$('final').addEventListener('input', e => { e.target.value = e.target.value.replace(/[^\d]/g, ''); e.target.className = ''; });
+$('final').addEventListener('keydown', e => { if (e.key === 'Enter') checkAll(); });
+$('check').addEventListener('click', () => (st.lv === 'NE' ? checkEnf() : checkAll()));
+$('reveal').addEventListener('click', () => (st.lv === 'NE' ? revealEnf() : reveal()));
+$('restart').addEventListener('click', reset);
+$('random').addEventListener('click', load);
+function setProj(on) {
+  document.documentElement.classList.toggle('proj', on);
+  $('projBtn').setAttribute('aria-pressed', String(on));
+  const want = on ? '#proyeccion' : '';
+  if (location.hash !== want) { try { history.replaceState(null, '', want || location.pathname + location.search); } catch (e) { location.hash = want; } }
+}
+document.documentElement.classList.add('proj');
+
+// ---------- Reloj: cronómetro y contrarreloj ----------
+const T = { mode: 'chrono', dur: 60000, running: false, acc: 0, t0: 0, iv: null, ended: false };
+let audioCtx = null;
+try { const m = localStorage.getItem('kakooma-timer-mode'); const d = Number(localStorage.getItem('kakooma-timer-dur')); if (m === 'down') T.mode = 'down'; if (d) T.dur = d * 1000; } catch (e) {}
+const tElapsed = () => T.acc + (T.running ? Date.now() - T.t0 : 0);
+const fmtClock = (ms, up) => { const s = up ? Math.floor(ms / 1000) : Math.ceil(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+function timerRender() {
+  const e = tElapsed(), el = $('clock');
+  if (T.mode === 'down') { const left = Math.max(0, T.dur - e); el.textContent = fmtClock(left, false); el.classList.toggle('low', left <= 10000); }
+  else { el.textContent = fmtClock(e, true); el.classList.remove('low'); }
+  $('tmStart').disabled = T.running || T.ended;
+  $('tmStart').textContent = T.acc > 0 && !T.running && !T.ended ? 'Seguir' : 'Iniciar';
+  $('tmStop').disabled = !T.running;
+  $('timer').classList.toggle('ended', T.ended);
+}
+function timerTick() { if (T.mode === 'down' && tElapsed() >= T.dur) { timeUp(); return; } timerRender(); }
+function timerStart() {
+  if (T.running || T.ended) return;
+  try { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === 'suspended') audioCtx.resume(); } catch (e) {}
+  T.t0 = Date.now(); T.running = true; clearInterval(T.iv); T.iv = setInterval(timerTick, 200); timerRender();
+}
+function timerStop() { if (T.running) { T.acc = tElapsed(); T.running = false; } clearInterval(T.iv); timerRender(); }
+function timerReset() { clearInterval(T.iv); T.running = false; T.acc = 0; T.ended = false; document.body.classList.remove('timeup'); timerRender(); }
+function alarm() {
+  if (!audioCtx) return;
+  try {
+    const now = audioCtx.currentTime;
+    for (let i = 0; i < 6; i++) {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type = 'square'; o.frequency.value = i % 2 ? 660 : 990;
+      g.gain.setValueAtTime(0.0001, now + i * 0.3); g.gain.exponentialRampToValueAtTime(0.25, now + i * 0.3 + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.3 + 0.26);
+      o.connect(g).connect(audioCtx.destination); o.start(now + i * 0.3); o.stop(now + i * 0.3 + 0.28);
+    }
+  } catch (e) {}
+}
+function timeUp() {
+  clearInterval(T.iv); T.running = false; T.acc = T.dur; T.ended = true; timerRender();
+  alarm();
+  document.body.classList.remove('timeup'); void document.body.offsetWidth; document.body.classList.add('timeup');
+  setTimeout(() => document.body.classList.remove('timeup'), 2000);
+  if (!st.done) { const r = $('result'); r.className = 'result bad'; r.textContent = '¡Se acabó el tiempo! Puedes terminar la hoja o pedir una nueva.'; }
+}
+function setTimerMode(m) {
+  T.mode = m; try { localStorage.setItem('kakooma-timer-mode', m); } catch (e) {}
+  $('tmChrono').setAttribute('aria-pressed', String(m === 'chrono')); $('tmDown').setAttribute('aria-pressed', String(m === 'down'));
+  $('tmDur').hidden = m !== 'down'; timerReset();
+}
+function recordSolve() {
+  if (st.done || st.revealed) return;
+  st.done = true; st.late = T.mode === 'down' && T.ended;
+  timerStop(); st.elapsed = Math.min(tElapsed(), T.mode === 'down' ? T.dur : Infinity);
+  st.solved++; $('solved').textContent = st.solved;
+  st.record = false;
+  if (st.elapsed > 0 && !st.late) { const b = readBest(); if (!b || st.elapsed < b) { writeBest(st.elapsed); st.record = true; } }
+  showBest();
+}
+const solveTime = () => (st.elapsed > 0 ? ` en ${fmtTime(st.elapsed)}` : '');
+const solveTail = () => (st.late ? '. El tiempo ya se había acabado.' : st.record ? '. ¡Nuevo mejor tiempo!' : '.');
+$('tmStart').addEventListener('click', timerStart);
+$('tmStop').addEventListener('click', timerStop);
+$('tmReset').addEventListener('click', timerReset);
+$('tmChrono').addEventListener('click', () => setTimerMode('chrono'));
+$('tmDown').addEventListener('click', () => setTimerMode('down'));
+$('tmDur').addEventListener('change', e => { T.dur = Number(e.target.value) * 1000; try { localStorage.setItem('kakooma-timer-dur', e.target.value); } catch (er) {} timerReset(); });
+$('tmMin').addEventListener('click', () => {
+  const min = $('timer').classList.toggle('min');
+  $('tmMin').textContent = min ? '+' : '–'; $('tmMin').setAttribute('aria-label', min ? 'Mostrar controles del reloj' : 'Minimizar reloj');
+});
+(function dragTimer() {
+  const box = $('timer'); let sx, sy, ox, oy, on = false;
+  const down = (e) => { if (e.target.closest('button, select')) return; on = true; const r = box.getBoundingClientRect(); sx = e.clientX; sy = e.clientY; ox = r.left; oy = r.top; $('tmBar').classList.add('drag'); e.currentTarget.setPointerCapture(e.pointerId); };
+  const move = (e) => {
+    if (!on) return;
+    const w = box.offsetWidth, h = box.offsetHeight;
+    const x = Math.min(Math.max(4, ox + e.clientX - sx), innerWidth - w - 4), y = Math.min(Math.max(4, oy + e.clientY - sy), innerHeight - h - 4);
+    box.style.left = x + 'px'; box.style.top = y + 'px'; box.style.right = 'auto'; box.style.bottom = 'auto';
+  };
+  const up = () => { on = false; $('tmBar').classList.remove('drag'); };
+  [$('tmBar'), $('clock')].forEach(h => { h.addEventListener('pointerdown', down); h.addEventListener('pointermove', move); h.addEventListener('pointerup', up); h.addEventListener('pointercancel', up); });
+})();
+(function initTimerUI() {
+  $('tmDur').value = String(T.dur / 1000); if (!$('tmDur').value) { $('tmDur').value = '60'; T.dur = 60000; }
+  $('tmChrono').setAttribute('aria-pressed', String(T.mode === 'chrono')); $('tmDown').setAttribute('aria-pressed', String(T.mode === 'down'));
+  $('tmDur').hidden = T.mode !== 'down';
+  if (innerWidth < 600) { $('timer').classList.add('min'); $('tmMin').textContent = '+'; $('tmMin').setAttribute('aria-label', 'Mostrar controles del reloj'); }
+})();
+load();
+</script>
+
+</body></html>
