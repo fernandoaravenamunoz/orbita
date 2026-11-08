@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Tetonor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Righteous&family=Archivo:wght@400;500;700;800&display=swap">
+<style>
+/* Layout: barra azul con título; controles; 8 tarjetas (2 columnas en teléfono, 4 en pantalla ancha) con el número arriba y tres espacios abajo (número · operación · número); tira de 8 círculos con marcas × y +; botones de revisión; reloj flotante. */
+/* Paleta Space Age de Órbita Matemática: crema mate, azul marino, naranja, rojo óxido, mostaza. */
+:root {
+  --cream: #DEDED2; --paper: #E9E9DF; --navy: #2C395C; --orange: #FF5500; --rust: #A92717; --mustard: #B9A727;
+  --cell: #C9CAC4; --muted: #535D76; --faint: #9DA2AE; --bad-bg: #D3B9AD; --shadow: rgba(44, 57, 92, 0.25);
+  --font-display: "Righteous", "Futura", "Century Gothic", system-ui, sans-serif;
+  --font-body: "Archivo", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { padding-top: env(safe-area-inset-top, 0px); }
+body { margin: 0; background: var(--cream); color: var(--navy); font-family: var(--font-body); font-size: 16px; line-height: 1.5; }
+.band { background: var(--navy); color: var(--cream); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.band.top { padding-block: 22px 18px; border-bottom: 6px double var(--mustard); }
+.band.bottom { padding-block: 18px calc(150px + env(safe-area-inset-bottom, 0px)); border-top: 6px double var(--mustard); margin-top: 28px; }
+.band > * { max-width: 1100px; margin: 0 auto; }
+header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; }
+h1 { font-family: var(--font-display); font-weight: 400; letter-spacing: 0.02em; font-size: clamp(26px, 4.6vw, 42px); line-height: 1.1; margin: 0; }
+.tally { margin: 0; font-size: 13px; color: #C4C5BE; font-variant-numeric: tabular-nums; text-align: right; }
+.tally span { color: var(--mustard); font-weight: 700; }
+footer { font-size: 13px; color: #C4C5BE; }
+.wrap { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; padding: 24px max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px)); }
+
+.controls { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: end; border: 2px solid var(--navy); border-radius: 14px; padding: 14px 16px; }
+.group { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.group > span { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
+.seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.seg button, .btn { font: inherit; font-size: 14px; border: 1px solid var(--navy); background: var(--cream); color: var(--navy); border-radius: 999px; padding: 8px 14px; cursor: pointer; line-height: 1.2; }
+.seg button[aria-pressed="true"] { background: var(--rust); color: var(--cream); border-color: var(--rust); font-weight: 700; }
+.seg button .sub { display: block; font-size: 11px; opacity: 0.8; }
+.btn.primary { background: var(--orange); color: var(--navy); border-color: var(--orange); font-weight: 700; }
+.btn:hover, .seg button:hover { border-color: var(--rust); }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--rust); outline-offset: 2px; }
+.lede { margin: -6px 0 0; max-width: 78ch; font-size: 15px; }
+
+/* Tarjetas */
+.cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 18px; width: 100%; max-width: 900px; margin: 0 auto; }
+@media (min-width: 820px) { .cards { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.tcard { position: relative; border: 2.5px solid var(--navy); border-radius: 14px; background: var(--paper); }
+.tcard .tv { text-align: center; font: 400 clamp(32px, 7.5vw, 50px)/1 var(--font-display); font-variant-numeric: tabular-nums; padding: 12px 0 8px; border-bottom: 2.5px solid var(--navy); }
+.slots { display: grid; grid-template-columns: repeat(3, 1fr); }
+.slot { height: clamp(44px, 9vw, 56px); border: 0; border-left: 2.5px solid var(--navy); background: transparent; color: var(--navy); font: 700 clamp(18px, 4.4vw, 26px) var(--font-body); font-variant-numeric: tabular-nums; cursor: pointer; padding: 0; min-width: 0; }
+.slot:first-child { border-left: 0; border-bottom-left-radius: 11px; }
+.slot:last-child { border-bottom-right-radius: 11px; }
+.slot.op { font-family: var(--font-display); font-weight: 400; font-size: clamp(22px, 5vw, 30px); }
+.slot.q { color: var(--rust); }
+.slot:hover { background: rgba(255, 85, 0, 0.15); }
+.slot.open { background: var(--orange); }
+.reset { position: absolute; top: 4px; left: 6px; width: 30px; height: 30px; border: 0; background: transparent; color: var(--navy); cursor: pointer; padding: 0; display: grid; place-items: center; border-radius: 8px; }
+.reset svg { width: 20px; height: 20px; }
+.reset:hover { background: rgba(44, 57, 92, 0.12); }
+.tcard.ok { background: var(--mustard); }
+.tcard.bad { border-color: var(--rust); background: var(--bad-bg); }
+.tcard.bad .tv, .tcard.bad .slot { border-color: var(--rust); }
+.tcard.hint::after { content: "★"; position: absolute; top: 4px; right: 9px; color: var(--rust); font-size: 16px; }
+.tcard.locked .slot { cursor: default; }
+.tcard.locked .slot:hover { background: transparent; }
+@media (prefers-reduced-motion: no-preference) {
+  .tcard.bad { animation: blink 0.24s steps(1) 4; }
+  @keyframes blink { 50% { background: var(--paper); border-color: var(--navy); } }
+  .tcard.ok { animation: pop 0.9s ease-out; }
+  @keyframes pop { 0%, 40% { filter: brightness(1.3) saturate(1.3); } 100% { filter: none; } }
+}
+
+/* Selector emergente */
+.pop { position: fixed; z-index: 40; background: var(--cream); border: 2px solid var(--navy); border-radius: 14px; box-shadow: 5px 5px 0 var(--mustard); padding: 10px; width: min(360px, calc(100vw - 16px)); }
+.pop .pgrid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; }
+.pop .pgrid button { height: 40px; border: 0; border-radius: 8px; background: transparent; color: var(--navy); font: 700 17px var(--font-body); font-variant-numeric: tabular-nums; cursor: pointer; padding: 0; }
+.pop .pgrid button.q { color: var(--rust); }
+.pop .pgrid button:hover:not(:disabled) { background: rgba(255, 85, 0, 0.2); }
+.pop .pgrid button:disabled { color: var(--faint); cursor: default; }
+.pop .pgrid button.cur { background: var(--orange); }
+.pop .prow { display: flex; gap: 8px; align-items: center; }
+.pop .opbtn { flex: 1; height: 52px; border: 2px solid var(--navy); border-radius: 10px; background: var(--paper); color: var(--navy); font: 400 30px var(--font-display); cursor: pointer; }
+.pop .opbtn.cur { background: var(--navy); color: var(--cream); }
+.pop .ptitle { margin: 0 0 8px; font-size: 13px; }
+.pop input { font: 700 24px var(--font-body); width: 5ch; text-align: center; padding: 4px; border: 3px solid var(--rust); border-radius: 10px; background: var(--paper); color: var(--rust); }
+.pop .plink { margin-top: 8px; font: 500 13px var(--font-body); background: none; border: 0; color: var(--rust); cursor: pointer; padding: 4px 0; text-decoration: underline; }
+
+/* Tira */
+.stripcard { border: 2px solid var(--navy); border-radius: 16px; padding: 14px 12px 18px; }
+.stripcard h2 { font: 400 16px var(--font-display); letter-spacing: 0.02em; margin: 0 0 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.state { font-family: var(--font-body); font-size: 12px; font-weight: 500; padding: 3px 10px; border-radius: 999px; }
+.state.ok { background: var(--mustard); color: var(--navy); }
+.state.bad { background: var(--bad-bg); color: var(--rust); }
+.strip { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 16px 6px; max-width: 640px; margin: 0 auto; }
+.sc { position: relative; justify-self: center; width: min(100%, 54px); aspect-ratio: 1; border-radius: 50%; border: 2px solid var(--navy); background: var(--paper); color: var(--navy); display: grid; place-items: center; font: 400 clamp(17px, 4vw, 22px) var(--font-display); font-variant-numeric: tabular-nums; cursor: pointer; padding: 0 0 6px; }
+.sc.q { color: var(--rust); border-style: dashed; border-color: var(--rust); }
+.sc.typed { border-style: solid; }
+.sc.focus { border-width: 4px; }
+.sc .bd { position: absolute; bottom: -9px; left: 50%; transform: translateX(-50%); display: flex; gap: 2px; }
+.sc .bd i { font: 700 10px/1 var(--font-body); font-style: normal; width: 17px; height: 17px; border-radius: 50%; border: 1.5px solid var(--navy); background: var(--cream); color: var(--navy); display: grid; place-items: center; }
+.sc .bd i.on { background: var(--navy); color: var(--cream); }
+.sc.full { background: var(--cell); }
+.sc.ok { background: var(--mustard); border-style: solid; border-color: var(--navy); color: var(--navy); }
+.sc.bad { background: var(--bad-bg); border-style: solid; }
+
+.actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.result { margin: 0; font-size: 15px; min-height: 1.5em; flex-basis: 100%; }
+.result.ok { font-weight: 700; }
+.result.bad { color: var(--rust); }
+
+/* Reloj flotante (igual que en Kakoomas) */
+.timer { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 30; width: 236px; background: var(--navy); color: var(--cream); border: 1.5px solid var(--mustard); border-radius: 16px; box-shadow: 5px 5px 0 var(--mustard); padding: 8px 12px 12px; display: flex; flex-direction: column; gap: 8px; }
+.tm-bar { display: flex; align-items: center; gap: 8px; cursor: grab; touch-action: none; user-select: none; }
+.tm-bar.drag { cursor: grabbing; }
+.tm-grip { flex: 1; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #C4C5BE; display: flex; align-items: center; gap: 6px; }
+.tm-grip::before { content: ""; width: 14px; height: 8px; background: radial-gradient(circle, var(--mustard) 1.2px, transparent 1.6px) 0 0 / 5px 4px; }
+.tm-icon { font: 700 16px var(--font-body); width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--mustard); background: transparent; color: var(--cream); cursor: pointer; display: grid; place-items: center; padding: 0; line-height: 1; }
+.tm-mode { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+.tm-mode button { font: 500 12px var(--font-body); padding: 6px 4px; border-radius: 999px; border: 1px solid var(--mustard); background: transparent; color: var(--cream); cursor: pointer; }
+.tm-mode button[aria-pressed="true"] { background: var(--mustard); color: var(--navy); font-weight: 700; }
+.tm-dur { font: 500 14px var(--font-body); padding: 6px 8px; border: 1px solid var(--mustard); border-radius: 10px; background: var(--navy); color: var(--cream); width: 100%; }
+.tm-time { font: 400 44px/1 var(--font-display); font-variant-numeric: tabular-nums; text-align: center; color: var(--orange); padding: 2px 0; }
+.tm-time.low { color: var(--cream); background: var(--rust); border-radius: 10px; }
+.tm-btns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+.tm-btns button { font: 500 13px var(--font-body); padding: 8px 4px; border-radius: 10px; border: 1px solid var(--mustard); background: transparent; color: var(--cream); cursor: pointer; }
+.tm-btns button.go { background: var(--orange); color: var(--navy); border-color: var(--orange); font-weight: 700; }
+.tm-btns button:disabled { opacity: 0.45; cursor: default; }
+.timer.min { width: auto; flex-direction: row; align-items: center; padding: 6px 8px 6px 12px; gap: 10px; }
+.timer.min .tm-mode, .timer.min .tm-dur, .timer.min .tm-btns, .timer.min .tm-grip { display: none; }
+.timer.min .tm-bar { order: 2; }
+.timer.min .tm-time { font-size: 26px; cursor: grab; touch-action: none; }
+.timer.ended { border-color: var(--rust); box-shadow: 0 0 0 3px var(--rust), 5px 5px 0 var(--mustard); }
+.timer button:focus-visible, .timer select:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+@media (max-width: 560px) { .timer { width: 208px; } .tm-time { font-size: 38px; } .tally { text-align: left; } }
+body.timeup::after { content: ""; position: fixed; inset: 0; background: var(--rust); pointer-events: none; z-index: 25; animation: tflash 0.3s steps(1) 6 forwards; }
+@keyframes tflash { 0% { opacity: 0.55; } 50% { opacity: 0; } 100% { opacity: 0; } }
+
+/* ===================== Pantalla de inicio: ¿Cómo se juega? ===================== */
+body.en-inicio .wrap, body.en-inicio .band.bottom, body.en-inicio #timer, body.en-inicio #pop { display: none !important; }
+body:not(.en-inicio) #pantallaInicio { display: none; }
+.inicio { max-width: 1100px; margin: 0 auto; padding: 24px max(16px, env(safe-area-inset-right, 0px)) 40px max(16px, env(safe-area-inset-left, 0px)); display: grid; grid-template-columns: 1.35fr 1fr; gap: 20px; align-items: start; }
+@media (max-width: 820px) { .inicio { grid-template-columns: 1fr; } }
+.inicio .tarjeta { border: 2px solid var(--navy); border-radius: 14px; padding: 20px 22px; background: var(--paper); }
+.inicio h2 { font-family: var(--font-display); font-weight: 400; font-size: 26px; margin: 0 0 12px; }
+.inicio h3 { font-family: var(--font-display); font-weight: 400; font-size: 18px; margin: 0 0 12px; }
+.reglas { margin: 0 0 18px; padding-left: 22px; }
+.reglas li { margin-bottom: 8px; }
+.reglas li::marker { color: var(--rust); font-weight: 700; }
+.ejemplo { border: 1px dashed var(--navy); border-radius: 12px; padding: 16px; background: var(--cream); }
+.ej-tira { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.ej-tira span { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; border: 2px solid var(--navy); background: var(--paper); font-variant-numeric: tabular-nums; }
+.ej-tira span.par { background: var(--mustard); }
+.ej-tira span.oculto { border-style: dashed; color: var(--muted); }
+.ej-cartas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.ej-carta { border: 2px solid var(--navy); border-radius: 12px; background: var(--paper); text-align: center; overflow: hidden; }
+.ej-carta .num { font-family: var(--font-display); font-size: 32px; padding: 6px 0 2px; }
+.ej-carta .op { display: flex; justify-content: center; gap: 6px; padding: 8px; border-top: 1px solid var(--navy); background: var(--cream); font-weight: 800; }
+.ej-carta .op i { font-style: normal; min-width: 30px; padding: 2px 6px; border-radius: 8px; border: 1px solid var(--navy); background: var(--paper); }
+.ej-carta .op i.o { color: var(--rust); border-color: var(--rust); }
+.ej-calc { margin: 14px 0 0; font-variant-numeric: tabular-nums; }
+.ej-calc .ok { color: var(--navy); font-weight: 800; }
+.ej-nota { margin: 10px 0 0; font-size: 14px; color: var(--muted); }
+.niveles { list-style: none; margin: 0 0 16px; padding: 0; display: grid; gap: 8px; }
+.niveles li { display: flex; gap: 12px; align-items: center; border: 1px solid var(--navy); border-radius: 12px; padding: 10px 12px; background: var(--cream); }
+.niveles .ico { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--navy); color: var(--cream); font-family: var(--font-display); }
+.niveles b { display: block; }
+.niveles small { color: var(--muted); font-size: 13.5px; }
+.inicio .nota-dif { font-size: 14px; color: var(--muted); margin: 0 0 18px; }
+.despegar { width: 100%; font-family: var(--font-display); font-size: 20px; padding: 14px 20px; border-radius: 999px; border: 2px solid var(--orange); background: var(--orange); color: var(--navy); cursor: pointer; }
+.despegar:hover { background: var(--navy); border-color: var(--navy); color: var(--cream); }
+.btn.ayuda { margin-left: auto; }
+</style>
+</head>
+<body class="en-inicio">
+<!-- Barra de regreso al sitio Órbita Matemática -->
+<nav class="orbita-volver" style="background:#2C395C;border-bottom:4px solid #FF5500;padding:8px max(16px,env(safe-area-inset-left,0px));font:600 14px/1.4 'Jost','Archivo','Helvetica Neue',Arial,sans-serif;position:relative;z-index:50">
+  <a href="../index.html#juegos" style="color:#DEDED2;text-decoration:none;display:inline-flex;align-items:center;gap:8px">
+    <span style="display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#FF5500;color:#2C395C;font-weight:700">←</span>
+    Volver a Órbita Matemática · Juegos
+  </a>
+</nav>
+<div class="band top"><header>
+  <h1>Tetonor</h1>
+  <p class="tally">Tableros resueltos: <span id="solved">0</span> · Mejor tiempo: <span id="best">—</span></p>
+</header></div>
+
+<!-- ===================== PANTALLA DE INICIO ===================== -->
+<section class="inicio" id="pantallaInicio" aria-label="Cómo se juega">
+  <div class="tarjeta">
+    <h2>¿Cómo se juega?</h2>
+    <ol class="reglas">
+      <li>Verás una <b>tira de 8 números</b>, ordenados de menor a mayor, y <b>8 tarjetas</b> con un número cada una.</li>
+      <li>Los 8 números de la tira forman <b>4 pares</b>. Cada par aparece <b>dos veces</b> en las tarjetas: una vez como su <b>suma</b> y otra como su <b>producto</b>.</li>
+      <li>En cada tarjeta, toca los espacios para elegir los <b>dos números</b> de la tira y la <b>operación</b> (+ o ×) que dan el número de la tarjeta.</li>
+      <li>Algunos números de la tira están ocultos con un <b>?</b>. Al elegirlos, escribes cuál crees que es.</li>
+      <li>Cada número de la tira se usa en <b>una suma y en un producto</b>. Las marcas + y × de la tira se encienden cuando ya lo usaste.</li>
+      <li>Cuando completes todas las tarjetas, presiona <b>Comprobar</b>.</li>
+    </ol>
+
+    <div class="ejemplo">
+      <h3>Ejemplo · el par 3 y 5</h3>
+      <div class="ej-tira" aria-label="Tira de ejemplo">
+        <span>2</span><span class="par">3</span><span class="oculto">?</span><span class="par">5</span><span>6</span><span>7</span><span class="oculto">?</span><span>9</span>
+      </div>
+      <div class="ej-cartas">
+        <div class="ej-carta"><div class="num">8</div><div class="op"><i>3</i><i class="o">+</i><i>5</i></div></div>
+        <div class="ej-carta"><div class="num">15</div><div class="op"><i>3</i><i class="o">×</i><i>5</i></div></div>
+      </div>
+      <p class="ej-calc">3 + 5 = 8 &nbsp;y&nbsp; 3 × 5 = 15 &nbsp;<span class="ok">✔ Par completo</span></p>
+      <p class="ej-nota">Fíjate: el mismo par resuelve dos tarjetas, una con suma y otra con producto. Busca primero las tarjetas con menos opciones, como los productos de números primos.</p>
+    </div>
+  </div>
+
+  <div class="tarjeta">
+    <h2>Niveles</h2>
+    <ul class="niveles">
+      <li><span class="ico">1</span><span><b>Nivel 1</b><small>Tira con números del 1 al 9</small></span></li>
+      <li><span class="ico">2</span><span><b>Nivel 2</b><small>Tira con números del 2 al 15</small></span></li>
+      <li><span class="ico">3</span><span><b>Nivel 3</b><small>Tira con números del 3 al 25</small></span></li>
+    </ul>
+    <p class="nota-dif"><b>Dificultad:</b> inicial (2 números ocultos), intermedia (4) o avanzada (6). La eliges dentro del juego.</p>
+    <p class="nota-dif">Puedes usar el <b>cronómetro</b> o el <b>contrarreloj</b>, y pedir una <b>pista</b> si te quedas pegado.</p>
+    <button class="despegar" id="btnDespegar" type="button">¡Despegar! 🚀</button>
+  </div>
+</section>
+
+<div class="wrap">
+  <section class="controls" aria-label="Elegir nivel y dificultad">
+    <div class="group"><span>Nivel</span><div class="seg" id="levels"></div></div>
+    <div class="group"><span>Dificultad</span><div class="seg" id="tiers"></div></div>
+    <div class="group"><span>&nbsp;</span><button class="btn primary" id="newBtn" type="button">Nuevo tetonor</button></div>
+    <div class="group ayuda-g" style="margin-left:auto"><span>&nbsp;</span><button class="btn" id="btnAyuda" type="button">¿Cómo se juega?</button></div>
+  </section>
+
+  <p class="lede">Los 8 números de la tira forman 4 pares. Cada par aparece <b>dos veces</b> en las tarjetas: una como su <b>suma</b> y otra como su <b>producto</b> (el par 3 y 5 da el 8 = 3 + 5 y el 15 = 3 × 5). Toca los espacios de cada tarjeta para elegir los números de la tira y la operación. Los <b style="color:var(--rust)">?</b> son números ocultos: al elegirlos, escribes cuál crees que es. Las marcas × y + de la tira se encienden cuando ese número ya se usó en un producto y en una suma.</p>
+
+  <section class="cards" id="cards" aria-label="Tarjetas"></section>
+
+  <article class="stripcard" aria-label="Tira de números">
+    <h2>Tira · de menor a mayor<span class="state" id="sstate"></span></h2>
+    <div class="strip" id="strip"></div>
+  </article>
+
+  <section class="actions">
+    <button class="btn primary" id="check" type="button">Comprobar</button>
+    <button class="btn" id="hint" type="button">Pista</button>
+    <button class="btn" id="reveal" type="button">Ver solución</button>
+    <button class="btn" id="restart" type="button">Reiniciar tablero</button>
+    <p class="result" id="result" aria-live="polite"></p>
+  </section>
+</div>
+
+<div class="band bottom"><footer>Cada tetonor se genera al momento y un solucionador lo revisa antes de mostrarlo: con los números visibles de la tira, hay una sola forma de completarlo. Las pistas (★) resuelven una tarjeta, pero un tablero con pistas no cuenta para el mejor tiempo.</footer></div>
+
+<div class="pop" id="pop" role="dialog" aria-label="Elegir" hidden></div>
+
+<aside class="timer" id="timer" aria-label="Reloj">
+  <div class="tm-bar" id="tmBar"><span class="tm-grip">Tiempo</span><button class="tm-icon" id="tmMin" type="button" aria-label="Minimizar reloj" title="Minimizar">–</button></div>
+  <div class="tm-mode" role="group" aria-label="Tipo de reloj">
+    <button type="button" id="tmChrono" aria-pressed="true">Cronómetro</button>
+    <button type="button" id="tmDown" aria-pressed="false">Contrarreloj</button>
+  </div>
+  <select class="tm-dur" id="tmDur" aria-label="Duración del contrarreloj" hidden>
+    <option value="60">1 minuto</option><option value="120">2 minutos</option><option value="180">3 minutos</option>
+    <option value="300" selected>5 minutos</option><option value="420">7 minutos</option><option value="600">10 minutos</option>
+    <option value="900">15 minutos</option><option value="1200">20 minutos</option>
+  </select>
+  <div class="tm-time" id="clock" aria-live="off">0:00</div>
+  <div class="tm-btns">
+    <button type="button" class="go" id="tmStart">Iniciar</button>
+    <button type="button" id="tmStop" disabled>Detener</button>
+    <button type="button" id="tmReset">Reiniciar</button>
+  </div>
+</aside>
+
+<script>
+// ---------- Generación y solucionador ----------
+const LEVELS = [
+  { name: 'Nivel 1', sub: 'Tira del 1 al 9', lo: 1, hi: 9 },
+  { name: 'Nivel 2', sub: 'Tira del 2 al 15', lo: 2, hi: 15 },
+  { name: 'Nivel 3', sub: 'Tira del 3 al 25', lo: 3, hi: 25 },
+];
+const NP = 4; // pares por tablero: 8 tarjetas y 8 números en la tira
+const TIERS = [{ name: 'Inicial', hid: 2 }, { name: 'Intermedia', hid: 4 }, { name: 'Avanzada', hid: 6 }];
+const ri = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+function shuffle(v) { for (let i = v.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [v[i], v[j]] = [v[j], v[i]]; } return v; }
+function rootsOf(S, P) {
+  const d = S * S - 4 * P; if (d < 0) return null;
+  const r = Math.round(Math.sqrt(d)); if (r * r !== d || (S - r) % 2) return null;
+  const a = (S - r) / 2; return a >= 1 ? [a, (S + r) / 2] : null;
+}
+// Cuenta las formas de emparejar la cuadrícula (suma, producto) compatibles con la tira visible
+function solveT(grid, known, limit) {
+  const n = grid.length, edges = grid.map(() => []);
+  for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+    if (i === j) continue;
+    const r = rootsOf(grid[i], grid[j]);
+    if (r) { const e = { s: i, p: j, a: r[0], b: r[1] }; edges[i].push(e); edges[j].push(e); }
+  }
+  const used = Array(n).fill(false), cur = [], out = [];
+  (function rec() {
+    if (out.length >= limit) return;
+    const i = used.indexOf(false);
+    if (i < 0) {
+      const ops = cur.flatMap(e => [e.a, e.b]).sort((x, y) => x - y);
+      if (known.every((v, k) => v === null || v === ops[k])) out.push({ ops });
+      return;
+    }
+    used[i] = true;
+    for (const e of edges[i]) {
+      const j = e.s === i ? e.p : e.s; if (used[j]) continue;
+      used[j] = true; cur.push(e); rec(); cur.pop(); used[j] = false;
+      if (out.length >= limit) break;
+    }
+    used[i] = false;
+  })();
+  return out;
+}
+function makePuzzle(lv, tier) {
+  const L = LEVELS[lv], want = TIERS[tier].hid;
+  let best = null;
+  for (let t = 0; t < 20000; t++) {
+    const pairs = [];
+    for (let k = 0; k < NP; k++) { let a = ri(L.lo, L.hi), b = ri(L.lo, L.hi); if (a > b) [a, b] = [b, a]; pairs.push([a, b]); }
+    if (pairs.flat().filter(x => x === 1).length > 1) continue;
+    const cells = [];
+    pairs.forEach(([a, b]) => { cells.push({ v: a + b, a, b, op: '+' }, { v: a * b, a, b, op: '×' }); });
+    if (new Set(cells.map(c => c.v)).size < 2 * NP) continue;
+    shuffle(cells);
+    const grid = cells.map(c => c.v), sol = cells.map(c => ({ a: c.a, b: c.b, op: c.op }));
+    const ops = pairs.flat().sort((x, y) => x - y);
+    const hidden = new Set(shuffle([...Array(2 * NP).keys()]).slice(0, want));
+    let unique = false;
+    for (let g = 0; g < 2 * NP; g++) {
+      const S = solveT(grid, ops.map((v, i) => (hidden.has(i) ? null : v)), 2);
+      if (S.length === 1) { unique = true; break; }
+      const diff = [...hidden].filter(i => S[0].ops[i] !== S[1].ops[i]);
+      if (!diff.length) break;
+      hidden.delete(diff[Math.floor(Math.random() * diff.length)]);
+    }
+    if (!unique) continue;
+    const pz = { grid, sol, ops, hidden };
+    if (hidden.size >= want - 1) return pz;
+    if (!best || hidden.size > best.hidden.size) best = pz;
+  }
+  return best;
+}
+
+// Índices de la tira para cada tarjeta de la solución (los dos usos de un par comparten índices)
+function assignIdx(P) {
+  const taken = Array(2 * NP).fill(false), byPair = {};
+  P.sol.forEach(s => {
+    const k = `${s.a},${s.b}`;
+    if (byPair[k]) return;
+    const i = P.ops.findIndex((v, n) => v === s.a && !taken[n]); taken[i] = true;
+    const j = P.ops.findIndex((v, n) => v === s.b && !taken[n]); taken[j] = true;
+    byPair[k] = [i, j];
+  });
+  P.idx = P.sol.map(s => byPair[`${s.a},${s.b}`]);
+  return P;
+}
+
+// ---------- Estado ----------
+const $ = (id) => document.getElementById(id);
+const st = { lv: 0, tier: 0, P: null, cells: [], strip: [], ok: [], open: null, done: false, revealed: false, hints: 0, solved: 0 };
+const bestKey = () => `tetonor-best-${st.lv}-${st.tier}`;
+function readBest() { try { const v = localStorage.getItem(bestKey()); return v ? Number(v) : null; } catch (e) { return null; } }
+function writeBest(ms) { try { localStorage.setItem(bestKey(), String(ms)); } catch (e) {} }
+const fmtTime = (ms) => { const s = Math.floor(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+function showBest() { const b = readBest(); $('best').textContent = b ? `${fmtTime(b)} (${LEVELS[st.lv].name.toLowerCase()}, ${TIERS[st.tier].name.toLowerCase()})` : '—'; }
+function seg(el, items, current, onPick) {
+  el.innerHTML = '';
+  items.forEach((it, idx) => {
+    const b = document.createElement('button'); b.type = 'button';
+    b.setAttribute('aria-pressed', String(idx === current));
+    b.innerHTML = it.sub ? `${it.name}<span class="sub">${it.sub}</span>` : it.name;
+    b.addEventListener('click', () => onPick(idx));
+    el.appendChild(b);
+  });
+}
+function renderControls() {
+  seg($('levels'), LEVELS, st.lv, i => { st.lv = i; load(); });
+  seg($('tiers'), TIERS, st.tier, i => { st.tier = i; load(); });
+}
+
+const isHid = (k) => st.P.hidden.has(k);
+const valOf = (k) => (k === null ? null : isHid(k) ? (st.strip[k] === '' ? null : Number(st.strip[k])) : st.P.ops[k]);
+const labelOf = (k) => (k === null ? '' : valOf(k) === null ? '?' : String(valOf(k)));
+// cuántas tarjetas (aparte de `except`) usan el lugar k de la tira con la operación op
+const uses = (k, op, except) => st.cells.reduce((n, c, i) => n + (i !== except && c.op === op && (c.L === k || c.R === k) ? 1 : 0), 0);
+
+// ---------- Dibujo ----------
+const RESET_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4.5h4.5"/></svg>';
+function renderCards() {
+  const box = $('cards'); box.innerHTML = '';
+  st.P.grid.forEach((v, i) => {
+    const c = document.createElement('div'); c.className = 'tcard'; c.id = `card${i}`;
+    c.innerHTML = `<button type="button" class="reset" id="rs${i}" aria-label="Vaciar la tarjeta ${v}" hidden>${RESET_SVG}</button>
+      <div class="tv">${v}</div>
+      <div class="slots">
+        <button type="button" class="slot" id="s${i}L" aria-label="Primer número para ${v}"></button>
+        <button type="button" class="slot op" id="s${i}O" aria-label="Operación para ${v}"></button>
+        <button type="button" class="slot" id="s${i}R" aria-label="Segundo número para ${v}"></button>
+      </div>`;
+    box.appendChild(c);
+    $(`s${i}L`).addEventListener('click', e => openPop(i, 'L', e.currentTarget));
+    $(`s${i}O`).addEventListener('click', e => openPop(i, 'O', e.currentTarget));
+    $(`s${i}R`).addEventListener('click', e => openPop(i, 'R', e.currentTarget));
+    $(`rs${i}`).addEventListener('click', () => clearCard(i));
+  });
+}
+function renderStrip() {
+  const s = $('strip'); s.innerHTML = '';
+  st.P.ops.forEach((v, k) => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'sc' + (isHid(k) ? ' q' : ''); b.id = `sc${k}`;
+    b.innerHTML = `<span id="sv${k}"></span><span class="bd" aria-hidden="true"><i id="bt${k}">×</i><i id="bp${k}">+</i></span>`;
+    b.addEventListener('click', e => stripTap(k, e.currentTarget));
+    s.appendChild(b);
+  });
+}
+function paint() {
+  st.cells.forEach((c, i) => {
+    const L = $(`s${i}L`), O = $(`s${i}O`), R = $(`s${i}R`);
+    L.textContent = labelOf(c.L); R.textContent = labelOf(c.R); O.textContent = c.op || '';
+    L.classList.toggle('q', c.L !== null && valOf(c.L) === null);
+    R.classList.toggle('q', c.R !== null && valOf(c.R) === null);
+    [['L', L], ['O', O], ['R', R]].forEach(([w, el]) => el.classList.toggle('open', !!(st.open && st.open.i === i && st.open.what === w)));
+    $(`rs${i}`).hidden = st.ok[i] || (c.L === null && c.R === null && !c.op);
+    $(`card${i}`).classList.toggle('locked', st.ok[i]);
+  });
+  const focus = st.open && st.open.i !== undefined ? st.cells[st.open.i] : null;
+  st.P.ops.forEach((_, k) => {
+    const t = uses(k, '×', -1), p = uses(k, '+', -1);
+    $(`sv${k}`).textContent = labelOf(k);
+    $(`bt${k}`).classList.toggle('on', t > 0); $(`bp${k}`).classList.toggle('on', p > 0);
+    const el = $(`sc${k}`);
+    el.classList.toggle('full', t > 0 && p > 0);
+    el.classList.toggle('typed', isHid(k) && st.strip[k] !== '');
+    el.classList.toggle('focus', !!(focus && (focus.L === k || focus.R === k)));
+  });
+}
+
+// ---------- Selector emergente ----------
+function placePop(anchor) {
+  const pop = $('pop'); pop.hidden = false;
+  const r = anchor.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight;
+  let x = r.left + r.width / 2 - w / 2; x = Math.max(8, Math.min(x, innerWidth - w - 8));
+  let y = r.bottom + 6; if (y + h > innerHeight - 8) y = Math.max(8, r.top - h - 6);
+  pop.style.left = x + 'px'; pop.style.top = y + 'px';
+}
+function closePop() { st.open = null; $('pop').hidden = true; $('pop').innerHTML = ''; paint(); }
+function openPop(i, what, anchor) {
+  if (st.ok[i]) { msg(`Esta tarjeta ya está bien resuelta.`); return; }
+  st.open = { i, what, anchor };
+  const pop = $('pop'), c = st.cells[i];
+  if (what === 'O') {
+    pop.innerHTML = `<p class="ptitle">Operación para <b>${st.P.grid[i]}</b></p><div class="prow">
+      <button type="button" class="opbtn${c.op === '+' ? ' cur' : ''}" data-op="+" aria-label="Suma">+</button>
+      <button type="button" class="opbtn${c.op === '×' ? ' cur' : ''}" data-op="×" aria-label="Multiplicación">×</button></div>
+      ${c.op ? '<button type="button" class="plink" data-op="">Quitar operación</button>' : ''}`;
+    pop.querySelectorAll('[data-op]').forEach(b => b.addEventListener('click', () => {
+      c.op = b.dataset.op || null; afterChange(i);
+      if (c.op) advance(i, 'O'); else closePop();
+    }));
+  } else {
+    const other = what === 'L' ? c.R : c.L, mine = c[what];
+    let html = `<p class="ptitle">${what === 'L' ? 'Primer' : 'Segundo'} número para <b>${st.P.grid[i]}</b></p><div class="pgrid">`;
+    st.P.ops.forEach((_, k) => {
+      const busy = k === other || (c.op ? uses(k, c.op, i) > 0 : uses(k, '+', i) > 0 && uses(k, '×', i) > 0);
+      html += `<button type="button" data-k="${k}" class="${valOf(k) === null ? 'q' : ''}${k === mine ? ' cur' : ''}"${busy && k !== mine ? ' disabled' : ''}>${labelOf(k)}</button>`;
+    });
+    html += `</div>${mine !== null ? '<button type="button" class="plink" id="pClear">Quitar número</button>' : ''}`;
+    pop.innerHTML = html;
+    pop.querySelectorAll('[data-k]').forEach(b => b.addEventListener('click', () => choose(i, what, Number(b.dataset.k))));
+    if ($('pClear')) $('pClear').addEventListener('click', () => { c[what] = null; afterChange(i); closePop(); });
+  }
+  paint(); placePop(anchor);
+}
+function choose(i, what, k) {
+  const c = st.cells[i]; c[what] = k; afterChange(i);
+  if (isHid(k) && st.strip[k] === '') { askHidden(k, () => advance(i, what)); return; }
+  advance(i, what);
+}
+// tras elegir, pasa al siguiente espacio vacío de la tarjeta
+function advance(i, from) {
+  const c = st.cells[i], order = ['L', 'O', 'R'];
+  const next = order.slice(order.indexOf(from) + 1).concat(order).find(w => (w === 'O' ? !c.op : c[w] === null));
+  if (next) openPop(i, next, $(`s${i}${next}`)); else closePop();
+}
+function askHidden(k, then) {
+  const pop = $('pop'); const prevOpen = st.open;
+  st.open = { k, anchor: $(`sc${k}`), prev: prevOpen };
+  pop.innerHTML = `<p class="ptitle">Número oculto n.º ${k + 1} de la tira. ¿Cuál es?</p>
+    <form class="prow" id="hForm"><input id="hIn" type="text" inputmode="numeric" autocomplete="off" value="${st.strip[k]}" aria-label="Valor del número oculto">
+    <button type="submit" class="btn primary">Listo</button>${st.strip[k] !== '' ? '<button type="button" class="btn" id="hDel">Borrar</button>' : ''}</form>`;
+  const inp = $('hIn');
+  inp.addEventListener('input', () => { inp.value = inp.value.replace(/\D/g, '').slice(0, 3); });
+  $('hForm').addEventListener('submit', e => {
+    e.preventDefault(); st.strip[k] = inp.value; stripChanged(k);
+    if (then && prevOpen) { st.open = prevOpen; then(); } else closePop();
+  });
+  if ($('hDel')) $('hDel').addEventListener('click', () => { st.strip[k] = ''; stripChanged(k); closePop(); });
+  paint(); placePop(prevOpen && prevOpen.anchor ? prevOpen.anchor : $(`sc${k}`));
+  inp.focus({ preventScroll: true }); inp.select();
+}
+function stripTap(k) {
+  // con un espacio de número abierto, tocar la tira elige ese número
+  if (st.open && st.open.i !== undefined && st.open.what !== 'O') {
+    const btn = $('pop').querySelector(`[data-k="${k}"]`);
+    if (btn && !btn.disabled) { choose(st.open.i, st.open.what, k); return; }
+  }
+  if (isHid(k) && !$(`sc${k}`).classList.contains('ok')) { askHidden(k, null); return; }
+  closePop();
+}
+function stripChanged(k) { $(`sc${k}`).classList.remove('ok', 'bad'); $('sstate').textContent = ''; $('sstate').className = 'state'; paint(); }
+function afterChange(i) { $(`card${i}`).classList.remove('ok', 'bad', 'hint'); paint(); }
+function clearCard(i) { st.cells[i] = { L: null, op: null, R: null }; closePop(); afterChange(i); }
+document.addEventListener('pointerdown', e => {
+  if (!st.open) return;
+  if (e.target.closest('#pop, .slot, .sc')) return;
+  closePop();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && st.open) closePop(); });
+addEventListener('resize', () => { if (st.open) closePop(); });
+function msg(t, bad) { const r = $('result'); r.className = 'result' + (bad ? ' bad' : ''); r.textContent = t; }
+
+// ---------- Comprobar, pistas y solución ----------
+function cellRight(i) {
+  const c = st.cells[i], s = st.P.sol[i];
+  const a = valOf(c.L), b = valOf(c.R);
+  return c.op === s.op && a !== null && b !== null && Math.min(a, b) === s.a && Math.max(a, b) === s.b;
+}
+const cellFull = (c) => c.L !== null && c.R !== null && c.op && valOf(c.L) !== null && valOf(c.R) !== null;
+function check() {
+  closePop();
+  let empty = 0, wrong = 0, sEmpty = 0, sWrong = 0;
+  st.cells.forEach((c, i) => {
+    const el = $(`card${i}`); el.classList.remove('ok', 'bad');
+    if (!cellFull(c)) { empty++; return; }
+    void el.offsetWidth;
+    if (cellRight(i)) { st.ok[i] = true; el.classList.add('ok'); } else { wrong++; el.classList.add('bad'); }
+  });
+  st.P.hidden.forEach(k => {
+    const d = $(`sc${k}`); d.classList.remove('ok', 'bad');
+    if (st.strip[k] === '') { sEmpty++; return; }
+    if (Number(st.strip[k]) === st.P.ops[k]) d.classList.add('ok'); else { sWrong++; d.classList.add('bad'); }
+  });
+  const ss = $('sstate');
+  ss.textContent = sWrong ? 'Revisa' : sEmpty ? '' : 'Correcto'; ss.className = 'state' + (sWrong ? ' bad' : sEmpty ? '' : ' ok');
+  paint();
+  if (!empty && !wrong && !sEmpty && !sWrong) {
+    recordSolve();
+    msg(st.revealed ? 'Solución mostrada. Pide un nuevo tetonor para seguir.' : `¡Tetonor resuelto${solveTime()}${st.hints ? ` con ${st.hints} ${st.hints === 1 ? 'pista' : 'pistas'}` : ''}!${solveTail()}`);
+    $('result').classList.add('ok');
+    return;
+  }
+  const parts = [];
+  if (wrong) parts.push(`${wrong} ${wrong === 1 ? 'tarjeta tiene' : 'tarjetas tienen'} una operación que no corresponde (en rojo)`);
+  if (sWrong) parts.push(`${sWrong} ${sWrong === 1 ? 'número oculto no es correcto' : 'números ocultos no son correctos'}`);
+  if (empty) parts.push(`${empty === 1 ? 'falta 1 tarjeta' : `faltan ${empty} tarjetas`}`);
+  if (sEmpty) parts.push(`${sEmpty === 1 ? 'falta 1 número oculto' : `faltan ${sEmpty} números ocultos`} en la tira`);
+  const txt = parts.join('; ');
+  if (wrong || sWrong) msg(txt.charAt(0).toUpperCase() + txt.slice(1) + '.', true);
+  else msg('Lo anotado está bien; ' + txt + '.');
+}
+function solveCell(i) {
+  const s = st.P.sol[i], [a, b] = st.P.idx[i];
+  // libera esos lugares de la tira si otra tarjeta los usaba con la misma operación
+  st.cells.forEach((c, j) => {
+    if (j === i || c.op !== s.op || st.ok[j]) return;
+    if (c.L === a || c.L === b) c.L = null;
+    if (c.R === a || c.R === b) c.R = null;
+  });
+  st.cells[i] = { L: a, op: s.op, R: b };
+  [a, b].forEach(k => { if (isHid(k)) { st.strip[k] = String(st.P.ops[k]); } });
+  st.ok[i] = true;
+}
+function hint() {
+  closePop();
+  const open = st.cells.map((_, i) => i).filter(i => !st.ok[i]);
+  if (!open.length) { msg('Todas las tarjetas ya están bien; revisa la tira y pulsa Comprobar.'); return; }
+  const i = open[Math.floor(Math.random() * open.length)];
+  solveCell(i); st.hints++;
+  const el = $(`card${i}`); el.classList.remove('bad'); el.classList.add('ok', 'hint');
+  paint();
+  const c = st.cells[i];
+  msg(`Pista: ${st.P.grid[i]} = ${valOf(c.L)} ${c.op} ${valOf(c.R)}.`);
+}
+function reveal() {
+  st.revealed = true; timerStop();
+  st.cells.forEach((_, i) => solveCell(i));
+  check();
+}
+
+// ---------- Ciclo de juego ----------
+function load() { st.P = assignIdx(makePuzzle(st.lv, st.tier)); reset(); }
+function reset() {
+  renderControls();
+  st.cells = Array.from({ length: 2 * NP }, () => ({ L: null, op: null, R: null }));
+  st.ok = Array(2 * NP).fill(false); st.strip = Array(2 * NP).fill('');
+  st.open = null; $('pop').hidden = true;
+  st.done = false; st.revealed = false; st.hints = 0;
+  renderCards(); renderStrip();
+  $('sstate').textContent = ''; $('sstate').className = 'state';
+  msg('');
+  showBest(); timerReset(); paint();
+}
+$('check').addEventListener('click', check);
+$('hint').addEventListener('click', hint);
+$('reveal').addEventListener('click', reveal);
+$('restart').addEventListener('click', reset);
+$('newBtn').addEventListener('click', load);
+
+// ---------- Reloj: cronómetro y contrarreloj ----------
+const T = { mode: 'chrono', dur: 300000, running: false, acc: 0, t0: 0, iv: null, ended: false };
+let audioCtx = null;
+try { const m = localStorage.getItem('tetonor-timer-mode'); const d = Number(localStorage.getItem('tetonor-timer-dur')); if (m === 'down') T.mode = 'down'; if (d) T.dur = d * 1000; } catch (e) {}
+const tElapsed = () => T.acc + (T.running ? Date.now() - T.t0 : 0);
+const fmtClock = (ms, up) => { const s = up ? Math.floor(ms / 1000) : Math.ceil(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+function timerRender() {
+  const e = tElapsed(), el = $('clock');
+  if (T.mode === 'down') { const left = Math.max(0, T.dur - e); el.textContent = fmtClock(left, false); el.classList.toggle('low', left <= 10000); }
+  else { el.textContent = fmtClock(e, true); el.classList.remove('low'); }
+  $('tmStart').disabled = T.running || T.ended;
+  $('tmStart').textContent = T.acc > 0 && !T.running && !T.ended ? 'Seguir' : 'Iniciar';
+  $('tmStop').disabled = !T.running;
+  $('timer').classList.toggle('ended', T.ended);
+}
+function timerTick() { if (T.mode === 'down' && tElapsed() >= T.dur) { timeUp(); return; } timerRender(); }
+function timerStart() {
+  if (T.running || T.ended) return;
+  try { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === 'suspended') audioCtx.resume(); } catch (e) {}
+  T.t0 = Date.now(); T.running = true; clearInterval(T.iv); T.iv = setInterval(timerTick, 200); timerRender();
+}
+function timerStop() { if (T.running) { T.acc = tElapsed(); T.running = false; } clearInterval(T.iv); timerRender(); }
+function timerReset() { clearInterval(T.iv); T.running = false; T.acc = 0; T.ended = false; document.body.classList.remove('timeup'); timerRender(); }
+function alarm() {
+  if (!audioCtx) return;
+  try {
+    const now = audioCtx.currentTime;
+    for (let i = 0; i < 6; i++) {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type = 'square'; o.frequency.value = i % 2 ? 660 : 990;
+      g.gain.setValueAtTime(0.0001, now + i * 0.3); g.gain.exponentialRampToValueAtTime(0.25, now + i * 0.3 + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.3 + 0.26);
+      o.connect(g).connect(audioCtx.destination); o.start(now + i * 0.3); o.stop(now + i * 0.3 + 0.28);
+    }
+  } catch (e) {}
+}
+function timeUp() {
+  clearInterval(T.iv); T.running = false; T.acc = T.dur; T.ended = true; timerRender(); alarm();
+  document.body.classList.remove('timeup'); void document.body.offsetWidth; document.body.classList.add('timeup');
+  setTimeout(() => document.body.classList.remove('timeup'), 2000);
+  if (!st.done) { const r = $('result'); r.className = 'result bad'; r.textContent = '¡Se acabó el tiempo! Puedes terminar el tablero o pedir uno nuevo.'; }
+}
+function setTimerMode(m) {
+  T.mode = m; try { localStorage.setItem('tetonor-timer-mode', m); } catch (e) {}
+  $('tmChrono').setAttribute('aria-pressed', String(m === 'chrono')); $('tmDown').setAttribute('aria-pressed', String(m === 'down'));
+  $('tmDur').hidden = m !== 'down'; timerReset();
+}
+function recordSolve() {
+  if (st.done) return;
+  st.done = true; st.late = T.mode === 'down' && T.ended;
+  timerStop(); st.elapsed = Math.min(tElapsed(), T.mode === 'down' ? T.dur : Infinity);
+  st.record = false;
+  if (st.revealed) return;
+  st.solved++; $('solved').textContent = st.solved;
+  if (st.elapsed > 0 && !st.late && !st.hints) { const b = readBest(); if (!b || st.elapsed < b) { writeBest(st.elapsed); st.record = true; } }
+  showBest();
+}
+const solveTime = () => (st.elapsed > 0 ? ` en ${fmtTime(st.elapsed)}` : '');
+const solveTail = () => (st.late ? ' El tiempo ya se había acabado.' : st.record ? ' ¡Nuevo mejor tiempo!' : '');
+$('tmStart').addEventListener('click', timerStart);
+$('tmStop').addEventListener('click', timerStop);
+$('tmReset').addEventListener('click', timerReset);
+$('tmChrono').addEventListener('click', () => setTimerMode('chrono'));
+$('tmDown').addEventListener('click', () => setTimerMode('down'));
+$('tmDur').addEventListener('change', e => { T.dur = Number(e.target.value) * 1000; try { localStorage.setItem('tetonor-timer-dur', e.target.value); } catch (er) {} timerReset(); });
+$('tmMin').addEventListener('click', () => {
+  const min = $('timer').classList.toggle('min');
+  $('tmMin').textContent = min ? '+' : '–'; $('tmMin').setAttribute('aria-label', min ? 'Mostrar controles del reloj' : 'Minimizar reloj');
+});
+(function dragTimer() {
+  const box = $('timer'); let sx, sy, ox, oy, on = false;
+  const down = (e) => { if (e.target.closest('button, select')) return; on = true; const r = box.getBoundingClientRect(); sx = e.clientX; sy = e.clientY; ox = r.left; oy = r.top; $('tmBar').classList.add('drag'); e.currentTarget.setPointerCapture(e.pointerId); };
+  const move = (e) => {
+    if (!on) return;
+    const w = box.offsetWidth, h = box.offsetHeight;
+    const x = Math.min(Math.max(4, ox + e.clientX - sx), innerWidth - w - 4), y = Math.min(Math.max(4, oy + e.clientY - sy), innerHeight - h - 4);
+    box.style.left = x + 'px'; box.style.top = y + 'px'; box.style.right = 'auto'; box.style.bottom = 'auto';
+  };
+  const up = () => { on = false; $('tmBar').classList.remove('drag'); };
+  [$('tmBar'), $('clock')].forEach(h => { h.addEventListener('pointerdown', down); h.addEventListener('pointermove', move); h.addEventListener('pointerup', up); h.addEventListener('pointercancel', up); });
+})();
+(function initTimerUI() {
+  $('tmDur').value = String(T.dur / 1000); if (!$('tmDur').value) { $('tmDur').value = '300'; T.dur = 300000; }
+  $('tmChrono').setAttribute('aria-pressed', String(T.mode === 'chrono')); $('tmDown').setAttribute('aria-pressed', String(T.mode === 'down'));
+  $('tmDur').hidden = T.mode !== 'down';
+  if (innerWidth < 600) { $('timer').classList.add('min'); $('tmMin').textContent = '+'; $('tmMin').setAttribute('aria-label', 'Mostrar controles del reloj'); }
+})();
+load();
+</script>
+<script>
+/* Pantalla de inicio: mostrar / ocultar sin tocar la lógica del juego */
+(() => {
+  const ir = (juego) => { document.body.classList.toggle('en-inicio', !juego); window.scrollTo(0, 0); };
+  document.getElementById('btnDespegar').addEventListener('click', () => ir(true));
+  document.getElementById('btnAyuda').addEventListener('click', () => ir(false));
+})();
+</script>
+</body>
+</html>

@@ -29,7 +29,32 @@ const SITIO = {
      --------------------------------------------------------------- */
   cursos: [
     // ===== EDUCACIÓN BÁSICA =====
-    { id: "7basico", seccion: "Educación Básica", nombre: "7° Básico", asignatura: "Matemática", unidades: [] },
+    {
+      id: "7basico", seccion: "Educación Básica", nombre: "7° Básico", asignatura: "Matemática",
+      unidades: [
+        {
+          nombre: "Unidad 0 · Diagnóstico y repaso",
+          materiales: [
+            { tipo: "guia", titulo: "Diagnóstico: reactivación de contenidos de 6° básico", url: "materiales/7basico/u0-diagnostico-reactivacion.pdf", fecha: "2026-11-08", descripcion: "Preguntas de alternativas para reactivar lo aprendido en 6° básico." },
+            { tipo: "guia", titulo: "Repaso: multiplicación, división y prioridad de las operaciones", url: "materiales/7basico/u0-repaso-multiplicacion-division.pdf", fecha: "2026-11-08", descripcion: "Operatoria con números naturales. Actividad formativa (OA de 5° y 6° básico)." }
+          ]
+        },
+        { nombre: "Unidad 1 · Números", materiales: [] },
+        {
+          nombre: "Unidad 2 · Álgebra y ecuaciones",
+          materiales: [
+            { tipo: "guia", titulo: "Lenguaje algebraico, términos semejantes, valorización y ecuaciones", url: "materiales/7basico/u2-lenguaje-algebraico-ecuaciones.pdf", fecha: "2026-11-08", descripcion: "Expresiones algebraicas, reducción de términos semejantes, valorización y ecuaciones. OA 6 · OA 7 · OA 9." }
+          ]
+        },
+        {
+          nombre: "Unidad 3 · Geometría",
+          materiales: [
+            { tipo: "guia", titulo: "Plano cartesiano, vectores, polígonos, ángulos y áreas", url: "materiales/7basico/u3-plano-cartesiano-poligonos-areas.pdf", fecha: "2026-11-08", descripcion: "Puntos y vectores en el plano, polígonos, ángulos y cálculo de áreas. OA 10 · OA 13 · OA 14." }
+          ]
+        },
+        { nombre: "Unidad 4 · Probabilidad y estadística", materiales: [] }
+      ]
+    },
     { id: "8basico", seccion: "Educación Básica", nombre: "8° Básico", asignatura: "Matemática", unidades: [] },
 
     // ===== EDUCACIÓN MEDIA =====
@@ -37,22 +62,37 @@ const SITIO = {
       id: "1medio", seccion: "Educación Media", nombre: "I° Medio", asignatura: "Matemática",
       unidades: [
         {
-          nombre: "Unidad 1 · Números",
+          nombre: "Unidad 1 · Números y álgebra",
           materiales: [
-            { tipo: "guia", titulo: "Guía de reforzamiento: números racionales", url: "materiales/ejemplo-guia.pdf", fecha: "2026-11-06", descripcion: "Ejemplo: reemplaza este archivo por tu guía." },
-            { tipo: "solucionario", titulo: "Solucionario: números racionales", url: "materiales/ejemplo-guia.pdf", fecha: "2026-11-06" }
+            { tipo: "guia", titulo: "Repaso: operatoria con números decimales", url: "materiales/1medio/u1-operatoria-decimales-repaso.pdf", fecha: "2026-11-08", descripcion: "Adición, sustracción, multiplicación y división de decimales. OA 1." },
+            { tipo: "guia", titulo: "Productos notables I", url: "materiales/1medio/u1-productos-notables-1.pdf", fecha: "2026-11-08", descripcion: "Binomios con término común, suma por diferencia y cuadrado de binomio. OA 3." },
+            { tipo: "guia", titulo: "Productos notables II", url: "materiales/1medio/u1-productos-notables-2.pdf", fecha: "2026-11-08", descripcion: "Cuadrado de binomio, suma por diferencia y áreas. OA 3." },
+            { tipo: "solucionario", titulo: "Solucionario: operatoria con números decimales", url: "materiales/1medio/u1-operatoria-decimales-solucionario.pdf", fecha: "2026-11-08", descripcion: "Resultados de la guía de repaso de decimales." }
           ]
         },
         {
           nombre: "Unidad 2 · Álgebra y funciones",
           materiales: [
+            { tipo: "guia", titulo: "Sistemas de ecuaciones lineales 2×2", url: "materiales/1medio/u2-sistemas-de-ecuaciones.pdf", fecha: "2026-11-08", descripcion: "Ecuaciones lineales y sistemas de dos ecuaciones con dos incógnitas. OA 4." },
             { tipo: "simulacion", titulo: "Graficando líneas (PhET)", url: "https://phet.colorado.edu/sims/html/graphing-lines/latest/graphing-lines_es.html", fecha: "2026-11-07", descripcion: "Explora la pendiente y el coeficiente de posición." }
             // Ejemplo de video (borra las dos barras // del inicio para activarlo):
             // ,{ tipo: "video", titulo: "Productos notables", url: "https://www.youtube.com/watch?v=CODIGO_DEL_VIDEO", fecha: "2026-11-07" }
           ]
         },
-        { nombre: "Unidad 3 · Geometría", materiales: [] },
-        { nombre: "Unidad 4 · Probabilidad y estadística", materiales: [] }
+        {
+          nombre: "Unidad 3 · Geometría",
+          materiales: [
+            { tipo: "guia", titulo: "Homotecia y homotecia vectorial", url: "materiales/1medio/u3-homotecias.pdf", fecha: "2026-11-08", descripcion: "Homotecias en el plano cartesiano y con vectores. OA 8 · OA 11." },
+            { tipo: "guia", titulo: "Semejanza, homotecia, Euclides, Tales y escalas", url: "materiales/1medio/u3-semejanza-tales-escalas.pdf", fecha: "2026-11-08", descripcion: "Polígonos semejantes, teoremas de Euclides y Tales, y escalas. OA 8 · OA 9 · OA 10 · OA 11." }
+          ]
+        },
+        {
+          nombre: "Unidad 4 · Probabilidad y estadística",
+          materiales: [
+            { tipo: "guia", titulo: "Probabilidades I: regla de Laplace y espacio muestral", url: "materiales/1medio/u4-probabilidades-1.pdf", fecha: "2026-11-08", descripcion: "Espacio muestral y cálculo de probabilidades con la regla de Laplace. OA 14." },
+            { tipo: "guia", titulo: "Probabilidades II: reglas aditiva y multiplicativa", url: "materiales/1medio/u4-probabilidades-2.pdf", fecha: "2026-11-08", descripcion: "Principio multiplicativo y reglas aditiva y multiplicativa. OA 14." }
+          ]
+        }
       ]
     },
     { id: "2medio", seccion: "Educación Media", nombre: "II° Medio", asignatura: "Matemática", unidades: [] },
@@ -83,6 +123,11 @@ const SITIO = {
       nombre: "Pirámide de ecuaciones",
       descripcion: "Elige 3 losetas y alcanza el número objetivo respetando la prioridad de las operaciones.",
       url: "juegos/piramide-ecuaciones.html"
+    },
+    {
+      nombre: "Tetonor",
+      descripcion: "Descubre los pares de la tira: cada uno aparece una vez como suma y otra como producto.",
+      url: "juegos/tetonor.html"
     }
     // Para agregar otro juego: sube su archivo .html a la carpeta "juegos"
     // y copia uno de los bloques de arriba (con su coma).
