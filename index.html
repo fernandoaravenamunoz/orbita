@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Órbita Matemática</title>
+  <meta name="description" content="Material de matemáticas y física: guías, videos, solucionarios y simulaciones.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Righteous&family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <a class="saltar" href="#contenido">Saltar al contenido</a>
+
+  <header class="barra">
+    <div class="barra__interior">
+      <a href="#inicio" class="marca" aria-label="Ir al inicio">
+        <svg class="marca__logo" viewBox="0 0 48 48" aria-hidden="true">
+          <circle cx="24" cy="24" r="10" fill="#FF5500"/>
+          <ellipse cx="24" cy="24" rx="21" ry="7" fill="none" stroke="#B9A727" stroke-width="2.5" transform="rotate(-20 24 24)"/>
+        </svg>
+        <span class="marca__texto" id="marca-titulo">Órbita Matemática</span>
+      </a>
+      <button class="menu-boton" aria-expanded="false" aria-controls="nav" id="menu-boton">Menú</button>
+      <nav id="nav" class="nav">
+        <a href="#inicio" data-ruta="inicio">Inicio</a>
+        <a href="#cursos" data-ruta="cursos">Cursos</a>
+        <a href="#juegos" data-ruta="juegos">Juegos</a>
+        <a href="#difusion" data-ruta="difusion">Difusión científica</a>
+        <a href="#tareas" data-ruta="tareas" class="nav__cta">Entregar tarea</a>
+      </nav>
+    </div>
+    <div class="franjas" aria-hidden="true"><span></span><span></span><span></span></div>
+  </header>
+
+  <main id="contenido" tabindex="-1"></main>
+
+  <footer class="pie">
+    <div class="franjas franjas--pie" aria-hidden="true"><span></span><span></span><span></span></div>
+    <div class="pie__interior">
+      <p class="pie__docente" id="pie-docente"></p>
+      <p class="pie__colegio" id="pie-colegio"></p>
+    </div>
+  </footer>
+
+  <dialog id="visor" class="visor">
+    <div class="visor__cabecera">
+      <h2 id="visor-titulo">Material</h2>
+      <div class="visor__acciones">
+        <a id="visor-externo" href="#" target="_blank" rel="noopener" class="boton boton--chico boton--borde">Abrir en pestaña nueva</a>
+        <button class="boton boton--chico" id="visor-cerrar">Cerrar ✕</button>
+      </div>
+    </div>
+    <div class="visor__marco"><iframe id="visor-iframe" title="Contenido" allowfullscreen allow="fullscreen; accelerometer; gyroscope"></iframe></div>
+  </dialog>
+
+  <script src="datos.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
