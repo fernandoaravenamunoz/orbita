@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cuenta Regresiva · Órbita Matemática</title>
+<meta name="description" content="Cuenta Regresiva: combina tus números con las operaciones para llegar exactamente al número objetivo. Juego de cálculo de Órbita Matemática.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Righteous&family=Jost:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+<style>
+:root{
+  --cream:#DEDED2; --paper:#E8E8DE; --navy:#2C395C; --orange:#FF5500; --burnt:#E2571E; --rust:#A92717; --mustard:#B9A727;
+  --muted:#535D76; --cell:#C9CAC4; --ok:#2C395C;
+  --display:"Righteous","Jost",system-ui,sans-serif; --body:"Jost","Helvetica Neue",Arial,sans-serif; --mono:"Space Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--cream);color:var(--navy);font-family:var(--body);font-size:16px;line-height:1.5}
+button{font:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.band{background:var(--navy);color:var(--cream);padding:0 max(16px,env(safe-area-inset-left,0px))}
+.band>*{max-width:1000px;margin:0 auto}
+.band.top{padding-top:22px;padding-bottom:18px;border-bottom:6px double var(--mustard)}
+.band.bottom{padding-top:16px;padding-bottom:24px;border-top:6px double var(--mustard);margin-top:36px;font-size:13px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--mustard);margin:0 0 4px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(30px,6vw,46px);line-height:1.05;margin:0}
+.tag{margin:6px 0 0;opacity:.85;font-size:15px}
+.wrap{max-width:1000px;margin:0 auto;padding:24px 16px 0;display:flex;flex-direction:column;gap:20px}
+.card{border:1px solid var(--mustard);border-radius:16px;padding:18px 20px;background:var(--paper)}
+.grp{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.grp>span{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.06em}
+h2{font-family:var(--display);font-weight:400;font-size:24px;margin:0 0 10px}
+.rules{margin:0;padding-left:22px}.rules li{margin-bottom:6px}.rules li::marker{color:var(--rust);font-weight:700}
+.ej{border:1px dashed var(--navy);border-radius:12px;padding:14px;background:var(--cream);margin-top:6px}
+.ej-t{font-family:var(--display);font-size:17px;margin:0 0 10px}
+.ej-fila{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.ej .mini-obj{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.ej .mini-obj b{font-family:var(--display);font-weight:400;font-size:30px;color:var(--rust);display:block;line-height:1}
+.mini-fichas{display:flex;gap:6px}
+.mini-fichas span{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--navy);color:var(--cream);font-weight:700;font-size:17px}
+.ej p{margin:4px 0}
+.ej .res{font-weight:700;font-size:18px}
+.ej .nota{font-size:14px;color:var(--muted)}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg button{border:1px solid var(--mustard);background:var(--cream);color:var(--navy);border-radius:999px;padding:8px 16px}
+.seg button[aria-pressed="true"]{background:var(--rust);border-color:var(--rust);color:var(--cream);font-weight:600}
+.info{background:var(--mustard);color:var(--navy);border-radius:12px;padding:10px 14px;font-size:14.5px}
+.go{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.rec{font-size:14px;color:var(--muted);margin:0}
+.btn{border:1px solid var(--navy);background:var(--cream);color:var(--navy);border-radius:999px;padding:9px 16px;font-size:15px}
+.btn:hover{background:var(--navy);color:var(--cream)}
+.btn.prim{background:var(--orange);border-color:var(--orange);color:var(--navy);font-family:var(--display);font-size:19px;padding:11px 26px}
+.btn.prim:hover{background:var(--navy);border-color:var(--navy);color:var(--cream)}
+.btn.prim:disabled{opacity:.45;cursor:not-allowed;background:var(--orange);color:var(--navy)}
+.btn.quiet{border-color:transparent;color:var(--muted);text-decoration:underline;background:none;padding:6px 8px}
+
+/* ---- Juego ---- */
+.hud{display:flex;gap:10px;flex-wrap:wrap}
+.chip{border:1px solid var(--navy);border-radius:12px;padding:6px 12px;background:var(--paper);min-width:92px}
+.chip small{display:block;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em}
+.chip b{font-family:var(--display);font-weight:400;font-size:22px;line-height:1.1}
+.chip.lvl{margin-left:auto;text-align:right}
+.mision{background:var(--navy);color:var(--cream);border-radius:18px;padding:18px 20px 22px;position:relative;overflow:hidden}
+.mision::before{content:"";position:absolute;inset:0;opacity:.5;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath d='M40 0H0V40' fill='none' stroke='%23DEDED2' stroke-opacity='.08'/%3E%3C/svg%3E")}
+.mision>*{position:relative}
+.obj{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;margin-bottom:16px}
+.obj .lbl{font-family:var(--mono);font-size:12px;color:var(--mustard);letter-spacing:.1em;text-align:right;line-height:1.4}
+.obj .num{font-family:var(--display);font-size:clamp(56px,13vw,92px);line-height:1;color:var(--cream);
+  border:3px solid var(--mustard);border-radius:16px;padding:6px 22px 2px;min-width:2.6em;text-align:center;background:rgba(0,0,0,.12);font-variant-numeric:tabular-nums}
+.obj .num.neg{color:#FFB08A}
+.fichas{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.ficha{width:68px;height:68px;border-radius:50%;border:3px solid var(--cream);background:var(--burnt);color:var(--navy);
+  font-family:var(--display);font-size:28px;display:grid;place-items:center;box-shadow:0 5px 0 rgba(0,0,0,.25);transition:transform .1s,opacity .15s}
+.ficha:hover{transform:translateY(-2px)}
+.ficha:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.ficha.usada{opacity:.22;cursor:default;transform:none;box-shadow:none}
+.ops{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.op{min-width:52px;height:48px;border-radius:12px;border:1px solid rgba(222,222,210,.6);background:transparent;color:var(--cream);font-size:22px;font-weight:600;padding:0 12px}
+.op:hover{background:var(--cream);color:var(--navy)}
+.op.especial{border-color:var(--mustard);color:var(--mustard)}
+.op.especial:hover{background:var(--mustard);color:var(--navy)}
+.op.especial sup{font-size:13px}
+.expr-box{border:2px solid var(--navy);border-radius:14px;background:var(--paper);padding:12px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-height:74px}
+.expr{flex:1;font-size:clamp(22px,4.4vw,32px);font-weight:600;min-height:1.3em;word-break:break-word;font-variant-numeric:tabular-nums}
+.expr .vacio{color:var(--muted);opacity:.6;font-weight:400;font-size:18px}
+.expr .t{margin:0 .12em}
+.expr sup{font-size:.6em;color:var(--rust)}
+.expr .hueco{display:inline-block;width:.55em;height:.6em;border:2px dashed var(--rust);border-radius:3px;vertical-align:super}
+.valor{font-family:var(--mono);font-size:15px;color:var(--muted);text-align:right;min-width:140px}
+.valor b{display:block;font-family:var(--display);font-weight:400;font-size:28px;color:var(--navy);line-height:1.1}
+.valor.err{color:var(--rust)}
+.valor.cerca b{color:var(--burnt)}
+.acciones{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.acciones .der{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.fb{margin:0;font-weight:600;min-height:1.6em;font-size:17px}
+.fb.ok{color:var(--navy)}.fb.mal{color:var(--rust)}
+.sol{border-left:4px solid var(--mustard);background:var(--paper);padding:10px 14px;border-radius:0 12px 12px 0;font-size:17px}
+.sol b{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--muted);display:block;font-weight:400}
+.sol sup{font-size:.65em}
+.exito{animation:despegue .9s ease-out}
+@keyframes despegue{0%{transform:scale(1)}30%{transform:scale(1.08);box-shadow:0 0 0 8px rgba(185,167,39,.4)}100%{transform:scale(1)}}
+.cohete{position:absolute;right:18px;bottom:-40px;font-size:40px;opacity:0}
+.cohete.go{animation:sube 1.4s ease-in forwards}
+@keyframes sube{0%{bottom:-40px;opacity:1}100%{bottom:110%;opacity:1}}
+
+/* ---- Fin ---- */
+.resumen{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:12px 0 16px}
+.stat{border:1px solid var(--mustard);border-radius:14px;padding:10px 14px;background:var(--paper)}
+.stat span{display:block;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.stat b{font-family:var(--display);font-weight:400;font-size:30px}
+.stat.main{background:var(--navy);color:var(--cream);border-color:var(--navy)}.stat.main span{color:var(--mustard)}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{text-align:left;font-family:var(--mono);font-size:11px;color:var(--muted);font-weight:400;border-bottom:2px solid var(--navy);padding:6px}
+td{padding:8px 6px;border-bottom:1px solid var(--mustard);vertical-align:top}
+td sup{font-size:.65em}
+.tw{overflow-x:auto}
+@media (max-width:560px){.ficha{width:56px;height:56px;font-size:23px}.op{min-width:46px;height:44px}.valor{min-width:0;width:100%;text-align:left}.chip.lvl{margin-left:0}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<!-- Barra de regreso al sitio Órbita Matemática -->
+<nav class="orbita-volver" style="background:#2C395C;border-bottom:4px solid #FF5500;padding:8px max(16px,env(safe-area-inset-left,0px));font:600 14px/1.4 'Jost','Archivo','Helvetica Neue',Arial,sans-serif;position:relative;z-index:50">
+  <a href="../index.html#juegos" style="color:#DEDED2;text-decoration:none;display:inline-flex;align-items:center;gap:8px">
+    <span style="display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#FF5500;color:#2C395C;font-weight:700">←</span>
+    Volver a Órbita Matemática · Juegos
+  </a>
+</nav>
+
+<header class="band top">
+  <div>
+    <p class="eyebrow">Juegos · Matemática</p>
+    <h1>Cuenta Regresiva</h1>
+    <p class="tag">Combina tus números para llegar exactamente al objetivo</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- INICIO -->
+  <section id="inicio" class="card" aria-label="Cómo se juega">
+    <div class="grp"><span>CÓMO SE JUEGA</span>
+      <ol class="rules">
+        <li>Aparece un <b>número objetivo</b> y varias <b>fichas</b> con números.</li>
+        <li>Toca las fichas y las operaciones para armar una expresión que dé <b>exactamente</b> el objetivo.</li>
+        <li>Cada ficha se usa <b>una sola vez</b>. No es obligatorio usarlas todas, pero si las usas todas ganas puntos extra.</li>
+        <li>Se respeta la <b>prioridad de las operaciones</b>: primero potencias y factorial, después multiplicación y división, y al final suma y resta.</li>
+        <li>Si no llegas exacto, puedes pasar a la siguiente ronda y te llevas puntos por quedar cerca.</li>
+      </ol>
+      <div class="ej" aria-label="Ejemplo resuelto">
+        <p class="ej-t">Ejemplo</p>
+        <div class="ej-fila">
+          <div class="mini-obj">OBJETIVO<b>31</b></div>
+          <div class="mini-fichas" aria-label="Fichas 3, 5, 7 y 2"><span>3</span><span>5</span><span>7</span><span>2</span></div>
+        </div>
+        <p class="res">3 · 7 + 5 · 2 = 21 + 10 = 31 🚀</p>
+        <p class="nota">Usó las cuatro fichas, así que suma puntos extra. Ojo con la prioridad: 3 + 7 · 5 − 2 da 36, no 48, porque primero se multiplica.</p>
+      </div>
+    </div>
+    <div class="grp"><span>DIFICULTAD</span>
+      <div class="seg" id="segNivel">
+        <button data-v="b" aria-pressed="true">Básico</button>
+        <button data-v="m" aria-pressed="false">Intermedio</button>
+        <button data-v="a" aria-pressed="false">Avanzado</button>
+      </div>
+      <div class="info" id="infoNivel"></div>
+    </div>
+    <div class="grp"><span>RONDAS</span>
+      <div class="seg" id="segRondas">
+        <button data-v="5" aria-pressed="true">5 rondas</button>
+        <button data-v="10" aria-pressed="false">10 rondas</button>
+      </div>
+    </div>
+    <div class="go">
+      <p class="rec" id="rec"></p>
+      <button class="btn prim" id="btnDespegar">Despegar ▸</button>
+    </div>
+  </section>
+
+  <!-- JUEGO -->
+  <section id="juego" hidden aria-label="Juego">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="hud">
+        <div class="chip"><small>RONDA</small><b id="hRonda">1/5</b></div>
+        <div class="chip"><small>PUNTAJE</small><b id="hPuntos">0</b></div>
+        <div class="chip"><small>EXACTAS</small><b id="hExactas">0</b></div>
+        <div class="chip"><small>TIEMPO</small><b id="hTiempo">0:00</b></div>
+        <div class="chip lvl"><small>NIVEL</small><b id="hNivel" style="font-size:18px">Básico</b></div>
+      </div>
+      <div class="mision" id="mision">
+        <div class="obj">
+          <div class="lbl">NÚMERO<br>OBJETIVO</div>
+          <div class="num" id="objetivo">—</div>
+        </div>
+        <div class="fichas" id="fichas"></div>
+        <div class="ops" id="ops"></div>
+        <span class="cohete" id="cohete" aria-hidden="true">🚀</span>
+      </div>
+      <div class="expr-box">
+        <div class="expr" id="expr" aria-live="polite"></div>
+        <div class="valor" id="valor"></div>
+      </div>
+      <div class="acciones">
+        <button class="btn" id="btnBorrar" title="Borrar el último (tecla ⌫)">⌫ Borrar</button>
+        <button class="btn" id="btnLimpiar">Limpiar</button>
+        <div class="der">
+          <button class="btn quiet" id="btnPasar">Ver una solución y pasar</button>
+          <button class="btn prim" id="btnComprobar">Comprobar ✓</button>
+        </div>
+      </div>
+      <p class="fb" id="fb" aria-live="polite"></p>
+      <div class="sol" id="sol" hidden></div>
+      <div class="acciones" id="filaSiguiente" hidden>
+        <div class="der"><button class="btn prim" id="btnSiguiente">Siguiente ronda ▸</button></div>
+      </div>
+      <p class="rec">En computador puedes usar el teclado: + − * / ( ) ^ ! , números de una cifra, ⌫ y Enter.</p>
+      <div><button class="btn quiet" id="btnAbandonar">Abandonar y volver al inicio</button></div>
+    </div>
+  </section>
+
+  <!-- FIN -->
+  <section id="fin" hidden class="card" aria-label="Resultados">
+    <p class="eyebrow" id="finNivel" style="color:var(--muted)"></p>
+    <h2 id="finTitulo">¡Misión cumplida!</h2>
+    <div class="resumen" id="resumen"></div>
+    <div class="tw"><table><thead><tr><th>OBJETIVO</th><th>FICHAS</th><th>TU RESPUESTA</th><th>UNA SOLUCIÓN POSIBLE</th><th>PUNTOS</th></tr></thead><tbody id="tabla"></tbody></table></div>
+    <div class="acciones" style="margin-top:16px">
+      <button class="btn prim" id="btnOtra">Jugar otra vez</button>
+      <button class="btn" id="btnConfig">Cambiar dificultad</button>
+    </div>
+  </section>
+</main>
+
+<footer class="band bottom"><p>Notación: «·» multiplicación, «:» división, «n!» factorial (por ejemplo 4! = 4 · 3 · 2 · 1 = 24). Cada desafío se genera al momento y <b>siempre tiene al menos una solución</b>.</p></footer>
+
+<script>
+/* ===== Cuenta Regresiva · motor (generador + evaluador) ===== */
+/* Aritmética racional exacta */
+function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b]; } return a || 1; }
+function Q(n, d = 1) {
+  if (d === 0) throw new Error("div0");
+  if (d < 0) { n = -n; d = -d; }
+  const g = gcd(n, d);
+  const r = { n: n / g, d: d / g };
+  if (Math.abs(r.n) > 1e12 || r.d > 1e12) throw new Error("grande");
+  return r;
+}
+const OPS = {
+  "+": (a, b) => Q(a.n * b.d + b.n * a.d, a.d * b.d),
+  "−": (a, b) => Q(a.n * b.d - b.n * a.d, a.d * b.d),
+  "·": (a, b) => Q(a.n * b.n, a.d * b.d),
+  ":": (a, b) => { if (b.n === 0) throw new Error("div0"); return Q(a.n * b.d, a.d * b.n); },
+};
+function potencia(base, e) {
+  if (e < 0 || e > 6) throw new Error("exp");
+  let r = Q(1);
+  for (let i = 0; i < e; i++) r = OPS["·"](r, base);
+  return r;
+}
+function factorial(v) {
+  if (v.d !== 1 || v.n < 0 || v.n > 8) throw new Error("fact");
+  let r = 1; for (let i = 2; i <= v.n; i++) r *= i; return Q(r);
+}
+const esEntero = (v) => v.d === 1;
+
+/* ---------- Niveles ---------- */
+const NIVELES = {
+  b: { nombre: "Básico", fichas: 4, parentesis: false, potencia: false, factorial: false,
+       min: 10, max: 99, negativos: false, usar: [3, 4],
+       texto: "4 números · suma, resta, multiplicación y división · objetivos enteros positivos." },
+  m: { nombre: "Intermedio", fichas: 5, parentesis: true, potencia: false, factorial: false,
+       min: -60, max: 200, negativos: true, usar: [3, 5],
+       texto: "5 números · las cuatro operaciones y paréntesis · el objetivo puede ser negativo." },
+  a: { nombre: "Avanzado", fichas: 6, parentesis: true, potencia: true, factorial: true,
+       min: -300, max: 600, negativos: true, usar: [3, 6],
+       texto: "6 números · paréntesis, potencias (el exponente es una de tus fichas) y factorial · objetivos positivos o negativos." },
+};
+
+/* ---------- Aleatorio con semilla ---------- */
+function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const entre = (rng, a, b) => a + Math.floor(rng() * (b - a + 1));
+const elegir = (rng, arr) => arr[Math.floor(rng() * arr.length)];
+function barajar(rng, a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+/* ---------- Árbol de expresión (para generar y mostrar soluciones) ---------- */
+// nodo: {t:'n', v:entero, i:índiceFicha} | {t:'op', op, a, b} | {t:'pow', a, e:nodoHoja} | {t:'fact', a}
+function valorNodo(x) {
+  if (x.t === "n") return Q(x.v);
+  if (x.t === "op") return OPS[x.op](valorNodo(x.a), valorNodo(x.b));
+  if (x.t === "pow") return potencia(valorNodo(x.a), x.e.v);
+  if (x.t === "fact") return factorial(valorNodo(x.a));
+}
+const PREC = { "+": 1, "−": 1, "·": 2, ":": 2 };
+function prec(x) { return x.t === "n" ? 9 : x.t === "op" ? PREC[x.op] : x.t === "pow" ? 3 : 4; }
+// Texto plano (para el banco de soluciones) y HTML (con exponente en superíndice)
+function texto(x, html) {
+  const T = (y) => texto(y, html);
+  if (x.t === "n") return String(x.v);
+  if (x.t === "fact") { const s = T(x.a); return (x.a.t === "n" ? s : "(" + s + ")") + "!"; }
+  if (x.t === "pow") { const s = T(x.a); const base = x.a.t === "n" ? s : "(" + s + ")"; return html ? base + "<sup>" + x.e.v + "</sup>" : base + "^" + x.e.v; }
+  const p = PREC[x.op];
+  let a = T(x.a), b = T(x.b);
+  if (prec(x.a) < p) a = "(" + a + ")";
+  if (prec(x.b) < p || (prec(x.b) === p && (x.op === "−" || x.op === ":"))) b = "(" + b + ")";
+  return a + " " + x.op + " " + b;
+}
+function usaParentesis(x) { return /\(/.test(texto(x, false)); }
+
+/* Construye un árbol aleatorio con las hojas dadas */
+function arbol(rng, hojas, cfg) {
+  if (hojas.length === 1) {
+    let h = hojas[0];
+    if (cfg.factorial && h.v >= 3 && h.v <= 5 && rng() < 0.18) h = { t: "fact", a: h };
+    return h;
+  }
+  // potencia: una hoja pequeña como exponente
+  if (cfg.potencia && hojas.length >= 2 && rng() < 0.30) {
+    const idxE = hojas.findIndex((h) => h.v >= 2 && h.v <= 3);
+    if (idxE >= 0) {
+      const e = hojas[idxE];
+      const resto = hojas.filter((_, i) => i !== idxE);
+      const base = arbol(rng, resto, cfg);
+      let bv; try { bv = valorNodo(base); } catch (err) { return null; }
+      if (bv && esEntero(bv) && Math.abs(bv.n) >= 2 && Math.abs(bv.n) <= 12) return { t: "pow", a: base, e };
+    }
+  }
+  const corte = entre(rng, 1, hojas.length - 1);
+  const izq = arbol(rng, hojas.slice(0, corte), cfg), der = arbol(rng, hojas.slice(corte), cfg);
+  if (!izq || !der) return null;
+  let nodo = { t: "op", op: elegir(rng, ["+", "−", "·", ":", "+", "−", "·"]), a: izq, b: der };
+  if (cfg.factorial && rng() < 0.08) {
+    try { const v = valorNodo(nodo); if (esEntero(v) && v.n >= 3 && v.n <= 5) nodo = { t: "fact", a: nodo }; } catch (e) {}
+  }
+  return nodo;
+}
+/* Árbol "plano" para el nivel básico: sin paréntesis, se lee con la prioridad de operaciones */
+function plano(rng, hojas) {
+  let x = hojas[0];
+  for (let i = 1; i < hojas.length; i++) {
+    const op = elegir(rng, ["+", "−", "·", ":", "+", "·"]);
+    // aplicar como se leería sin paréntesis
+    if ((op === "·" || op === ":") && x.t === "op" && (x.op === "+" || x.op === "−")) {
+      x = { t: "op", op: x.op, a: x.a, b: { t: "op", op, a: x.b, b: hojas[i] } };
+    } else x = { t: "op", op, a: x, b: hojas[i] };
+  }
+  return x;
+}
+/* Todas las divisiones del camino deben ser exactas (resultados parciales enteros) */
+function todoEntero(x) {
+  if (x.t === "n") return true;
+  if (x.t === "fact") return todoEntero(x.a);
+  if (x.t === "pow") return todoEntero(x.a);
+  if (!todoEntero(x.a) || !todoEntero(x.b)) return false;
+  return esEntero(valorNodo(x));
+}
+function cuentaOps(x, tipo) { if (x.t === "n") return 0; const s = (x.t === tipo ? 1 : 0); return s + (x.a ? cuentaOps(x.a, tipo) : 0) + (x.b ? cuentaOps(x.b, tipo) : 0); }
+
+function fichasNivel(rng, nivel) {
+  const cfg = NIVELES[nivel];
+  const f = [];
+  if (nivel === "b") { while (f.length < 4) f.push(rng() < 0.08 ? 1 : entre(rng, 2, 10)); }
+  else if (nivel === "m") { while (f.length < 4) f.push(entre(rng, 2, 10)); f.push(elegir(rng, [10, 12, 15, 20, 25])); }
+  else { f.push(entre(rng, 2, 3)); while (f.length < 5) f.push(entre(rng, 2, 10)); f.push(elegir(rng, [12, 15, 20, 25, 50])); }
+  return barajar(rng, f).slice(0, cfg.fichas);
+}
+
+/* Genera un desafío que SIEMPRE tiene solución */
+function generar(nivel, semilla) {
+  const cfg = NIVELES[nivel];
+  const rng = mulberry32(semilla);
+  for (let intento = 0; intento < 4000; intento++) {
+    const fichas = intento % 40 === 0 || !generar._f ? fichasNivel(rng, nivel) : generar._f;
+    generar._f = fichas;
+    const k = entre(rng, cfg.usar[0], Math.min(cfg.usar[1], fichas.length));
+    const idx = barajar(rng, fichas.map((_, i) => i)).slice(0, k);
+    const hojas = idx.map((i) => ({ t: "n", v: fichas[i], i }));
+    const x = nivel === "b" ? plano(rng, hojas) : arbol(rng, hojas, cfg);
+    if (!x) continue;
+    let v; try { v = valorNodo(x); } catch (e) { continue; }
+    if (!esEntero(v) || !todoEntero(x)) continue;
+    const obj = v.n;
+    if (obj < cfg.min || obj > cfg.max || obj === 0) continue;
+    if (!cfg.negativos && obj < 0) continue;
+    if (fichas.includes(Math.abs(obj))) continue;
+    if (Math.abs(obj) < 5) continue;
+    if (nivel === "m") { if (!usaParentesis(x)) continue; if (obj > 0 && rng() < 0.25) continue; }
+    if (nivel === "a") { const especial = cuentaOps(x, "pow") + cuentaOps(x, "fact"); if (!especial && rng() < 0.85) continue; if (obj > 0 && rng() < 0.2) continue; }
+    generar._f = null;
+    return { nivel, fichas, objetivo: obj, solucion: texto(x, true), solucionPlana: texto(x, false), usadas: k };
+  }
+  generar._f = null;
+  // respaldo (prácticamente nunca ocurre)
+  return generar(nivel, semilla + 1);
+}
+
+/* ---------- Evaluador de lo que escribe el estudiante ----------
+   fichas: [{t:'num', v, ficha}] | {t:'op', v:'+'|'−'|'·'|':'} | {t:'(' } | {t:')'} | {t:'^'} | {t:'!'} */
+function evaluar(tokens, cfg) {
+  let i = 0;
+  const ver = () => tokens[i], comer = () => tokens[i++];
+  const error = (m) => { const e = new Error(m); e.usuario = true; throw e; };
+  function primario() {
+    const t = ver();
+    if (!t) error("Falta un número al final.");
+    if (t.t === "num") { comer(); return Q(t.v); }
+    if (t.t === "(") {
+      comer(); const v = expr();
+      if (!ver() || ver().t !== ")") error("Falta cerrar un paréntesis.");
+      comer(); return v;
+    }
+    if (t.t === ")") error("Hay un paréntesis que cierra sin haber abierto.");
+    if (t.t === "op" && t.v === "−") error("No se puede empezar con un signo menos: usa una resta entre dos números.");
+    error("Falta un número antes de «" + (t.v || t.t) + "».");
+  }
+  function postfijo() {
+    let v = primario();
+    while (ver() && ver().t === "!") {
+      comer();
+      try { v = factorial(v); } catch (e) { error("El factorial solo se puede aplicar a enteros entre 0 y 8."); }
+    }
+    return v;
+  }
+  function pot() {
+    const base = postfijo();
+    if (ver() && ver().t === "^") {
+      comer();
+      const e = ver();
+      if (!e || e.t !== "num") error("El exponente tiene que ser una de tus fichas.");
+      comer();
+      if (e.v > 6) error("El exponente puede ser como máximo 6.");
+      let r; try { r = potencia(base, e.v); } catch (err) { error("El resultado es demasiado grande."); }
+      if (ver() && ver().t === "^") error("No se pueden encadenar potencias; usa paréntesis.");
+      if (ver() && ver().t === "!") error("Para aplicar factorial a una potencia, ponla entre paréntesis.");
+      return r;
+    }
+    return base;
+  }
+  function term() {
+    let v = pot();
+    while (ver() && ver().t === "op" && (ver().v === "·" || ver().v === ":")) {
+      const op = comer().v; const w = pot();
+      try { v = OPS[op](v, w); } catch (e) { error(e.message === "div0" ? "No se puede dividir por 0." : "El resultado es demasiado grande."); }
+    }
+    return v;
+  }
+  function expr() {
+    let v = term();
+    while (ver() && ver().t === "op" && (ver().v === "+" || ver().v === "−")) {
+      const op = comer().v; const w = term();
+      try { v = OPS[op](v, w); } catch (e) { error("El resultado es demasiado grande."); }
+    }
+    return v;
+  }
+  if (!tokens.length) error("Escribe una expresión con tus números.");
+  try {
+    const v = expr();
+    if (i < tokens.length) {
+      const t = tokens[i];
+      if (t.t === ")") error("Hay un paréntesis que cierra sin haber abierto.");
+      if (t.t === "num" || t.t === "(") error("Falta una operación entre dos números.");
+      error("Revisa la expresión.");
+    }
+    return v;
+  } catch (e) {
+    if (e.usuario) throw e;
+    const er = new Error(e.message === "div0" ? "No se puede dividir por 0." : "El resultado es demasiado grande."); er.usuario = true; throw er;
+  }
+}
+function fmtQ(v) {
+  const s = (n) => (n < 0 ? "−" : "") + Math.abs(n).toLocaleString("es-CL");
+  if (v.d === 1) return s(v.n);
+  const ent = Math.trunc(v.n / v.d);
+  const dec = (v.n / v.d);
+  return (v.n < 0 ? "−" : "") + Math.abs(v.n) + "/" + v.d + " ≈ " + (dec < 0 ? "−" : "") + Math.abs(dec).toFixed(2).replace(".", ",");
+}
+
+</script>
+<script>
+(() => {
+"use strict";
+const $ = (s) => document.querySelector(s);
+const st = { nivel: "b", rondas: 5 };
+const leer = (k) => { try { return Number(localStorage.getItem(k)) || 0; } catch (e) { return 0; } };
+const guardar = (k, v) => { try { localStorage.setItem(k, String(v)); } catch (e) {} };
+
+/* ---------- Inicio ---------- */
+function seg(id, clave) {
+  $(id).addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-v]"); if (!b) return;
+    st[clave] = clave === "rondas" ? +b.dataset.v : b.dataset.v;
+    $(id).querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", x === b));
+    pintarInicio();
+  });
+}
+seg("#segNivel", "nivel"); seg("#segRondas", "rondas");
+function pintarInicio() {
+  $("#infoNivel").innerHTML = `<b>${NIVELES[st.nivel].nombre}:</b> ${NIVELES[st.nivel].texto}`;
+  const r = leer(`cr-record-${st.nivel}-${st.rondas}`);
+  $("#rec").textContent = r ? `Tu récord en ${NIVELES[st.nivel].nombre} (${st.rondas} rondas): ${r} puntos` : `Aún no tienes récord en ${NIVELES[st.nivel].nombre} con ${st.rondas} rondas.`;
+}
+pintarInicio();
+const mostrar = (id) => { ["inicio", "juego", "fin"].forEach((v) => ($("#" + v).hidden = v !== id)); window.scrollTo(0, 0); };
+
+/* ---------- Partida ---------- */
+let P = null, R = null, reloj = null;
+function nuevaPartida() {
+  const base = 1 + Math.floor(Math.random() * 900000);
+  P = { nivel: st.nivel, total: st.rondas, ronda: 0, puntos: 0, exactas: 0, base, historia: [], t0: Date.now() };
+  $("#hNivel").textContent = NIVELES[P.nivel].nombre;
+  clearInterval(reloj); reloj = setInterval(tic, 500);
+  mostrar("juego"); siguienteRonda();
+}
+function tic() {
+  if (!P) return; const s = Math.floor((Date.now() - P.t0) / 1000);
+  $("#hTiempo").textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+}
+function siguienteRonda() {
+  if (P.ronda >= P.total) return terminar();
+  P.ronda++;
+  const d = generar(P.nivel, P.base * 31 + P.ronda * 7919);
+  R = { d, tokens: [], usadas: new Array(d.fichas.length).fill(false), mejor: null, resuelta: false };
+  $("#hRonda").textContent = `${P.ronda}/${P.total}`;
+  const o = $("#objetivo"); o.textContent = fmtN(d.objetivo); o.classList.toggle("neg", d.objetivo < 0);
+  pintarFichas(); pintarOps();
+  $("#fb").textContent = ""; $("#fb").className = "fb"; $("#sol").hidden = true; $("#filaSiguiente").hidden = true;
+  ["#btnComprobar", "#btnBorrar", "#btnLimpiar", "#btnPasar"].forEach((s) => ($(s).disabled = false));
+  pintarExpr();
+}
+const fmtN = (n) => (n < 0 ? "−" : "") + Math.abs(n).toLocaleString("es-CL");
+function pintarFichas() {
+  const c = $("#fichas"); c.innerHTML = "";
+  R.d.fichas.forEach((v, i) => {
+    const b = document.createElement("button");
+    b.className = "ficha" + (R.usadas[i] ? " usada" : ""); b.textContent = v;
+    b.setAttribute("aria-label", "Ficha " + v + (R.usadas[i] ? " (usada)" : ""));
+    b.disabled = R.usadas[i] || R.resuelta;
+    b.onclick = () => ponerFicha(i);
+    c.appendChild(b);
+  });
+}
+function pintarOps() {
+  const cfg = NIVELES[P.nivel];
+  const ops = [["+", "op", "+"], ["−", "op", "−"], ["·", "op", "·"], [":", "op", ":"]];
+  if (cfg.parentesis) ops.push(["(", "(", "("], [")", ")", ")"]);
+  if (cfg.potencia) ops.push(["x<sup>n</sup>", "^", "^", "Potencia: el exponente será la próxima ficha que toques"]);
+  if (cfg.factorial) ops.push(["n!", "!", "!", "Factorial"]);
+  const c = $("#ops"); c.innerHTML = "";
+  ops.forEach(([html, t, v, title]) => {
+    const b = document.createElement("button");
+    b.className = "op" + (t === "^" || t === "!" ? " especial" : ""); b.innerHTML = html;
+    if (title) b.title = title;
+    b.setAttribute("aria-label", title || ({ "+": "más", "−": "menos", "·": "por", ":": "dividido", "(": "abre paréntesis", ")": "cierra paréntesis" })[v]);
+    b.onclick = () => ponerToken(t === "op" ? { t: "op", v } : { t });
+    c.appendChild(b);
+  });
+}
+function ponerFicha(i) {
+  if (R.resuelta || R.usadas[i]) return;
+  R.usadas[i] = true; R.tokens.push({ t: "num", v: R.d.fichas[i], ficha: i });
+  pintarFichas(); pintarExpr();
+}
+function ponerToken(tk) { if (R.resuelta) return; R.tokens.push(tk); pintarExpr(); }
+function borrar() {
+  if (R.resuelta) return;
+  const t = R.tokens.pop(); if (t && t.t === "num") R.usadas[t.ficha] = false;
+  pintarFichas(); pintarExpr();
+}
+function limpiar() { if (R.resuelta) return; R.tokens = []; R.usadas.fill(false); pintarFichas(); pintarExpr(); }
+
+function htmlTokens(tokens) {
+  let h = "";
+  for (let k = 0; k < tokens.length; k++) {
+    const t = tokens[k];
+    if (t.t === "^") {
+      const e = tokens[k + 1];
+      if (e && e.t === "num") { h += `<sup>${e.v}</sup>`; k++; } else h += `<sup><span class="hueco"></span></sup>`;
+      continue;
+    }
+    h += `<span class="t">${t.t === "num" ? t.v : t.t === "op" ? t.v : t.t}</span>`;
+  }
+  return h;
+}
+function pintarExpr() {
+  const ex = $("#expr"), va = $("#valor");
+  ex.innerHTML = R.tokens.length ? htmlTokens(R.tokens) : `<span class="vacio">Toca las fichas y las operaciones…</span>`;
+  va.className = "valor";
+  if (!R.tokens.length) { va.innerHTML = ""; return; }
+  try {
+    const v = evaluar(R.tokens, NIVELES[P.nivel]);
+    const dif = v.d === 1 ? Math.abs(v.n - R.d.objetivo) : null;
+    va.innerHTML = `vale<b>${fmtQ(v)}</b>`;
+    if (dif !== null && dif > 0 && dif <= 5) va.classList.add("cerca");
+  } catch (e) {
+    const ult = R.tokens[R.tokens.length - 1];
+    const incompleto = ult.t === "op" || ult.t === "(" || ult.t === "^" || /Falta cerrar/.test(e.message);
+    va.innerHTML = incompleto ? `vale<b>…</b>` : `<span>${e.message}</span>`;
+    if (!incompleto) va.classList.add("err");
+  }
+}
+function fichasUsadas() { return R.usadas.filter(Boolean).length; }
+function comprobar() {
+  if (R.resuelta) return;
+  const fb = $("#fb");
+  let v;
+  try { v = evaluar(R.tokens, NIVELES[P.nivel]); }
+  catch (e) { fb.textContent = e.message; fb.className = "fb mal"; return; }
+  const exprHtml = htmlTokens(R.tokens);
+  if (v.d === 1 && v.n === R.d.objetivo) {
+    const todas = fichasUsadas() === R.d.fichas.length;
+    const pts = 10 + (todas ? 5 : 0);
+    P.puntos += pts; P.exactas++;
+    P.historia.push({ d: R.d, resp: exprHtml + " = " + fmtN(v.n), pts });
+    fb.textContent = `¡Despegue! 🚀 Llegaste exacto: +10${todas ? " y +5 por usar todas las fichas" : ""}.`; fb.className = "fb ok";
+    $("#mision").classList.remove("exito"); void $("#mision").offsetWidth; $("#mision").classList.add("exito");
+    const c = $("#cohete"); c.classList.remove("go"); void c.offsetWidth; c.classList.add("go");
+    cerrarRonda(false);
+  } else {
+    const dif = v.d === 1 ? Math.abs(v.n - R.d.objetivo) : Infinity;
+    if (!R.mejor || dif < R.mejor.dif) R.mejor = { dif, html: exprHtml + " = " + fmtQ(v) };
+    fb.textContent = v.d !== 1 ? `Tu expresión vale ${fmtQ(v)}, que no es un entero. Sigue intentando.`
+      : `Tu expresión vale ${fmtN(v.n)}: te ${v.n < R.d.objetivo ? "faltan" : "sobran"} ${dif}. ¡Sigue intentando!`;
+    fb.className = "fb mal";
+  }
+  actualizarHud();
+}
+function pasar() {
+  if (R.resuelta) return;
+  let pts = 0, resp = "—";
+  if (R.mejor && R.mejor.dif <= 5) { pts = 6 - R.mejor.dif; resp = R.mejor.html; }
+  else if (R.mejor) resp = R.mejor.html;
+  P.puntos += pts;
+  P.historia.push({ d: R.d, resp, pts });
+  const fb = $("#fb");
+  fb.textContent = pts ? `Tu mejor intento quedó a ${R.mejor.dif} del objetivo: +${pts} ${pts === 1 ? "punto" : "puntos"}.` : (R.mejor ? "Tu mejor intento quedó lejos del objetivo. ¡En la próxima!" : "Ronda sin respuesta. ¡En la próxima!");
+  fb.className = "fb";
+  cerrarRonda(true);
+  actualizarHud();
+}
+function cerrarRonda(mostrarSol) {
+  R.resuelta = true;
+  pintarFichas();
+  ["#btnComprobar", "#btnBorrar", "#btnLimpiar", "#btnPasar"].forEach((s) => ($(s).disabled = true));
+  const s = $("#sol");
+  s.innerHTML = `<b>${mostrarSol ? "UNA SOLUCIÓN POSIBLE" : "OTRA SOLUCIÓN POSIBLE"}</b>${R.d.solucion} = ${fmtN(R.d.objetivo)}`;
+  s.hidden = false;
+  $("#btnSiguiente").textContent = P.ronda >= P.total ? "Ver resultados ▸" : "Siguiente ronda ▸";
+  $("#filaSiguiente").hidden = false;
+  $("#btnSiguiente").focus();
+}
+function actualizarHud() { $("#hPuntos").textContent = P.puntos; $("#hExactas").textContent = P.exactas; }
+function terminar() {
+  clearInterval(reloj);
+  const s = Math.floor((Date.now() - P.t0) / 1000);
+  const k = `cr-record-${P.nivel}-${P.total}`, prev = leer(k), rec = P.puntos > prev;
+  if (rec) guardar(k, P.puntos);
+  const max = P.total * 15;
+  $("#finNivel").textContent = `${NIVELES[P.nivel].nombre.toUpperCase()} · ${P.total} RONDAS`;
+  $("#finTitulo").textContent = P.exactas === P.total ? "¡Misión perfecta! 🚀" : P.exactas >= P.total / 2 ? "¡Misión cumplida!" : "Buen vuelo, sigue practicando";
+  $("#resumen").innerHTML = `
+    <div class="stat main"><span>PUNTAJE</span><b>${P.puntos}</b></div>
+    <div class="stat"><span>EXACTAS</span><b>${P.exactas}/${P.total}</b></div>
+    <div class="stat"><span>TIEMPO</span><b>${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}</b></div>
+    <div class="stat"><span>${rec ? "¡NUEVO RÉCORD!" : "RÉCORD"}</span><b>${Math.max(prev, P.puntos)}</b></div>`;
+  $("#tabla").innerHTML = P.historia.map((h) => `<tr><td><b>${fmtN(h.d.objetivo)}</b></td><td>${h.d.fichas.join(" · ")}</td><td>${h.resp}</td><td>${h.d.solucion}</td><td><b>${h.pts}</b></td></tr>`).join("");
+  mostrar("fin");
+}
+
+/* ---------- Botones y teclado ---------- */
+$("#btnDespegar").onclick = nuevaPartida;
+$("#btnOtra").onclick = nuevaPartida;
+$("#btnConfig").onclick = () => { pintarInicio(); mostrar("inicio"); };
+$("#btnAbandonar").onclick = () => { clearInterval(reloj); P = null; pintarInicio(); mostrar("inicio"); };
+$("#btnBorrar").onclick = borrar;
+$("#btnLimpiar").onclick = limpiar;
+$("#btnComprobar").onclick = comprobar;
+$("#btnPasar").onclick = pasar;
+$("#btnSiguiente").onclick = siguienteRonda;
+document.addEventListener("keydown", (e) => {
+  if ($("#juego").hidden || !R) return;
+  if (e.target.tagName === "INPUT") return;
+  const cfg = NIVELES[P.nivel], k = e.key;
+  if (R.resuelta) { if (k === "Enter") { e.preventDefault(); siguienteRonda(); } return; }
+  if (k === "Enter") { e.preventDefault(); comprobar(); return; }
+  if (k === "Backspace") { e.preventDefault(); borrar(); return; }
+  if (k === "Escape") { limpiar(); return; }
+  const mapa = { "+": "+", "-": "−", "*": "·", "x": "·", "/": ":", ":": ":" };
+  if (mapa[k]) { e.preventDefault(); ponerToken({ t: "op", v: mapa[k] }); return; }
+  if ((k === "(" || k === ")") && cfg.parentesis) { ponerToken({ t: k }); return; }
+  if (k === "^" && cfg.potencia) { ponerToken({ t: "^" }); return; }
+  if (k === "!" && cfg.factorial) { ponerToken({ t: "!" }); return; }
+  if (/^[0-9]$/.test(k)) { const i = R.d.fichas.findIndex((v, j) => v === +k && !R.usadas[j]); if (i >= 0) ponerFicha(i); }
+});
+})();
+</script>
+</body>
+</html>

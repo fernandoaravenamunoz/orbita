@@ -191,6 +191,26 @@ const SITIO = {
       nombre: "Descomponedor de números",
       descripcion: "Divide por números primos hasta llegar a 1 y encuentra la descomposición prima. Modo misión o maratón.",
       url: "juegos/descomponedor-numeros.html"
+    },
+    {
+      nombre: "Cuenta Regresiva",
+      descripcion: "Combina las losetas con operaciones, paréntesis, potencias y factoriales hasta llegar al número objetivo.",
+      url: "juegos/cuenta-regresiva.html"
+    },
+    {
+      nombre: "Batalla naval cartesiana",
+      descripcion: "Hunde la flota del bot disparando a pares ordenados en el plano cartesiano, antes de que hunda la tuya.",
+      url: "juegos/batalla-naval.html"
+    },
+    {
+      nombre: "Recta numérica",
+      descripcion: "Ubica fracciones, decimales, negativos y raíces en la recta. Mientras más cerca, más puntos.",
+      url: "juegos/recta-numerica.html"
+    },
+    {
+      nombre: "Cuadrados mágicos",
+      descripcion: "Completa el cuadrado para que filas, columnas y diagonales sumen lo mismo. Con enteros, fracciones y decimales.",
+      url: "juegos/cuadrados-magicos.html"
     }
     // Para agregar otro juego: sube su archivo .html a la carpeta "juegos"
     // y copia uno de los bloques de arriba (con su coma).

@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Batalla naval cartesiana · Órbita Matemática</title>
+<meta name="description" content="Batalla naval cartesiana: hunde la flota del bot disparando con coordenadas (x, y) en el plano cartesiano. Juego de Órbita Matemática.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Righteous&family=Jost:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+<style>
+:root{
+  --cream:#DEDED2; --paper:#E8E8DE; --navy:#2C395C; --navy2:#25304F; --orange:#FF5500; --burnt:#E2571E; --rust:#A92717; --mustard:#B9A727;
+  --muted:#535D76; --sea:#33436A;
+  --display:"Righteous","Jost",system-ui,sans-serif; --body:"Jost","Helvetica Neue",Arial,sans-serif; --mono:"Space Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--cream);color:var(--navy);font-family:var(--body);font-size:16px;line-height:1.5}
+button,input{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.band{background:var(--navy);color:var(--cream);padding:0 max(16px,env(safe-area-inset-left,0px))}
+.band>*{max-width:1100px;margin:0 auto}
+.band.top{padding-top:22px;padding-bottom:18px;border-bottom:6px double var(--mustard)}
+.band.bottom{padding-top:16px;padding-bottom:24px;border-top:6px double var(--mustard);margin-top:36px;font-size:13px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--mustard);margin:0 0 4px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(28px,6vw,44px);line-height:1.05;margin:0}
+.tag{margin:6px 0 0;opacity:.85;font-size:15px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 0;display:flex;flex-direction:column;gap:18px}
+.card{border:1px solid var(--mustard);border-radius:16px;padding:18px 20px;background:var(--paper)}
+.grp{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.grp>span{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.06em}
+h2{font-family:var(--display);font-weight:400;font-size:22px;margin:0 0 6px}
+.rules{margin:0;padding-left:22px}.rules li{margin-bottom:6px}.rules li::marker{color:var(--rust);font-weight:700}
+.ej{border:1px dashed var(--navy);border-radius:12px;padding:14px;background:var(--cream);display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.ej > svg{width:230px;flex:none}
+.ej-txt{flex:1;min-width:230px}
+.ej-txt p{margin:4px 0}
+.ej-t{font-family:var(--display);font-size:17px}
+.leyenda{display:flex;gap:16px;flex-wrap:wrap;font-size:14px;color:var(--muted);margin-top:8px}
+.leyenda span{display:inline-flex;align-items:center;gap:6px}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg button{border:1px solid var(--mustard);background:var(--cream);color:var(--navy);border-radius:999px;padding:8px 16px}
+.seg button[aria-pressed="true"]{background:var(--rust);border-color:var(--rust);color:var(--cream);font-weight:600}
+.info{background:var(--mustard);color:var(--navy);border-radius:12px;padding:10px 14px;font-size:14.5px}
+.go{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.rec{font-size:14px;color:var(--muted);margin:0}
+.btn{border:1px solid var(--navy);background:var(--cream);color:var(--navy);border-radius:999px;padding:9px 16px;font-size:15px}
+.btn:hover{background:var(--navy);color:var(--cream)}
+.btn.prim{background:var(--orange);border-color:var(--orange);color:var(--navy);font-family:var(--display);font-size:19px;padding:11px 26px}
+.btn.prim:hover{background:var(--navy);border-color:var(--navy);color:var(--cream)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.quiet{border-color:transparent;background:none;color:var(--muted);text-decoration:underline;padding:6px 8px}
+
+/* ---- Juego ---- */
+.hud{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch}
+.chip{border:1px solid var(--navy);border-radius:12px;padding:6px 12px;background:var(--paper);min-width:96px}
+.chip small{display:block;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em}
+.chip b{font-family:var(--display);font-weight:400;font-size:21px;line-height:1.15}
+.turno{margin-left:auto;display:flex;align-items:center;gap:10px;font-family:var(--display);font-size:18px;padding:6px 16px;border-radius:12px;background:var(--navy);color:var(--cream)}
+.turno .dot{width:12px;height:12px;border-radius:50%;background:var(--mustard)}
+.turno.bot{background:var(--rust)}
+.turno.bot .dot{background:var(--cream);animation:parpadeo .8s steps(1) infinite}
+@keyframes parpadeo{50%{opacity:0}}
+.tableros{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:860px){.tableros{grid-template-columns:1fr}}
+.tablero{background:var(--navy);border-radius:18px;padding:12px 12px 10px;color:var(--cream);position:relative}
+.tablero h3{font-family:var(--display);font-weight:400;font-size:19px;margin:2px 6px 6px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.tablero h3 small{font-family:var(--mono);font-size:11px;color:var(--mustard)}
+.tablero svg{display:block;width:100%;height:auto;touch-action:manipulation}
+.flotilla{display:flex;gap:6px;flex-wrap:wrap;margin:6px 6px 2px;font-family:var(--mono);font-size:11px;color:rgba(222,222,210,.75)}
+.flotilla span{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;border:1px solid rgba(222,222,210,.35)}
+.flotilla span.hundido{text-decoration:line-through;opacity:.5;border-color:var(--orange)}
+.flotilla i{display:inline-block;height:6px;border-radius:3px;background:var(--mustard)}
+/* elementos del plano */
+.grilla line{stroke:rgba(222,222,210,.13);stroke-width:.03}
+.eje{stroke:rgba(222,222,210,.8);stroke-width:.055}
+.marca{fill:rgba(222,222,210,.85);font-family:var(--mono);font-size:.42px}
+.pto{fill:rgba(222,222,210,.38);pointer-events:none}
+.capa-pasiva{pointer-events:none}
+.pto-hit{fill:transparent}
+.clicable .pto-hit{cursor:crosshair}
+
+.guia{stroke:var(--mustard);stroke-width:.04;stroke-dasharray:.12 .1;opacity:.8;pointer-events:none}
+.barco{fill:rgba(185,167,39,.28);stroke:var(--mustard);stroke-width:.06}
+.barco.hundido{fill:rgba(169,39,23,.45);stroke:var(--orange);stroke-width:.08}
+.agua{stroke:rgba(222,222,210,.85);stroke-width:.07;stroke-linecap:round}
+.agua-anillo{fill:none;stroke:rgba(222,222,210,.5);stroke-width:.04;animation:onda .7s ease-out forwards}
+@keyframes onda{from{r:.05;opacity:1}to{r:.45;opacity:0}}
+.ultimo{fill:none;stroke:var(--orange);stroke-width:.06;stroke-dasharray:.15 .1;animation:giro 4s linear infinite;transform-box:fill-box;transform-origin:center}
+@keyframes giro{to{transform:rotate(360deg)}}
+/* fuego */
+.fuego .halo{fill:var(--orange);opacity:.28;animation:halo 1.2s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}
+.fuego .l1{fill:var(--burnt);animation:llama 0.55s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 100%}
+.fuego .l2{fill:var(--mustard);animation:llama 0.4s ease-in-out infinite alternate-reverse;transform-box:fill-box;transform-origin:50% 100%}
+.fuego .l3{fill:#FFE2B0;animation:llama 0.32s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 100%}
+.fuego .humo{fill:rgba(222,222,210,.35);animation:humo 1.6s ease-out infinite}
+.fuego .chispa{fill:var(--mustard);animation:chispa 1.1s ease-out infinite}
+@keyframes llama{0%{transform:scale(1,1) skewX(0)}50%{transform:scale(.9,1.12) skewX(5deg)}100%{transform:scale(1.06,.9) skewX(-5deg)}}
+@keyframes halo{from{transform:scale(.85)}to{transform:scale(1.15)}}
+@keyframes humo{0%{transform:translateY(0);opacity:.6}100%{transform:translateY(-.9px);opacity:0}}
+@keyframes chispa{0%{transform:translate(0,0);opacity:1}100%{transform:translate(.25px,-.7px);opacity:0}}
+.boom{fill:var(--orange);animation:boom .5s ease-out forwards}
+@keyframes boom{from{r:.1;opacity:1}to{r:.9;opacity:0}}
+/* disparo */
+.disparo{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--paper);border:2px solid var(--navy);border-radius:14px;padding:10px 14px}
+.disparo label{font-family:var(--display);font-size:19px}
+.coord{display:flex;align-items:center;gap:4px;font-size:26px;font-weight:700}
+.coord input{width:74px;font-size:24px;font-weight:700;text-align:center;border:2px solid var(--navy);border-radius:10px;padding:4px 6px;background:var(--cream);color:var(--navy)}
+.coord input::-webkit-inner-spin-button{opacity:1}
+.disparo .msg{flex:1;min-width:200px;font-weight:600}
+.msg.mal{color:var(--rust)}
+.bitacora{border:1px solid var(--mustard);border-radius:14px;background:var(--paper);padding:10px 14px;max-height:190px;overflow:auto;font-size:14.5px}
+.bitacora h4{margin:0 0 6px;font-family:var(--mono);font-size:11px;color:var(--muted);font-weight:400;letter-spacing:.06em}
+.bitacora ol{margin:0;padding-left:20px}
+.bitacora li{margin:2px 0}
+.bitacora .yo{color:var(--navy)} .bitacora .bot{color:var(--muted)}
+.bitacora b.imp{color:var(--rust)}
+/* fin */
+.modal{position:fixed;inset:0;background:rgba(34,45,73,.72);display:grid;place-items:center;padding:16px;z-index:30}
+.modal .card{max-width:520px;width:100%}
+.resumen{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:12px 0 16px}
+.stat{border:1px solid var(--mustard);border-radius:14px;padding:8px 12px;background:var(--cream)}
+.stat span{display:block;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.stat b{font-family:var(--display);font-weight:400;font-size:26px}
+.stat.main{background:var(--navy);color:var(--cream);border-color:var(--navy)}.stat.main span{color:var(--mustard)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<!-- Barra de regreso al sitio Órbita Matemática -->
+<nav class="orbita-volver" style="background:#2C395C;border-bottom:4px solid #FF5500;padding:8px max(16px,env(safe-area-inset-left,0px));font:600 14px/1.4 'Jost','Archivo','Helvetica Neue',Arial,sans-serif;position:relative;z-index:50">
+  <a href="../index.html#juegos" style="color:#DEDED2;text-decoration:none;display:inline-flex;align-items:center;gap:8px">
+    <span style="display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#FF5500;color:#2C395C;font-weight:700">←</span>
+    Volver a Órbita Matemática · Juegos
+  </a>
+</nav>
+
+<header class="band top">
+  <div>
+    <p class="eyebrow">Juegos · Matemática</p>
+    <h1>Batalla naval cartesiana</h1>
+    <p class="tag">Hunde la flota del bot disparando con coordenadas (x, y)</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- INICIO -->
+  <section id="inicio" class="card" aria-label="Cómo se juega">
+    <div class="grp"><span>CÓMO SE JUEGA</span>
+      <ol class="rules">
+        <li>Tú y el bot tienen una flota escondida sobre los <b>puntos del plano cartesiano</b>. Cada barco ocupa varios puntos seguidos, en horizontal o en vertical.</li>
+        <li>En tu turno disparas a un punto con su <b>par ordenado (x, y)</b>: primero la coordenada <b>x</b> (horizontal) y después la <b>y</b> (vertical).</li>
+        <li>Si le das a un barco, ese punto <b>se incendia 🔥</b>. Si cae al agua, queda marcado con ✕. Cuando aciertas todos los puntos de un barco, <b>se hunde</b>.</li>
+        <li>Luego dispara el bot sobre tu flota. Gana quien hunda primero todos los barcos del otro.</li>
+      </ol>
+      <div class="ej" aria-label="Ejemplo">
+        <svg viewBox="-1 -1 7.2 5.4" aria-hidden="true" id="ejemplo"></svg>
+        <div class="ej-txt">
+          <p class="ej-t">Ejemplo · disparar a (3, 2)</p>
+          <p>Desde el origen (0, 0), avanza <b>3 hacia la derecha</b> (x = 3) y luego <b>2 hacia arriba</b> (y = 2).</p>
+          <p>¡Había un barco! El punto se incendia. Su vecino (4, 2) también se ve dañado: ese barco aún no se hunde, así que conviene seguir disparando cerca.</p>
+          <p class="rec">Ojo: (3, 2) y (2, 3) son puntos distintos. El orden importa.</p>
+          <div class="leyenda"><span>🔥 impacto</span><span>✕ agua</span><span><svg width="34" height="12" viewBox="0 0 34 12"><rect x="1" y="1" width="32" height="10" rx="5" fill="rgba(169,39,23,.45)" stroke="#FF5500" stroke-width="1.5"/></svg> barco hundido</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="grp"><span>DIFICULTAD</span>
+      <div class="seg" id="segNivel">
+        <button data-v="b" aria-pressed="true">Básico</button>
+        <button data-v="m" aria-pressed="false">Intermedio</button>
+        <button data-v="a" aria-pressed="false">Avanzado</button>
+      </div>
+      <div class="info" id="infoNivel"></div>
+    </div>
+    <div class="go">
+      <p class="rec" id="rec"></p>
+      <button class="btn prim" id="btnZarpar">Zarpar ▸</button>
+    </div>
+  </section>
+
+  <!-- JUEGO -->
+  <section id="juego" hidden aria-label="Juego">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="hud">
+        <div class="chip"><small>DISPAROS</small><b id="hDisparos">0</b></div>
+        <div class="chip"><small>ACIERTOS</small><b id="hAciertos">0</b></div>
+        <div class="chip"><small>PRECISIÓN</small><b id="hPrec">—</b></div>
+        <div class="chip"><small>NIVEL</small><b id="hNivel" style="font-size:17px">Básico</b></div>
+        <div class="turno" id="turno"><span class="dot"></span><span id="turnoTxt">Tu turno</span></div>
+      </div>
+      <div class="disparo" id="panelDisparo">
+        <label for="inX">Disparar a</label>
+        <div class="coord">(<input id="inX" type="number" inputmode="numeric" step="1" aria-label="Coordenada x" placeholder="x">,<input id="inY" type="number" inputmode="numeric" step="1" aria-label="Coordenada y" placeholder="y">)</div>
+        <button class="btn prim" id="btnFuego">¡Fuego! 🚀</button>
+        <span class="msg" id="msg" aria-live="polite"></span>
+      </div>
+      <div class="tableros">
+        <div class="tablero">
+          <h3>Flota enemiga <small id="ayudaEnemigo">TUS DISPAROS</small></h3>
+          <svg id="tabEnemigo" role="img" aria-label="Tablero del bot con tus disparos"></svg>
+          <div class="flotilla" id="flotaEnemiga"></div>
+        </div>
+        <div class="tablero">
+          <h3>Tu flota <small>DISPAROS DEL BOT</small></h3>
+          <svg id="tabPropio" role="img" aria-label="Tu tablero con los disparos del bot"></svg>
+          <div class="flotilla" id="flotaPropia"></div>
+        </div>
+      </div>
+      <div class="bitacora"><h4>BITÁCORA DE DISPAROS</h4><ol id="bitacora" reversed></ol></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" id="btnReordenar" title="Solo antes del primer disparo">Reordenar mi flota</button>
+        <button class="btn quiet" id="btnAbandonar">Abandonar y volver al inicio</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="modal" id="modal" hidden>
+  <div class="card">
+    <p class="eyebrow" id="finNivel" style="color:var(--muted)"></p>
+    <h2 id="finTitulo"></h2>
+    <p id="finTxt" style="margin:0"></p>
+    <div class="resumen" id="resumen"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn prim" id="btnOtra">Jugar otra vez</button>
+      <button class="btn" id="btnVer">Ver los tableros</button>
+      <button class="btn" id="btnConfig">Cambiar dificultad</button>
+    </div>
+  </div>
+</div>
+
+<footer class="band bottom"><p>Un par ordenado (x, y) indica primero la posición horizontal y después la vertical. Los barcos se ubican sobre puntos de coordenadas enteras y nunca se tocan entre sí.</p></footer>
+
+<script>
+(() => {
+"use strict";
+const $ = (s) => document.querySelector(s);
+const NS = "http://www.w3.org/2000/svg";
+const NIVELES = {
+  b: { nombre: "Básico", min: 0, max: 8, flota: [4, 3, 3, 2], clic: true, bot: "azar",
+       texto: "Primer cuadrante (de 0 a 8). Puedes disparar <b>tocando un punto</b> o escribiendo la coordenada. El bot dispara al azar." },
+  m: { nombre: "Intermedio", min: -5, max: 5, flota: [4, 3, 3, 2, 2], clic: false, bot: "caza",
+       texto: "Los cuatro cuadrantes (de −5 a 5). Tienes que <b>escribir la coordenada</b>. Cuando el bot acierta, busca alrededor." },
+  a: { nombre: "Avanzado", min: -6, max: 6, flota: [5, 4, 3, 3, 2], clic: false, bot: "estratega",
+       texto: "Los cuatro cuadrantes (de −6 a 6) y <b>escribes la coordenada</b>. El bot es estratégico: reparte sus disparos como un tablero de ajedrez y persigue cada impacto." },
+};
+const NOMBRES = { 5: "Portaaviones", 4: "Acorazado", 3: "Crucero", 2: "Lancha" };
+let nivel = "b", J = null;
+const leer = (k) => { try { return Number(localStorage.getItem(k)) || 0; } catch (e) { return 0; } };
+const guardar = (k, v) => { try { localStorage.setItem(k, String(v)); } catch (e) {} };
+const fmt = (n) => (n < 0 ? "−" : "") + Math.abs(n);
+const par = (x, y) => `(${fmt(x)}, ${fmt(y)})`;
+const clave = (x, y) => x + "," + y;
+
+/* ---------- Inicio ---------- */
+$("#segNivel").addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-v]"); if (!b) return;
+  nivel = b.dataset.v;
+  $("#segNivel").querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", x === b));
+  pintarInicio();
+});
+function pintarInicio() {
+  const c = NIVELES[nivel];
+  $("#infoNivel").innerHTML = `<b>${c.nombre}:</b> ${c.texto} Flota: ${c.flota.map((l) => NOMBRES[l] + " (" + l + ")").join(", ")}.`;
+  const g = leer("bn-ganadas-" + nivel), m = leer("bn-mejor-" + nivel);
+  $("#rec").textContent = g ? `Victorias en ${c.nombre}: ${g} · Mejor precisión: ${m}%` : `Aún no le has ganado al bot en ${c.nombre}.`;
+}
+pintarInicio();
+const mostrar = (id) => { ["inicio", "juego"].forEach((v) => ($("#" + v).hidden = v !== id)); window.scrollTo(0, 0); };
+
+/* ---------- Flotas ---------- */
+function ubicarFlota(cfg) {
+  for (let intento = 0; intento < 500; intento++) {
+    const ocupado = new Set(), barcos = [];
+    let ok = true;
+    for (const L of cfg.flota) {
+      let puesto = false;
+      for (let t = 0; t < 300 && !puesto; t++) {
+        const h = Math.random() < 0.5;
+        const x0 = cfg.min + Math.floor(Math.random() * (cfg.max - cfg.min + 1 - (h ? L - 1 : 0)));
+        const y0 = cfg.min + Math.floor(Math.random() * (cfg.max - cfg.min + 1 - (h ? 0 : L - 1)));
+        const pts = [];
+        for (let k = 0; k < L; k++) pts.push(h ? [x0 + k, y0] : [x0, y0 + k]);
+        // sin tocar otros barcos (ni en diagonal)
+        if (pts.some(([x, y]) => { for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) if (ocupado.has(clave(x + dx, y + dy))) return true; return false; })) continue;
+        pts.forEach(([x, y]) => ocupado.add(clave(x, y)));
+        barcos.push({ L, pts, golpes: new Set(), hundido: false });
+        puesto = true;
+      }
+      if (!puesto) { ok = false; break; }
+    }
+    if (ok) return barcos;
+  }
+}
+const barcoEn = (barcos, x, y) => barcos.find((b) => b.pts.some(([a, c]) => a === x && c === y));
+
+/* ---------- Dibujo del plano ---------- */
+function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+function dibujarPlano(svg, cfg, clicable) {
+  svg.innerHTML = "";
+  const a = cfg.min - (cfg.min < 0 ? 1.15 : 0.9), b = cfg.max + 0.9;
+  svg.setAttribute("viewBox", `${a} ${-b} ${b - a} ${b - a}`);
+  const g = el("g", { class: "grilla" }, svg);
+  for (let v = cfg.min; v <= cfg.max; v++) {
+    el("line", { x1: v, y1: -cfg.max - .4, x2: v, y2: -cfg.min + .4 }, g);
+    el("line", { x1: cfg.min - .4, y1: -v, x2: cfg.max + .4, y2: -v }, g);
+  }
+  // ejes (en 0, o en el borde si el rango no incluye 0)
+  const ex = Math.max(cfg.min, Math.min(cfg.max, 0)), ey = ex;
+  el("line", { class: "eje", x1: cfg.min - .6, y1: -ey, x2: cfg.max + .6, y2: -ey }, svg);
+  el("line", { class: "eje", x1: ex, y1: -cfg.min + .6, x2: ex, y2: -cfg.max - .6 }, svg);
+  el("path", { d: `M${cfg.max + .75} ${-ey} l-.25 -.13 v.26z`, fill: "rgba(222,222,210,.8)" }, svg);
+  el("path", { d: `M${ex} ${-cfg.max - .75} l-.13 .25 h.26z`, fill: "rgba(222,222,210,.8)" }, svg);
+  const tx = el("text", { class: "marca", x: cfg.max + .55, y: -ey - .22, "font-style": "italic" }, svg); tx.textContent = "x";
+  const ty = el("text", { class: "marca", x: ex + .18, y: -cfg.max - .5, "font-style": "italic" }, svg); ty.textContent = "y";
+  // números: junto a los ejes en el primer cuadrante; en los bordes cuando hay cuatro cuadrantes (no tapan los disparos en x = 0 o y = 0)
+  const borde = cfg.min < 0;
+  const yNumX = borde ? cfg.min - .55 : ey - .55;   // fila donde van los números de x (en coordenadas del plano)
+  const xNumY = borde ? cfg.min - .45 : ex - .2;    // columna donde van los números de y
+  for (let v = cfg.min; v <= cfg.max; v++) {
+    if (borde || v !== 0) {
+      const t1 = el("text", { class: "marca", x: v, y: -yNumX + .14, "text-anchor": "middle" }, svg); t1.textContent = fmt(v);
+      const t2 = el("text", { class: "marca", x: xNumY, y: -v + .14, "text-anchor": "end" }, svg); t2.textContent = fmt(v);
+    }
+  }
+  if (!borde) { const t0 = el("text", { class: "marca", x: ex - .2, y: -ey + .55, "text-anchor": "end" }, svg); t0.textContent = "0"; }
+  const capas = { barcos: el("g", { class: "capa-pasiva" }, svg), puntos: el("g", { class: clicable ? "clicable" : "" }, svg), marcas: el("g", { class: "capa-pasiva" }, svg), guias: el("g", { class: "capa-pasiva" }, svg) };
+  for (let x = cfg.min; x <= cfg.max; x++) for (let y = cfg.min; y <= cfg.max; y++) {
+    const hit = el("circle", { class: "pto-hit", cx: x, cy: -y, r: .45, "data-x": x, "data-y": y }, capas.puntos);
+    el("circle", { class: "pto", cx: x, cy: -y, r: .09 }, capas.puntos);
+  }
+  return capas;
+}
+function capsula(capa, barco, hundido) {
+  const xs = barco.pts.map((p) => p[0]), ys = barco.pts.map((p) => p[1]);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  el("rect", { class: "barco" + (hundido ? " hundido" : ""), x: x0 - .32, y: -y1 - .32, width: x1 - x0 + .64, height: y1 - y0 + .64, rx: .32 }, capa);
+}
+function fuego(capa, x, y, nuevo) {
+  const g = el("g", { class: "fuego", transform: `translate(${x} ${-y})` }, capa);
+  if (nuevo) el("circle", { class: "boom", r: .1 }, g);
+  el("circle", { class: "halo", r: .36 }, g);
+  el("circle", { class: "humo", cx: -.08, cy: -.45, r: .12 }, g);
+  el("path", { class: "l1", d: "M0 -.46 C.2 -.24 .27 -.06 .15 .1 C.08 .18 -.08 .18 -.15 .1 C-.27 -.06 -.2 -.24 0 -.46Z" }, g);
+  el("path", { class: "l2", d: "M0 -.3 C.12 -.16 .16 -.04 .09 .07 C.04 .12 -.04 .12 -.09 .07 C-.16 -.04 -.12 -.16 0 -.3Z" }, g);
+  el("path", { class: "l3", d: "M0 -.14 C.06 -.07 .08 0 .04 .05 C.02 .07 -.02 .07 -.04 .05 C-.08 0 -.06 -.07 0 -.14Z" }, g);
+  el("circle", { class: "chispa", cx: .12, cy: -.3, r: .03 }, g);
+}
+function agua(capa, x, y, nuevo) {
+  const g = el("g", { transform: `translate(${x} ${-y})` }, capa);
+  if (nuevo) el("circle", { class: "agua-anillo", r: .05 }, g);
+  el("path", { class: "agua", d: "M-.16 -.16 L.16 .16 M.16 -.16 L-.16 .16" }, g);
+}
+function pintarTablero(lado) {
+  const t = J[lado];
+  t.capas.barcos.innerHTML = ""; t.capas.marcas.innerHTML = "";
+  t.barcos.forEach((b) => { if (lado === "propio" || b.hundido || J.terminado) capsula(t.capas.barcos, b, b.hundido); });
+  t.disparos.forEach((d, i) => { const nuevo = i === t.disparos.length - 1 && d.nuevo; (d.imp ? fuego : agua)(t.capas.marcas, d.x, d.y, nuevo); d.nuevo = false; });
+  const u = t.disparos[t.disparos.length - 1];
+  if (u) el("circle", { class: "ultimo", cx: u.x, cy: -u.y, r: .42 }, t.capas.marcas);
+}
+function pintarFlotilla(id, barcos) {
+  $(id).innerHTML = barcos.map((b) => `<span class="${b.hundido ? "hundido" : ""}"><i style="width:${b.L * 7}px"></i>${NOMBRES[b.L]}</span>`).join("");
+}
+
+/* ---------- Partida ---------- */
+function nuevaPartida() {
+  const cfg = NIVELES[nivel];
+  J = { cfg, turno: "yo", terminado: false, disparos: 0, aciertos: 0, bot: { objetivos: [], golpesVivos: [] } };
+  J.enemigo = { barcos: ubicarFlota(cfg), disparos: [], hechos: new Set() };
+  J.propio = { barcos: ubicarFlota(cfg), disparos: [], hechos: new Set() };
+  J.enemigo.capas = dibujarPlano($("#tabEnemigo"), cfg, cfg.clic);
+  J.propio.capas = dibujarPlano($("#tabPropio"), cfg, false);
+  $("#hNivel").textContent = cfg.nombre;
+  $("#ayudaEnemigo").textContent = cfg.clic ? "TOCA UN PUNTO O ESCRIBE (x, y)" : "ESCRIBE LA COORDENADA (x, y)";
+  $("#bitacora").innerHTML = ""; $("#msg").textContent = ""; $("#msg").className = "msg";
+  $("#inX").min = $("#inY").min = cfg.min; $("#inX").max = $("#inY").max = cfg.max;
+  $("#inX").value = ""; $("#inY").value = "";
+  $("#btnReordenar").disabled = false;
+  $("#modal").hidden = true;
+  pintarTablero("enemigo"); pintarTablero("propio");
+  pintarFlotilla("#flotaEnemiga", J.enemigo.barcos); pintarFlotilla("#flotaPropia", J.propio.barcos);
+  activarClic(); hud(); turno("yo");
+  mostrar("juego"); $("#inX").focus();
+}
+function activarClic() {
+  const svg = $("#tabEnemigo");
+  svg.onclick = (e) => {
+    const p = e.target.closest(".pto-hit"); if (!p || !J.cfg.clic) return;
+    disparar(+p.dataset.x, +p.dataset.y);
+  };
+  // guías hacia los ejes al pasar el mouse (solo básico)
+  svg.onmousemove = (e) => {
+    const g = J.enemigo.capas.guias; g.innerHTML = "";
+    const p = e.target.closest(".pto-hit"); if (!p || !J.cfg.clic || J.turno !== "yo" || J.terminado) return;
+    const x = +p.dataset.x, y = +p.dataset.y;
+    el("line", { class: "guia", x1: x, y1: -y, x2: x, y2: 0 }, g); el("line", { class: "guia", x1: x, y1: -y, x2: 0, y2: -y }, g);
+    el("circle", { cx: x, cy: -y, r: .17, fill: "#B9A727" }, g);
+  };
+  svg.onmouseleave = () => { J.enemigo.capas.guias.innerHTML = ""; };
+}
+function turno(q) {
+  J.turno = q;
+  const t = $("#turno"); t.classList.toggle("bot", q === "bot");
+  $("#turnoTxt").textContent = q === "bot" ? "Dispara el bot…" : "Tu turno";
+  $("#btnFuego").disabled = q !== "yo" || J.terminado;
+}
+function hud() {
+  $("#hDisparos").textContent = J.disparos; $("#hAciertos").textContent = J.aciertos;
+  $("#hPrec").textContent = J.disparos ? Math.round(100 * J.aciertos / J.disparos) + "%" : "—";
+}
+function log(html, cls) { const li = document.createElement("li"); li.className = cls; li.innerHTML = html; $("#bitacora").prepend(li); }
+function msg(t, mal) { $("#msg").textContent = t; $("#msg").className = "msg" + (mal ? " mal" : ""); }
+
+function disparar(x, y) {
+  if (!J || J.terminado || J.turno !== "yo") return;
+  const c = J.cfg;
+  if (!Number.isInteger(x) || !Number.isInteger(y)) return msg("Escribe dos números enteros, x e y.", true);
+  if (x < c.min || x > c.max || y < c.min || y > c.max) return msg(`Ese punto está fuera del tablero: x e y van de ${fmt(c.min)} a ${fmt(c.max)}.`, true);
+  const t = J.enemigo;
+  if (t.hechos.has(clave(x, y))) return msg(`Ya disparaste a ${par(x, y)}. Elige otro punto.`, true);
+  $("#btnReordenar").disabled = true;
+  t.hechos.add(clave(x, y)); J.disparos++;
+  const b = barcoEn(t.barcos, x, y);
+  let txt;
+  if (b) {
+    b.golpes.add(clave(x, y)); J.aciertos++;
+    if (b.golpes.size === b.L) { b.hundido = true; txt = `¡Hundiste el ${NOMBRES[b.L].toLowerCase()} enemigo! 🔥`; }
+    else txt = "¡Impacto! 🔥";
+  } else txt = "Agua.";
+  t.disparos.push({ x, y, imp: !!b, nuevo: true });
+  msg(`${par(x, y)}: ${txt}`, false);
+  log(`Disparaste a <b>${par(x, y)}</b>: ${b ? `<b class="imp">${txt}</b>` : txt}`, "yo");
+  pintarTablero("enemigo"); pintarFlotilla("#flotaEnemiga", t.barcos); hud();
+  $("#inX").value = ""; $("#inY").value = "";
+  if (t.barcos.every((s) => s.hundido)) return fin(true);
+  turno("bot");
+  setTimeout(turnoBot, 900);
+}
+
+/* ---------- Bot ---------- */
+function libres() {
+  const c = J.cfg, out = [];
+  for (let x = c.min; x <= c.max; x++) for (let y = c.min; y <= c.max; y++) if (!J.propio.hechos.has(clave(x, y))) out.push([x, y]);
+  return out;
+}
+function elegirBot() {
+  const c = J.cfg, B = J.bot, h = J.propio.hechos;
+  const dentro = ([x, y]) => x >= c.min && x <= c.max && y >= c.min && y <= c.max && !h.has(clave(x, y));
+  if (c.bot !== "azar" && B.golpesVivos.length) {
+    const g = B.golpesVivos;
+    let cand = [];
+    if (g.length >= 2) {
+      // continuar en la línea de los impactos
+      const horiz = g.every((p) => p[1] === g[0][1]);
+      const xs = g.map((p) => p[0]), ys = g.map((p) => p[1]);
+      if (horiz) cand = [[Math.min(...xs) - 1, g[0][1]], [Math.max(...xs) + 1, g[0][1]]];
+      else cand = [[g[0][0], Math.min(...ys) - 1], [g[0][0], Math.max(...ys) + 1]];
+      cand = cand.filter(dentro);
+    }
+    if (!cand.length) for (const [x, y] of g) cand.push(...[[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]].filter(dentro));
+    // no disparar junto a barcos ya hundidos (nunca se tocan)
+    cand = cand.filter(([x, y]) => !vecinoHundido(x, y));
+    if (cand.length) return cand[Math.floor(Math.random() * cand.length)];
+  }
+  let op = libres().filter(([x, y]) => c.bot === "azar" || !vecinoHundido(x, y));
+  if (c.bot === "estratega") { const pares = op.filter(([x, y]) => ((x + y) % 2 + 2) % 2 === 0); if (pares.length) op = pares; }
+  if (!op.length) op = libres();
+  return op[Math.floor(Math.random() * op.length)];
+}
+function vecinoHundido(x, y) {
+  return J.propio.barcos.some((b) => b.hundido && b.pts.some(([a, c]) => Math.abs(a - x) <= 1 && Math.abs(c - y) <= 1));
+}
+function turnoBot() {
+  if (!J || J.terminado) return;
+  const [x, y] = elegirBot(), t = J.propio;
+  t.hechos.add(clave(x, y));
+  const b = barcoEn(t.barcos, x, y);
+  let txt;
+  if (b) {
+    b.golpes.add(clave(x, y)); J.bot.golpesVivos.push([x, y]);
+    if (b.golpes.size === b.L) {
+      b.hundido = true; txt = `hundió tu ${NOMBRES[b.L].toLowerCase()}`;
+      J.bot.golpesVivos = J.bot.golpesVivos.filter(([a, c]) => !b.pts.some(([p, q]) => p === a && q === c));
+    } else txt = "¡impacto en tu flota!";
+  } else txt = "agua";
+  t.disparos.push({ x, y, imp: !!b, nuevo: true });
+  log(`El bot disparó a <b>${par(x, y)}</b>: ${b ? `<b class="imp">${txt}</b>` : txt}`, "bot");
+  pintarTablero("propio"); pintarFlotilla("#flotaPropia", t.barcos);
+  if (t.barcos.every((s) => s.hundido)) return fin(false);
+  turno("yo");
+  if (!J.cfg.clic || document.activeElement === $("#inX") || document.activeElement === $("#inY") || document.activeElement === $("#btnFuego")) $("#inX").focus();
+}
+
+/* ---------- Fin ---------- */
+function fin(gane) {
+  J.terminado = true; turno("fin");
+  $("#turnoTxt").textContent = gane ? "¡Victoria!" : "Derrota";
+  pintarTablero("enemigo");
+  const prec = J.disparos ? Math.round(100 * J.aciertos / J.disparos) : 0;
+  if (gane) { guardar("bn-ganadas-" + nivel, leer("bn-ganadas-" + nivel) + 1); if (prec > leer("bn-mejor-" + nivel)) guardar("bn-mejor-" + nivel, prec); }
+  const restantes = J.propio.barcos.filter((b) => !b.hundido).length, suyos = J.enemigo.barcos.filter((b) => !b.hundido).length;
+  $("#finNivel").textContent = J.cfg.nombre.toUpperCase();
+  $("#finTitulo").textContent = gane ? "¡Hundiste toda la flota enemiga! 🔥" : "El bot hundió tu flota";
+  $("#finTxt").textContent = gane ? `Te quedaron ${restantes} ${restantes === 1 ? "barco" : "barcos"} a flote.` : `Al bot le quedaban ${suyos} ${suyos === 1 ? "barco" : "barcos"}. Ahora puedes ver dónde estaban.`;
+  $("#resumen").innerHTML = `<div class="stat main"><span>DISPAROS</span><b>${J.disparos}</b></div><div class="stat"><span>ACIERTOS</span><b>${J.aciertos}</b></div><div class="stat"><span>PRECISIÓN</span><b>${prec}%</b></div>`;
+  setTimeout(() => ($("#modal").hidden = false), 700);
+}
+
+/* ---------- Ejemplo de la pantalla de inicio ---------- */
+(function ejemplo() {
+  const svg = $("#ejemplo"), cfg = { min: 0, max: 5 };
+  svg.setAttribute("viewBox", "-0.9 -5.6 6.6 6.4");
+  const fondo = el("rect", { x: -.9, y: -5.9, width: 6.8, height: 6.8, rx: .4, fill: "#2C395C" }, svg);
+  const c = dibujarPlano(svg, { min: 0, max: 5 }, false);
+  svg.insertBefore(fondo, svg.firstChild);
+  svg.setAttribute("viewBox", "-0.9 -5.9 6.8 6.8");
+  el("line", { class: "guia", x1: 0, y1: 0, x2: 3, y2: 0, "stroke-dasharray": "none", "stroke-width": ".08" }, c.guias);
+  el("line", { class: "guia", x1: 3, y1: 0, x2: 3, y2: -2, "stroke-dasharray": "none", "stroke-width": ".08" }, c.guias);
+  el("path", { d: "M3 -2 l-.12 .22 h.24z", fill: "#B9A727" }, c.guias);
+  fuego(c.marcas, 3, 2, false); fuego(c.marcas, 4, 2, false); agua(c.marcas, 1, 4, false);
+  const t = el("text", { class: "marca", x: 3.05, y: -2.55, fill: "#B9A727", "font-size": ".46" }, c.guias); t.textContent = "(3, 2)";
+})();
+
+/* ---------- Controles ---------- */
+$("#btnZarpar").onclick = nuevaPartida;
+$("#btnOtra").onclick = nuevaPartida;
+$("#btnVer").onclick = () => { $("#modal").hidden = true; };
+$("#btnConfig").onclick = () => { $("#modal").hidden = true; pintarInicio(); mostrar("inicio"); };
+$("#btnAbandonar").onclick = () => { J = null; pintarInicio(); mostrar("inicio"); };
+$("#btnReordenar").onclick = () => {
+  if (!J || J.disparos) return;
+  J.propio.barcos = ubicarFlota(J.cfg); pintarTablero("propio"); pintarFlotilla("#flotaPropia", J.propio.barcos);
+};
+const fuegoForm = () => {
+  const vx = $("#inX").value.trim().replace("−", "-"), vy = $("#inY").value.trim().replace("−", "-");
+  if (vx === "" || vy === "") return msg("Escribe las dos coordenadas: primero x y después y.", true);
+  disparar(Number(vx), Number(vy));
+};
+$("#btnFuego").onclick = fuegoForm;
+$("#inX").addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === ",") { e.preventDefault(); $("#inY").focus(); } });
+$("#inY").addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); fuegoForm(); } });
+})();
+</script>
+</body>
+</html>

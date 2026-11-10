@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Recta numérica · Órbita Matemática</title>
+<meta name="description" content="Recta numérica: ubica fracciones, decimales, negativos e irracionales en la recta y gana puntos por precisión. Juego de Órbita Matemática.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Righteous&family=Jost:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+<style>
+:root{
+  --cream:#DEDED2; --paper:#E8E8DE; --navy:#2C395C; --orange:#FF5500; --burnt:#E2571E; --rust:#A92717; --mustard:#B9A727; --muted:#535D76;
+  --display:"Righteous","Jost",system-ui,sans-serif; --body:"Jost","Helvetica Neue",Arial,sans-serif; --mono:"Space Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--cream);color:var(--navy);font-family:var(--body);font-size:16px;line-height:1.5}
+button{font:inherit;cursor:pointer}
+button:focus-visible,svg:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+.band{background:var(--navy);color:var(--cream);padding:0 max(16px,env(safe-area-inset-left,0px))}
+.band>*{max-width:1000px;margin:0 auto}
+.band.top{padding-top:22px;padding-bottom:18px;border-bottom:6px double var(--mustard)}
+.band.bottom{padding-top:16px;padding-bottom:24px;border-top:6px double var(--mustard);margin-top:36px;font-size:13px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--mustard);margin:0 0 4px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(30px,6vw,46px);line-height:1.05;margin:0}
+.tag{margin:6px 0 0;opacity:.85;font-size:15px}
+.wrap{max-width:1000px;margin:0 auto;padding:24px 16px 0;display:flex;flex-direction:column;gap:18px}
+.card{border:1px solid var(--mustard);border-radius:16px;padding:18px 20px;background:var(--paper)}
+.grp{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.grp>span{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.06em}
+h2{font-family:var(--display);font-weight:400;font-size:24px;margin:0 0 8px}
+.rules{margin:0;padding-left:22px}.rules li{margin-bottom:6px}.rules li::marker{color:var(--rust);font-weight:700}
+.ej{border:1px dashed var(--navy);border-radius:12px;padding:14px;background:var(--cream)}
+.ej-t{font-family:var(--display);font-size:17px;margin:0 0 6px}
+.ej p{margin:4px 0}
+.ej svg{width:100%;max-width:640px;display:block;margin:6px 0}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg button{border:1px solid var(--mustard);background:var(--cream);color:var(--navy);border-radius:999px;padding:8px 16px}
+.seg button[aria-pressed="true"]{background:var(--rust);border-color:var(--rust);color:var(--cream);font-weight:600}
+.info{background:var(--mustard);color:var(--navy);border-radius:12px;padding:10px 14px;font-size:14.5px}
+.go{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.rec{font-size:14px;color:var(--muted);margin:0}
+.btn{border:1px solid var(--navy);background:var(--cream);color:var(--navy);border-radius:999px;padding:9px 16px;font-size:15px}
+.btn:hover{background:var(--navy);color:var(--cream)}
+.btn.prim{background:var(--orange);border-color:var(--orange);color:var(--navy);font-family:var(--display);font-size:19px;padding:11px 26px}
+.btn.prim:hover{background:var(--navy);border-color:var(--navy);color:var(--cream)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.quiet{border-color:transparent;background:none;color:var(--muted);text-decoration:underline;padding:6px 8px}
+/* número a ubicar */
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1;margin:0 .06em}
+.fr .nu{border-bottom:.08em solid currentColor;padding:0 .12em .06em}
+.fr .de{padding:.06em .12em 0}
+.rad{display:inline-flex;align-items:flex-start}
+.rad .sig{font-size:1.05em;margin-right:.02em}
+.rad .in{border-top:.07em solid currentColor;padding:0 .1em;margin-top:.12em}
+/* juego */
+.hud{display:flex;gap:10px;flex-wrap:wrap}
+.chip{border:1px solid var(--navy);border-radius:12px;padding:6px 12px;background:var(--paper);min-width:92px}
+.chip small{display:block;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em}
+.chip b{font-family:var(--display);font-weight:400;font-size:21px;line-height:1.15}
+.chip.lvl{margin-left:auto;text-align:right}
+.mision{background:var(--navy);color:var(--cream);border-radius:18px;padding:16px 18px 10px;position:relative}
+.pedido{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:4px}
+.pedido .lbl{font-family:var(--mono);font-size:12px;color:var(--mustard);letter-spacing:.1em;text-align:right;line-height:1.4}
+.pedido .num{font-family:var(--display);font-size:clamp(40px,9vw,64px);line-height:1;border:3px solid var(--mustard);border-radius:16px;padding:10px 22px;min-width:2.4em;text-align:center;background:rgba(0,0,0,.12)}
+.pedido .num .fr .nu,.pedido .num .fr .de{font-size:.62em}
+#recta{width:100%;height:auto;display:block;cursor:crosshair;touch-action:none;user-select:none}
+#recta .linea{stroke:var(--cream);stroke-width:3}
+#recta .tick{stroke:var(--cream);stroke-width:2.5}
+#recta .tick.menor{stroke:rgba(222,222,210,.55);stroke-width:1.5}
+#recta .lab{fill:var(--cream);font-family:var(--mono);font-size:20px;text-anchor:middle}
+#recta .zona{fill:transparent}
+#recta .pin path{fill:var(--orange);stroke:var(--cream);stroke-width:2}
+#recta .pin line{stroke:var(--orange);stroke-width:3}
+#recta .real path{fill:var(--mustard)}
+#recta .real line{stroke:var(--mustard);stroke-width:3;stroke-dasharray:6 4}
+#recta .real text{fill:var(--mustard);font-family:var(--mono);font-size:19px;text-anchor:middle;font-weight:700}
+#recta .brecha{stroke:var(--orange);stroke-width:2}
+#recta .diana{fill:none;stroke:var(--mustard);stroke-width:3;animation:diana .9s ease-out forwards}
+@keyframes diana{from{r:6;opacity:1}to{r:60;opacity:0}}
+.ayuda{font-size:13px;color:rgba(222,222,210,.7);text-align:center;margin:0 0 4px}
+.acciones{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.acciones .der{margin-left:auto;display:flex;gap:8px}
+.fb{margin:0;font-weight:600;font-size:17px;min-height:1.6em}
+.exp{border-left:4px solid var(--mustard);background:var(--paper);padding:10px 14px;border-radius:0 12px 12px 0;font-size:16.5px}
+.exp b.k{font-family:var(--mono);font-size:12px;color:var(--muted);display:block;font-weight:400;letter-spacing:.06em}
+/* fin */
+.resumen{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:12px 0 16px}
+.stat{border:1px solid var(--mustard);border-radius:14px;padding:10px 14px;background:var(--cream)}
+.stat span{display:block;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.stat b{font-family:var(--display);font-weight:400;font-size:30px}
+.stat.main{background:var(--navy);color:var(--cream);border-color:var(--navy)}.stat.main span{color:var(--mustard)}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{text-align:left;font-family:var(--mono);font-size:11px;color:var(--muted);font-weight:400;border-bottom:2px solid var(--navy);padding:6px}
+td{padding:8px 6px;border-bottom:1px solid var(--mustard)}
+.tw{overflow-x:auto}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<!-- Barra de regreso al sitio Órbita Matemática -->
+<nav class="orbita-volver" style="background:#2C395C;border-bottom:4px solid #FF5500;padding:8px max(16px,env(safe-area-inset-left,0px));font:600 14px/1.4 'Jost','Archivo','Helvetica Neue',Arial,sans-serif;position:relative;z-index:50">
+  <a href="../index.html#juegos" style="color:#DEDED2;text-decoration:none;display:inline-flex;align-items:center;gap:8px">
+    <span style="display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#FF5500;color:#2C395C;font-weight:700">←</span>
+    Volver a Órbita Matemática · Juegos
+  </a>
+</nav>
+
+<header class="band top">
+  <div>
+    <p class="eyebrow">Juegos · Matemática</p>
+    <h1>Recta numérica</h1>
+    <p class="tag">Ubica cada número en la recta, lo más cerca posible de su lugar</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="inicio" class="card" aria-label="Cómo se juega">
+    <div class="grp"><span>CÓMO SE JUEGA</span>
+      <ol class="rules">
+        <li>Arriba aparece un número: una fracción, un decimal, un negativo o una raíz.</li>
+        <li><b>Toca la recta</b> donde crees que está. Puedes arrastrar el marcador 🔻 o moverlo con las flechas del teclado para afinar.</li>
+        <li>Presiona <b>Confirmar</b>: aparece la ubicación exacta y la distancia a la que quedaste.</li>
+        <li>Mientras más cerca, más puntos (hasta 100 por número). Si quedas muy cerca, ¡es una <b>diana</b>! 🎯</li>
+      </ol>
+      <div class="ej">
+        <p class="ej-t">Ejemplo · ubicar ¾ entre 0 y 2</p>
+        <svg viewBox="0 0 1000 130" id="ejemplo" aria-hidden="true"></svg>
+        <p>¾ = 0,75: está entre 0 y 1, más cerca del 1. Si divides el tramo de 0 a 1 en 4 partes iguales, ¾ está en la <b>tercera marca</b>.</p>
+        <p class="rec">El marcador naranjo quedó en 0,8, a solo 0,05 del lugar exacto: ¡90 puntos!</p>
+      </div>
+    </div>
+    <div class="grp"><span>DIFICULTAD</span>
+      <div class="seg" id="segNivel">
+        <button data-v="b" aria-pressed="true">Básico</button>
+        <button data-v="m" aria-pressed="false">Intermedio</button>
+        <button data-v="a" aria-pressed="false">Avanzado</button>
+      </div>
+      <div class="info" id="infoNivel"></div>
+    </div>
+    <div class="go">
+      <p class="rec" id="rec"></p>
+      <button class="btn prim" id="btnDespegar">Despegar ▸</button>
+    </div>
+  </section>
+
+  <section id="juego" hidden aria-label="Juego">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="hud">
+        <div class="chip"><small>NÚMERO</small><b id="hRonda">1/10</b></div>
+        <div class="chip"><small>PUNTAJE</small><b id="hPuntos">0</b></div>
+        <div class="chip"><small>DIANAS</small><b id="hDianas">0</b></div>
+        <div class="chip lvl"><small>NIVEL</small><b id="hNivel" style="font-size:18px">Básico</b></div>
+      </div>
+      <div class="mision">
+        <div class="pedido"><div class="lbl">UBICA EN<br>LA RECTA</div><div class="num" id="pedido">—</div></div>
+        <svg id="recta" viewBox="0 0 1000 190" tabindex="0" role="slider" aria-label="Recta numérica: toca para ubicar el número" aria-valuetext="sin marcar"></svg>
+        <p class="ayuda" id="ayuda">Toca la recta para poner el marcador · arrástralo o usa ← → para afinar</p>
+      </div>
+      <div class="acciones">
+        <span id="tuValor" class="rec"></span>
+        <div class="der">
+          <button class="btn prim" id="btnConfirmar" disabled>Confirmar ✓</button>
+          <button class="btn prim" id="btnSiguiente" hidden>Siguiente ▸</button>
+        </div>
+      </div>
+      <p class="fb" id="fb" aria-live="polite"></p>
+      <div class="exp" id="exp" hidden></div>
+      <div><button class="btn quiet" id="btnAbandonar">Abandonar y volver al inicio</button></div>
+    </div>
+  </section>
+
+  <section id="fin" hidden class="card" aria-label="Resultados">
+    <p class="eyebrow" id="finNivel" style="color:var(--muted)"></p>
+    <h2 id="finTitulo"></h2>
+    <div class="resumen" id="resumen"></div>
+    <div class="tw"><table><thead><tr><th>NÚMERO</th><th>VALOR</th><th>TU MARCA</th><th>DISTANCIA</th><th>PUNTOS</th></tr></thead><tbody id="tabla"></tbody></table></div>
+    <div class="acciones" style="margin-top:16px">
+      <button class="btn prim" id="btnOtra">Jugar otra vez</button>
+      <button class="btn" id="btnConfig">Cambiar dificultad</button>
+    </div>
+  </section>
+</main>
+
+<footer class="band bottom"><p>Los valores se muestran redondeados a la centésima (con coma decimal). Las raíces y π son números irracionales: sus decimales no terminan ni se repiten.</p></footer>
+
+<script>
+(() => {
+"use strict";
+const $ = (s) => document.querySelector(s);
+const NS = "http://www.w3.org/2000/svg";
+const RONDAS = 10;
+const NIVELES = {
+  b: { nombre: "Básico", texto: "Fracciones y decimales positivos entre 0 y 2. La recta tiene marcas cada un cuarto." },
+  m: { nombre: "Intermedio", texto: "Números negativos y positivos entre −5 y 5: enteros, fracciones y decimales. Solo se marcan los enteros." },
+  a: { nombre: "Avanzado", texto: "Raíces cuadradas, π y fracciones en tramos que cambian (por ejemplo, de 2 a 4). Solo se marcan los extremos y los enteros." },
+};
+let nivel = "b", P = null, R = null;
+const leer = (k) => { try { return Number(localStorage.getItem(k)) || 0; } catch (e) { return 0; } };
+const guardar = (k, v) => { try { localStorage.setItem(k, String(v)); } catch (e) {} };
+
+/* ---------- formato ---------- */
+const sg = (n) => (n < 0 ? "−" : "");
+const dec = (v, d = 2) => { let t = Math.abs(v).toFixed(d); if (t.indexOf(".") >= 0) t = t.replace(/0+$/, "").replace(/\.$/, ""); return sg(v) + t.replace(".", ","); };
+const exacto = (v) => Math.abs(v * 1000 - Math.round(v * 1000)) < 1e-9;
+const dec2 = (v) => sg(v) + Math.abs(v).toFixed(2).replace(".", ",");
+const fracH = (p, q) => `<span class="fr"><span class="nu">${p}</span><span class="de">${q}</span></span>`;
+const radH = (n) => `<span class="rad"><span class="sig">√</span><span class="in">${n}</span></span>`;
+
+/* ---------- generadores ---------- */
+const azar = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const elegir = (arr) => arr[Math.floor(Math.random() * arr.length)];
+function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a; }
+function fraccion(min, max, dens, mixtos) {
+  for (let i = 0; i < 200; i++) {
+    const q = elegir(dens), lo = Math.ceil(min * q), hi = Math.floor(max * q);
+    const p = azar(lo, hi);
+    if (p % q === 0 || gcd(p, q) !== 1) continue;
+    const v = p / q, s = sg(p), a = Math.abs(p);
+    let html = s + fracH(a, q), texto = `${s}${a}/${q}`;
+    if (mixtos && a > q && Math.random() < 0.5) { html = s + Math.floor(a / q) + fracH(a % q, q); texto = `${s}${Math.floor(a / q)} ${a % q}/${q}`; }
+    return { v, html, texto, exp: null };
+  }
+}
+function decimal(min, max, cifras) {
+  for (let i = 0; i < 200; i++) {
+    const f = Math.pow(10, cifras), v = azar(Math.ceil(min * f), Math.floor(max * f)) / f;
+    if (Number.isInteger(v)) continue;
+    if (cifras === 2 && Math.round(v * 100) % 10 === 0 && Math.random() < .5) continue;
+    const s = dec(v, cifras);
+    return { v, html: s, texto: s, exp: null };
+  }
+}
+function raiz(min, max) {
+  const op = [];
+  for (let n = 2; n <= 99; n++) { const r = Math.sqrt(n); if (!Number.isInteger(r) && r >= min && r <= max) op.push(n); }
+  if (!op.length) return null;
+  const n = elegir(op), r = Math.sqrt(n), neg = false;
+  const a = Math.floor(r);
+  return { v: r, html: radH(n), texto: `√${n}`, exp: `${radH(n)} ≈ ${dec2(r)}, porque ${a}² = ${a * a} y ${a + 1}² = ${(a + 1) * (a + 1)}: está entre ${a} y ${a + 1}, ${n - a * a < (a + 1) * (a + 1) - n ? "más cerca del " + a : "más cerca del " + (a + 1)}.` };
+}
+function nuevoDesafio(nv, k) {
+  if (nv === "b") {
+    const t = k % 3;
+    const x = t === 0 ? fraccion(0, 2, [2, 3, 4, 5, 8, 10], k % 2 === 0) : t === 1 ? decimal(0, 2, elegir([1, 2])) : fraccion(0, 2, [3, 4, 5, 6], true);
+    return { min: 0, max: 2, menor: 0.25, ...x };
+  }
+  if (nv === "m") {
+    const t = k % 3;
+    let x;
+    if (t === 0) x = fraccion(-5, 5, [2, 3, 4, 5], true);
+    else x = decimal(-5, 5, elegir([1, 2, 2]));
+    if (x.v > 0 && Math.random() < 0.6) { x = t === 0 ? fraccion(-5, -0.1, [2, 3, 4, 5], true) : decimal(-5, -0.1, elegir([1, 2])); }
+    return { min: -5, max: 5, menor: 0, ...x };
+  }
+  // avanzado: tramo variable de 2 a 4 unidades
+  for (let i = 0; i < 100; i++) {
+    const L = elegir([2, 3, 4]), min = azar(-6, 8), max = min + L;
+    const t = k % 4;
+    let x = null;
+    if (t === 0 || t === 2) x = raiz(Math.max(min, 1.05), max - .05);
+    else if (t === 1) {
+      const pis = [
+        { v: Math.PI, html: "π", texto: "π", exp: "π ≈ 3,14: está entre 3 y 4, muy cerca del 3." },
+        { v: Math.PI / 2, html: fracH("π", 2), texto: "π/2", exp: fracH("π", 2) + " ≈ 1,57: es la mitad de π ≈ 3,14." },
+        { v: -Math.PI, html: "−π", texto: "−π", exp: "−π ≈ −3,14: es el opuesto de π, así que está entre −4 y −3, muy cerca del −3." },
+        { v: 2 * Math.PI, html: "2π", texto: "2π", exp: "2π ≈ 6,28: es el doble de π ≈ 3,14." }]
+        .filter((p) => p.v > min + .05 && p.v < max - .05);
+      if (pis.length) x = { ...elegir(pis) };
+    } else x = Math.random() < .5 ? fraccion(min + .05, max - .05, [3, 6, 7, 9], true) : (() => { const r = raiz(Math.max(-max, 1.05), -min - .05); return r ? { v: -r.v, html: "−" + r.html, texto: "−" + r.texto, exp: `−${r.exp.replace(" ≈ ", " ≈ −").replace("está entre", "−" + r.texto + " está entre el opuesto:")}` } : null; })();
+    if (!x || Number.isInteger(x.v) || x.v <= min || x.v >= max) continue;
+    if (x.texto && x.texto.startsWith("−√")) { const n = +x.texto.slice(2), a = Math.floor(Math.sqrt(n)); x.exp = `${x.html} ≈ ${dec2(x.v)}: como ${radH(n)} está entre ${a} y ${a + 1}, ${x.html} está entre −${a + 1} y −${a}.`; }
+    return { min, max, menor: 0, ...x };
+  }
+  return nuevoDesafio("b", k);
+}
+
+/* ---------- dibujo ---------- */
+const X0 = 50, X1 = 950, YL = 120;
+const aX = (v) => X0 + (v - R.min) / (R.max - R.min) * (X1 - X0);
+const aV = (x) => R.min + (x - X0) / (X1 - X0) * (R.max - R.min);
+function el(tag, at, par) { const e = document.createElementNS(NS, tag); for (const k in at) e.setAttribute(k, at[k]); if (par) par.appendChild(e); return e; }
+function dibujarRecta(svg, r, conZona) {
+  svg.innerHTML = "";
+  const map = (v) => X0 + (v - r.min) / (r.max - r.min) * (X1 - X0);
+  if (conZona) el("rect", { class: "zona", x: 0, y: 0, width: 1000, height: 190 }, svg);
+  el("line", { class: "linea", x1: X0 - 30, y1: YL, x2: X1 + 30, y2: YL }, svg);
+  el("path", { d: `M${X1 + 38} ${YL} l-14 -8 v16z`, fill: "#DEDED2" }, svg);
+  el("path", { d: `M${X0 - 38} ${YL} l14 -8 v16z`, fill: "#DEDED2" }, svg);
+  if (r.menor) for (let v = r.min; v <= r.max + 1e-9; v += r.menor) if (Math.abs(v - Math.round(v)) > 1e-9) el("line", { class: "tick menor", x1: map(v), y1: YL - 9, x2: map(v), y2: YL + 9 }, svg);
+  for (let v = Math.ceil(r.min); v <= r.max; v++) {
+    el("line", { class: "tick", x1: map(v), y1: YL - 16, x2: map(v), y2: YL + 16 }, svg);
+    const t = el("text", { class: "lab", x: map(v), y: YL + 44 }, svg); t.textContent = sg(v) + Math.abs(v);
+  }
+  return map;
+}
+function pintar() {
+  const svg = $("#recta");
+  const map = dibujarRecta(svg, R, true);
+  if (R.resuelto) {
+    const xr = aX(R.v);
+    if (R.marca !== null) el("line", { class: "brecha", x1: aX(R.marca), y1: YL - 2, x2: xr, y2: YL - 2 }, svg);
+    const g = el("g", { class: "real" }, svg);
+    el("line", { x1: xr, y1: YL - 62, x2: xr, y2: YL + 16 }, g);
+    el("path", { d: `M${xr} ${YL - 8} l-11 -18 h22z` }, g);
+    const t = el("text", { x: Math.min(940, Math.max(60, xr)), y: YL - 70 }, g); t.textContent = R.texto + (exacto(R.v) ? (R.texto === dec(R.v, 3) ? "" : " = " + dec(R.v, 3)) : " ≈ " + dec2(R.v));
+    if (R.diana) el("circle", { class: "diana", cx: xr, cy: YL, r: 6 }, svg);
+  }
+  if (R.marca !== null) {
+    const x = aX(R.marca), g = el("g", { class: "pin" }, svg);
+    el("line", { x1: x, y1: YL - 30, x2: x, y2: YL + 4 }, g);
+    el("path", { d: `M${x} ${YL - 4} l-13 -26 h26z` }, g);
+  }
+  svg.setAttribute("aria-valuetext", R.marca === null ? "sin marcar" : "marcador en " + dec2(R.marca));
+  $("#tuValor").textContent = R.marca === null ? "" : (R.resuelto ? "" : "Tu marcador: " + dec2(R.marca));
+}
+
+/* ---------- partida ---------- */
+function nuevaPartida() {
+  P = { nivel, ronda: 0, puntos: 0, dianas: 0, hist: [], usados: new Set() };
+  $("#hNivel").textContent = NIVELES[nivel].nombre;
+  mostrar("juego"); siguiente();
+}
+function siguiente() {
+  if (P.ronda >= RONDAS) return terminar();
+  P.ronda++;
+  let d;
+  for (let i = 0; i < 25; i++) { d = nuevoDesafio(P.nivel, P.ronda + Math.floor(Math.random() * 3)); if (!P.usados.has(d.texto)) break; }
+  P.usados.add(d.texto);
+  R = { ...d, marca: null, resuelto: false, diana: false };
+  $("#pedido").innerHTML = d.html;
+  $("#hRonda").textContent = `${P.ronda}/${RONDAS}`;
+  $("#fb").textContent = ""; $("#exp").hidden = true;
+  $("#btnConfirmar").hidden = false; $("#btnConfirmar").disabled = true; $("#btnSiguiente").hidden = true;
+  pintar(); $("#recta").focus({ preventScroll: true });
+}
+function confirmar() {
+  if (!R || R.resuelto || R.marca === null) return;
+  R.resuelto = true;
+  const L = R.max - R.min, err = Math.abs(R.marca - R.v), rel = err / L;
+  const pts = Math.max(0, Math.round(100 * (1 - rel / 0.25)));
+  R.diana = rel <= 0.015;
+  P.puntos += pts; if (R.diana) P.dianas++;
+  P.hist.push({ html: R.html, v: R.v, marca: R.marca, err, pts });
+  $("#hPuntos").textContent = P.puntos; $("#hDianas").textContent = P.dianas;
+  $("#fb").textContent = R.diana ? `🎯 ¡Diana! Quedaste a solo ${dec2(err)}: +${pts} puntos.` : pts >= 70 ? `¡Muy cerca! Quedaste a ${dec2(err)}: +${pts} puntos.` : pts > 0 ? `Quedaste a ${dec2(err)}: +${pts} puntos.` : `Quedaste a ${dec2(err)}: demasiado lejos para sumar puntos.`;
+  const e = $("#exp");
+  e.innerHTML = `<b class="k">ASÍ SE UBICA</b>${R.exp || explicacion()}`;
+  e.hidden = false;
+  $("#btnConfirmar").hidden = true; $("#btnSiguiente").hidden = false;
+  $("#btnSiguiente").textContent = P.ronda >= RONDAS ? "Ver resultados ▸" : "Siguiente ▸";
+  pintar(); $("#btnSiguiente").focus();
+}
+function explicacion() {
+  const v = R.v, a = Math.floor(v), b = a + 1;
+  const pos = v < 0 ? ` Es negativo, así que está a la izquierda del 0.` : "";
+  const ex = exacto(v), igual = ex && R.texto === dec(v, 3);
+  return `${R.html}${igual ? "" : ex ? " = " + dec(v, 3) : " ≈ " + dec2(v)} está entre ${sg(a) + Math.abs(a)} y ${sg(b) + Math.abs(b)}, ${v - a < b - v ? "más cerca del " + (sg(a) + Math.abs(a)) : v - a > b - v ? "más cerca del " + (sg(b) + Math.abs(b)) : "justo en la mitad"}.${pos}`;
+}
+function terminar() {
+  const k = "rn-record-" + P.nivel, prev = leer(k), rec = P.puntos > prev; if (rec) guardar(k, P.puntos);
+  $("#finNivel").textContent = NIVELES[P.nivel].nombre.toUpperCase() + " · " + RONDAS + " NÚMEROS";
+  $("#finTitulo").textContent = P.puntos >= 850 ? "¡Precisión de astronauta! 🎯" : P.puntos >= 600 ? "¡Muy buena ubicación!" : "Buen vuelo, sigue practicando";
+  $("#resumen").innerHTML = `<div class="stat main"><span>PUNTAJE</span><b>${P.puntos}</b></div><div class="stat"><span>DIANAS</span><b>${P.dianas}</b></div><div class="stat"><span>PROMEDIO</span><b>${Math.round(P.puntos / RONDAS)}</b></div><div class="stat"><span>${rec ? "¡NUEVO RÉCORD!" : "RÉCORD"}</span><b>${Math.max(prev, P.puntos)}</b></div>`;
+  $("#tabla").innerHTML = P.hist.map((h) => `<tr><td style="font-size:18px">${h.html}</td><td>${dec2(h.v)}</td><td>${dec2(h.marca)}</td><td>${dec2(h.err)}</td><td><b>${h.pts}</b></td></tr>`).join("");
+  mostrar("fin");
+}
+const mostrar = (id) => { ["inicio", "juego", "fin"].forEach((v) => ($("#" + v).hidden = v !== id)); window.scrollTo(0, 0); };
+
+/* ---------- interacción con la recta ---------- */
+const svg = $("#recta");
+let arrastrando = false;
+function posicion(e) {
+  const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+  const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+  return Math.max(R.min, Math.min(R.max, aV(Math.max(X0, Math.min(X1, p.x)))));
+}
+svg.addEventListener("pointerdown", (e) => { if (!R || R.resuelto) return; arrastrando = true; svg.setPointerCapture(e.pointerId); R.marca = posicion(e); $("#btnConfirmar").disabled = false; pintar(); });
+svg.addEventListener("pointermove", (e) => { if (!arrastrando || !R || R.resuelto) return; R.marca = posicion(e); pintar(); });
+svg.addEventListener("pointerup", () => { arrastrando = false; });
+svg.addEventListener("keydown", (e) => {
+  if (!R) return;
+  if (e.key === "Enter") { e.preventDefault(); R.resuelto ? siguiente() : confirmar(); return; }
+  if (R.resuelto) return;
+  const paso = (R.max - R.min) / (e.shiftKey ? 20 : 200);
+  if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+    e.preventDefault();
+    if (R.marca === null) R.marca = (R.min + R.max) / 2;
+    R.marca = Math.max(R.min, Math.min(R.max, R.marca + (e.key === "ArrowRight" ? paso : -paso)));
+    $("#btnConfirmar").disabled = false; pintar();
+  }
+});
+
+/* ---------- inicio ---------- */
+$("#segNivel").addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-v]"); if (!b) return;
+  nivel = b.dataset.v; $("#segNivel").querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", x === b)); pintarInicio();
+});
+function pintarInicio() {
+  $("#infoNivel").innerHTML = `<b>${NIVELES[nivel].nombre}:</b> ${NIVELES[nivel].texto}`;
+  const r = leer("rn-record-" + nivel);
+  $("#rec").textContent = r ? `Tu récord en ${NIVELES[nivel].nombre}: ${r} de 1.000 puntos` : `Aún no tienes récord en ${NIVELES[nivel].nombre}.`;
+}
+pintarInicio();
+(function ejemplo() {
+  const s = $("#ejemplo"); const r = { min: 0, max: 2, menor: .25 };
+  const old = R; R = r;
+  const fondo = el("rect", { x: 0, y: 0, width: 1000, height: 130, rx: 14, fill: "#2C395C" }, s);
+  const map = dibujarRecta(s, r, false); s.insertBefore(fondo, s.firstChild);
+  s.querySelectorAll(".linea,.tick,.lab").forEach((x) => { x.setAttribute("transform", "translate(0 -42)"); });
+  s.querySelectorAll("path").forEach((x, i) => { if (i < 2) x.setAttribute("transform", "translate(0 -42)"); });
+  const y = 78, xr = map(0.75), xp = map(0.8);
+  el("line", { x1: xr, y1: y - 46, x2: xr, y2: y + 6, stroke: "#B9A727", "stroke-width": 3, "stroke-dasharray": "6 4" }, s);
+  el("path", { d: `M${xr} ${y - 6} l-10 -16 h20z`, fill: "#B9A727" }, s);
+  el("path", { d: `M${xp} ${y - 4} l-12 -24 h24z`, fill: "#FF5500", stroke: "#DEDED2", "stroke-width": 2 }, s);
+  const t = el("text", { x: xr - 14, y: y - 50, fill: "#B9A727", "font-family": "Space Mono, monospace", "font-size": 19, "font-weight": 700, "text-anchor": "end" }, s); t.textContent = "¾ = 0,75";
+  s.querySelectorAll(".lab").forEach((x) => { x.setAttribute("style", "fill:#DEDED2;font-family:Space Mono,monospace;font-size:20px;text-anchor:middle"); });
+  s.querySelectorAll(".linea,.tick").forEach((x) => { x.setAttribute("stroke", "#DEDED2"); x.setAttribute("stroke-width", x.classList.contains("menor") ? 1.5 : 3); if (x.classList.contains("menor")) x.setAttribute("stroke-opacity", .55); });
+  R = old;
+})();
+$("#btnDespegar").onclick = nuevaPartida; $("#btnOtra").onclick = nuevaPartida;
+$("#btnConfig").onclick = () => { pintarInicio(); mostrar("inicio"); };
+$("#btnAbandonar").onclick = () => { P = null; R = null; pintarInicio(); mostrar("inicio"); };
+$("#btnConfirmar").onclick = confirmar; $("#btnSiguiente").onclick = siguiente;
+})();
+</script>
+</body>
+</html>

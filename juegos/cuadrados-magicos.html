@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cuadrados mágicos · Órbita Matemática</title>
+<meta name="description" content="Cuadrados mágicos: completa las casillas para que todas las filas, columnas y diagonales sumen lo mismo. Con naturales, enteros, fracciones y decimales. Juego de Órbita Matemática.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Righteous&family=Jost:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+<style>
+:root{
+  --cream:#DEDED2; --paper:#E8E8DE; --navy:#2C395C; --orange:#FF5500; --burnt:#E2571E; --rust:#A92717; --mustard:#B9A727; --muted:#535D76;
+  --ok:#2E7D5B;
+  --display:"Righteous","Jost",system-ui,sans-serif; --body:"Jost","Helvetica Neue",Arial,sans-serif; --mono:"Space Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--cream);color:var(--navy);font-family:var(--body);font-size:16px;line-height:1.5}
+button,input{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.band{background:var(--navy);color:var(--cream);padding:0 max(16px,env(safe-area-inset-left,0px))}
+.band>*{max-width:1000px;margin:0 auto}
+.band.top{padding-top:22px;padding-bottom:18px;border-bottom:6px double var(--mustard)}
+.band.bottom{padding-top:16px;padding-bottom:24px;border-top:6px double var(--mustard);margin-top:36px;font-size:13px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--mustard);margin:0 0 4px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(30px,6vw,46px);line-height:1.05;margin:0}
+.tag{margin:6px 0 0;opacity:.85;font-size:15px}
+.wrap{max-width:1000px;margin:0 auto;padding:24px 16px 0;display:flex;flex-direction:column;gap:18px}
+.card{border:1px solid var(--mustard);border-radius:16px;padding:18px 20px;background:var(--paper)}
+.grp{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.grp>span{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.06em}
+h2{font-family:var(--display);font-weight:400;font-size:24px;margin:0 0 8px}
+.rules{margin:0;padding-left:22px}.rules li{margin-bottom:6px}.rules li::marker{color:var(--rust);font-weight:700}
+.ej{border:1px dashed var(--navy);border-radius:12px;padding:14px;background:var(--cream);display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.ej-txt{flex:1;min-width:240px}.ej-txt p{margin:4px 0}
+.ej-t{font-family:var(--display);font-size:17px}
+.mini{display:grid;grid-template-columns:repeat(3,42px);gap:4px}
+.mini span{height:42px;display:grid;place-items:center;border-radius:8px;background:var(--navy);color:var(--cream);font-weight:700;font-size:18px}
+.mini span.n{background:var(--mustard);color:var(--navy)}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg button{border:1px solid var(--mustard);background:var(--cream);color:var(--navy);border-radius:999px;padding:8px 16px}
+.seg button[aria-pressed="true"]{background:var(--rust);border-color:var(--rust);color:var(--cream);font-weight:600}
+.info{background:var(--mustard);color:var(--navy);border-radius:12px;padding:10px 14px;font-size:14.5px}
+.go{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.rec{font-size:14px;color:var(--muted);margin:0}
+.btn{border:1px solid var(--navy);background:var(--cream);color:var(--navy);border-radius:999px;padding:9px 16px;font-size:15px}
+.btn:hover{background:var(--navy);color:var(--cream)}
+.btn.prim{background:var(--orange);border-color:var(--orange);color:var(--navy);font-family:var(--display);font-size:19px;padding:11px 26px}
+.btn.prim:hover{background:var(--navy);border-color:var(--navy);color:var(--cream)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.quiet{border-color:transparent;background:none;color:var(--muted);text-decoration:underline;padding:6px 8px}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1}
+.fr .nu{border-bottom:2px solid currentColor;padding:0 .12em 1px}
+.fr .de{padding:1px .12em 0}
+/* juego */
+.hud{display:flex;gap:10px;flex-wrap:wrap}
+.chip{border:1px solid var(--navy);border-radius:12px;padding:6px 12px;background:var(--paper);min-width:92px}
+.chip small{display:block;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em}
+.chip b{font-family:var(--display);font-weight:400;font-size:21px;line-height:1.15}
+.chip.lvl{margin-left:auto;text-align:right}
+.tablero{background:var(--navy);color:var(--cream);border-radius:18px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:12px;position:relative;overflow:hidden}
+.objetivo{font-family:var(--mono);font-size:13px;color:var(--mustard);letter-spacing:.08em;text-align:center}
+.objetivo b{display:block;font-family:var(--display);font-weight:400;font-size:44px;color:var(--cream);letter-spacing:0;line-height:1.1}
+.objetivo b .fr .nu,.objetivo b .fr .de{font-size:.6em}
+.malla{display:grid;gap:6px;align-items:center;justify-items:center}
+.celda{width:var(--t);height:var(--t);border-radius:12px;display:grid;place-items:center;font-size:var(--f);font-weight:700;font-variant-numeric:tabular-nums}
+.celda.dada{background:var(--cream);color:var(--navy)}
+.celda input{width:100%;height:100%;border-radius:12px;border:2px dashed var(--mustard);background:rgba(222,222,210,.08);color:var(--cream);text-align:center;font-size:var(--f);font-weight:700;padding:0 2px}
+.celda input:focus{border-style:solid;background:rgba(222,222,210,.16)}
+.celda input.pista{border-color:var(--orange);border-style:solid}
+.celda input.mala{border-color:var(--orange);background:rgba(255,85,0,.18)}
+.suma{font-family:var(--mono);font-size:14px;min-width:48px;padding:3px 6px;border-radius:8px;text-align:center;color:rgba(222,222,210,.7);border:1px solid rgba(222,222,210,.25)}
+.suma.ok{background:var(--mustard);color:var(--navy);border-color:var(--mustard);font-weight:700}
+.suma.mal{background:var(--rust);color:var(--cream);border-color:var(--rust)}
+.suma.diag{font-size:12px}
+.vacio{width:48px}
+.acciones{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.acciones .der{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.fb{margin:0;font-weight:600;font-size:17px;min-height:1.6em}
+.fb.ok{color:var(--navy)}.fb.mal{color:var(--rust)}
+.ayuda{font-size:13px;color:rgba(222,222,210,.7);text-align:center;margin:0}
+.brillo{animation:brillo 1s ease-out}
+@keyframes brillo{0%{box-shadow:0 0 0 0 rgba(185,167,39,.9)}100%{box-shadow:0 0 0 22px rgba(185,167,39,0)}}
+.resumen{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:12px 0 16px}
+.stat{border:1px solid var(--mustard);border-radius:14px;padding:10px 14px;background:var(--cream)}
+.stat span{display:block;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.stat b{font-family:var(--display);font-weight:400;font-size:30px}
+.stat.main{background:var(--navy);color:var(--cream);border-color:var(--navy)}.stat.main span{color:var(--mustard)}
+@media (max-width:520px){.suma{min-width:38px;font-size:12px}.vacio{width:38px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<!-- Barra de regreso al sitio Órbita Matemática -->
+<nav class="orbita-volver" style="background:#2C395C;border-bottom:4px solid #FF5500;padding:8px max(16px,env(safe-area-inset-left,0px));font:600 14px/1.4 'Jost','Archivo','Helvetica Neue',Arial,sans-serif;position:relative;z-index:50">
+  <a href="../index.html#juegos" style="color:#DEDED2;text-decoration:none;display:inline-flex;align-items:center;gap:8px">
+    <span style="display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#FF5500;color:#2C395C;font-weight:700">←</span>
+    Volver a Órbita Matemática · Juegos
+  </a>
+</nav>
+
+<header class="band top">
+  <div>
+    <p class="eyebrow">Juegos · Matemática</p>
+    <h1>Cuadrados mágicos</h1>
+    <p class="tag">Completa el cuadrado: todas las filas, columnas y diagonales deben sumar lo mismo</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="inicio" class="card" aria-label="Cómo se juega">
+    <div class="grp"><span>CÓMO SE JUEGA</span>
+      <ol class="rules">
+        <li>Un cuadrado es <b>mágico</b> cuando cada fila, cada columna y las dos diagonales suman lo mismo: la <b>suma mágica</b>.</li>
+        <li>Algunas casillas ya vienen llenas. Escribe los números que faltan en las casillas punteadas.</li>
+        <li>Al costado de cada fila, bajo cada columna y en las esquinas (diagonales) ves la suma actual. Se pinta de <b>amarillo</b> cuando llega a la suma mágica.</li>
+        <li>Si te quedas pegado, pide una <b>pista</b>: se llena una casilla, pero ganas menos puntos.</li>
+      </ol>
+      <div class="ej">
+        <div class="mini" aria-label="Ejemplo de cuadrado mágico">
+          <span>2</span><span class="n">7</span><span>6</span>
+          <span>9</span><span>5</span><span>1</span>
+          <span>4</span><span class="n">3</span><span>8</span>
+        </div>
+        <div class="ej-txt">
+          <p class="ej-t">Ejemplo · suma mágica 15</p>
+          <p>En la primera fila faltaba un número: 2 + ? + 6 = 15, así que ? = <b>7</b>.</p>
+          <p>En la columna del medio: 7 + 5 + ? = 15, así que ? = <b>3</b>.</p>
+          <p class="rec">Comprueba la diagonal: 2 + 5 + 8 = 15 ✓. Un buen truco: busca una fila, columna o diagonal donde falte <b>un solo</b> número.</p>
+        </div>
+      </div>
+    </div>
+    <div class="grp"><span>DIFICULTAD</span>
+      <div class="seg" id="segNivel">
+        <button data-v="b" aria-pressed="true">Básico</button>
+        <button data-v="m" aria-pressed="false">Intermedio</button>
+        <button data-v="a" aria-pressed="false">Avanzado</button>
+      </div>
+      <div class="info" id="infoNivel"></div>
+    </div>
+    <div class="go">
+      <p class="rec" id="rec"></p>
+      <button class="btn prim" id="btnDespegar">Despegar ▸</button>
+    </div>
+  </section>
+
+  <section id="juego" hidden aria-label="Juego">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="hud">
+        <div class="chip"><small>CUADRADO</small><b id="hRonda">1/5</b></div>
+        <div class="chip"><small>PUNTAJE</small><b id="hPuntos">0</b></div>
+        <div class="chip"><small>PISTAS</small><b id="hPistas">0</b></div>
+        <div class="chip"><small>TIEMPO</small><b id="hTiempo">0:00</b></div>
+        <div class="chip lvl"><small>NIVEL</small><b id="hNivel" style="font-size:18px">Básico</b></div>
+      </div>
+      <div class="tablero" id="tablero">
+        <div class="objetivo">SUMA MÁGICA<b id="objetivo">15</b></div>
+        <div class="malla" id="malla"></div>
+        <p class="ayuda" id="ayuda"></p>
+      </div>
+      <div class="acciones">
+        <button class="btn" id="btnPista">💡 Pista</button>
+        <button class="btn" id="btnBorrar">Borrar mis números</button>
+        <div class="der">
+          <button class="btn quiet" id="btnRendirse">Ver la solución</button>
+          <button class="btn prim" id="btnComprobar">Comprobar ✓</button>
+          <button class="btn prim" id="btnSiguiente" hidden>Siguiente ▸</button>
+        </div>
+      </div>
+      <p class="fb" id="fb" aria-live="polite"></p>
+      <div><button class="btn quiet" id="btnAbandonar">Abandonar y volver al inicio</button></div>
+    </div>
+  </section>
+
+  <section id="fin" hidden class="card" aria-label="Resultados">
+    <p class="eyebrow" id="finNivel" style="color:var(--muted)"></p>
+    <h2 id="finTitulo"></h2>
+    <div class="resumen" id="resumen"></div>
+    <div class="acciones">
+      <button class="btn prim" id="btnOtra">Jugar otra vez</button>
+      <button class="btn" id="btnConfig">Cambiar dificultad</button>
+    </div>
+  </section>
+</main>
+
+<footer class="band bottom"><p>Se acepta cualquier forma correcta de completar el cuadrado. Puedes escribir enteros (−3), decimales con coma (0,25) o fracciones con barra (3/4).</p></footer>
+
+<script>
+(() => {
+"use strict";
+const $ = (s) => document.querySelector(s);
+const TOTAL = 5;
+const NIVELES = {
+  b: { nombre: "Básico", texto: "Cuadrados de 3 × 3 con los números del 1 al 9, sin repetir. La suma mágica es 15." },
+  m: { nombre: "Intermedio", texto: "Cuadrados de 3 × 3 con números enteros, también negativos. La suma mágica cambia en cada cuadrado." },
+  a: { nombre: "Avanzado", texto: "Cuadrados de 3 × 3 con fracciones o decimales, y cuadrados de 4 × 4 con enteros. ¡Ojo con los signos!" },
+};
+let nivel = "b", P = null, C = null, reloj = null;
+const leer = (k) => { try { return Number(localStorage.getItem(k)) || 0; } catch (e) { return 0; } };
+const guardar = (k, v) => { try { localStorage.setItem(k, String(v)); } catch (e) {} };
+
+/* ---------- racionales ---------- */
+function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; }
+function Q(n, d = 1) { if (d < 0) { n = -n; d = -d; } const g = gcd(n, d); return { n: n / g, d: d / g }; }
+const suma = (a, b) => Q(a.n * b.d + b.n * a.d, a.d * b.d);
+const igual = (a, b) => a.n === b.n && a.d === b.d;
+function leerNumero(txt) {
+  let s = String(txt).trim().replace(/\s+/g, "").replace(/−/g, "-").replace(/\./g, ",");
+  if (!s) return null;
+  let m = /^(-?)(\d+)\/(\d+)$/.exec(s);
+  if (m) { if (+m[3] === 0) return undefined; return Q((m[1] ? -1 : 1) * +m[2], +m[3]); }
+  m = /^(-?)(\d*),(\d+)$/.exec(s);
+  if (m) { const d = Math.pow(10, m[3].length); return Q((m[1] ? -1 : 1) * (+(m[2] || 0) * d + +m[3]), d); }
+  m = /^(-?)(\d+)$/.exec(s);
+  if (m) return Q((m[1] ? -1 : 1) * +m[2]);
+  return undefined;
+}
+const sg = (n) => (n < 0 ? "−" : "");
+function html(v, modo) {
+  if (v.d === 1) return sg(v.n) + Math.abs(v.n);
+  if (modo === "dec") { const x = v.n / v.d; return sg(x) + String(Math.abs(x)).replace(".", ","); }
+  return sg(v.n) + `<span class="fr"><span class="nu">${Math.abs(v.n)}</span><span class="de">${v.d}</span></span>`;
+}
+
+/* ---------- generadores ---------- */
+const LOSHU = [[2, 7, 6], [9, 5, 1], [4, 3, 8]];
+const DURER = [[16, 3, 2, 13], [5, 10, 11, 8], [9, 6, 7, 12], [4, 15, 14, 1]];
+const azar = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const elegir = (arr) => arr[Math.floor(Math.random() * arr.length)];
+function simetria(M) {
+  let A = M.map((f) => f.slice());
+  const rot = (X) => X[0].map((_, j) => X.map((f) => f[j]).reverse());
+  for (let k = azar(0, 3); k > 0; k--) A = rot(A);
+  if (Math.random() < .5) A = A.map((f) => f.slice().reverse());
+  return A;
+}
+// para 4 × 4 se mezclan además filas/columnas de forma que se conserva la magia (permutación 0↔3 y 1↔2 simultánea, etc.)
+function transforma(M, a, b) { return M.map((f) => f.map((x) => suma(Q(a.n * x, a.d), b))); }
+function generar(nv, k) {
+  let base, a = Q(1), b = Q(0), modo = "frac", ocultar, n;
+  if (nv === "b") { base = simetria(LOSHU); ocultar = elegir([4, 5, 5]); }
+  else if (nv === "m") { base = simetria(LOSHU); a = Q(elegir([1, 1, 2, 3, -1, -2])); b = Q(azar(-14, 4)); ocultar = elegir([5, 5, 6]); }
+  else if (k % 2 === 0) { base = simetria(DURER); a = Q(elegir([1, 1, 2, -1])); b = Q(azar(-12, 2)); ocultar = elegir([8, 9]); }
+  else {
+    base = simetria(LOSHU);
+    if (Math.random() < .5) { modo = "frac"; a = Q(1, elegir([2, 3, 4])); b = Q(elegir([0, -1, -2]), 1); if (Math.random() < .4) b = Q(-1, 2); }
+    else { modo = "dec"; const c = elegir([[1, 2], [1, 4], [1, 10], [3, 10]]); a = Q(c[0], c[1]); b = Q(elegir([0, -1, -2, -3]) * (c[1] === 10 ? 1 : 1)); }
+    ocultar = elegir([5, 6]);
+  }
+  const sol = transforma(base, a, b);
+  n = sol.length;
+  let S = Q(0); for (const x of sol[0]) S = suma(S, x);
+  // ocultar casillas de a una, en orden aleatorio, mientras el cuadrado siga pudiendo resolverse línea por línea
+  const pos = []; for (let i = 0; i < n * n; i++) pos.push(i);
+  pos.sort(() => Math.random() - .5);
+  const oculto = new Set();
+  for (const q of pos) { if (oculto.size >= ocultar) break; oculto.add(q); if (!resoluble(n, oculto)) oculto.delete(q); }
+  return { n, sol, S, oculto, modo, nivel: nv };
+}
+// ¿se puede completar razonando línea por línea (siempre hay alguna línea con un solo hueco)?
+function lineas(n) {
+  const L = [];
+  for (let i = 0; i < n; i++) { L.push({ t: "f", i, c: [...Array(n).keys()].map((j) => [i, j]) }); L.push({ t: "c", i, c: [...Array(n).keys()].map((j) => [j, i]) }); }
+  L.push({ t: "d1", c: [...Array(n).keys()].map((j) => [j, j]) }); L.push({ t: "d2", c: [...Array(n).keys()].map((j) => [j, n - 1 - j]) });
+  return L;
+}
+function resoluble(n, oculto) {
+  const h = new Set(oculto), L = lineas(n);
+  let avance = true;
+  while (h.size && avance) {
+    avance = false;
+    for (const l of L) { const f = l.c.filter(([i, j]) => h.has(i * n + j)); if (f.length === 1) { h.delete(f[0][0] * n + f[0][1]); avance = true; } }
+  }
+  return h.size === 0;
+}
+
+/* ---------- dibujo ---------- */
+function pintarCuadrado() {
+  const n = C.n, malla = $("#malla");
+  const t = n === 3 ? "min(84px, 19vw)" : "min(68px, 15vw)", f = n === 3 ? "min(28px, 6.4vw)" : "min(23px, 5vw)";
+  malla.style.setProperty("--t", t); malla.style.setProperty("--f", f);
+  malla.style.gridTemplateColumns = `auto repeat(${n}, auto) auto`;
+  malla.innerHTML = "";
+  const add = (e) => malla.appendChild(e);
+  const div = (cls, txt) => { const d = document.createElement("div"); d.className = cls; if (txt !== undefined) d.innerHTML = txt; return d; };
+  // fila superior: diagonal ↘ suma en la esquina izquierda, diagonal ↙ en la derecha
+  add(div("suma diag", "↘")).id = "s-d1";
+  for (let j = 0; j < n; j++) add(div("vacio"));
+  add(div("suma diag", "↙")).id = "s-d2";
+  for (let i = 0; i < n; i++) {
+    add(div("vacio"));
+    for (let j = 0; j < n; j++) {
+      const c = div("celda");
+      if (C.oculto.has(i * n + j)) {
+        const inp = document.createElement("input");
+        inp.inputMode = C.modo === "frac" || C.nivel !== "b" ? "text" : "numeric";
+        inp.setAttribute("aria-label", `Fila ${i + 1}, columna ${j + 1}`);
+        inp.dataset.i = i; inp.dataset.j = j; inp.autocomplete = "off";
+        inp.addEventListener("input", actualizar);
+        inp.addEventListener("keydown", navegar);
+        c.appendChild(inp);
+      } else { c.classList.add("dada"); c.innerHTML = html(C.sol[i][j], C.modo); }
+      add(c);
+    }
+    add(div("suma")).id = "s-f" + i;
+  }
+  add(div("vacio"));
+  for (let j = 0; j < n; j++) add(div("suma")).id = "s-c" + j;
+  add(div("vacio"));
+  $("#objetivo").innerHTML = html(C.S, C.modo === "dec" ? "dec" : "frac");
+  $("#ayuda").textContent = C.nivel === "b" ? "Usa los números del 1 al 9 sin repetir." : C.modo === "dec" ? "Escribe decimales con coma, por ejemplo 0,75 o −1,5." : C.modo === "frac" && C.n === 3 && C.nivel === "a" ? "Escribe fracciones con barra, por ejemplo 3/4 o −1/2." : "Puedes escribir números negativos con el signo menos.";
+  actualizar();
+}
+function valorCelda(i, j) {
+  if (!C.oculto.has(i * C.n + j)) return C.sol[i][j];
+  const inp = $(`#malla input[data-i="${i}"][data-j="${j}"]`);
+  const v = leerNumero(inp.value);
+  return v === null || v === undefined ? null : v;
+}
+function actualizar() {
+  const n = C.n;
+  for (const inp of document.querySelectorAll("#malla input")) inp.classList.toggle("mala", leerNumero(inp.value) === undefined);
+  for (const l of lineas(n)) {
+    let s = Q(0), completa = true;
+    for (const [i, j] of l.c) { const v = valorCelda(i, j); if (v === null) completa = false; else s = suma(s, v); }
+    const id = l.t === "f" ? "s-f" + l.i : l.t === "c" ? "s-c" + l.i : "s-" + l.t;
+    const e = document.getElementById(id);
+    const pref = l.t === "d1" ? "↘ " : l.t === "d2" ? "↙ " : "";
+    e.innerHTML = pref + (completa ? html(s, C.modo === "dec" ? "dec" : "frac") : "…");
+    e.classList.toggle("ok", completa && igual(s, C.S));
+    e.classList.toggle("mal", completa && !igual(s, C.S));
+  }
+}
+function navegar(e) {
+  const inps = [...document.querySelectorAll("#malla input")], k = inps.indexOf(e.target);
+  if (e.key === "Enter") { e.preventDefault(); const sig = inps.find((x, i) => i > k && !x.value) || inps.find((x) => !x.value); if (sig) sig.focus(); else comprobar(); }
+}
+
+/* ---------- partida ---------- */
+function nuevaPartida() {
+  P = { nivel, ronda: 0, puntos: 0, pistas: 0, resueltos: 0, t0: Date.now() };
+  $("#hNivel").textContent = NIVELES[nivel].nombre;
+  clearInterval(reloj); reloj = setInterval(() => { const s = Math.floor((Date.now() - P.t0) / 1000); $("#hTiempo").textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; }, 500);
+  mostrar("juego"); siguiente();
+}
+function siguiente() {
+  if (P.ronda >= TOTAL) return terminar();
+  P.ronda++;
+  C = generar(P.nivel, P.ronda); C.pistas = 0; C.listo = false;
+  $("#hRonda").textContent = `${P.ronda}/${TOTAL}`;
+  $("#fb").textContent = ""; $("#fb").className = "fb";
+  $("#btnComprobar").hidden = false; $("#btnSiguiente").hidden = true;
+  ["#btnPista", "#btnBorrar", "#btnRendirse"].forEach((s) => ($(s).disabled = false));
+  pintarCuadrado();
+  const p = document.querySelector("#malla input"); if (p) p.focus();
+}
+function comprobar() {
+  if (C.listo) return;
+  const fb = $("#fb"), n = C.n;
+  const inps = [...document.querySelectorAll("#malla input")];
+  if (inps.some((x) => leerNumero(x.value) === undefined)) { fb.textContent = "Hay una casilla con un número mal escrito (marcada en naranja)."; fb.className = "fb mal"; return; }
+  if (inps.some((x) => leerNumero(x.value) === null)) { fb.textContent = "Todavía quedan casillas vacías."; fb.className = "fb mal"; return; }
+  if (C.nivel === "b") {
+    const vals = []; for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) vals.push(valorCelda(i, j));
+    if (vals.some((v) => v.d !== 1 || v.n < 1 || v.n > 9)) { fb.textContent = "En el nivel básico solo se usan los números del 1 al 9."; fb.className = "fb mal"; return; }
+    if (new Set(vals.map((v) => v.n)).size !== 9) { fb.textContent = "Hay números repetidos: cada número del 1 al 9 va una sola vez."; fb.className = "fb mal"; return; }
+  }
+  const malas = lineas(n).filter((l) => { let s = Q(0); for (const [i, j] of l.c) s = suma(s, valorCelda(i, j)); return !igual(s, C.S); });
+  if (malas.length) {
+    const nom = (l) => l.t === "f" ? "la fila " + (l.i + 1) : l.t === "c" ? "la columna " + (l.i + 1) : "una diagonal";
+    fb.textContent = `Casi: ${malas.length === 1 ? nom(malas[0]) + " no suma" : malas.length + " líneas no suman"} lo mismo que la suma mágica. Revisa las marcas rojas.`;
+    fb.className = "fb mal"; return;
+  }
+  const pts = Math.max(5, 20 - 5 * C.pistas);
+  P.puntos += pts; P.resueltos++;
+  fb.textContent = `✨ ¡Cuadrado mágico! +${pts} puntos${C.pistas ? ` (usaste ${C.pistas} ${C.pistas === 1 ? "pista" : "pistas"})` : ""}.`; fb.className = "fb ok";
+  $("#tablero").classList.remove("brillo"); void $("#tablero").offsetWidth; $("#tablero").classList.add("brillo");
+  cerrar();
+}
+function pista() {
+  if (C.listo) return;
+  const inps = [...document.querySelectorAll("#malla input")];
+  // primero corrige una casilla equivocada respecto de la solución, si la hay; si no, llena una vacía
+  const cand = inps.filter((x) => { const v = leerNumero(x.value); return !v || !igual(v, C.sol[+x.dataset.i][+x.dataset.j]); });
+  if (!cand.length) return;
+  const vacias = cand.filter((x) => !x.value.trim());
+  const x = (vacias.length ? vacias : cand)[0];
+  const v = C.sol[+x.dataset.i][+x.dataset.j];
+  x.value = C.modo === "dec" && v.d !== 1 ? String(v.n / v.d).replace(".", ",").replace("-", "−") : (v.d === 1 ? sg(v.n) + Math.abs(v.n) : sg(v.n) + Math.abs(v.n) + "/" + v.d);
+  x.classList.add("pista"); x.readOnly = true;
+  C.pistas++; P.pistas++; $("#hPistas").textContent = P.pistas;
+  actualizar();
+}
+function rendirse() {
+  if (C.listo) return;
+  for (const x of document.querySelectorAll("#malla input")) { const v = C.sol[+x.dataset.i][+x.dataset.j]; x.value = C.modo === "dec" && v.d !== 1 ? String(v.n / v.d).replace(".", ",").replace("-", "−") : (v.d === 1 ? sg(v.n) + Math.abs(v.n) : sg(v.n) + Math.abs(v.n) + "/" + v.d); x.readOnly = true; }
+  actualizar();
+  $("#fb").textContent = "Esta es una solución posible. ¡En el próximo cuadrado lo logras!"; $("#fb").className = "fb";
+  cerrar();
+}
+function cerrar() {
+  C.listo = true;
+  document.querySelectorAll("#malla input").forEach((x) => (x.readOnly = true));
+  ["#btnPista", "#btnBorrar", "#btnRendirse"].forEach((s) => ($(s).disabled = true));
+  $("#btnComprobar").hidden = true; $("#btnSiguiente").hidden = false;
+  $("#btnSiguiente").textContent = P.ronda >= TOTAL ? "Ver resultados ▸" : "Siguiente ▸";
+  $("#btnSiguiente").focus();
+}
+function borrar() { if (C.listo) return; document.querySelectorAll("#malla input").forEach((x) => { if (!x.readOnly) x.value = ""; }); actualizar(); }
+function terminar() {
+  clearInterval(reloj);
+  const s = Math.floor((Date.now() - P.t0) / 1000);
+  const k = "cm-record-" + P.nivel, prev = leer(k), rec = P.puntos > prev; if (rec) guardar(k, P.puntos);
+  $("#finNivel").textContent = NIVELES[P.nivel].nombre.toUpperCase() + " · " + TOTAL + " CUADRADOS";
+  $("#finTitulo").textContent = P.resueltos === TOTAL && !P.pistas ? "¡Magia pura! ✨" : P.resueltos >= 3 ? "¡Muy buen trabajo!" : "Buen intento, sigue practicando";
+  $("#resumen").innerHTML = `<div class="stat main"><span>PUNTAJE</span><b>${P.puntos}</b></div><div class="stat"><span>RESUELTOS</span><b>${P.resueltos}/${TOTAL}</b></div><div class="stat"><span>PISTAS</span><b>${P.pistas}</b></div><div class="stat"><span>TIEMPO</span><b>${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}</b></div><div class="stat"><span>${rec ? "¡NUEVO RÉCORD!" : "RÉCORD"}</span><b>${Math.max(prev, P.puntos)}</b></div>`;
+  mostrar("fin");
+}
+const mostrar = (id) => { ["inicio", "juego", "fin"].forEach((v) => ($("#" + v).hidden = v !== id)); window.scrollTo(0, 0); };
+
+$("#segNivel").addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-v]"); if (!b) return;
+  nivel = b.dataset.v; $("#segNivel").querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", x === b)); pintarInicio();
+});
+function pintarInicio() {
+  $("#infoNivel").innerHTML = `<b>${NIVELES[nivel].nombre}:</b> ${NIVELES[nivel].texto}`;
+  const r = leer("cm-record-" + nivel);
+  $("#rec").textContent = r ? `Tu récord en ${NIVELES[nivel].nombre}: ${r} de 100 puntos` : `Aún no tienes récord en ${NIVELES[nivel].nombre}.`;
+}
+pintarInicio();
+$("#btnDespegar").onclick = nuevaPartida; $("#btnOtra").onclick = nuevaPartida;
+$("#btnConfig").onclick = () => { pintarInicio(); mostrar("inicio"); };
+$("#btnAbandonar").onclick = () => { clearInterval(reloj); P = null; pintarInicio(); mostrar("inicio"); };
+$("#btnComprobar").onclick = comprobar; $("#btnSiguiente").onclick = siguiente;
+$("#btnPista").onclick = pista; $("#btnRendirse").onclick = rendirse; $("#btnBorrar").onclick = borrar;
+window.__cm = { generar, resoluble, leerNumero, igual, suma, Q, lineas }; // para pruebas
+})();
+</script>
+</body>
+</html>
