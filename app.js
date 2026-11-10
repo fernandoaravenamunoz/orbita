@@ -238,12 +238,13 @@
 
       <section class="seccion">
         <div class="contenedor">
-          ${cabeceraSeccion("§ 01", "Explorar", "Cuatro rutas por el sitio")}
+          ${cabeceraSeccion("§ 01", "Explorar", "Cinco rutas por el sitio")}
           <div class="accesos">
             <a class="acceso" href="#cursos"><span class="acceso__icono">01</span><h3>Material por curso</h3><p>Guías, videos, pautas y simulaciones ordenados por unidad.</p></a>
             <a class="acceso" href="#juegos"><span class="acceso__icono">02</span><h3>Juegos</h3><p>Desafíos de cálculo mental, como los Kakoomas matemáticos.</p></a>
             <a class="acceso" href="#difusion"><span class="acceso__icono">03</span><h3>Observatorio</h3><p>Artículos y videos sobre matemáticas y ciencias.</p></a>
-            <a class="acceso" href="#tareas"><span class="acceso__icono">04</span><h3>Entregar tarea</h3><p>Sube tu trabajo y llega directo al profesor.</p></a>
+            <a class="acceso" href="#curiosa"><span class="acceso__icono">04</span><h3>Órbita Curiosa</h3><p>Investigaciones reales y excéntricas, varias con Premio Ig Nobel.</p></a>
+            <a class="acceso" href="#tareas"><span class="acceso__icono">05</span><h3>Entregar tarea</h3><p>Sube tu trabajo y llega directo al profesor.</p></a>
           </div>
         </div>
       </section>
@@ -391,6 +392,89 @@
       <div class="franja-modular" aria-hidden="true"></div>
       <section class="seccion"><div class="contenedor">${cuerpo}</div></section>`;
   }
+
+  /* ---------- Órbita Curiosa ---------- */
+  const marcoFoto = `<svg viewBox="0 0 120 80" aria-hidden="true"><rect x="1" y="1" width="118" height="78" fill="none" stroke="currentColor" stroke-dasharray="3 4"/><circle cx="60" cy="40" r="16" fill="none" stroke="currentColor"/><ellipse cx="60" cy="40" rx="30" ry="9" fill="none" stroke="currentColor" transform="rotate(-18 60 40)"/><circle cx="86" cy="31" r="2.6" fill="currentColor"/></svg>`;
+  const claveArea = (a) => String(a || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+
+  function vistaCuriosa() {
+    const items = SITIO.curiosa || [];
+    const areas = [];
+    items.forEach((d) => { if (!areas.includes(d.area)) areas.push(d.area); });
+    const premiados = items.filter((d) => d.premio).length;
+
+    const ficha = (d, i) => {
+      const num = String(i + 1).padStart(2, "0");
+      const sello = d.premio
+        ? `<span class="oc-sello"><span class="oc-sello__ig" aria-hidden="true">Ig</span>${esc(d.premio)}</span>`
+        : `<span class="oc-sello oc-sello--otro">Curiosidad · sin premio</span>`;
+      const foto = d.imagen
+        ? `<img src="${esc(d.imagen)}" alt="${esc(d.imagenAlt || d.titulo)}" loading="lazy" onerror="this.closest('.oc-ficha__figura').classList.add('oc-ficha__figura--vacia');this.remove()">`
+        : "";
+      return `
+        <article class="oc-ficha" data-area="${esc(claveArea(d.area))}" id="oc-${num}">
+          <header class="oc-ficha__cabeza">
+            <span class="oc-ficha__codigo">OC·${num}</span>
+            <span class="oc-ficha__area">${esc(d.area)}</span>
+            <span class="oc-ficha__anio">${esc(d.anio)}</span>
+          </header>
+          <figure class="oc-ficha__figura${foto ? "" : " oc-ficha__figura--vacia"}">
+            ${sello}
+            ${foto}
+            <div class="oc-ficha__hueco" aria-hidden="true">${marcoFoto}<span>Espacio para imagen</span><small>${esc(d.imagen || "materiales/curiosa/…")}</small></div>
+          </figure>
+          <div class="oc-ficha__cuerpo">
+            <h3 class="oc-ficha__titulo" lang="en">${esc(d.titulo)}</h3>
+            ${d.traduccion ? `<p class="oc-ficha__traduccion">${esc(d.traduccion)}</p>` : ""}
+            <dl class="oc-ficha__datos">
+              <div><dt>Autores</dt><dd>${esc(d.autores)}</dd></div>
+              <div><dt>Publicado en</dt><dd>${esc(d.revista)} · <b>${esc(d.anio)}</b></dd></div>
+            </dl>
+            <p class="oc-ficha__resumen">${esc(d.resumen)}</p>
+            ${d.contexto ? `<div class="oc-ficha__contexto"><span class="oc-ficha__rotulo">Quiénes lo hicieron</span><p>${esc(d.contexto)}</p></div>` : ""}
+            ${d.conexion ? `<p class="oc-ficha__clase"><span class="oc-ficha__rotulo">En la sala de clases</span>${esc(d.conexion)}</p>` : ""}
+            <div class="oc-ficha__pie">
+              <a class="boton boton--chico" href="${esc(d.enlace)}" target="_blank" rel="noopener">Leer el artículo original <span aria-hidden="true">↗</span></a>
+              ${d.doi ? `<span class="oc-ficha__doi">DOI ${esc(d.doi)}</span>` : ""}
+            </div>
+          </div>
+        </article>`;
+    };
+
+    const filtros = areas.length > 1 ? `
+      <div class="oc-filtros" role="group" aria-label="Filtrar por área">
+        <button type="button" class="oc-filtro" data-filtro="todas" aria-pressed="true">Todas <span class="insignia insignia--vacia">${items.length}</span></button>
+        ${areas.map((a) => `<button type="button" class="oc-filtro" data-filtro="${esc(claveArea(a))}" aria-pressed="false">${esc(a)} <span class="insignia insignia--vacia">${items.filter((d) => d.area === a).length}</span></button>`).join("")}
+      </div>` : "";
+
+    const cuerpo = items.length ? `
+      <aside class="oc-intro">
+        <div class="oc-intro__sello" aria-hidden="true"><span>Ig</span><small>Nobel</small></div>
+        <div>
+          <h2>¿Qué es el Premio Ig Nobel?</h2>
+          <p>Desde 1991, la revista <i>Annals of Improbable Research</i> premia investigaciones que <b>primero hacen reír y después hacen pensar</b>. Todas las de esta sección son reales y salieron en revistas científicas. ${premiados} de ellas ganaron un Ig Nobel; las demás son rarezas que merecían estar aquí.</p>
+        </div>
+      </aside>
+      ${filtros}
+      <div class="oc-rejilla">${items.map(ficha).join("")}</div>
+      <p class="oc-vacio" hidden>No hay fichas en esta área.</p>`
+      : `<div class="vacio">${planetaVacio}<p>Pronto habrá investigaciones curiosas.</p></div>`;
+
+    return `
+      ${cabecera("§ 04", "Ciencia improbable", "Órbita Curiosa", "Investigaciones reales, publicadas en revistas serias, sobre las preguntas más inesperadas de la física y la matemática.")}
+      <div class="franja-modular" aria-hidden="true"></div>
+      <section class="seccion"><div class="contenedor">${cuerpo}</div></section>`;
+  }
+
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-filtro]");
+    if (!b) return;
+    const f = b.dataset.filtro;
+    document.querySelectorAll("[data-filtro]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    let visibles = 0;
+    document.querySelectorAll(".oc-ficha").forEach((c) => { const ver = f === "todas" || c.dataset.area === f; c.hidden = !ver; if (ver) visibles++; });
+    const v = document.querySelector(".oc-vacio"); if (v) v.hidden = visibles > 0;
+  });
 
   function vistaTareas() {
     let url = (SITIO.formularioTareas || "").trim();
@@ -699,6 +783,7 @@
       if (j) titulo = `${j.nombre} · ${SITIO.titulo}`;
     }
     else if (vista === "difusion") { html = vistaDifusion(); activa = "difusion"; titulo = "Observatorio · " + SITIO.titulo; }
+    else if (vista === "curiosa") { html = vistaCuriosa(); activa = "curiosa"; titulo = "Órbita Curiosa · " + SITIO.titulo; }
     else if (vista === "tareas") { html = vistaTareas(); activa = "tareas"; titulo = "Entregar tarea · " + SITIO.titulo; }
     else html = vistaNoEncontrada();
 

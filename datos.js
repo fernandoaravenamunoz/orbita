@@ -217,6 +217,177 @@ const SITIO = {
   ],
 
   /* ---------------------------------------------------------------
+     ÓRBITA CURIOSA — investigaciones reales y excéntricas.
+     area: "Física" o "Matemáticas" (sirve para el filtro).
+     premio: texto del sello; déjalo "" si el artículo no ganó un Ig Nobel.
+     imagen: ruta de la foto o gráfico. Si el archivo todavía no existe,
+       la tarjeta muestra un recuadro "Espacio para imagen" en su lugar.
+       Sube las imágenes a materiales/curiosa/ con estos mismos nombres.
+     --------------------------------------------------------------- */
+  curiosa: [
+    {
+      area: "Física",
+      titulo: "Spontaneous knotting of an agitated string",
+      traduccion: "Anudamiento espontáneo de una cuerda agitada",
+      autores: "Dorian M. Raymer y Douglas E. Smith",
+      revista: "Proceedings of the National Academy of Sciences (PNAS)",
+      anio: 2007,
+      premio: "Ig Nobel de Física 2008",
+      enlace: "https://doi.org/10.1073/pnas.0611320104",
+      doi: "10.1073/pnas.0611320104",
+      contexto: "Físicos de la Universidad de California en San Diego. Raymer era estudiante de pregrado cuando partió el proyecto; el laboratorio de Smith estudia moléculas de ADN, que también se anudan solas.",
+      resumen: "Metieron una cuerda en una caja que giraba, como ropa en una secadora, y repitieron el experimento más de 3.000 veces. Con cuerdas de menos de 46 cm no se formó ningún nudo. Desde ahí, la probabilidad sube rápido hasta los 1,5 m y luego se estanca cerca del 50 %. Con teoría de nudos identificaron 120 tipos distintos.",
+      conexion: "Probabilidad experimental y frecuencia relativa; una función que crece y luego se estabiliza.",
+      imagen: "materiales/curiosa/oc01-nudos.jpg",
+      imagenAlt: "Cuerda anudada después de girar dentro de una caja, junto al diagrama del nudo"
+    },
+    {
+      area: "Física",
+      titulo: "Two-, Three-, and Four-Atom Exchange Effects in bcc ³He",
+      traduccion: "Efectos de intercambio de dos, tres y cuatro átomos en helio-3 sólido",
+      autores: "J. H. Hetherington y F. D. C. Willard",
+      revista: "Physical Review Letters, vol. 35",
+      anio: 1975,
+      premio: "",
+      enlace: "https://doi.org/10.1103/PhysRevLett.35.1442",
+      doi: "10.1103/PhysRevLett.35.1442",
+      contexto: "Jack H. Hetherington era físico de la Universidad Estatal de Míchigan. «F. D. C. Willard» era Chester, su gato siamés: las iniciales vienen de Felis domesticus Chester.",
+      resumen: "Es un artículo serio de física cuántica a bajas temperaturas. Hetherington lo escribió a máquina usando «nosotros», pero la revista no aceptaba ese plural con un solo autor. En vez de reescribirlo entero, sumó a su gato como coautor. Así Chester se volvió uno de los pocos animales que firman un artículo científico.",
+      conexion: "Cómo se publica la ciencia: autoría, revisión por pares y normas de las revistas.",
+      imagen: "materiales/curiosa/oc02-chester.jpg",
+      imagenAlt: "Gato siamés, en referencia a Chester, coautor del artículo"
+    },
+    {
+      area: "Física",
+      titulo: "Splash-free urinals for global sustainability and accessibility: Design through physics and differential equations",
+      traduccion: "Urinarios sin salpicaduras: diseño con física y ecuaciones diferenciales",
+      autores: "Kaveeshan Thurairajah, Randy C. Hurd, Tadd T. Truscott, Zhao Pan y otros",
+      revista: "PNAS Nexus, vol. 4",
+      anio: 2025,
+      premio: "Ig Nobel de Física 2026",
+      enlace: "https://doi.org/10.1093/pnasnexus/pgaf087",
+      doi: "10.1093/pnasnexus/pgaf087",
+      contexto: "Equipo liderado desde la Universidad de Waterloo (Canadá), con ingenieros de Weber State (EE. UU.) y KAUST (Arabia Saudita). La idea nació como broma de laboratorio en 2012, y a la ceremonia en Zúrich llegaron con impermeables amarillos.",
+      resumen: "Las salpicaduras dependen del ángulo con que el chorro choca contra la pared. Resolviendo una ecuación diferencial obtuvieron superficies donde ese ángulo es siempre pequeño. Su mejor diseño, «Nautilus», sigue una espiral logarítmica, la misma curva de la concha del nautilo, y redujo las salpicaduras en cerca de un 98 % comparado con un urinario común.",
+      conexion: "Ecuaciones diferenciales, ángulos de incidencia y la espiral logarítmica.",
+      imagen: "materiales/curiosa/oc03-nautilus.jpg",
+      imagenAlt: "Prototipo del urinario Nautilus, con forma de espiral"
+    },
+    {
+      area: "Física",
+      titulo: "Phase behavior of Cacio e Pepe sauce",
+      traduccion: "Comportamiento de fases de la salsa cacio e pepe",
+      autores: "G. Bartolucci, D. M. Busiello, M. Ciarchi, A. Corticelli, I. Di Terlizzi, F. Olmeda, D. Revignas y V. M. Schimmenti",
+      revista: "Physics of Fluids, vol. 37",
+      anio: 2025,
+      premio: "Ig Nobel de Física 2025",
+      enlace: "https://doi.org/10.1063/5.0255841",
+      doi: "10.1063/5.0255841",
+      contexto: "Ocho físicos italianos que investigan en distintos centros de Europa. Querían cocinar la receta para muchos amigos sin que fallara; hicieron los experimentos los fines de semana, en una cocina y pagando ellos mismos los ingredientes.",
+      resumen: "La salsa de queso pecorino se arruina al calentarse: las proteínas se agrupan y forman grumos, lo que llamaron la «fase mozzarella». Midieron cuándo ocurre según la temperatura y la cantidad de almidón. Con menos de 1 % de almidón (respecto de la masa del queso) aparecen grumos; su receta usa entre 2 y 3 %.",
+      conexion: "Porcentajes, diagramas de fase y control de variables en un experimento.",
+      imagen: "materiales/curiosa/oc04-cacio.jpg",
+      imagenAlt: "Plato de pasta cacio e pepe junto a muestras de salsa con y sin grumos"
+    },
+    {
+      area: "Física",
+      titulo: "How do wombats make cubed poo?",
+      traduccion: "¿Cómo hacen los wombats caca en forma de cubo?",
+      autores: "Patricia J. Yang, Miles Chan, Scott Carver y David L. Hu",
+      revista: "71.ª reunión de la División de Dinámica de Fluidos de la APS (resumen de congreso)",
+      anio: 2018,
+      premio: "Ig Nobel de Física 2019",
+      enlace: "https://archive.aps.org/dfd/2018/e19/1",
+      doi: "",
+      contexto: "Ingenieros del Instituto Tecnológico de Georgia (EE. UU.) y un ecólogo de la Universidad de Tasmania (Australia). Carver dio con los cubos al disecar wombats atropellados mientras estudiaba una enfermedad de la piel. El trabajo completo se publicó en 2021 en la revista Soft Matter.",
+      resumen: "El wombat es el único animal conocido que hace caca en cubos, de unos 2 cm. No se debe a la forma del ano: los cubos se forman dentro del intestino, cuya pared tiene franjas más rígidas y otras más elásticas. Al contraerse, las zonas rígidas marcan las aristas. Los wombats usan esos cubos para marcar territorio sobre rocas y troncos.",
+      conexion: "Geometría de prismas, elasticidad y modelos matemáticos de un fenómeno biológico.",
+      imagen: "materiales/curiosa/oc05-wombat.jpg",
+      imagenAlt: "Wombat junto a sus excrementos con forma de cubo"
+    },
+    {
+      area: "Física",
+      titulo: "Pressures produced when penguins pooh — calculations on avian defaecation",
+      traduccion: "Presiones que producen los pingüinos al defecar: cálculos sobre la defecación de las aves",
+      autores: "Victor Benno Meyer-Rochow y Jozsef Gal",
+      revista: "Polar Biology, vol. 27",
+      anio: 2003,
+      premio: "Ig Nobel de Dinámica de Fluidos 2005",
+      enlace: "https://doi.org/10.1007/s00300-003-0563-3",
+      doi: "10.1007/s00300-003-0563-3",
+      contexto: "Biólogos de la Universidad Internacional de Bremen (Alemania) y la Universidad Eötvös Loránd (Hungría). En los agradecimientos del artículo aparece el Programa Antártico Chileno (INACH).",
+      resumen: "Los pingüinos de barbijo y de Adelia disparan sus excrementos lejos del nido para no ensuciarlo. A partir de cuán lejos llegan, a qué altura salen y qué tan viscosos son, calcularon la presión necesaria: entre 10 y 60 kPa. Para comparar, la presión sistólica de una persona ronda los 16 kPa.",
+      conexion: "Lanzamiento horizontal, presión y conversión de unidades (kPa y mmHg).",
+      imagen: "materiales/curiosa/oc06-pinguino.jpg",
+      imagenAlt: "Diagrama de un pingüino y la trayectoria de sus excrementos"
+    },
+    {
+      area: "Matemáticas",
+      titulo: "An application of Poincaré's recurrence theorem to academic administration",
+      traduccion: "Una aplicación del teorema de recurrencia de Poincaré a la administración académica",
+      autores: "Kenneth R. Meyer",
+      revista: "The American Mathematical Monthly, vol. 88, n.º 1, págs. 32-33",
+      anio: 1981,
+      premio: "",
+      enlace: "https://www.jstor.org/action/doBasicSearch?Query=%22Poincare%27s+Recurrence+Theorem+to+Academic+Administration%22",
+      doi: "",
+      contexto: "Matemático de la Universidad de Cincinnati, especialista en sistemas dinámicos. La nota tiene solo dos páginas y es una broma escrita con todo el rigor de un artículo de matemáticas.",
+      resumen: "El teorema de Poincaré dice que ciertos sistemas cerrados vuelven, tarde o temprano, a quedar muy cerca de su estado inicial. El autor trata la administración de una universidad como uno de esos sistemas y concluye, con humor, que tras cualquier reforma todo terminará volviendo a ser como antes.",
+      conexion: "Fenómenos que se repiten, sucesiones periódicas y la idea de modelar con matemática.",
+      imagen: "materiales/curiosa/oc07-poincare.jpg",
+      imagenAlt: "Diagrama de una órbita que regresa cerca de su punto de partida"
+    },
+    {
+      area: "Matemáticas",
+      titulo: "The Peter principle revisited: A computational study",
+      traduccion: "El principio de Peter revisado: un estudio computacional",
+      autores: "Alessandro Pluchino, Andrea Rapisarda y Cesare Garofalo",
+      revista: "Physica A: Statistical Mechanics and its Applications, vol. 389",
+      anio: 2010,
+      premio: "Ig Nobel de Administración 2010",
+      enlace: "https://doi.org/10.1016/j.physa.2009.09.045",
+      doi: "10.1016/j.physa.2009.09.045",
+      contexto: "Investigadores de la Universidad de Catania (Italia). Usaron herramientas de la física estadística para simular organizaciones jerárquicas con muchos empleados.",
+      resumen: "El principio de Peter dice que cada persona asciende hasta llegar a un puesto en el que es incompetente. Simularon empresas con distintas reglas de ascenso. Si el principio se cumple, ascender siempre al mejor baja la eficiencia, y elegir al azar, o alternar entre el mejor y el peor, da mejores resultados.",
+      conexion: "Simulación, azar y comparación de estrategias con datos.",
+      imagen: "materiales/curiosa/oc08-peter.jpg",
+      imagenAlt: "Gráfico de la eficiencia de una organización según la regla de ascenso"
+    },
+    {
+      area: "Matemáticas",
+      titulo: "Are cows more likely to lie down the longer they stand?",
+      traduccion: "¿Es más probable que una vaca se eche mientras más tiempo lleva de pie?",
+      autores: "Bert J. Tolkamp, Marie J. Haskell, Fritha M. Langford, David J. Roberts y Colin A. Morgan",
+      revista: "Applied Animal Behaviour Science, vol. 124",
+      anio: 2010,
+      premio: "Ig Nobel de Probabilidad 2013",
+      enlace: "https://doi.org/10.1016/j.applanim.2010.02.004",
+      doi: "10.1016/j.applanim.2010.02.004",
+      contexto: "Investigadores del Scotland's Rural College (Escocia). Pusieron sensores en las patas de las vacas y registraron miles de veces en que se echaban y se paraban, para poder detectar a tiempo a los animales enfermos.",
+      resumen: "Mientras más tiempo lleva echada una vaca, más probable es que se pare pronto: tiene hambre y solo puede comer de pie. Lo contrario no se cumple. Una vaca que lleva seis horas de pie tiene la misma probabilidad de echarse en los próximos 15 minutos que una que lleva solo una hora. Es un proceso «sin memoria».",
+      conexion: "Probabilidad condicional y sucesos que no dependen de lo que ocurrió antes.",
+      imagen: "materiales/curiosa/oc09-vacas.jpg",
+      imagenAlt: "Vacas echadas y de pie en un potrero"
+    },
+    {
+      area: "Matemáticas",
+      titulo: "How often should you beat your kids?",
+      traduccion: "¿Con qué frecuencia deberías ganarles a tus hijos?",
+      autores: "Don Zagier",
+      revista: "Mathematics Magazine, vol. 63, n.º 2, págs. 89-92",
+      anio: 1990,
+      premio: "",
+      enlace: "https://www.jstor.org/stable/2691064",
+      doi: "",
+      contexto: "Matemático estadounidense, reconocido en teoría de números; en ese momento trabajaba en la Universidad de Maryland. En inglés, «beat» significa tanto «pegar» como «ganar»: el título es un doble sentido a propósito.",
+      resumen: "Se juega con un mazo mitad rojo y mitad negro: antes de dar vuelta cada carta, hay que adivinar su color. Si siempre apuestas por el color que más queda en el mazo, le ganas a un niño que adivina al azar cerca del 85,4 % de las veces. Como eso es casi 6/7, el autor concluye que hay que ganarles «todos los días, menos el domingo».",
+      conexion: "Probabilidad, estrategias óptimas y la fracción 6/7 ≈ 0,857.",
+      imagen: "materiales/curiosa/oc10-cartas.jpg",
+      imagenAlt: "Mazo de cartas rojas y negras sobre una mesa"
+    }
+  ],
+
+  /* ---------------------------------------------------------------
      OBSERVATORIO (difusión científica) — artículos y videos de interés general.
      tipo: "articulo" o "video"
      categoria: agrupa las tarjetas por tema (en el orden en que aparecen aquí).
