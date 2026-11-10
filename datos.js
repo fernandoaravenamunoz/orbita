@@ -186,6 +186,11 @@ const SITIO = {
       nombre: "Gemelos Estelares",
       descripcion: "Encuentra las parejas de cantidades que valen lo mismo aunque estén escritas de otra forma.",
       url: "juegos/gemelos-estelares.html"
+    },
+    {
+      nombre: "Descomponedor de números",
+      descripcion: "Divide por números primos hasta llegar a 1 y encuentra la descomposición prima. Modo misión o maratón.",
+      url: "juegos/descomponedor-numeros.html"
     }
     // Para agregar otro juego: sube su archivo .html a la carpeta "juegos"
     // y copia uno de los bloques de arriba (con su coma).

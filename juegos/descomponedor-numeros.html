@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Descomponedor de números</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Righteous&family=Archivo:wght@400;500;700;800&display=swap">
+<style>
+/* Retrofuturismo / Space Age: crema mate, azul marino, naranja quemado, rojo óxido, mostaza. Misma línea visual que los demás juegos de Órbita Matemática. */
+:root{
+  --cream:#DEDED2; --navy:#2C395C; --orange:#FF5500; --rust:#A92717; --mustard:#B9A727;
+  --muted:#535D76; --cell:#C9CAC4; --bad-bg:#D3B9AD;
+  --font-display:"Righteous","Futura","Century Gothic",system-ui,sans-serif;
+  --font-body:"Archivo","Helvetica Neue",Helvetica,Arial,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--cream);color:var(--navy);font-family:var(--font-body);font-size:16px;line-height:1.5}
+.band{background:var(--navy);color:var(--cream);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.band.top{padding-block:22px 18px;border-bottom:6px double var(--mustard)}
+.band.bottom{padding-block:18px calc(28px + env(safe-area-inset-bottom,0px));border-top:6px double var(--mustard);margin-top:32px;font-size:13px}
+.band>*{max-width:980px;margin:0 auto}
+.band .eyebrow{color:var(--mustard)}
+.band p{margin:0}
+.hdr{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:8px 24px}
+h1{font-family:var(--font-display);font-weight:400;font-size:clamp(26px,5vw,40px);line-height:1.05;margin:0}
+h2{font-family:var(--font-display);font-weight:400;font-size:24px;margin:0}
+.tag{opacity:.85;font-size:14px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+.wrap{max-width:980px;margin:0 auto;padding:24px max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:20px}
+
+/* Configuración */
+.card{border:1px solid var(--mustard);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:16px}
+.group{display:flex;flex-direction:column;gap:8px}
+.group>span{font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg button,.btn{font:inherit;font-size:15px;border:1px solid var(--mustard);background:var(--cream);color:var(--navy);border-radius:999px;padding:9px 16px;cursor:pointer;line-height:1.2}
+.seg button[aria-pressed="true"]{background:var(--rust);border-color:var(--rust);color:var(--cream);font-weight:500}
+.seg button:hover,.btn:hover{border-color:var(--rust)}
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.mode{font:inherit;text-align:left;background:var(--cream);color:var(--navy);border:2px solid var(--mustard);border-radius:14px;padding:14px;cursor:pointer;display:flex;flex-direction:column;gap:4px}
+.mode b{font-family:var(--font-display);font-weight:400;font-size:19px}
+.mode small{font-size:13.5px;color:var(--muted);line-height:1.4}
+.mode[aria-pressed="true"]{border-color:var(--navy);background:var(--navy);color:var(--cream)}
+.mode[aria-pressed="true"] small{color:var(--cream);opacity:.85}
+.mode .ico{font-size:22px;line-height:1}
+.info{background:var(--mustard);color:var(--navy);border-radius:12px;padding:10px 14px;font-size:14px;margin:0}
+.info b{font-weight:700}
+.rules{margin:0;padding-left:20px;font-size:14.5px;color:var(--navy)}
+.rules li{margin:2px 0}
+.go{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.btn.primary{background:var(--orange);border-color:var(--orange);color:var(--navy);font-weight:800;font-size:17px;padding:12px 28px;font-family:var(--font-display);letter-spacing:.02em}
+.btn.primary:hover{border-color:var(--navy)}
+.btn.quiet{font-size:14px;padding:7px 14px;color:var(--muted)}
+.rec{font-size:14px;color:var(--muted);margin:0}
+button:focus-visible{outline:3px solid var(--rust);outline-offset:2px}
+
+/* Juego */
+.hud{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:10px 20px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid var(--mustard);border-radius:999px;padding:6px 14px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.chip b{color:var(--navy);font-size:17px;margin-left:4px}
+.timer{display:flex;flex-direction:column;gap:6px}
+.timer .eyebrow{margin:0}
+.tbar{position:relative;height:22px;border-radius:999px;background:var(--cell);overflow:hidden;border:2px solid var(--navy)}
+.tbar i{display:block;height:100%;width:100%;background:var(--navy);border-radius:999px;transition:width .1s linear}
+.tbar.mid i{background:var(--mustard)}
+.tbar.urgent i{background:var(--orange);animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:.6}}
+.tbar.pen{animation:tpen .5s}
+@keyframes tpen{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px);border-color:var(--rust)}75%{transform:translateX(6px);border-color:var(--rust)}}
+
+.arena{border:1px solid var(--mustard);border-radius:16px;padding:16px;display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:stretch}
+.target{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;height:260px;border-radius:12px;position:relative;overflow:hidden;
+  background-color:var(--navy);color:var(--cream);
+  background-image:radial-gradient(circle at 12% 18%,var(--cream) 1.2px,transparent 1.8px),radial-gradient(circle at 63% 9%,var(--cream) 1px,transparent 1.6px),radial-gradient(circle at 84% 41%,var(--mustard) 1.4px,transparent 2px),radial-gradient(circle at 33% 57%,var(--cream) 1px,transparent 1.6px),radial-gradient(circle at 74% 72%,var(--cream) 1.1px,transparent 1.7px),radial-gradient(circle at 21% 83%,var(--mustard) 1px,transparent 1.6px);
+  background-size:180px 160px;padding:18px 12px}
+.target .eyebrow{color:var(--mustard);margin:0}
+.bignum{font-family:var(--font-display);font-size:120px;line-height:1;font-variant-numeric:tabular-nums;transition:font-size .45s cubic-bezier(.3,1.4,.5,1);white-space:nowrap;flex:1;display:flex;align-items:center}
+.progress{font-family:var(--font-display);font-size:clamp(20px,3.6vw,28px);text-align:center;font-variant-numeric:tabular-nums;line-height:1.35;border:2px solid var(--navy);border-radius:14px;padding:10px 14px;word-break:break-word}
+.progress .lbl{display:block;font-family:var(--font-body);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.progress .p{color:var(--rust)}
+.progress .rest{background:var(--mustard);border-radius:8px;padding:0 8px}
+.progress sup{font-size:.55em}
+.bignum.hit{animation:hit .35s ease-out}
+@keyframes hit{0%{transform:scale(1.18);color:var(--mustard)}100%{transform:scale(1)}}
+.bignum.boom{animation:boom .6s ease-out}
+@keyframes boom{0%{transform:scale(1)}35%{transform:scale(1.35);color:var(--orange)}100%{transform:scale(1)}}
+.orig{font-size:14px;opacity:.85}
+.fb{margin:0;text-align:center;font-weight:700;min-height:1.5em;font-size:16.5px}
+.fb.ok{color:var(--navy)}
+.fb.bad{color:var(--rust)}
+.flash-ok{animation:fok .35s ease-out}
+.flash-bad{animation:fbad .35s ease-out}
+@keyframes fok{0%{background:var(--mustard)}100%{background:transparent}}
+@keyframes fbad{0%{background:var(--bad-bg)}100%{background:transparent}}
+
+/* Tabla de divisiones sucesivas */
+.ladder{display:flex;flex-direction:column;gap:6px;min-width:0}
+.ladder .eyebrow{margin:0}
+.lad{flex:1;max-height:260px;overflow-y:auto;border-radius:12px;background:#E8E8DE;padding:10px 14px}
+.lad table{border-collapse:collapse;margin:0 auto;font-variant-numeric:tabular-nums;font-size:19px}
+.lad td{padding:3px 14px;text-align:right;border:0}
+.lad td.dv{border-left:3px solid var(--navy);text-align:left;color:var(--rust);font-weight:800;min-width:3.2em}
+.lad tr.cur td.nm{background:var(--mustard);border-radius:8px 0 0 8px;font-weight:800}
+.lad tr.cur td.dv{color:var(--muted);font-weight:400}
+
+/* Teclado */
+.pad-wrap{display:flex;flex-direction:column;gap:10px;max-width:400px;width:100%;margin:0 auto}
+.disp{font-family:var(--font-display);font-size:30px;text-align:center;border:2px solid var(--navy);border-radius:12px;padding:6px 12px;min-height:58px;font-variant-numeric:tabular-nums;background:#E8E8DE}
+.disp.empty{color:var(--muted);opacity:.6;font-size:18px;display:flex;align-items:center;justify-content:center}
+.disp.wrong{animation:wrong .4s}
+@keyframes wrong{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px);background:var(--bad-bg)}75%{transform:translateX(5px);background:var(--bad-bg)}}
+.pad{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;touch-action:manipulation}
+.pad button{font:700 22px var(--font-body);border:1px solid var(--navy);background:var(--cell);color:var(--navy);border-radius:12px;padding:12px 0;cursor:pointer;user-select:none;-webkit-user-select:none}
+.pad button:active{background:var(--mustard)}
+.pad .ok{grid-column:4;grid-row:1 / span 3;background:var(--navy);border-color:var(--navy);color:var(--cream);font-family:var(--font-display);font-weight:400;font-size:18px}
+.pad .fn{background:var(--cream)}
+.pad .zero{grid-column:1 / span 2}
+.pad .del{grid-column:3 / span 2}
+.bignum.explode{animation:explode .9s ease-out forwards;color:var(--orange)}
+@keyframes explode{0%{transform:scale(1)}25%{transform:scale(1.6);color:var(--mustard)}55%{transform:scale(.8)}100%{transform:scale(2.6);opacity:0}}
+.win{font-family:var(--font-display);font-size:clamp(34px,7vw,52px);color:var(--orange);line-height:1.1;animation:winin .5s ease-out}
+@keyframes winin{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+.sparks{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:none}
+.sparks i{position:absolute;left:0;top:0;width:12px;height:12px;border-radius:50%;margin:-6px 0 0 -6px;animation:spark .9s ease-out forwards}
+@keyframes spark{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--x),var(--y)) scale(.2);opacity:0}}
+.off{opacity:.45;pointer-events:none}
+.hint{font-size:12.5px;color:var(--muted);text-align:center;margin:0}
+.row-end{display:flex;justify-content:center}
+
+/* Resultados */
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat{border:1px solid var(--mustard);border-radius:14px;padding:12px 14px}
+.stat span{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.stat b{font-family:var(--font-display);font-weight:400;font-size:30px;font-variant-numeric:tabular-nums}
+.stat.main{background:var(--navy);color:var(--cream);border-color:var(--navy)}
+.stat.main span{color:var(--mustard)}
+.badge{display:inline-block;background:var(--orange);color:var(--navy);font-weight:800;border-radius:999px;padding:3px 12px;font-size:13px;margin-left:8px;vertical-align:middle;font-family:var(--font-body)}
+.fact{font-family:var(--font-display);font-size:clamp(24px,5vw,34px);font-variant-numeric:tabular-nums;line-height:1.3}
+.fact sup{font-size:.55em}
+.factbox{border:2px solid var(--navy);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.factbox small{color:var(--muted);font-size:14px}
+table.res{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:15px}
+table.res th{text-align:left;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;border-bottom:2px solid var(--navy);padding:6px 8px}
+table.res td{padding:7px 8px;border-bottom:1px solid var(--mustard)}
+table.res td.bad{color:var(--rust);font-weight:700}
+table.res sup{font-size:.7em}
+.tablewrap{overflow-x:auto}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+
+@media (max-width:640px){
+  .arena{grid-template-columns:1fr}
+  .target{height:210px}
+  .lad{max-height:170px}
+  .pad button{padding:10px 0}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* Ejemplo resuelto en la pantalla de inicio */
+.ej{border:1px dashed var(--navy);border-radius:12px;padding:12px 14px;background:#E8E8DE;margin-top:4px}
+.ej-t{margin:0 0 10px;font-family:var(--font-display);font-size:17px}
+.ej-cuerpo{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.ej-tabla{display:grid;grid-template-columns:auto auto;font-weight:800;font-size:18px;font-variant-numeric:tabular-nums}
+.ej-tabla span{padding:3px 12px;text-align:right}
+.ej-tabla .p{border-left:2px solid var(--navy);text-align:left;color:var(--rust)}
+.ej-tabla .uno{color:var(--orange)}
+.ej-texto{flex:1;min-width:220px}
+.ej-texto p{margin:0 0 6px}
+.ej-res{font-weight:800;font-size:17px}
+.ej-nota{font-size:14px;color:var(--muted)}
+</style>
+</head>
+<body>
+<!-- Barra de regreso al sitio Órbita Matemática -->
+<nav class="orbita-volver" style="background:#2C395C;border-bottom:4px solid #FF5500;padding:8px max(16px,env(safe-area-inset-left,0px));font:600 14px/1.4 'Jost','Archivo','Helvetica Neue',Arial,sans-serif;position:relative;z-index:50">
+  <a href="../index.html#juegos" style="color:#DEDED2;text-decoration:none;display:inline-flex;align-items:center;gap:8px">
+    <span style="display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#FF5500;color:#2C395C;font-weight:700">←</span>
+    Volver a Órbita Matemática · Juegos
+  </a>
+</nav>
+
+<header class="band top">
+  <div class="hdr">
+    <div><p class="eyebrow">Juegos · Matemática</p><h1>Descomponedor de números</h1></div>
+    <p class="tag">Divide por números primos hasta llegar a la descomposición prima</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- CONFIGURACIÓN -->
+  <section id="setup" class="card" aria-label="Configuración">
+    <div class="group"><span>Cómo se juega</span>
+      <ol class="rules">
+        <li>Aparece un número compuesto mayor que 20.</li>
+        <li>Escribe un número <b>primo</b> que lo divida de forma exacta y presiona <b>Dividir</b>: el número se reduce al cociente.</li>
+        <li>Sigue dividiendo hasta llegar a <b>1</b>: el 1 explota y ganas. ¡Recuerda que un primo también se divide por sí mismo!</li>
+        <li>Tienes <b>45 segundos</b>. Cada valor que no funciona acorta la barra de tiempo.</li>
+      </ol>
+      <div class="ej" aria-label="Ejemplo resuelto">
+        <p class="ej-t">Ejemplo · descomponer 84</p>
+        <div class="ej-cuerpo">
+          <div class="ej-tabla" role="table" aria-label="Divisiones sucesivas de 84">
+            <span class="n">84</span><span class="p">2</span>
+            <span class="n">42</span><span class="p">2</span>
+            <span class="n">21</span><span class="p">3</span>
+            <span class="n">7</span><span class="p">7</span>
+            <span class="n uno">1</span><span class="p vacio"></span>
+          </div>
+          <div class="ej-texto">
+            <p>84 : 2 = 42 → 42 : 2 = 21 → 21 : 3 = 7 → 7 : 7 = 1 💥</p>
+            <p class="ej-res">84 = 2 · 2 · 3 · 7 = 2² · 3 · 7</p>
+            <p class="ej-nota">Si escribes 5, no sirve: 84 no se puede dividir exactamente por 5 y pierdes tiempo. Si escribes 4, tampoco: 4 no es primo.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="group"><span>Dificultad</span>
+      <div class="seg" data-k="diff">
+        <button data-v="b" aria-pressed="true">Básico</button>
+        <button data-v="m" aria-pressed="false">Intermedio</button>
+        <button data-v="d" aria-pressed="false">Avanzado</button>
+      </div>
+    </div>
+    <p class="info" id="info"></p>
+    <div class="group"><span>Modo de juego</span>
+      <div class="modes" data-k="mode">
+        <button class="mode" data-v="mision" aria-pressed="true"><span class="ico">◎</span><b>Misión</b><small>Un solo número. Descomponlo antes de que se acabe el tiempo y ganas la misión.</small></button>
+        <button class="mode" data-v="maraton" aria-pressed="false"><span class="ico">☄</span><b>Maratón</b><small>Descompón todos los números que puedas antes de que termine el tiempo. Más factores, más puntos.</small></button>
+      </div>
+    </div>
+    <div class="go">
+      <p class="rec" id="rec"></p>
+      <button class="btn primary" id="startBtn">Despegar ▸</button>
+    </div>
+  </section>
+
+  <!-- JUEGO -->
+  <section id="game" hidden aria-label="Juego">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="hud">
+        <div><p class="eyebrow" id="hudMode" style="margin:0"></p></div>
+        <div class="chips">
+          <span class="chip" id="chipDone">Descompuestos <b id="hDone">0</b></span>
+          <span class="chip" id="chipScore">Puntaje <b id="hScore">0</b></span>
+          <span class="chip">Errores <b id="hErr">0</b></span>
+        </div>
+      </div>
+      <div class="timer"><p class="eyebrow">Tiempo</p><div class="tbar" id="tbar" role="progressbar" aria-label="Tiempo restante" aria-valuemin="0" aria-valuemax="45"><i id="tfill"></i></div></div>
+
+      <div class="arena" id="arena">
+        <div class="target">
+          <p class="eyebrow">Número actual</p>
+          <div class="bignum" id="bignum">—</div>
+          <div class="orig" id="orig"></div>
+          <div class="sparks" id="sparks" aria-hidden="true"></div>
+        </div>
+        <div class="ladder">
+          <p class="eyebrow">Divisiones sucesivas</p>
+          <div class="lad" id="lad"></div>
+        </div>
+      </div>
+      <div class="progress" id="progress" aria-live="polite"></div>
+      <p class="fb" id="fb" aria-live="polite">&nbsp;</p>
+
+      <div id="controls" class="pad-wrap">
+        <div class="disp empty" id="disp">Escribe un primo</div>
+        <div class="pad" id="pad">
+          <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button>
+          <button class="ok" data-k="ok">Dividir</button>
+          <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button>
+          <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button>
+          <button class="zero" data-k="0">0</button><button class="fn del" data-k="del" aria-label="Borrar">⌫</button>
+        </div>
+        <p class="hint">En computador puedes usar el teclado: números y Enter.</p>
+      </div>
+      <div class="row-end"><button class="btn quiet" id="quitBtn">Abandonar partida</button></div>
+    </div>
+  </section>
+
+  <!-- RESULTADOS -->
+  <section id="end" hidden aria-label="Resultados">
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div><p class="eyebrow" id="endMode"></p><h2 id="endTitle">Fin de la misión</h2></div>
+      <div class="summary" id="summary"></div>
+      <div id="detail"></div>
+      <div class="actions">
+        <button class="btn primary" id="againBtn">Jugar otra vez</button>
+        <button class="btn" id="cfgBtn">Cambiar configuración</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="band bottom">
+  <p>Notación: «·» multiplicación, «:» división. La descomposición prima de un número es única: no importa en qué orden dividas, siempre llegarás a los mismos factores primos.</p>
+</footer>
+
+<script>
+(() => {
+const $ = s => document.querySelector(s);
+const S = { diff: 'b', mode: 'mision' };
+const TOTAL = 45;     // segundos de juego
+const PENALTY = 5;    // segundos que se pierden por error
+const BIG = 128, SMALL = 34; // tamaño del número al inicio y al final (px)
+
+const isPrime = n => { if (n < 2) return false; for (let d = 2; d * d <= n; d++) if (n % d === 0) return false; return true; };
+const primesIn = (a, b) => { const r = []; for (let i = a; i <= b; i++) if (isPrime(i)) r.push(i); return r; };
+
+/* Cada nivel: rango del número, primos pequeños que lo forman (con su peso) y primos "grandes"
+   que pueden quedar al final (el estudiante debe reconocer que ya son primos). */
+const DIFF = {
+  b: { name: 'Básico', min: 21, max: 100, big: primesIn(11, 47), bigP: 0.35, minF: 2, base: 10,
+       w: { 2: 5, 3: 4, 5: 3, 7: 2 },
+       desc: 'Números del 21 al 100, formados con los primos 2, 3, 5 y 7. El último factor puede ser un primo mayor, como 23 o 47.' },
+  m: { name: 'Intermedio', min: 101, max: 1000, big: primesIn(17, 97), bigP: 0.35, minF: 3, base: 20,
+       w: { 2: 5, 3: 4, 5: 3, 7: 2, 11: 1, 13: 1 },
+       desc: 'Números del 101 al 1.000, con al menos tres factores primos (hasta el 13). El último factor puede ser un primo hasta el 97.' },
+  d: { name: 'Avanzado', min: 1001, max: 10000, big: primesIn(29, 199), bigP: 0.4, minF: 4, base: 30,
+       w: { 2: 5, 3: 4, 5: 3, 7: 3, 11: 2, 13: 2, 17: 1, 19: 1, 23: 1 },
+       desc: 'Números del 1.001 al 10.000, con al menos cuatro factores primos (hasta el 23). El último factor puede ser un primo hasta el 199.' }
+};
+const MODE = { mision: 'Misión', maraton: 'Maratón' };
+
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const fmt = n => n.toLocaleString('es-CL');
+const fmtSec = s => s.toFixed(1).replace('.', ',') + ' s';
+const store = {
+  get(k) { try { return Number(localStorage.getItem(k)) || 0; } catch (e) { return 0; } },
+  set(k, v) { try { localStorage.setItem(k, String(v)); } catch (e) {} }
+};
+const recKey = (m = S.mode, d = S.diff) => `dn-best-${m}-${d}`;
+
+/* ---------- Generador de números ---------- */
+function weightedPick(w) {
+  const keys = Object.keys(w).map(Number); let r = Math.random() * keys.reduce((s, k) => s + w[k], 0);
+  for (const k of keys) { r -= w[k]; if (r < 0) return k; } return keys[0];
+}
+function genNumber(diff, avoid) {
+  const D = DIFF[diff];
+  for (let tries = 0; tries < 2000; tries++) {
+    let n = 1; const f = [];
+    if (Math.random() < D.bigP) { const p = pick(D.big); if (p * 2 <= D.max) { n = p; f.push(p); } }
+    while (n < D.min) { const p = weightedPick(D.w); n *= p; f.push(p); }
+    if (n > D.max || f.length < D.minF || n === avoid) continue;
+    if (new Set(f).size === 1 && f.length > 2 && Math.random() < 0.7) continue;
+    return n;
+  }
+  return diff === 'b' ? 60 : diff === 'm' ? 360 : 2310;
+}
+function factorize(n) { const f = []; let d = 2; while (n > 1) { while (n % d === 0) { f.push(d); n /= d; } d++; } return f; }
+function powers(factors) {
+  const c = {}; factors.forEach(p => c[p] = (c[p] || 0) + 1);
+  return Object.keys(c).map(Number).sort((a, b) => a - b).map(p => c[p] > 1 ? `${p}<sup>${c[p]}</sup>` : `${p}`).join(' · ');
+}
+
+/* ---------- Configuración ---------- */
+document.querySelectorAll('#setup [data-k]').forEach(grp => {
+  grp.addEventListener('click', e => {
+    const b = e.target.closest('button[data-v]'); if (!b) return;
+    S[grp.dataset.k] = b.dataset.v;
+    grp.querySelectorAll('button[data-v]').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    refreshSetup();
+  });
+});
+function refreshSetup() {
+  $('#info').innerHTML = `<b>${DIFF[S.diff].name}:</b> ${DIFF[S.diff].desc}`;
+  const best = store.get(recKey());
+  if (S.mode === 'mision') $('#rec').textContent = best ? `Tu misión más rápida en ${DIFF[S.diff].name}: ${fmtSec(best / 10)}` : `Aún no hay récord de Misión en ${DIFF[S.diff].name}.`;
+  else $('#rec').textContent = best ? `Tu mejor Maratón en ${DIFF[S.diff].name}: ${fmt(best)} puntos` : `Aún no hay récord de Maratón en ${DIFF[S.diff].name}.`;
+}
+refreshSetup();
+
+/* ---------- Estado de partida ---------- */
+let G = null;
+function show(id) { ['setup', 'game', 'end'].forEach(x => $('#' + x).hidden = x !== id); window.scrollTo({ top: 0 }); }
+function stop() { if (G) { G.running = false; clearInterval(G.iv); clearTimeout(G.nextT); } }
+
+function startGame() {
+  stop();
+  G = { diff: S.diff, mode: S.mode, total: TOTAL * 1000, running: true, accept: true,
+        errors: 0, done: [], score: 0, input: '', cur: null };
+  G.endAt = Date.now() + G.total;
+  $('#hudMode').textContent = `${MODE[G.mode]} · ${DIFF[G.diff].name}`;
+  $('#chipDone').hidden = $('#chipScore').hidden = G.mode === 'mision';
+  hud(); show('game');
+  newNumber();
+  tick(); G.iv = setInterval(tick, 100);
+}
+function newNumber() {
+  const n = genNumber(G.diff, G.cur ? G.cur.start : 0);
+  G.cur = { start: n, value: n, divs: [], errors: 0, t0: Date.now() };
+  setInput(''); setAccept(true);
+  render(); fb('&nbsp;');
+}
+function hud() {
+  $('#hErr').textContent = G.errors;
+  $('#hDone').textContent = G.done.length;
+  $('#hScore').textContent = fmt(G.score);
+}
+function tick() {
+  if (!G || !G.running) return;
+  const left = Math.max(0, G.endAt - Date.now()), frac = left / G.total;
+  $('#tfill').style.width = (100 * frac) + '%';
+  const bar = $('#tbar');
+  bar.classList.toggle('urgent', left <= 10000);
+  bar.classList.toggle('mid', left > 10000 && frac <= 0.5);
+  bar.setAttribute('aria-valuenow', Math.ceil(left / 1000));
+  if (left <= 0) finish(false);
+}
+function setAccept(b) { G.accept = b; $('#controls').classList.toggle('off', !b); }
+
+/* ---------- Pantalla ---------- */
+function sizeNumber(v) {
+  const c = G.cur, big = $('#bignum');
+  // El número se achica según cuánto se ha descompuesto (escala logarítmica: cada división lo reduce).
+  const t = c.start > 1 ? Math.pow(Math.log(Math.max(v, 2)) / Math.log(c.start), 1.6) : 1;
+  let px = SMALL + (BIG - SMALL) * t;
+  const box = $('.target').clientWidth - 28, chars = fmt(v).length;
+  px = Math.min(px, box / (chars * 0.62), 150);
+  big.style.fontSize = Math.round(px) + 'px';
+}
+function render(anim) {
+  const c = G.cur, big = $('#bignum');
+  big.textContent = fmt(c.value);
+  sizeNumber(c.value);
+  if (anim) { big.classList.remove('hit', 'boom'); void big.offsetWidth; big.classList.add(anim); }
+  $('#orig').textContent = c.divs.length ? `Número inicial: ${fmt(c.start)}` : 'Escribe un primo que lo divida de forma exacta';
+  // Descomposición que se va escribiendo
+  const parts = c.divs.map(d => `<span class="p">${d}</span>`);
+  $('#progress').innerHTML = `<span class="lbl">Descomposición prima</span>${fmt(c.start)} = ` +
+    (c.divs.length ? parts.join(' · ') + (c.value > 1 ? ` · <span class="rest">${fmt(c.value)}</span>` : '') : `<span class="rest">${fmt(c.value)}</span>`);
+  ladder(c, false);
+}
+function ladder(c, done) {
+  let v = c.start, rows = '';
+  c.divs.forEach(d => { rows += `<tr><td class="nm">${fmt(v)}</td><td class="dv">${d}</td></tr>`; v /= d; });
+  if (done) rows += `<tr class="cur"><td class="nm">1</td><td class="dv"></td></tr>`;
+  else rows += `<tr class="cur"><td class="nm">${fmt(v)}</td><td class="dv">${v === 1 ? '' : '?'}</td></tr>`;
+  const lad = $('#lad'); lad.innerHTML = `<table>${rows}</table>`; lad.scrollTop = lad.scrollHeight;
+}
+function fb(html, cls) { const el = $('#fb'); el.innerHTML = html; el.className = 'fb ' + (cls || ''); }
+function flash(ok) { const a = $('#arena'); a.classList.remove('flash-ok', 'flash-bad'); void a.offsetWidth; a.classList.add(ok ? 'flash-ok' : 'flash-bad'); }
+function penalize(msg) {
+  G.errors++; G.cur.errors++;
+  G.endAt -= PENALTY * 1000;
+  const bar = $('#tbar'); bar.classList.remove('pen'); void bar.offsetWidth; bar.classList.add('pen');
+  const d = $('#disp'); d.classList.remove('wrong'); void d.offsetWidth; d.classList.add('wrong');
+  fb(`✗ ${msg}`, 'bad'); flash(false); hud(); tick();
+}
+
+/* ---------- Entrada ---------- */
+function setInput(s) {
+  G.input = s; const d = $('#disp');
+  d.textContent = s === '' ? 'Escribe un primo' : s;
+  d.classList.toggle('empty', s === '');
+}
+function keyPress(k) {
+  if (!G || !G.running || !G.accept) return;
+  if (k === 'ok') { if (G.input !== '') { const v = Number(G.input); setInput(''); divide(v); } return; }
+  if (k === 'del') return setInput(G.input.slice(0, -1));
+  if (/^\d$/.test(k) && G.input.length < 4) setInput(G.input === '0' ? k : G.input + k);
+}
+$('#pad').addEventListener('click', e => { const b = e.target.closest('button[data-k]'); if (b) keyPress(b.dataset.k); });
+document.addEventListener('keydown', e => {
+  if ($('#game').hidden) {
+    if (!$('#end').hidden && e.key === 'Enter' && document.activeElement === document.body) { e.preventDefault(); startGame(); }
+    return;
+  }
+  if (/^\d$/.test(e.key)) keyPress(e.key);
+  else if (e.key === 'Backspace') { e.preventDefault(); keyPress('del'); }
+  else if (e.key === 'Enter') { e.preventDefault(); keyPress('ok'); }
+});
+
+/* ---------- Acciones ---------- */
+function divide(p) {
+  const c = G.cur;
+  // No primo, no divide exacto, o ya se llegó a 1: el valor no funciona.
+  if (!isPrime(p) || c.value === 1 || c.value % p !== 0) return penalize(`El ${fmt(p)} no funciona`);
+  const before = c.value;
+  c.value /= p; c.divs.push(p);
+  fb(`✓ ${fmt(before)} : ${p} = ${fmt(c.value)}`, 'ok');
+  render('hit');
+  if (c.value === 1) win();
+}
+function boom() {
+  const sp = $('#sparks'), cols = ['var(--orange)', 'var(--mustard)', 'var(--cream)', 'var(--rust)'];
+  let h = '';
+  for (let i = 0; i < 26; i++) {
+    const ang = Math.random() * Math.PI * 2, r = 70 + Math.random() * 130;
+    h += `<i style="--x:${Math.cos(ang) * r}px;--y:${Math.sin(ang) * r}px;background:${cols[i % 4]};animation-delay:${Math.random() * 0.12}s"></i>`;
+  }
+  sp.innerHTML = h;
+}
+function win() {
+  const c = G.cur, factors = c.divs.slice();
+  const item = { n: c.start, factors, errors: c.errors, secs: (Date.now() - c.t0) / 1000 + c.errors * PENALTY };
+  G.done.push(item);
+  setAccept(false); setInput('');
+  if (G.mode === 'mision') { G.running = false; clearInterval(G.iv); }
+  const big = $('#bignum');
+  big.style.fontSize = '96px';
+  big.classList.remove('hit', 'boom', 'explode'); void big.offsetWidth; big.classList.add('explode');
+  boom();
+  $('#progress').innerHTML = `<span class="lbl">Descomposición prima</span>${fmt(c.start)} = ${powers(factors)}`;
+  ladder(c, true);
+  fb('&nbsp;');
+  G.nextT = setTimeout(() => {
+    big.classList.remove('explode'); big.style.fontSize = '';
+    big.innerHTML = `<span class="win">¡Ganaste!</span>`;
+    $('#sparks').innerHTML = '';
+    $('#orig').innerHTML = `${fmt(c.start)} = ${powers(factors)}`;
+    flash(true);
+    if (G.mode === 'mision') {
+      fb(`✓ ¡Descompusiste el ${fmt(c.start)}!`, 'ok');
+      G.nextT = setTimeout(() => finish(true), 1800);
+    } else {
+      const pts = DIFF[G.diff].base * factors.length;
+      G.score += pts; hud();
+      fb(`✓ ¡Descompuesto! +${pts}`, 'ok');
+      G.nextT = setTimeout(() => { if (G.running) newNumber(); }, 1300);
+    }
+  }, 900);
+}
+
+/* ---------- Fin ---------- */
+function finish(won) {
+  if (!G) return;
+  stop();
+  const D = DIFF[G.diff], key = recKey(G.mode, G.diff);
+  $('#endMode').textContent = `${MODE[G.mode]} · ${D.name}`;
+  const correct = n => `${fmt(n)} = ${powers(factorize(n))}`;
+  if (G.mode === 'mision') {
+    if (won) {
+      const it = G.done[0], tenths = Math.round(it.secs * 10), prev = store.get(key), isRec = !prev || tenths < prev;
+      if (isRec) store.set(key, tenths);
+      $('#endTitle').innerHTML = '¡Misión cumplida!' + (isRec ? '<span class="badge">Nuevo récord</span>' : '');
+      $('#summary').innerHTML = `
+        <div class="stat main"><span>Tiempo (con penalización)</span><b>${fmtSec(it.secs)}</b></div>
+        <div class="stat"><span>Factores primos</span><b>${it.factors.length}</b></div>
+        <div class="stat"><span>Errores</span><b>${it.errors}</b></div>
+        <div class="stat"><span>Récord</span><b>${fmtSec((isRec ? tenths : prev) / 10)}</b></div>`;
+      $('#detail').innerHTML = `<div class="factbox"><small>Descomposición prima</small><div class="fact">${fmt(it.n)} = ${powers(it.factors)}</div><small>Forma desarrollada: ${it.factors.slice().sort((a, b) => a - b).join(' · ')}</small></div>`;
+    } else {
+      const c = G.cur;
+      $('#endTitle').textContent = 'Se acabó el tiempo';
+      $('#summary').innerHTML = `
+        <div class="stat main"><span>Número</span><b>${fmt(c.start)}</b></div>
+        <div class="stat"><span>Llegaste hasta</span><b>${fmt(c.value)}</b></div>
+        <div class="stat"><span>Divisiones correctas</span><b>${c.divs.length}</b></div>
+        <div class="stat"><span>Errores</span><b>${c.errors}</b></div>`;
+      $('#detail').innerHTML = `<div class="factbox"><small>La descomposición prima era</small><div class="fact">${correct(c.start)}</div><small>${c.divs.length ? `Ibas bien: ya habías dividido por ${c.divs.join(', ')}.` : 'Pista: parte probando con los primos más pequeños (2, 3, 5…).'}</small></div>`;
+    }
+  } else {
+    const prev = store.get(key), isRec = G.score > prev && G.score > 0;
+    if (isRec) store.set(key, G.score);
+    const nF = G.done.reduce((s, x) => s + x.factors.length, 0);
+    $('#endTitle').innerHTML = '¡Tiempo!' + (isRec ? '<span class="badge">Nuevo récord</span>' : '');
+    $('#summary').innerHTML = `
+      <div class="stat main"><span>Puntaje</span><b>${fmt(G.score)}</b></div>
+      <div class="stat"><span>Números descompuestos</span><b>${G.done.length}</b></div>
+      <div class="stat"><span>Factores encontrados</span><b>${nF}</b></div>
+      <div class="stat"><span>Errores</span><b>${G.errors}</b></div>
+      <div class="stat"><span>Récord</span><b>${fmt(Math.max(prev, G.score))}</b></div>`;
+    const rows = G.done.map(x => `<tr><td>${fmt(x.n)}</td><td>${powers(x.factors)}</td><td class="${x.errors ? 'bad' : ''}">${x.errors}</td><td>${fmtSec(x.secs)}</td></tr>`).join('');
+    const c = G.cur, pend = c && G.accept ? `<p class="rec">Número sin terminar: ${correct(c.start)}</p>` : '';
+    $('#detail').innerHTML = (G.done.length
+      ? `<h2 style="font-size:20px;margin-bottom:8px">Números descompuestos</h2><div class="tablewrap"><table class="res"><thead><tr><th>Número</th><th>Descomposición prima</th><th>Errores</th><th>Tiempo</th></tr></thead><tbody>${rows}</tbody></table></div>`
+      : '<p class="info">No alcanzaste a descomponer ningún número. Prueba partir dividiendo por 2, 3 y 5.</p>') + pend;
+  }
+  show('end');
+}
+
+$('#startBtn').addEventListener('click', startGame);
+$('#againBtn').addEventListener('click', startGame);
+$('#cfgBtn').addEventListener('click', () => { refreshSetup(); show('setup'); });
+$('#quitBtn').addEventListener('click', () => { stop(); refreshSetup(); show('setup'); });
+window.addEventListener('resize', () => { if (G && G.running && G.accept) sizeNumber(G.cur.value); });
+})();
+</script>
+</body>
+</html>
