@@ -238,7 +238,7 @@ const SITIO = {
       contexto: "Físicos de la Universidad de California en San Diego. Raymer era estudiante de pregrado cuando partió el proyecto; el laboratorio de Smith estudia moléculas de ADN, que también se anudan solas.",
       resumen: "Metieron una cuerda en una caja que giraba, como ropa en una secadora, y repitieron el experimento más de 3.000 veces. Con cuerdas de menos de 46 cm no se formó ningún nudo. Desde ahí, la probabilidad sube rápido hasta los 1,5 m y luego se estanca cerca del 50 %. Con teoría de nudos identificaron 120 tipos distintos.",
       conexion: "Probabilidad experimental y frecuencia relativa; una función que crece y luego se estabiliza.",
-      imagen: "materiales/curiosa/oc01-nudos.jpg",
+      imagen: "materiales/curiosa/oc01-nudos.svg",
       imagenAlt: "Cuerda anudada después de girar dentro de una caja, junto al diagrama del nudo"
     },
     {
@@ -254,7 +254,7 @@ const SITIO = {
       contexto: "Jack H. Hetherington era físico de la Universidad Estatal de Míchigan. «F. D. C. Willard» era Chester, su gato siamés: las iniciales vienen de Felis domesticus Chester.",
       resumen: "Es un artículo serio de física cuántica a bajas temperaturas. Hetherington lo escribió a máquina usando «nosotros», pero la revista no aceptaba ese plural con un solo autor. En vez de reescribirlo entero, sumó a su gato como coautor. Así Chester se volvió uno de los pocos animales que firman un artículo científico.",
       conexion: "Cómo se publica la ciencia: autoría, revisión por pares y normas de las revistas.",
-      imagen: "materiales/curiosa/oc02-chester.jpg",
+      imagen: "materiales/curiosa/oc02-chester.svg",
       imagenAlt: "Gato siamés, en referencia a Chester, coautor del artículo"
     },
     {
@@ -270,7 +270,7 @@ const SITIO = {
       contexto: "Equipo liderado desde la Universidad de Waterloo (Canadá), con ingenieros de Weber State (EE. UU.) y KAUST (Arabia Saudita). La idea nació como broma de laboratorio en 2012, y a la ceremonia en Zúrich llegaron con impermeables amarillos.",
       resumen: "Las salpicaduras dependen del ángulo con que el chorro choca contra la pared. Resolviendo una ecuación diferencial obtuvieron superficies donde ese ángulo es siempre pequeño. Su mejor diseño, «Nautilus», sigue una espiral logarítmica, la misma curva de la concha del nautilo, y redujo las salpicaduras en cerca de un 98 % comparado con un urinario común.",
       conexion: "Ecuaciones diferenciales, ángulos de incidencia y la espiral logarítmica.",
-      imagen: "materiales/curiosa/oc03-nautilus.jpg",
+      imagen: "materiales/curiosa/oc03-nautilus.svg",
       imagenAlt: "Prototipo del urinario Nautilus, con forma de espiral"
     },
     {
@@ -286,7 +286,7 @@ const SITIO = {
       contexto: "Ocho físicos italianos que investigan en distintos centros de Europa. Querían cocinar la receta para muchos amigos sin que fallara; hicieron los experimentos los fines de semana, en una cocina y pagando ellos mismos los ingredientes.",
       resumen: "La salsa de queso pecorino se arruina al calentarse: las proteínas se agrupan y forman grumos, lo que llamaron la «fase mozzarella». Midieron cuándo ocurre según la temperatura y la cantidad de almidón. Con menos de 1 % de almidón (respecto de la masa del queso) aparecen grumos; su receta usa entre 2 y 3 %.",
       conexion: "Porcentajes, diagramas de fase y control de variables en un experimento.",
-      imagen: "materiales/curiosa/oc04-cacio.jpg",
+      imagen: "materiales/curiosa/oc04-cacio.svg",
       imagenAlt: "Plato de pasta cacio e pepe junto a muestras de salsa con y sin grumos"
     },
     {
@@ -302,7 +302,7 @@ const SITIO = {
       contexto: "Ingenieros del Instituto Tecnológico de Georgia (EE. UU.) y un ecólogo de la Universidad de Tasmania (Australia). Carver dio con los cubos al disecar wombats atropellados mientras estudiaba una enfermedad de la piel. El trabajo completo se publicó en 2021 en la revista Soft Matter.",
       resumen: "El wombat es el único animal conocido que hace caca en cubos, de unos 2 cm. No se debe a la forma del ano: los cubos se forman dentro del intestino, cuya pared tiene franjas más rígidas y otras más elásticas. Al contraerse, las zonas rígidas marcan las aristas. Los wombats usan esos cubos para marcar territorio sobre rocas y troncos.",
       conexion: "Geometría de prismas, elasticidad y modelos matemáticos de un fenómeno biológico.",
-      imagen: "materiales/curiosa/oc05-wombat.jpg",
+      imagen: "materiales/curiosa/oc05-wombat.svg",
       imagenAlt: "Wombat junto a sus excrementos con forma de cubo"
     },
     {
@@ -318,7 +318,7 @@ const SITIO = {
       contexto: "Biólogos de la Universidad Internacional de Bremen (Alemania) y la Universidad Eötvös Loránd (Hungría). En los agradecimientos del artículo aparece el Programa Antártico Chileno (INACH).",
       resumen: "Los pingüinos de barbijo y de Adelia disparan sus excrementos lejos del nido para no ensuciarlo. A partir de cuán lejos llegan, a qué altura salen y qué tan viscosos son, calcularon la presión necesaria: entre 10 y 60 kPa. Para comparar, la presión sistólica de una persona ronda los 16 kPa.",
       conexion: "Lanzamiento horizontal, presión y conversión de unidades (kPa y mmHg).",
-      imagen: "materiales/curiosa/oc06-pinguino.jpg",
+      imagen: "materiales/curiosa/oc06-pinguino.svg",
       imagenAlt: "Diagrama de un pingüino y la trayectoria de sus excrementos"
     },
     {
@@ -334,7 +334,7 @@ const SITIO = {
       contexto: "Matemático de la Universidad de Cincinnati, especialista en sistemas dinámicos. La nota tiene solo dos páginas y es una broma escrita con todo el rigor de un artículo de matemáticas.",
       resumen: "El teorema de Poincaré dice que ciertos sistemas cerrados vuelven, tarde o temprano, a quedar muy cerca de su estado inicial. El autor trata la administración de una universidad como uno de esos sistemas y concluye, con humor, que tras cualquier reforma todo terminará volviendo a ser como antes.",
       conexion: "Fenómenos que se repiten, sucesiones periódicas y la idea de modelar con matemática.",
-      imagen: "materiales/curiosa/oc07-poincare.jpg",
+      imagen: "materiales/curiosa/oc07-poincare.svg",
       imagenAlt: "Diagrama de una órbita que regresa cerca de su punto de partida"
     },
     {
@@ -350,7 +350,7 @@ const SITIO = {
       contexto: "Investigadores de la Universidad de Catania (Italia). Usaron herramientas de la física estadística para simular organizaciones jerárquicas con muchos empleados.",
       resumen: "El principio de Peter dice que cada persona asciende hasta llegar a un puesto en el que es incompetente. Simularon empresas con distintas reglas de ascenso. Si el principio se cumple, ascender siempre al mejor baja la eficiencia, y elegir al azar, o alternar entre el mejor y el peor, da mejores resultados.",
       conexion: "Simulación, azar y comparación de estrategias con datos.",
-      imagen: "materiales/curiosa/oc08-peter.jpg",
+      imagen: "materiales/curiosa/oc08-peter.svg",
       imagenAlt: "Gráfico de la eficiencia de una organización según la regla de ascenso"
     },
     {
@@ -366,7 +366,7 @@ const SITIO = {
       contexto: "Investigadores del Scotland's Rural College (Escocia). Pusieron sensores en las patas de las vacas y registraron miles de veces en que se echaban y se paraban, para poder detectar a tiempo a los animales enfermos.",
       resumen: "Mientras más tiempo lleva echada una vaca, más probable es que se pare pronto: tiene hambre y solo puede comer de pie. Lo contrario no se cumple. Una vaca que lleva seis horas de pie tiene la misma probabilidad de echarse en los próximos 15 minutos que una que lleva solo una hora. Es un proceso «sin memoria».",
       conexion: "Probabilidad condicional y sucesos que no dependen de lo que ocurrió antes.",
-      imagen: "materiales/curiosa/oc09-vacas.jpg",
+      imagen: "materiales/curiosa/oc09-vacas.svg",
       imagenAlt: "Vacas echadas y de pie en un potrero"
     },
     {
@@ -382,7 +382,7 @@ const SITIO = {
       contexto: "Matemático estadounidense, reconocido en teoría de números; en ese momento trabajaba en la Universidad de Maryland. En inglés, «beat» significa tanto «pegar» como «ganar»: el título es un doble sentido a propósito.",
       resumen: "Se juega con un mazo mitad rojo y mitad negro: antes de dar vuelta cada carta, hay que adivinar su color. Si siempre apuestas por el color que más queda en el mazo, le ganas a un niño que adivina al azar cerca del 85,4 % de las veces. Como eso es casi 6/7, el autor concluye que hay que ganarles «todos los días, menos el domingo».",
       conexion: "Probabilidad, estrategias óptimas y la fracción 6/7 ≈ 0,857.",
-      imagen: "materiales/curiosa/oc10-cartas.jpg",
+      imagen: "materiales/curiosa/oc10-cartas.svg",
       imagenAlt: "Mazo de cartas rojas y negras sobre una mesa"
     }
   ],
