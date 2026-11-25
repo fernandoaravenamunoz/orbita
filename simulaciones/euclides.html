@@ -104,7 +104,7 @@ input[type=range]{accent-color:var(--sel);width:100%;height:28px}
 <div class="row"><label class="chk" style="margin:0">Al cambiar un dato, mantener fijo: <select id="eFix"><option value="auto">el último que cambié</option><option value="a">a</option><option value="b">b</option><option value="c">c</option><option value="h">h</option><option value="p">p</option><option value="q">q</option></select></label></div>
 <p class="msg" id="eMsg"></p>
 <span class="lbl" style="margin-top:12px">Ejemplos con valores exactos</span><div class="row" id="ePre" style="margin-top:0"></div>
-<div class="row"><label class="chk" style="margin:0">Ver áreas: <select id="eArea"><option value="">No</option><option value="catetos">a² = p · c y b² = q · c</option><option value="altura">h² = p · q</option></select></label></div>
+<div class="row"><label class="chk" style="margin:0">Ver: <select id="eArea"><option value="">Solo el triángulo</option><option value="catetos">a² = p · c y b² = q · c</option><option value="altura">h² = p · q</option><option value="semejanza">Los tres triángulos semejantes</option></select></label></div>
 </div>
 </div>
 <aside class="panel">
@@ -136,7 +136,7 @@ $('prs').innerHTML=KEYS.map(k=>`<div class="pr" id="pr_${k}"><label for="t_${k}"
 KEYS.forEach(k=>{$('r_'+k).oninput=e=>setVal(k,+e.target.value);$('t_'+k).onchange=e=>{const v=parseFloat(String(e.target.value).replace(/\s/g,'').replace(',','.'));setVal(k,v);};
  $('t_'+k).onkeydown=e=>{if(e.key==='Enter')e.target.blur();};});
 $('eFix').onchange=e=>{E.fix=e.target.value;upd();};
-$('eArea').onchange=e=>{E.area=e.target.value;upd();};
+$('eArea').onchange=e=>{E.area=e.target.value;document.querySelector('.fig .hint').hidden=E.area==='semejanza';upd();};
 const PRE=[['Trío 3 – 4 – 5',1.8,3.2],['Trío 6 – 8 – 10',3.6,6.4],['Trío 5 – 12 – 13',25/13,144/13],['Trío 9 – 12 – 15',5.4,9.6],['p = 9, q = 16',9,16],['p = 4, q = 9',4,9],['p = 1, q = 4',1,4],['Isósceles (p = q = 3)',3,3]];
 $('ePre').innerHTML=PRE.map((p,i)=>`<button data-i="${i}">${p[0]}</button>`).join('');
 $('ePre').onclick=e=>{const b=e.target.closest('button');if(!b)return;[,E.p,E.q]=PRE[+b.dataset.i];E.msg='';E.err=false;E.edit=null;upd();};
@@ -172,6 +172,7 @@ function setVal(K,v){const d=der();if(!(v>0)||!isFinite(v)){E.msg='Escribe un n�
 let VV=null;
 function render(d){const s=$('esv'),W=s.clientWidth||600,Hh=s.clientHeight||420;s.setAttribute('viewBox',`0 0 ${W} ${Hh}`);
  const{a,b,c,h,p,q}=d,A=[0,0],B=[c,0],D=[q,0],Cc=[q,h];
+ if(E.area==='semejanza'){renderSem(d,s,W,Hh);return;}
  const box=[A,B,Cc];let sqA,sqB,rq,rp,sh,rpq;
  if(E.area==='catetos'){sqB=[A,Cc,[Cc[0]-h,Cc[1]+q],[-h,q]];sqA=[B,Cc,[Cc[0]+h,Cc[1]+p],[c+h,p]];rq=[[0,0],[q,0],[q,-c],[0,-c]];rp=[[q,0],[c,0],[c,-c],[q,-c]];box.push(...sqA,...sqB,...rq,...rp);}
  if(E.area==='altura'){sh=[[q-h,0],[q,0],[q,-h],[q-h,-h]];rpq=[[q,0],[c,0],[c,-q],[q,-q]];box.push(...sh,...rpq);}
@@ -196,19 +197,38 @@ function render(d){const s=$('esv'),W=s.clientWidth||600,Hh=s.clientHeight||420;
  [['A',A,[-14,8]],['B',B,[14,8]],['C',Cc,[0,-16]],['D',D,[0,16]]].forEach(([n,P,dv])=>{const q2=S(P);o+=`<circle cx="${F1(q2[0])}" cy="${F1(q2[1])}" r="4" fill="var(--ink)"/>`+T(q2[0]+dv[0],q2[1]+dv[1]+(n==='D'&&!E.area?0:0),n,'var(--ink)',{fs:17});});
  s.innerHTML=o;}
 
+function renderSem(d,s,W,Hh){const{a,b,c,h,p,q}=d;
+ // (adyacente a α, opuesto a α, hipotenusa) con α = ángulo en A
+ const TR=[{n:'△ ACD',adj:[q,'q',C.teal],op:[h,'h',C.vio],hy:[b,'b',C.teal],v:['A','D','C']},
+           {n:'△ CBD',adj:[h,'h',C.vio],op:[p,'p',C.coral],hy:[a,'a',C.coral],v:['C','D','B']},
+           {n:'△ ABC',adj:[b,'b',C.teal],op:[a,'a',C.coral],hy:[c,'c','var(--ink)'],v:['A','C','B']}];
+ const gap=70,tw=TR.reduce((t,x)=>t+x.adj[0],0),th=Math.max(...TR.map(x=>x.op[0]));
+ const sc=Math.min((W-110-gap*2)/tw,(Hh-140)/th);let x=(W-(tw*sc+gap*2))/2+30,o='';const yb=Math.min(Hh-66,(Hh+th*sc)/2+20);
+ TR.forEach((t,i)=>{const P0=[x,yb],P1=[x+t.adj[0]*sc,yb],P2=[x,yb-t.op[0]*sc];
+  o+=`<polygon points="${PS([P0,P1,P2])}" fill="${i===2?'#163a5f':i===0?C.teal:C.coral}" fill-opacity=".08"/>`;
+  o+=Ln(P0,P1,t.adj[2],4)+Ln(P0,P2,t.op[2],4)+Ln(P1,P2,t.hy[2],4,{dash:t.hy[1]==='c'?'':''});
+  o+=`<polyline points="${PS([[P0[0]+12,P0[1]],[P0[0]+12,P0[1]-12],[P0[0],P0[1]-12]])}" fill="none" stroke="var(--ink)" stroke-width="1.3"/>`;
+  const ang=Math.atan2(t.op[0],t.adj[0]),R=Math.min(30,t.adj[0]*sc*.35);o+=`<path d="M ${F1(P1[0]-R)} ${F1(P1[1])} A ${R} ${R} 0 0 1 ${F1(P1[0]-R*Math.cos(ang))} ${F1(P1[1]-R*Math.sin(ang))}" fill="none" stroke="${C.amb}" stroke-width="2.2"/>`+T(P1[0]-R-12,P1[1]-8,'α',C.amb,{fs:15});
+  o+=T((P0[0]+P1[0])/2,yb+20,`${t.adj[1]} = ${nf(t.adj[0])}`,t.adj[2],{fs:14})+T(P0[0]-8,(P0[1]+P2[1])/2,`${t.op[1]} = ${nf(t.op[0])}`,t.op[2],{fs:14,a:'end'})+T((P1[0]+P2[0])/2+10,(P1[1]+P2[1])/2-10,`${t.hy[1]} = ${nf(t.hy[0])}`,t.hy[2],{fs:14,a:'start'});
+  o+=T(P1[0]+4,P1[1]+20,t.v[0],'var(--mut)',{fs:12,fw:500})+T(P0[0]-4,P0[1]+20,t.v[1],'var(--mut)',{fs:12,fw:500})+T(P2[0],P2[1]-10,t.v[2],'var(--mut)',{fs:12,fw:500});
+  o+=T((P0[0]+P1[0])/2,yb+42,t.n,'var(--ink)',{fs:14});x+=t.adj[0]*sc+gap;});
+ o+=T(W/2,24,'Los tres triángulos tienen un ángulo recto y el mismo ángulo α: son semejantes',`var(--ink)`,{fs:14,fw:500});
+ s.innerHTML=o;}
 const sq=x=>`${nf(x)}²`;
 const Fx=(a,b)=>`<span class="fx2"><span>${a}</span><span>${b}</span></span>`;
-function rel(title,f,v,r){return `<div class="rel"><h3>${title}</h3><div class="f">${f}</div><div class="v">${v}</div><div class="r">${r} <span class="ok">✓</span></div></div>`;}
+function rel(title,f,v,r,x){return `<div class="rel"><h3>${title}</h3><div class="f">${f}</div><div class="v">${v}</div><div class="r">${r} <span class="ok">✓</span></div>${x?`<div class="v" style="margin-top:6px">Despejando: ${x}</div>`:''}</div>`;}
 function upd(){const d=der(),{a,b,c,h,p,q}=d;const fixNow=E.fixUsed&&E.edit?E.fixUsed:(E.fix!=='auto'?E.fix:null);
  KEYS.forEach(k=>{const r=$('r_'+k),v=d[k];r.max=Math.max(PAR[k][3],Math.ceil(v));r.value=v;if(document.activeElement!==$('t_'+k))$('t_'+k).value=nf(v);
   $('pr_'+k).classList.toggle('edit',E.edit===k);$('pr_'+k).classList.toggle('fix',fixNow===k);});
  $('eFix').value=E.fix;$('eArea').value=E.area;
  $('eMsg').innerHTML=E.msg||'Mueve una barra o escribe un valor y presiona Enter.';$('eMsg').classList.toggle('err',E.err);
  const A=x=>`<span class="ca">${x}</span>`,B=x=>`<span class="cb">${x}</span>`,H=x=>`<span class="ch">${x}</span>`,P=x=>`<span class="cp">${x}</span>`,Q=x=>`<span class="cq">${x}</span>`;
- $('rels').innerHTML=
-  rel('Teorema de Euclides · altura',`${H('h')}² = ${P('p')} · ${Q('q')}`,`${H(sq(h))} = ${P(nf(p))} · ${Q(nf(q))}`,`<b>${nf(h*h)}</b> = <b>${nf(p*q)}</b>`)+
-  rel('Teorema de Euclides · cateto a',`${A('a')}² = ${P('p')} · c`,`${A(sq(a))} = ${P(nf(p))} · ${nf(c)}`,`<b>${nf(a*a)}</b> = <b>${nf(p*c)}</b>`)+
-  rel('Teorema de Euclides · cateto b',`${B('b')}² = ${Q('q')} · c`,`${B(sq(b))} = ${Q(nf(q))} · ${nf(c)}`,`<b>${nf(b*b)}</b> = <b>${nf(q*c)}</b>`)+
+ const rt=(v,name,expr,col)=>isEx(v)?`${col(name)} = √${expr} = <b>${nf(v)}</b>`:`${col(name)} = √${expr} ≈ <b>${nf(v)}</b>`;
+ const sem=E.area!=='semejanza'?'':`<div class="rel"><h3>Tres triángulos semejantes: ACD, CBD y ABC</h3><div class="f" style="font-size:18px">opuesto : hipotenusa → ${H('h')} : ${B('b')} = ${P('p')} : ${A('a')} = ${A('a')} : c</div><div class="v">${nf(h)} : ${nf(b)} = ${nf(p)} : ${nf(a)} = ${nf(a)} : ${nf(c)}</div><div class="r"><b>${nf(h/b,3)}</b> = <b>${nf(p/a,3)}</b> = <b>${nf(a/c,3)}</b> <span class="ok">✓</span></div><div class="f" style="margin-top:8px;font-size:18px">opuesto : adyacente → ${H('h')} : ${Q('q')} = ${P('p')} : ${H('h')} = ${A('a')} : ${B('b')}</div><div class="v">${nf(h)} : ${nf(q)} = ${nf(p)} : ${nf(h)} = ${nf(a)} : ${nf(b)}</div><div class="r"><b>${nf(h/q,3)}</b> = <b>${nf(p/h,3)}</b> = <b>${nf(a/b,3)}</b> <span class="ok">✓</span></div><div class="v" style="margin-top:8px">De ${H('h')} : ${Q('q')} = ${P('p')} : ${H('h')} se obtiene, multiplicando cruzado, ${H('h')}² = ${P('p')} · ${Q('q')}. Así nacen las relaciones de Euclides.</div></div>`;
+ $('rels').innerHTML=sem+
+  rel('Teorema de Euclides · altura',`${H('h')}² = ${P('p')} · ${Q('q')}`,`${H(sq(h))} = ${P(nf(p))} · ${Q(nf(q))}`,`<b>${nf(h*h)}</b> = <b>${nf(p*q)}</b>`,rt(h,'h',`(${nf(p)} · ${nf(q)})`,H))+
+  rel('Teorema de Euclides · cateto a',`${A('a')}² = ${P('p')} · c`,`${A(sq(a))} = ${P(nf(p))} · ${nf(c)}`,`<b>${nf(a*a)}</b> = <b>${nf(p*c)}</b>`,rt(a,'a',`(${nf(p)} · ${nf(c)})`,A))+
+  rel('Teorema de Euclides · cateto b',`${B('b')}² = ${Q('q')} · c`,`${B(sq(b))} = ${Q(nf(q))} · ${nf(c)}`,`<b>${nf(b*b)}</b> = <b>${nf(q*c)}</b>`,rt(b,'b',`(${nf(q)} · ${nf(c)})`,B))+
   rel('Altura a partir de los catetos',`${H('h')} = ${Fx(`${A('a')} · ${B('b')}`,'c')}`,`${H(nf(h))} = ${Fx(`${A(nf(a))} · ${B(nf(b))}`,nf(c))}`,`<b>${nf(h)}</b> = ${Fx(nf(a*b),nf(c))} = <b>${nf(a*b/c)}</b>`)+
   rel('La hipotenusa es la suma de las proyecciones',`c = ${P('p')} + ${Q('q')}`,`${nf(c)} = ${P(nf(p))} + ${Q(nf(q))}`,`<b>${nf(c)}</b> = <b>${nf(p+q)}</b>`)+
   rel('Teorema de Pitágoras',`${A('a')}² + ${B('b')}² = c²`,`${A(sq(a))} + ${B(sq(b))} = ${sq(c)}`,`${nf(a*a)} + ${nf(b*b)} = ${nf(c*c)} → <b>${nf(a*a+b*b)}</b> = <b>${nf(c*c)}</b>`);
@@ -216,6 +236,22 @@ function upd(){const d=der(),{a,b,c,h,p,q}=d;const fixNow=E.fixUsed&&E.edit?E.fi
 new ResizeObserver(()=>upd()).observe(document.body);
 upd();
 }
+</script>
+<style>
+.mclase{margin-left:4px;font:inherit;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--line,#cbd5e1);background:#fff;color:#163a5f;cursor:pointer;white-space:nowrap}
+.mclase[aria-pressed="true"]{background:#163a5f;color:#fff;border-color:#163a5f}
+@media(min-width:901px){
+body.clase .concept,body.clase .note,body.clase .hint,body.clase .panel details,body.clase .panel .box:has(> details:only-child){display:none!important}
+body.clase .work{grid-template-columns:minmax(0,2.2fr) minmax(280px,1fr)}
+body.clase .fig{height:clamp(420px,76vh,920px)}
+body.clase .stepTxt{font-size:19px}}
+@media(max-width:900px){.mclase{display:none}}
+</style>
+<script>
+(function(){var K='orbita-modo-clase',on=false;try{on=localStorage.getItem(K)==='1';}catch(e){}
+var b=document.createElement('button');b.type='button';b.className='mclase';b.textContent='Modo clase';b.title='Oculta las explicaciones y agranda la figura para proyectar';
+function set(v){on=v;document.body.classList.toggle('clase',on);b.setAttribute('aria-pressed',on?'true':'false');try{localStorage.setItem(K,on?'1':'0');}catch(e){}setTimeout(function(){window.dispatchEvent(new Event('resize'));},30);}
+b.onclick=function(){set(!on);};var h=document.querySelector('.brand')||document.querySelector('header');if(h)h.appendChild(b);set(on);})();
 </script>
 </body>
 </html>

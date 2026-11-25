@@ -87,6 +87,7 @@ details summary{cursor:pointer;font-weight:600;font-size:17px;min-height:32px}
 <label class="chk"><input type="checkbox" id="mHide"> Predecir: ocultar el resultado hasta revelarlo</label>
 </div>
 <div class="mets" id="mMets"></div>
+<div class="box" id="mSimpBox" hidden><h2>Simplificar el producto</h2><div id="mSimp"></div></div>
 <div class="box"><details open><summary>Desarrollo</summary><div class="fm" id="mFm"></div></details></div>
 </aside>
 </div>
@@ -180,35 +181,41 @@ function defs(p){return `<defs><pattern id="${p}T" patternUnits="userSpaceOnUse"
 function mData(){const{ma:a,mb:b,mc:c,md:d}=S;return{a,b,c,d,n:a*c,den:b*d};}
 function mMerge(){if(S.mStep===0)return 0;if(reduce)return 1;return ease(clamp01((now()-S.mA)/1500));}
 function renderMul(){const sv=$('msv'),W=sv.clientWidth||600,H=sv.clientHeight||420;sv.setAttribute('viewBox',`0 0 ${W} ${H}`);
- const{a,b,c,d}=mData(),nx=Math.max(1,Math.ceil(a/b-1e-9)),ny=Math.max(1,Math.ceil(c/d-1e-9));
- const m=Math.max(24,W*0.05),gap=Math.max(40,W*0.08),U=Math.min((W-2*m-gap)/(2*nx),(H-110)/ny),Wq=U*nx,Hq=U*ny,y0=(H-Hq)/2-6;
+ const{a,b,c,d}=mData(),nx=Math.max(1,Math.ceil(a/b-1e-9)),ny=Math.max(1,Math.ceil(c/d-1e-9)),g=(nx>1||ny>1)?12:0;
+ const m=Math.max(24,W*0.05),gap=Math.max(40,W*0.08),U=Math.min((W-2*m-gap-2*(nx-1)*g)/(2*nx),(H-110-(ny-1)*g)/ny),Wq=U*nx+g*(nx-1),Hq=U*ny+g*(ny-1),y0=(H-Hq)/2-6;
  const e=mMerge();S.anim=S.mStep>=1&&e<1;
  const xm=(W-Wq)/2,xa=(W/2-gap/2-Wq)+(xm-(W/2-gap/2-Wq))*e,xc=(W/2+gap/2)+(xm-(W/2+gap/2))*e;
+ const ux=i=>i*(U+g),cov=(L,i)=>Math.max(0,Math.min(1,L-i)),pos=L=>{if(L<=0)return 0;const f=Math.ceil(L-1e-9)-1;return ux(f)+(L-f)*U;};
  const show3=S.mStep===2&&e>=1&&(!S.mHide||S.mRev);let o=defs('m');
- const units=x=>{let s='';for(let i=0;i<nx;i++)for(let j=0;j<ny;j++)s+=R(x+i*U,y0+j*U,U,U,'var(--bg)',1);return s;};
- const outl=(x,op)=>{let s='';for(let i=0;i<nx;i++)for(let j=0;j<ny;j++)s+=R(x+i*U,y0+j*U,U,U,'none',0,'var(--ink)',2.2,`opacity="${op}"`);return s;};
+ const units=x=>{let s='';for(let i=0;i<nx;i++)for(let j=0;j<ny;j++)s+=R(x+ux(i),y0+ux(j),U,U,'var(--bg)',1);return s;};
+ const outl=(x,op)=>{let s='';for(let i=0;i<nx;i++)for(let j=0;j<ny;j++)s+=R(x+ux(i),y0+ux(j),U,U,'none',0,'var(--ink)',2.2,`opacity="${op}"`);return s;};
  o+=units(xa)+(e<1?units(xc):'');
  // primer factor: columnas, achurado «/»
- o+=R(xa,y0,U*a/b,Hq,C.teal,.13)+R(xa,y0,U*a/b,Hq,'url(#mT)',1);
- for(let k=1;k<nx*b;k++){const x=xa+k*U/b;o+=Ln(x,y0,x,y0+Hq,C.teal,k%b?1.1:0,{op:.8});}
+ for(let i=0;i<nx;i++)for(let j=0;j<ny;j++){const w=U*cov(a/b,i);if(w>0)o+=R(xa+ux(i),y0+ux(j),w,U,C.teal,.13)+R(xa+ux(i),y0+ux(j),w,U,'url(#mT)',1);
+  for(let k=1;k<b;k++){const x=xa+ux(i)+k*U/b;o+=Ln(x,y0+ux(j),x,y0+ux(j)+U,C.teal,1.1,{op:.8});}}
  // segundo factor: filas, achurado «\»
- o+=R(xc,y0,Wq,U*c/d,C.coral,.13)+R(xc,y0,Wq,U*c/d,'url(#mC)',1);
- for(let k=1;k<ny*d;k++){const y=y0+k*U/d;o+=Ln(xc,y,xc+Wq,y,C.coral,k%d?1.1:0,{op:.8});}
- if(show3&&a*c>0){const cw=U/b,ch=U/d;o+=R(xm,y0,U*a/b,U*c/d,'none',0,C.vio,4);
-  if(a*c<=80&&Math.min(cw,ch)>=22){let k=1;for(let j=0;j<c;j++)for(let i=0;i<a;i++)o+=`<circle cx="${F1(xm+(i+.5)*cw)}" cy="${F1(y0+(j+.5)*ch)}" r="${F1(Math.min(11,cw*.3,ch*.3))}" fill="var(--bg)" stroke="${C.vio}" stroke-width="1.5"/>`+T(xm+(i+.5)*cw,y0+(j+.5)*ch,k++,C.vio,{fs:Math.min(13,cw*.36,ch*.36),sw:0});}}
+ for(let i=0;i<nx;i++)for(let j=0;j<ny;j++){const h=U*cov(c/d,j);if(h>0)o+=R(xc+ux(i),y0+ux(j),U,h,C.coral,.13)+R(xc+ux(i),y0+ux(j),U,h,'url(#mC)',1);
+  for(let k=1;k<d;k++){const y=y0+ux(j)+k*U/d;o+=Ln(xc+ux(i),y,xc+ux(i)+U,y,C.coral,1.1,{op:.8});}}
+ if(show3&&a*c>0){const cw=U/b,ch=U/d;
+  for(let i=0;i<nx;i++)for(let j=0;j<ny;j++){const w=U*cov(a/b,i),h=U*cov(c/d,j);if(w>0&&h>0)o+=R(xm+ux(i),y0+ux(j),w,h,'none',0,C.vio,4);}
+  if(a*c<=80&&Math.min(cw,ch)>=22){let k=1;for(let q=0;q<c;q++)for(let p=0;p<a;p++){const cx=xm+ux(Math.floor(p/b))+(p%b+.5)*cw,cy=y0+ux(Math.floor(q/d))+(q%d+.5)*ch;
+   o+=`<circle cx="${F1(cx)}" cy="${F1(cy)}" r="${F1(Math.min(11,cw*.3,ch*.3))}" fill="var(--bg)" stroke="${C.vio}" stroke-width="1.5"/>`+T(cx,cy,k++,C.vio,{fs:Math.min(13,cw*.36,ch*.36),sw:0});}}}
  o+=outl(xa,1)+(e<1?outl(xc,1):'');
  const lo=Math.max(0,1-e*2.2);
  if(lo>0){o+=`<g opacity="${lo.toFixed(2)}">`+T(xa+Wq/2,y0+Hq+28,Ft(a,b),C.teal,{fs:24,fw:700})+T(xa+Wq/2,y0+Hq+52,`${a} de ${b} columnas`,'var(--mut)',{fs:13,fw:500})
   +T(xc+Wq/2,y0+Hq+28,Ft(c,d),C.coral,{fs:24,fw:700})+T(xc+Wq/2,y0+Hq+52,`${c} de ${d} filas`,'var(--mut)',{fs:13,fw:500})+T(W/2,y0+Hq/2,'·','var(--mut)',{fs:40,fw:700})+`</g>`;}
- if(e>=1){if(a>0){const y=y0-18,x2=xm+U*a/b;o+=Ln(xm,y,x2,y,C.teal,3)+Ln(xm,y-6,xm,y+6,C.teal,2)+Ln(x2,y-6,x2,y+6,C.teal,2)+T((xm+x2)/2,y-14,Ft(a,b),C.teal,{fs:17});}
-  if(c>0){const x=xm-18,y2=y0+U*c/d;o+=Ln(x,y0,x,y2,C.coral,3)+Ln(x-6,y0,x+6,y0,C.coral,2)+Ln(x-6,y2,x+6,y2,C.coral,2)+T(x-10,(y0+y2)/2,Ft(c,d),C.coral,{fs:17,a:'end'});}
-  o+=T(xm+U/2,y0+Hq+20,'1 unidad','var(--mut)',{fs:13,fw:500});}
+ if(e>=1){if(a>0){const y=y0-18,x2=xm+pos(a/b);o+=Ln(xm,y,x2,y,C.teal,3)+Ln(xm,y-6,xm,y+6,C.teal,2)+Ln(x2,y-6,x2,y+6,C.teal,2)+T((xm+x2)/2,y-14,Ft(a,b),C.teal,{fs:17});}
+  if(c>0){const x=xm-18,y2=y0+pos(c/d);o+=Ln(x,y0,x,y2,C.coral,3)+Ln(x-6,y0,x+6,y0,C.coral,2)+Ln(x-6,y2,x+6,y2,C.coral,2)+T(x-10,(y0+y2)/2,Ft(c,d),C.coral,{fs:17,a:'end'});}
+  o+=T(xm+U/2,y0+Hq+20,nx>1||ny>1?'cada cuadrado = 1 unidad':'1 unidad','var(--mut)',{fs:13,fw:500,a:nx>1?'start':'middle'});}
  sv.innerHTML=o;}
+function barSVG(rows){const W=300,h=26,gp=14,H=rows.length*(h+gp)+4;let o=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:340px;height:auto;display:block" role="img" aria-label="Modelo de barras de fracciones equivalentes">`;
+ rows.forEach(([n,d,col,lab],r)=>{const y=2+r*(h+gp),u=(W-70)/d;for(let k=0;k<d;k++)o+=`<rect x="${F1(k*u)}" y="${y}" width="${F1(u)}" height="${h}" fill="${k<n?col:'#fff'}" fill-opacity="${k<n?.35:1}" stroke="${col}" stroke-width="1.4"/>`;
+  o+=`<text x="${W-62}" y="${y+h/2}" font-size="15" font-weight="600" fill="${col}" dominant-baseline="middle">${lab}</text>`;});return o+'</svg>';}
 function updMul(){const{a,b,c,d,n,den}=mData();['ma','mb','mc','md'].forEach(k=>$('o_'+k).textContent=S[k]);
  const hid=S.mHide&&!S.mRev,q='<b>?</b>';$('mRev').hidden=!(S.mHide&&!S.mRev&&S.mStep===2);
- const txt=[`Las dos fracciones por separado. ${F(a,b)}: la unidad se divide en <b>${b} columna${b>1?'s':''}</b> y se achuran <b>${a}</b> (verde, líneas «/»). ${F(c,d)}: la unidad se divide en <b>${d} fila${d>1?'s':''}</b> y se achuran <b>${c}</b> (naranja, líneas «\\»).`,
-  `Ahora <b>juntamos</b> las dos representaciones: ponemos una unidad sobre la otra. Las columnas y las filas dividen la unidad en ${b} · ${d} = <b>${den}</b> celdas iguales. Donde los achurados se cruzan, queda una cuadrícula.`,
-  hid?`¿Cuántas celdas quedan con el achurado cruzado? ¿Qué fracción de la unidad es? Anota tu predicción y presiona <b>Revelar</b>.`:`El producto es la zona con el <b>achurado cruzado</b>: ${a} · ${c} = <b>${n}</b> celdas de las ${den} de la unidad. ${F(a,b)} · ${F(c,d)} = ${F(n,den)}.`];
+ const txt=[`${F(a,b)}: <b>${a}</b> de ${b} columnas (verde). ${F(c,d)}: <b>${c}</b> de ${d} filas (naranja).`,
+  `Juntamos las dos representaciones: la unidad queda dividida en ${b} · ${d} = <b>${den}</b> celdas iguales.`,
+  hid?`¿Cuántas celdas quedan con el achurado cruzado? ¿Qué fracción de la unidad es? Anota tu predicción y presiona <b>Revelar</b>.`:`El producto es el <b>achurado cruzado</b>: ${n} celdas de ${den}. ${F(a,b)} · ${F(c,d)} = ${F(n,den)}.`];
  $('mStep').innerHTML=`<span style="color:var(--mut)">Paso ${S.mStep+1} de 3 · </span>`+txt[S.mStep];
  const decOK=decExact(a,b)&&decExact(c,d),dv=x=>nf(x);
  $('mMets').innerHTML=[['Producto',hid?q:simpChain(n,den)],['Celdas con achurado cruzado',hid?q:`${n} de ${den}`],['Cada celda vale',F(1,den)+' de la unidad'],['En decimales',decOK?`${dv(a/b)} · ${dv(c/d)} = ${hid?'?':dv(a*c/(b*d))}`:`≈ ${dv(a/b)} · ${dv(c/d)} ≈ ${hid?'?':dv(a*c/(b*d))}`]]
@@ -222,6 +229,8 @@ function updMul(){const{a,b,c,d,n,den}=mData();['ma','mb','mc','md'].forEach(k=>
  if(n===0)L.push(`Si un factor es 0, no hay achurado cruzado: el producto es 0.`);
  if(decOK&&(b===10||d===10||b===100||d===100)&&!hid)L.push(`<b>Con decimales:</b> ${dv(a/b)} · ${dv(c/d)} = ${dv(a*c/(b*d))}, porque ${F(a,b)} · ${F(c,d)} = ${F(n,den)}.`);
  $('mFm').innerHTML=L.map(x=>`<div>${x}</div>`).join('');
+ const[sa,sb]=simp(n,den),canS=!hid&&n>0&&sa!==n&&den<=40;$('mSimpBox').hidden=!canS;
+ if(canS)$('mSimp').innerHTML=barSVG([[n,den,C.vio,Ft(n,den)],[sa,sb,C.teal,Ft(sa,sb)]])+`<p class="note" style="margin-top:6px">Las dos barras pintan la misma parte: agrupando de a ${den/sb} celdas, ${F(n,den)} = ${F(sa,sb)}${sa>sb?' (cada barra es una unidad; el producto es mayor que 1)':''}.</p>`;
  renderMul();}
 
 /* ---------- división ---------- */
@@ -248,13 +257,13 @@ function renderDiv(){const sv=$('dsv'),W=sv.clientWidth||600,H=sv.clientHeight||
    if(pr>=1){o.s+=R(x+1,y,U*D.rem/D.L-1,hB,C.vio,.35,C.vio,2,'rx="3"');const rs=simp(D.rem,D.L);
     o.s+=T(Math.min(W-12,x+U*D.rem/D.L/2),y-16,`sobra ${Ft(rs[0],rs[1])} = ${Ft(D.rem,D.R)} del divisor`,C.vio,{fs:14,a:x+U*D.rem/D.L/2>W*0.62?'end':'middle'});}}
   if(st>=2&&!hid)o.s+=T(W/2,ySm+hB+44,`${Ft(D.p,D.q)} : ${Ft(D.r,D.s)} = ${D.k?D.k:''}${D.rem?(D.k?' + ':'')+Ft(D.rem,D.R):''}`,'var(--ink)',{fs:18});
- }else{const Dd=D.p/D.q,M=Math.max(1,Math.ceil(Dd-1e-9)),gapMax=Math.min(16,60/D.n),U=(W-2*m-gapMax*(D.n-1))/M,xL=m,yA=H*0.6,hB=40,yB=yA-96,part=Dd/D.n;
+ }else{const Dd=D.p/D.q,M=Math.max(1,Math.ceil(Dd-1e-9)),gapMax=0,U=(W-2*m)/M,xL=m,yA=H*0.6,hB=40,yB=yA-96,part=Dd/D.n;
   axis(o,xL,U,M,yA,D.q*D.n,0);
   const e=st===0?0:(reduce||st===2?1:ease(clamp01((now()-S.dA)/1100)));if(st===1)S.anim=e<1;
-  for(let i=0;i<D.n;i++){const x=xL+i*U*part+i*gapMax*e,y=yB+(i%2?14:0)*e;const one=st===2&&i===0;
-   o.s+=hBar(x,y,U*part,hB,C.teal,'dT',.13)+(one?R(x,y,U*part,hB,'url(#dC)',1,C.coral,3,'rx="3"'):'');}
+  for(let i=0;i<D.n;i++){const x=xL+i*U*part,y=yB-(i%2?22:0)*e;const one=st===2&&i===0;
+   o.s+=hBar(x+1,y,U*part-2,hB,C.teal,'dT',.13)+(one?R(x+1,y,U*part-2,hB,'url(#dC)',1,C.coral,3,'rx="3"'):'');if(e>0)o.s+=Ln(x+U*part,y+hB,x+U*part,yA,'var(--mut)',1.2,{dash:'4 4',op:e*.8});}
   if(st===0)o.s+=T(xL+U*Dd/2,yB-16,'Dividendo '+Ft(D.p,D.q),C.teal,{fs:16});
-  else o.s+=T(xL+(U*Dd+gapMax*(D.n-1)*e)/2,yB-16,`${D.n} partes iguales`,'var(--mut)',{fs:15});
+  else o.s+=T(xL+(U*Dd+gapMax*(D.n-1)*e)/2,yB-(D.n>1?44:16),`${D.n} partes iguales`,'var(--mut)',{fs:15});
   if(st===2&&!hid){const[a,b]=simp(D.p,D.q*D.n);o.s+=Ln(xL,yB+hB+18,xL+U*part,yB+hB+18,C.coral,3)+T(xL+U*part/2,yB+hB+36,`una parte = ${Ft(a,b)}`,C.coral,{fs:16,a:U*part<130?'start':'middle'});}
  }
  sv.innerHTML=o.s;}
@@ -300,6 +309,22 @@ new ResizeObserver(()=>upd()).observe(document.body);
 drawDPre();route();
 (function loop(){if(S.anim){if(view==='division')renderDiv();else renderMul();}requestAnimationFrame(loop);})();
 }
+</script>
+<style>
+.mclase{margin-left:4px;font:inherit;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--line,#cbd5e1);background:#fff;color:#163a5f;cursor:pointer;white-space:nowrap}
+.mclase[aria-pressed="true"]{background:#163a5f;color:#fff;border-color:#163a5f}
+@media(min-width:901px){
+body.clase .concept,body.clase .note,body.clase .hint,body.clase .panel details,body.clase .panel .box:has(> details:only-child){display:none!important}
+body.clase .work{grid-template-columns:minmax(0,2.2fr) minmax(280px,1fr)}
+body.clase .fig{height:clamp(420px,76vh,920px)}
+body.clase .stepTxt{font-size:19px}}
+@media(max-width:900px){.mclase{display:none}}
+</style>
+<script>
+(function(){var K='orbita-modo-clase',on=false;try{on=localStorage.getItem(K)==='1';}catch(e){}
+var b=document.createElement('button');b.type='button';b.className='mclase';b.textContent='Modo clase';b.title='Oculta las explicaciones y agranda la figura para proyectar';
+function set(v){on=v;document.body.classList.toggle('clase',on);b.setAttribute('aria-pressed',on?'true':'false');try{localStorage.setItem(K,on?'1':'0');}catch(e){}setTimeout(function(){window.dispatchEvent(new Event('resize'));},30);}
+b.onclick=function(){set(!on);};var h=document.querySelector('.brand')||document.querySelector('header');if(h)h.appendChild(b);set(on);})();
 </script>
 </body>
 </html>

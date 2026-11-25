@@ -100,6 +100,8 @@ input[type=range]{accent-color:var(--sel);width:100%;height:28px}
 <div class="box"><h2>Razón de homotecia</h2>
 <div class="sl"><label for="hk">k</label><input type="range" id="hk" min="-3" max="3" step="0.1"><output id="hkO"></output></div>
 <div class="row" id="hkPre" style="margin-top:4px"></div>
+<div class="row" style="margin-top:6px"><button id="hFit">Encuadrar</button><label class="chk" style="margin:0"><input type="checkbox" id="hAuto"> Encuadrar automáticamente</label></div>
+<p class="note" style="margin-top:4px">Con el encuadre fijo, la cuadrícula no cambia al mover k: así se ve cuánto crece o se achica la figura.</p>
 <label class="chk"><input type="checkbox" id="hRays" checked> Mostrar rayos desde O</label>
 <label class="chk"><input type="checkbox" id="hCamC"> Mostrar la cámara oscura (orificio en O)</label>
 <label class="chk"><input type="checkbox" id="hHide"> Predecir: ocultar la imagen y marcar dónde quedará A′</label>
@@ -120,11 +122,12 @@ input[type=range]{accent-color:var(--sel);width:100%;height:28px}
 <aside class="panel">
 <p class="concept">En forma vectorial, la homotecia de centro O y razón k <b>multiplica por k</b> cada vector que sale de O: <b>OP′ = k · OP</b>. Así, P′ = O + k · (P − O). Además, cualquier vector de la figura queda multiplicado por k: <b>A′B′ = k · AB</b>.</p>
 <div class="box"><h2>Razón</h2>
-<div class="sl"><label for="vk">k₁</label><input type="range" id="vk" min="-3" max="3" step="0.5"><output id="vkO"></output></div>
+<div class="sl"><label for="vk">k₁</label><input type="range" id="vk" min="-3" max="3" step="0.25"><output id="vkO"></output></div>
+<div class="row" id="vkPre" style="margin-top:4px"></div>
 <label class="chk"><input type="checkbox" id="vAB" checked> Mostrar el vector AB y su imagen A′B′</label>
 <label class="chk"><input type="checkbox" id="vTwo"> Aplicar una segunda homotecia con el mismo centro</label>
-<div class="sl" id="vk2Row" hidden><label for="vk2">k₂</label><input type="range" id="vk2" min="-3" max="3" step="0.5"><output id="vk2O"></output></div>
-<div class="row"><button id="vReset">Restablecer puntos</button></div>
+<div class="sl" id="vk2Row" hidden><label for="vk2">k₂</label><input type="range" id="vk2" min="-3" max="3" step="0.25"><output id="vk2O"></output></div>
+<div class="row"><button id="vReset">Restablecer puntos</button><button id="vFit">Encuadrar</button></div>
 </div>
 <div class="box"><h2>Coordenadas</h2><table class="tbl" id="vTbl"></table></div>
 <div class="mets" id="vMets"></div>
@@ -139,7 +142,8 @@ input[type=range]{accent-color:var(--sel);width:100%;height:28px}
 const $=id=>document.getElementById(id);
 const C={teal:'#1D9E75',coral:'#D85A30',vio:'#7F77DD',amb:'#BA7517',pink:'#D4537E',sel:'#378ADD',ink:'var(--ink)'};
 const nf=(x,d=2)=>{const r=Math.round(x*10**d)/10**d;return (Object.is(r,-0)?0:r).toLocaleString('es-CL',{maximumFractionDigits:d});};
-const kS=k=>(k<0?'−':'')+nf(Math.abs(k),2);
+const kS=k=>{const a=Math.abs(k),t=a*3;if(Math.abs(t-Math.round(t))<1e-9&&Math.round(t)%3!==0)return (k<0?'−':'')+Math.round(t)+'/3';return (k<0?'−':'')+nf(a,2);};
+const k2S=k=>{const t=k*k*9;if(Math.abs(t-Math.round(t))<1e-9&&Math.round(t)%9!==0)return Math.round(t)+'/9';return nf(k*k);};
 const kP=k=>k<0?`(${kS(k)})`:kS(k);
 const deN=x=>x.startsWith('el ')?'del '+x.slice(3):'de '+x;
 const F1=x=>x.toFixed(1);
@@ -178,17 +182,18 @@ function world(){const f=figParts(),[px,py]=H.pos,O=H.O,k=H.k;
 const RF=['estrella','vela','arbol','casa'],GF=['triangulo','cuadrilatero','pentagono'];
 $('hFigR').innerHTML=RF.map(k=>`<button data-f="${k}">${FIGS[k].n}</button>`).join('');
 $('hFigG').innerHTML=GF.map(k=>`<button data-f="${k}">${FIGS[k].n}</button>`).join('');
-document.querySelectorAll('#hFigR,#hFigG').forEach(el=>el.onclick=e=>{const b=e.target.closest('button');if(!b)return;H.fig=b.dataset.f;H.rev=false;H.guess=null;upd();});
-const KP=[2,1.5,0.5,1,-0.5,-1,-2,0];
+document.querySelectorAll('#hFigR,#hFigG').forEach(el=>el.onclick=e=>{const b=e.target.closest('button');if(!b)return;H.fig=b.dataset.f;H.refit=true;H.rev=false;H.guess=null;upd();});
+const KP=[3,2,1.5,1,0.5,1/3,0,-1/3,-0.5,-1,-2];
 $('hkPre').innerHTML=KP.map(k=>`<button data-k="${k}">k = ${kS(k)}</button>`).join('');
 $('hkPre').onclick=e=>{const b=e.target.closest('button');if(!b)return;H.k=+b.dataset.k;H.rev=false;H.guess=null;upd();};
+$('hFit').onclick=()=>{H.refit=true;upd();};$('hAuto').onchange=e=>{H.auto=e.target.checked;H.refit=true;upd();};
 $('hk').oninput=e=>{H.k=Math.round(+e.target.value*10)/10;H.rev=false;H.guess=null;upd();};
 $('hRays').onchange=e=>{H.rays=e.target.checked;upd();};
 $('hCamC').onchange=e=>{H.cam=e.target.checked;upd();};
 $('hHide').onchange=e=>{H.hide=e.target.checked;H.rev=false;H.guess=null;upd();};
 $('hShow').onclick=()=>{H.rev=true;upd();};
-$('hCam').onclick=()=>{H.fig='vela';H.k=-0.5;H.O=[0,0];H.pos=[-6,0.3];H.cam=true;$('hCamC').checked=true;H.rev=false;H.guess=null;upd();};
-$('hReset').onclick=()=>{H.O=[-5,-1];H.pos=[-1.5,0.3];if(FIGS[H.fig].geo)H.geo[H.fig]=FIGS[H.fig].base.map(p=>[...p]);H.guess=null;upd();};
+$('hCam').onclick=()=>{H.fig='vela';H.k=-0.5;H.O=[0,0];H.pos=[-6,0.3];H.cam=true;H.refit=true;$('hCamC').checked=true;H.rev=false;H.guess=null;upd();};
+$('hReset').onclick=()=>{H.refit=true;H.O=[-5,-1];H.pos=[-1.5,0.3];if(FIGS[H.fig].geo)H.geo[H.fig]=FIGS[H.fig].base.map(p=>[...p]);H.guess=null;upd();};
 
 /* vista (escala automática) */
 function fitView(V,pts,W,Hh,maxS,instant){let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;pts.forEach(p=>{x0=Math.min(x0,p[0]);x1=Math.max(x1,p[0]);y0=Math.min(y0,p[1]);y1=Math.max(y1,p[1]);});
@@ -206,7 +211,7 @@ function svs(id){const s=$(id),W=s.clientWidth||600,Hh=s.clientHeight||420;s.set
 const HV={v:null};
 function renderH(){const{s,W,Hh}=svs('hsv'),Wd=world(),{f,orig,img,ko,ki}=Wd,k=H.k,O=H.O,hid=H.hide&&!H.rev;
  const pts=[O,...orig.flat()];if(!hid)pts.push(...img.flat());else pts.push(...ki);if(H.guess)pts.push(H.guess);
- H.anim=H.drag?false:fitView(HV,pts,W,Hh,70,false);if(!HV.v)fitView(HV,pts,W,Hh,70,true);const M=mk(HV,W,Hh),S=M.s;
+ if(H.lw!==W){H.lw=W;H.refit=true;}H.anim=(H.drag||!(H.auto||H.refit))?false:fitView(HV,pts,W,Hh,70,false);if(!H.anim)H.refit=false;if(!HV.v)fitView(HV,pts,W,Hh,70,true);const M=mk(HV,W,Hh),S=M.s;
  let o=grid(M,W,Hh,false);
  if(H.cam&&k<0&&!hid){const ys=[...orig.flat(),...img.flat()].map(p=>p[1]),top=Math.max(...ys)+0.8,bot=Math.min(...ys)-0.8,xs=(Math.min(...img.flat().map(p=>p[0]))+Math.max(...img.flat().map(p=>p[0])))/2;
   const xsS=Math.max(...img.flat().map(p=>p[0]))+0.3,g=.18;
@@ -234,16 +239,16 @@ function typeOf(k){if(k===0)return['Caso degenerado','Toda la figura se reduce a
  const d=k>0?'Directa':'Inversa',t=Math.abs(k)>1?'ampliación':'reducción';return[`${d} · ${t}`,k>0?`La imagen queda al mismo lado de O y es una ${t}.`:`La imagen queda al lado opuesto de O, girada en 180°, y es una ${t}.`];}
 function updH(){const{f,orig,img,ko,ki}=world(),k=H.k,O=H.O,hid=H.hide&&!H.rev,q='<b>?</b>';
  document.querySelectorAll('#hFigR button,#hFigG button').forEach(b=>b.classList.toggle('on',b.dataset.f===H.fig));
- $('hk').value=k;$('hkO').textContent=kS(k);document.querySelectorAll('#hkPre button').forEach(b=>b.classList.toggle('on',+b.dataset.k===k));
+ $('hk').value=k;$('hkO').textContent=kS(k);document.querySelectorAll('#hkPre button').forEach(b=>b.classList.toggle('on',Math.abs(+b.dataset.k-k)<1e-9));
  $('hShow').hidden=!hid;const[ty,td]=typeOf(k);
  const A=ko[0],A2=ki[0],B=ko[1],B2=ki[1],m=f.main,p0=per(orig[m]),p1=per(img[m]),a0=area(orig[m]),a1=area(img[m]);
  $('hTxt').innerHTML=hid?(H.guess?`Marcaste tu predicción. Presiona <b>Mostrar la imagen</b> para comprobar.`:`Con k = ${kS(k)}, ¿dónde quedará A′? <b>Toca la cuadrícula</b> para marcar tu predicción.`):
   (H.guess?`Tu predicción quedó a <b>${nf(dist(H.guess,A2),1)} cm</b> de A′. `:'')+`<b>${ty}.</b> ${td}${H.cam&&k<0?' Igual que en una cámara oscura: los rayos que salen de la vela cruzan el orificio O y forman en la pantalla una imagen invertida.':''}${H.cam&&k>=0?' <span style="color:var(--mut)">(La cámara oscura necesita k negativo: el orificio queda entre el objeto y su imagen.)</span>':''}`;
- $('hMets').innerHTML=[['Razón k',`${kS(k)} <span class="kbig">${hid?'':ty.toLowerCase()}</span>`],['OA′ : OA',hid?q:`${nf(dist(O,A2))} : ${nf(dist(O,A))} = ${nf(Math.abs(k))}`],['Perímetro',hid?q:`× ${nf(Math.abs(k))}`],['Área',hid?q:`× ${nf(k*k)}`]].map(([l,v])=>`<div class="met"><p class="l">${l}</p><p class="v">${v}</p></div>`).join('');
- const L=[`<b>Distancias desde O:</b> OA = ${nf(dist(O,A))} cm y OA′ = ${hid?q:nf(dist(O,A2))+' cm'}. Entonces OA′ = |k| · OA = ${nf(Math.abs(k))} · ${nf(dist(O,A))}${hid?'':' = '+nf(Math.abs(k)*dist(O,A))+' cm'}.`];
- if(!hid&&k!==0){L.push(`<b>Lados:</b> AB = ${nf(dist(A,B))} cm y A′B′ = ${nf(dist(A2,B2))} cm. Todos los lados se multiplican por |k| = ${nf(Math.abs(k))}, y cada lado de la imagen es <b>paralelo</b> a su lado original.`);
-  L.push(`<b>Perímetro</b> ${deN(f.mainN)}: ${nf(p0)} cm → ${nf(p1)} cm. Cociente ${nf(p1)} : ${nf(p0)} = ${nf(Math.abs(k))} = |k|.`);
-  L.push(`<b>Área</b> ${deN(f.mainN)}: ${nf(a0)} cm² → ${nf(a1)} cm². Cociente ${nf(a1)} : ${nf(a0)} = ${nf(k*k)} = k². <span style="color:var(--mut)">El área no se multiplica por k, sino por k², porque se amplían el largo y el ancho.</span>`);
+ $('hMets').innerHTML=[['Razón k',`${kS(k)} <span class="kbig">${hid?'':ty.toLowerCase()}</span>`],['OA′ : OA',hid?q:`${nf(dist(O,A2))} : ${nf(dist(O,A))} = ${kS(Math.abs(k))}`],['Perímetro',hid?q:`× ${kS(Math.abs(k))}`],['Área',hid?q:`× ${k2S(k)}`]].map(([l,v])=>`<div class="met"><p class="l">${l}</p><p class="v">${v}</p></div>`).join('');
+ const L=[`<b>Distancias desde O:</b> OA = ${nf(dist(O,A))} cm y OA′ = ${hid?q:nf(dist(O,A2))+' cm'}. Entonces OA′ = |k| · OA = ${kS(Math.abs(k))} · ${nf(dist(O,A))}${hid?'':' = '+nf(Math.abs(k)*dist(O,A))+' cm'}.`];
+ if(!hid&&k!==0){L.push(`<b>Lados:</b> AB = ${nf(dist(A,B))} cm y A′B′ = ${nf(dist(A2,B2))} cm. Todos los lados se multiplican por |k| = ${kS(Math.abs(k))}, y cada lado de la imagen es <b>paralelo</b> a su lado original.`);
+  L.push(`<b>Perímetro</b> ${deN(f.mainN)}: ${nf(p0)} cm → ${nf(p1)} cm. Cociente ${nf(p1)} : ${nf(p0)} = ${kS(Math.abs(k))} = |k|.`);
+  L.push(`<b>Área</b> ${deN(f.mainN)}: ${nf(a0)} cm² → ${nf(a1)} cm². Cociente ${nf(a1)} : ${nf(a0)} = ${k2S(k)} = k². <span style="color:var(--mut)">El área no se multiplica por k, sino por k², porque se amplían el largo y el ancho.</span>`);
   if(ko.length>=3){const g0=ang(A,B,ko[2]),g1=ang(A2,B2,ki[2]);L.push(`<b>Ángulos:</b> el ángulo en A mide ${nf(g0,1)}° y el ángulo en A′ mide ${nf(g1,1)}°. La homotecia conserva los ángulos: la imagen es <b>semejante</b> a la original.`);}
   if(k<0)L.push(`<b>k negativo:</b> A y A′ quedan a distintos lados de O. Una homotecia de razón k negativa equivale a una de razón |k| = ${nf(-k)} seguida de un giro de 180° en torno a O.`);}
  if(k===0)L.push('Con k = 0 todos los puntos van a O: no hay figura imagen. Por eso en la práctica se pide k ≠ 0.');
@@ -263,12 +268,15 @@ dragSetup('hsv',H,(h,p)=>{const w=H.M.w(p);if(h==='O')return{t:'O'};if(h&&h[0]==
 /* ---------- vectorial ---------- */
 const V={O:[0,0],A:[1,1],B:[4,1],C:[2,3],k:2,k2:-0.5,two:false,ab:true,drag:null};
 const VV={v:null};
+$('vkPre').innerHTML=KP.map(k=>`<button data-k="${k}">k₁ = ${kS(k)}</button>`).join('');
+$('vkPre').onclick=e=>{const b=e.target.closest('button');if(!b)return;V.k=+b.dataset.k;upd();};
+$('vFit').onclick=()=>{V.refit=true;upd();};
 $('vk').oninput=e=>{V.k=+e.target.value;upd();};$('vk2').oninput=e=>{V.k2=+e.target.value;upd();};
 $('vAB').onchange=e=>{V.ab=e.target.checked;upd();};$('vTwo').onchange=e=>{V.two=e.target.checked;upd();};
-$('vReset').onclick=()=>{Object.assign(V,{O:[0,0],A:[1,1],B:[4,1],C:[2,3]});upd();};
+$('vReset').onclick=()=>{Object.assign(V,{O:[0,0],A:[1,1],B:[4,1],C:[2,3],refit:true});upd();};
 const hom=(P,k)=>[V.O[0]+k*(P[0]-V.O[0]),V.O[1]+k*(P[1]-V.O[1])];
 function renderV(){const{s,W,Hh}=svs('vsv'),k=V.k,ks=['A','B','C'],P=ks.map(n=>V[n]),P1=P.map(p=>hom(p,k)),Q2=P1.map(p=>hom(p,V.k2));
- const pts=[V.O,...P,...P1,[0,0]];if(V.two)pts.push(...Q2);V.anim=V.drag?false:fitView(VV,pts,W,Hh,64,false);if(!VV.v)fitView(VV,pts,W,Hh,64,true);const M=mk(VV,W,Hh),S=M.s;
+ const pts=[V.O,...P,...P1,[0,0]];if(V.two)pts.push(...Q2);if(V.lw!==W){V.lw=W;V.refit=true;}V.anim=(V.drag||!V.refit)?false:fitView(VV,pts,W,Hh,64,false);if(!V.anim)V.refit=false;if(!VV.v)fitView(VV,pts,W,Hh,64,true);const M=mk(VV,W,Hh),S=M.s;
  let o=grid(M,W,Hh,true);
  o+=`<polygon points="${PS(P.map(S))}" fill="${C.teal}" fill-opacity=".16" stroke="${C.teal}" stroke-width="1.6"/>`;
  o+=`<polygon points="${PS(P1.map(S))}" fill="${C.coral}" fill-opacity=".2" stroke="${C.coral}" stroke-width="2.2"/>`;
@@ -287,12 +295,12 @@ const P2s=p=>P2(p);
 const vec=(a,b)=>[b[0]-a[0],b[1]-a[1]];
 const VS=v=>{const a=nf(v[0]),b=nf(v[1]);return (Number.isInteger(v[0])&&Number.isInteger(v[1]))?`(${a}, ${b})`:`(${a}; ${b})`;};
 function updV(){const k=V.k,ks=['A','B','C'],P=ks.map(n=>V[n]),P1=P.map(p=>hom(p,k)),Q2=P1.map(p=>hom(p,V.k2));
- $('vk').value=k;$('vkO').textContent=kS(k);$('vk2').value=V.k2;$('vk2O').textContent=kS(V.k2);$('vk2Row').hidden=!V.two;
+ $('vk').value=k;$('vkO').textContent=kS(k);document.querySelectorAll('#vkPre button').forEach(b=>b.classList.toggle('on',Math.abs(+b.dataset.k-k)<1e-9));$('vk2').value=V.k2;$('vk2O').textContent=kS(V.k2);$('vk2Row').hidden=!V.two;
  $('vLeg').innerHTML=[['teal','Original y vectores OP'],['coral','Imagen y vectores OP′ = k₁ · OP'],...(V.two?[['vio','Segunda imagen']]:[])].map(([c,s])=>`<span><i style="background:var(--${c})"></i>${s}</span>`).join('');
  const hd=`<tr><th>Punto</th><th>Vector OP</th><th>k₁ · OP</th><th>Imagen P′</th>${V.two?'<th>P″</th>':''}</tr>`;
  $('vTbl').innerHTML=hd+P.map((p,i)=>{const v=vec(V.O,p),w=[k*v[0],k*v[1]];return `<tr><td class="t">${ks[i]}${P2(p)}</td><td>${VS(v)}</td><td class="c">${VS(w)}</td><td class="c">${ks[i]}′${P2(P1[i])}</td>${V.two?`<td class="v">${P2(Q2[i])}</td>`:''}</tr>`;}).join('');
  const[ty]=typeOf(k);
- $('vMets').innerHTML=[['Razón k₁',`${kS(k)} <span class="kbig">${ty.toLowerCase()}</span>`],['Centro O',P2(V.O)],['Los lados se multiplican por',`|k₁| = ${nf(Math.abs(k))}`],['El área se multiplica por',`k₁² = ${nf(k*k)}`]].map(([l,v])=>`<div class="met"><p class="l">${l}</p><p class="v">${v}</p></div>`).join('');
+ $('vMets').innerHTML=[['Razón k₁',`${kS(k)} <span class="kbig">${ty.toLowerCase()}</span>`],['Centro O',P2(V.O)],['Los lados se multiplican por',`|k₁| = ${kS(Math.abs(k))}`],['El área se multiplica por',`k₁² = ${k2S(k)}`]].map(([l,v])=>`<div class="met"><p class="l">${l}</p><p class="v">${v}</p></div>`).join('');
  const A=P[0],A1=P1[0],vA=vec(V.O,A),AB=vec(P[0],P[1]),A1B1=vec(P1[0],P1[1]);
  const L=[`<b>Vector desde el centro:</b> OA = A − O = ${P2(A)} − ${P2(V.O)} = ${VS(vA)}.`,
   `<b>Producto por un escalar:</b> OA′ = k₁ · OA = ${kP(k)} · ${VS(vA)} = ${VS([k*vA[0],k*vA[1]])}.`,
@@ -315,6 +323,22 @@ new ResizeObserver(()=>upd()).observe(document.body);
 route();
 (function loop(){if(view==='homotecia'&&H.anim)renderH();if(view==='vectorial'&&V.anim)renderV();requestAnimationFrame(loop);})();
 }
+</script>
+<style>
+.mclase{margin-left:4px;font:inherit;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--line,#cbd5e1);background:#fff;color:#163a5f;cursor:pointer;white-space:nowrap}
+.mclase[aria-pressed="true"]{background:#163a5f;color:#fff;border-color:#163a5f}
+@media(min-width:901px){
+body.clase .concept,body.clase .note,body.clase .hint,body.clase .panel details,body.clase .panel .box:has(> details:only-child){display:none!important}
+body.clase .work{grid-template-columns:minmax(0,2.2fr) minmax(280px,1fr)}
+body.clase .fig{height:clamp(420px,76vh,920px)}
+body.clase .stepTxt{font-size:19px}}
+@media(max-width:900px){.mclase{display:none}}
+</style>
+<script>
+(function(){var K='orbita-modo-clase',on=false;try{on=localStorage.getItem(K)==='1';}catch(e){}
+var b=document.createElement('button');b.type='button';b.className='mclase';b.textContent='Modo clase';b.title='Oculta las explicaciones y agranda la figura para proyectar';
+function set(v){on=v;document.body.classList.toggle('clase',on);b.setAttribute('aria-pressed',on?'true':'false');try{localStorage.setItem(K,on?'1':'0');}catch(e){}setTimeout(function(){window.dispatchEvent(new Event('resize'));},30);}
+b.onclick=function(){set(!on);};var h=document.querySelector('.brand')||document.querySelector('header');if(h)h.appendChild(b);set(on);})();
 </script>
 </body>
 </html>

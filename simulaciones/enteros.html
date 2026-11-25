@@ -125,6 +125,7 @@ select{min-height:36px;border-radius:10px;border:1px solid var(--line);backgroun
 <div class="expr" id="uExpr" style="margin-top:12px"></div><p class="expr2" id="uExpr2"></p>
 <div class="frin" style="margin-top:10px" id="uInM"><span class="fr t"><span class="stp" data-key="ua"><button data-d="-1" aria-label="Disminuir primer factor">−</button><output id="o_ua"></output><button data-d="1" aria-label="Aumentar primer factor">+</button></span></span><span class="op">·</span><span class="fr c"><span class="stp" data-key="ub"><button data-d="-1" aria-label="Disminuir segundo factor">−</button><output id="o_ub"></output><button data-d="1" aria-label="Aumentar segundo factor">+</button></span></span></div>
 <div class="frin" style="margin-top:10px" id="uInD"><span class="fr t"><span class="stp" data-key="ud"><button data-d="-1" aria-label="Disminuir dividendo">−</button><output id="o_ud"></output><button data-d="1" aria-label="Aumentar dividendo">+</button></span></span><span class="op">:</span><span class="fr c"><span class="stp" data-key="un"><button data-d="-1" aria-label="Disminuir divisor">−</button><output id="o_un"></output><button data-d="1" aria-label="Aumentar divisor">+</button></span></span></div>
+<label class="chk" id="uInvL"><input type="checkbox" id="uInv"> Ver la división como operación inversa de la multiplicación</label>
 <span class="lbl" style="margin-top:12px">Ejemplos</span><div class="row" id="uPre" style="margin-top:0"></div>
 <label class="chk"><input type="checkbox" id="uHide"> Predecir: ocultar el resultado hasta revelarlo</label>
 </div>
@@ -164,7 +165,7 @@ function sv(id){const s=$(id),W=s.clientWidth||600,H=s.clientHeight||420;s.setAt
 /* ---------- estado ---------- */
 const S={sa:-3,sop:'+',sb:5,sStep:0,sHide:false,sRev:false,ctx:'',
  uop:'m',ua:-3,ub:2,ud:-12,un:3,uStep:0,uHide:false,uRev:false,t0:0,anim:false,pat:4};
-const LIM={sa:[-12,12],sb:[-12,12],ua:[-6,6],ub:[-8,8],ud:[-24,24],un:[-6,6]};
+const LIM={sa:[-12,12],sb:[-12,12],ua:[-6,6],ub:[-6,6],ud:[-24,24],un:[-6,6]};
 document.addEventListener('click',e=>{const b=e.target.closest('.stp button');if(!b)return;const k=b.parentNode.dataset.key;let v=S[k]+(+b.dataset.d);if(k==='un'&&v===0)v+=+b.dataset.d;
  S[k]=Math.max(LIM[k][0],Math.min(LIM[k][1],v));if(S[k]===0&&k==='un')S[k]=1;
  if(k[0]==='s')S.sRev=false;else{S.uRev=false;if(S.uStep>=2)S.t0=performance.now();}upd();});
@@ -180,7 +181,7 @@ $('sRev').onclick=()=>{S.sRev=true;upd();};$('sHide').onchange=e=>{S.sHide=e.tar
 function sData(){const a=S.sa,b=S.sb,sub=S.sop==='-',m=sub?-b:b;return{a,b,sub,m,r:a+m};}
 function ctxText(D,hid){const{a,b,sub,r}=D,ab=Math.abs,P=x=>(x*1000).toLocaleString('es-CL');const res=hid?'… (predice el resultado)':'';
  if(S.ctx==='din'){const ini=a>=0?`Tienes $${P(a)}`:`Debes $${P(ab(a))} (tu saldo es ${M_}$${P(ab(a))})`;
-  const acc=!sub?(b>=0?`recibes $${P(b)}`:`contraes una deuda nueva de $${P(ab(b))}`):(b>=0?`gastas $${P(b)}`:`te perdonan una deuda de $${P(ab(b))} (te quitan una deuda: restar un negativo)`);
+  const acc=!sub?(b>=0?`recibes $${P(b)}`:`se suma una deuda de $${P(ab(b))} (sumar un negativo es como gastar)`):(b>=0?`gastas $${P(b)}`:`se cancela una deuda tuya de $${P(ab(b))} (quitar una deuda es como recibir ese dinero: restar un negativo es sumar)`);
   const fin=hid?res:(r>=0?`Tu saldo queda en $${P(r)}.`:`Quedas debiendo $${P(ab(r))}: saldo ${M_}$${P(ab(r))}.`);
   return `<b>Dinero:</b> ${ini} y ${acc}. ${fin} <span style="color:var(--mut)">(Cada unidad de la recta = $1.000.)</span>`;}
  if(S.ctx==='tem'){if(!sub){const fin=hid?res:`La temperatura final es ${sN(r)} °C.`;return `<b>Temperatura:</b> A las 18 h hay ${sN(a)} °C y durante la noche la temperatura ${b>=0?`sube ${b} °C`:`baja ${ab(b)} °C`}. ${fin}`;}
@@ -228,7 +229,7 @@ $('uPre').onclick=e=>{const b=e.target.closest('button');if(!b)return;const p=UP
 $('uOp').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.uop=b.dataset.o;S.uStep=0;S.uRev=false;drawUPre();upd();};
 function setU(s){const o=S.uStep;S.uStep=Math.max(0,Math.min(2,s));if(S.uStep===2&&o<2)S.t0=performance.now();upd();}
 $('uPrev').onclick=()=>setU(S.uStep-1);$('uNext').onclick=()=>setU(S.uStep+1);$('uAll').onclick=()=>setU(2);
-$('uRev').onclick=()=>{S.uRev=true;S.t0=performance.now();upd();};$('uHide').onchange=e=>{S.uHide=e.target.checked;S.uRev=false;upd();};
+$('uRev').onclick=()=>{S.uRev=true;S.t0=performance.now();upd();};$('uInv').onchange=e=>{S.inv=e.target.checked;S.uStep=0;S.uRev=false;upd();};$('uHide').onchange=e=>{S.uHide=e.target.checked;S.uRev=false;upd();};
 $('uPatNext').onclick=()=>{S.pat=Math.min(7,S.pat+1);const k=3-(S.pat-1);S.ua=k;S.uop='m';S.uStep=2;S.t0=performance.now();S.uRev=true;drawUPre();upd();};
 $('uPatReset').onclick=()=>{S.pat=4;upd();};
 $('uPat').onclick=e=>{const tr=e.target.closest('tr');if(!tr||tr.dataset.k===undefined)return;const k=+tr.dataset.k;if(3-k>=S.pat)return;S.ua=k;S.uop='m';S.uStep=2;S.t0=performance.now();drawUPre();upd();};
@@ -248,6 +249,13 @@ function renderMul(){const{s,W,H}=sv('usv'),D=uData(),st=S.uStep,hid=S.uHide&&!S
   if(st>=2){if(D.neg&&!hid&&mag!==0)o+=rot(xOf(mag)-x0,yA,C.vio);
    if(!hid&&(!S.anim))o+=Ln(xOf(r),yA,xOf(r),yL,C.vio,2,{dash:'5 5'})+`<circle cx="${F1(xOf(r))}" cy="${F1(yL)}" r="8" fill="${C.vio}"/>`+T(xOf(r),yL+44,`resultado: ${sN(r)}`,C.vio,{fs:17,a:xOf(r)<90?'start':xOf(r)>W-90?'end':'middle'});
    if(hid)o+=T(xOf(r),yL+44,'¿?',C.vio,{fs:20});}
+ }else if(S.inv){const{d,n,r}=D,k=Math.abs(n),mag=k*r;
+  o+=Arr(x0,yB,xOf(d),yB,C.teal,4)+T((x0+xOf(d))/2,yB-18,`${pS(d)}`,C.teal,{fs:17});
+  if(st>=1&&r!==0){for(let i=0;i<k;i++){const xa=xOf(i*r),xb=xOf((i+1)*r),yy=yA-(i%2)*12;o+=Arr(xa,yy,xb,yy,C.coral,4,{op:st===2&&D.neg&&!hid?.35:1});if(U*Math.abs(r)>22)o+=T((xa+xb)/2,yy-16,'c',C.coral,{fs:13,sw:3});}
+   o+=T((x0+xOf(mag))/2,yA+20,`${k} ${k===1?'vez':'veces'} c = ${sN(mag)}`,C.coral,{fs:14,fw:500});}
+  if(st>=2){if(D.neg&&!hid&&mag!==0)o+=rot(xOf(mag)-x0,yA,C.vio);
+   if(!hid&&!S.anim)o+=Ln(xOf(r),yA,xOf(r),yL,C.vio,2,{dash:'5 5'})+`<circle cx="${F1(xOf(r))}" cy="${F1(yL)}" r="8" fill="${C.vio}"/>`+T(xOf(r),yL+44,`c = ${Ft(d,n)}`,C.vio,{fs:17,a:xOf(r)<90?'start':xOf(r)>W-90?'end':'middle'});
+   if(hid)o+=T(xOf(r),yL+44,'¿c?',C.vio,{fs:20});}
  }else{const{d,n,part,r}=D,k=Math.abs(n);
   o+=Arr(x0,yB,xOf(d),yB,C.teal,4)+T((x0+xOf(d))/2,yB-18,`${pS(d)}`,C.teal,{fs:17});
   if(st>=1){for(let i=1;i<k;i++){const x=xOf(i*part);o+=Ln(x,yB-9,x,yB+9,'var(--ink)',2);}
@@ -259,16 +267,18 @@ function renderMul(){const{s,W,H}=sv('usv'),D=uData(),st=S.uStep,hid=S.uHide&&!S
 function updMul(){const D=uData(),hid=S.uHide&&!S.uRev,q='<b>?</b>',m=D.mul;
  ['ua','ub','ud','un'].forEach(k=>$('o_'+k).textContent=sN(S[k]));
  document.querySelectorAll('#uOp button').forEach(x=>x.classList.toggle('on',x.dataset.o===S.uop));$('uInM').hidden=!m;$('uInD').hidden=m;
- $('uRev').hidden=!(hid&&S.uStep===2);$('uPatBox').hidden=!m;
+ $('uRev').hidden=!(hid&&S.uStep===2);$('uPatBox').hidden=!m;$('uInvL').hidden=m;$('uInv').checked=!!S.inv;
  $('uTitle').textContent=m?'Multiplicación de enteros':'División de enteros';
  $('uLeg').innerHTML=(m?[['coral','Segundo factor repetido'],['vio','Resultado (giro si el primer factor es negativo)']]:[['teal','Dividendo'],['coral','Una de las partes'],['vio','Resultado']]).map(([c,s])=>`<span><i style="background:var(--${c})"></i>${s}</span>`).join('');
  const it=(v,cl,cap)=>`<span class="it"><span class="${cl}">${v}</span><small>${cap}</small></span>`;
  const res=m?sN(D.r):Ft(D.d,D.n);
  $('uExpr').innerHTML=m?it(pN(D.a),'t','primer factor')+it('·','','')+it(pN(D.b),'c','segundo factor')+it('=','','')+it(hid?'?':res,'v','producto'):it(pN(D.d),'t','dividendo')+it(':','','')+it(pN(D.n),'c','divisor')+it('=','','')+it(hid?'?':res,'v','cociente');
- $('uExpr2').innerHTML=m?(D.a<0?`${pN(D.a)} · ${pN(D.b)} = ${M_}(${Math.abs(D.a)} · ${pN(D.b)}): repetir ${Math.abs(D.a)} veces y girar`:`${D.a} · ${pN(D.b)}: repetir ${D.a} ${D.a===1?'vez':'veces'} la flecha de ${pS(D.b)}`):(D.n<0?`Repartir en ${Math.abs(D.n)} partes y girar 180°`:`Repartir en ${D.n} partes iguales`);
+ $('uExpr2').innerHTML=m?(D.a<0?`${pN(D.a)} · ${pN(D.b)} = ${M_}(${Math.abs(D.a)} · ${pN(D.b)}): repetir ${Math.abs(D.a)} veces y girar`:`${D.a} · ${pN(D.b)}: repetir ${D.a} ${D.a===1?'vez':'veces'} la flecha de ${pS(D.b)}`):S.inv?`Operación inversa: ${pN(D.n)} · c = ${sN(D.d)}`:(D.n<0?`Repartir en ${Math.abs(D.n)} partes y girar 180°`:`Repartir en ${D.n} partes iguales`);
  let txt;
  if(m){const{a,b,mag}=D,n=Math.abs(a);txt=[`El segundo factor es la flecha de ${pS(b)}.`,n===0?`El primer factor es 0: la flecha se repite 0 veces, así que no hay recorrido.`:b===0?`La flecha de 0 no tiene largo: repetirla no avanza nada.`:`Se repite la flecha <b>${n} ${n===1?'vez':'veces'}</b>: ${n} · ${pN(b)} = ${sN(mag)}.`,
   hid?(a<0?`El primer factor es negativo: ¿qué le pasa a la flecha de ${sN(mag)}? ¿Dónde termina? Predice y presiona <b>Revelar</b>.`:`¿Dónde termina? Predice y presiona <b>Revelar</b>.`):(a<0&&mag!==0?`Como el primer factor es <b>negativo</b>, la flecha <b>gira 180°</b> en torno al 0: ${sN(mag)} pasa a ser <b>${sN(-mag)}</b>.`:`El resultado es <b>${sN(D.r)}</b>.`)];}
+ else if(S.inv){const{d,n}=D,k=Math.abs(n),dd=n<0?-d:d;txt=[`${pN(d)} : ${pN(n)} = c significa que <b>${pN(n)} · c = ${sN(d)}</b>. Buscamos la flecha c.`,`En ${pN(n)} · c, la flecha c se repite <b>${k} ${k===1?'vez':'veces'}</b>${n<0?' y luego gira 180°':''}. Para que eso dé ${sN(d)}, las ${k} copias deben sumar ${sN(dd)}${n<0?' (antes de girar)':''}.`,
+  hid?`¿Cuánto mide c? Predice y presiona <b>Revelar</b>.`:`Cada copia mide <b>c = ${Ft(d,n)}</b>${n<0?`: ${k} · c = ${sN(dd)} y, al girar, llega a ${sN(d)}`:''}. Comprobación: ${pN(n)} · ${d%n?'('+Ft(d,n)+')':pN(d/n)} = ${sN(d)}.`];}
  else{const{d,n}=D,k=Math.abs(n);txt=[`El dividendo es la flecha de ${pS(d)}.`,`Se reparte en <b>${k}</b> partes iguales: cada parte mide ${Ft(d,k)}.`,
   hid?`¿Cuál es el cociente? Predice y presiona <b>Revelar</b>.`:(n<0?`Como el divisor es <b>negativo</b>, la parte <b>gira 180°</b>: ${Ft(d,k)} pasa a ser <b>${Ft(-d,k)}</b>.`:`El cociente es <b>${Ft(d,n)}</b>.`)];}
  $('uStep').innerHTML=`<span style="color:var(--mut)">Paso ${S.uStep} de 2 · </span>`+txt[S.uStep];
@@ -303,6 +313,22 @@ new ResizeObserver(()=>upd()).observe(document.body);
 drawUPre();route();
 (function loop(){if(view==='multiplicacion'&&S.anim){renderMul();}requestAnimationFrame(loop);})();
 }
+</script>
+<style>
+.mclase{margin-left:4px;font:inherit;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--line,#cbd5e1);background:#fff;color:#163a5f;cursor:pointer;white-space:nowrap}
+.mclase[aria-pressed="true"]{background:#163a5f;color:#fff;border-color:#163a5f}
+@media(min-width:901px){
+body.clase .concept,body.clase .note,body.clase .hint,body.clase .panel details,body.clase .panel .box:has(> details:only-child){display:none!important}
+body.clase .work{grid-template-columns:minmax(0,2.2fr) minmax(280px,1fr)}
+body.clase .fig{height:clamp(420px,76vh,920px)}
+body.clase .stepTxt{font-size:19px}}
+@media(max-width:900px){.mclase{display:none}}
+</style>
+<script>
+(function(){var K='orbita-modo-clase',on=false;try{on=localStorage.getItem(K)==='1';}catch(e){}
+var b=document.createElement('button');b.type='button';b.className='mclase';b.textContent='Modo clase';b.title='Oculta las explicaciones y agranda la figura para proyectar';
+function set(v){on=v;document.body.classList.toggle('clase',on);b.setAttribute('aria-pressed',on?'true':'false');try{localStorage.setItem(K,on?'1':'0');}catch(e){}setTimeout(function(){window.dispatchEvent(new Event('resize'));},30);}
+b.onclick=function(){set(!on);};var h=document.querySelector('.brand')||document.querySelector('header');if(h)h.appendChild(b);set(on);})();
 </script>
 </body>
 </html>

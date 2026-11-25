@@ -114,7 +114,8 @@ details summary{cursor:pointer;font-weight:600;font-size:17px;min-height:32px}
 <div id="sliders"></div>
 <div class="row"><button id="pre">Valores con trío pitagórico</button>
 <label class="chk" id="regRow"><input type="checkbox" id="reg"> Tetraedro regular</label>
-<label class="chk" id="vomRow"><input type="checkbox" id="vom" checked> Triángulo rectángulo interior</label></div>
+<label class="chk" id="vomRow"><input type="checkbox" id="vom" checked> Triángulo rectángulo interior</label>
+<label class="chk" id="cmpRow" hidden><input type="checkbox" id="cmp"> Comparar con el <span id="cmpName">prisma</span> de igual base y altura</label></div>
 </div>
 <div class="box">
 <div class="fh"><h2>Cara seleccionada</h2><select id="fsel" aria-label="Cara seleccionada"></select></div>
@@ -340,7 +341,7 @@ function setBody(key){st.key=key;const b=BODIES[key];$('bTitle').textContent=b.t
  $('nRow').hidden=!b.ns;if(b.ns)$('nSeg').innerHTML=b.ns.map(n=>`<button data-n="${n}">${NB[n][0].toUpperCase()+NB[n].slice(1)}</button>`).join('');
  $('sliders').innerHTML=b.sl.map(k=>`<div class="sl"><label for="s_${k}">${SLD[k][0]}</label><input type="range" id="s_${k}" min="${SLD[k][1]}" max="${SLD[k][2]}" step="${SLD[k][3]}"><output id="o_${k}"></output></div>`).join('');
  b.sl.forEach(k=>{$('s_'+k).oninput=e=>{st.p[k]=+e.target.value;if(k==='h'&&st.p.reg){st.p.reg=false;$('reg').checked=false;}update();};});
- $('pre').textContent=b.preLabel;$('vomRow').hidden=!b.vom;
+ $('pre').textContent=b.preLabel;$('vomRow').hidden=!b.vom;$('cmpRow').hidden=!(key==='piramide'||key==='cono');$('cmpName').textContent=key==='cono'?'cilindro':'prisma';
  $('legend').innerHTML=b.legend.map(([c,s])=>`<span><i style="border-color:${COL[c]}"></i>${s}</span>`).join('');
  st.t=st.tT=0;$('net').value=0;netLabel();loadPreset(b.ns?(key==='prisma'?4:4):null);SB.MR=VIEWS[0]();SB.auto=false;$('spin').textContent='Iniciar giro';}
 function loadPreset(n){const b=BODIES[st.key];st.p=b.preset(n);st.sel=b.defSel;
@@ -354,12 +355,17 @@ function update(){const b=BODIES[st.key],p=st.p;st.d=b.der(p);const d=st.d;
  $('fsel').value=st.sel;const f=b.face(p,d,st.sel);
  $('fInfo').innerHTML=clean(`<p><b>${f.name}</b> · ${f.shape}</p><dl>${f.rows.map(([a,v])=>`<dt>${a}</dt><dd>${v}</dd>`).join('')}</dl><div class="fx"><p><span style="color:var(--mut)">Perímetro:</span> ${f.P}</p><p><span style="color:var(--mut)">Área:</span> ${f.A}</p></div>`);
  const m=b.metrics(p,d);
+ if($('cmp').checked&&(st.key==='piramide'||st.key==='cono')){const co=st.key==='cono',VP=d.AB*p.h;m.lines.push(co?`<b>Cilindro de igual base y altura:</b> V = π · r² · h = π · ${num(p.r)}² · ${num(p.h)} = <b>${fpi(p.r*p.r*p.h)} cm³</b>. El cono ocupa <b>un tercio</b>: ${fpi(p.r*p.r*p.h)} : 3 = ${fpi(p.r*p.r*p.h/3)} cm³. Con el agua de 3 conos se llena el cilindro.`:`<b>Prisma de igual base y altura:</b> V = A${sb('B')} · h = ${num(d.AB)} · ${num(p.h)} = <b>${fmt(VP)} cm³</b>. La pirámide ocupa <b>un tercio</b>: ${num(VP)} : 3 = ${fmt(VP/3)} cm³. Con el agua de 3 pirámides se llena el prisma.`);}
  $('mets').innerHTML=m.cards.map(([l,v,u,k])=>`<div class="met"><p class="l">${l}</p><p class="v">${fmt(v)} ${u}</p>${k!==undefined&&isEx(k)?`<p class="s">= ${Math.abs(k-1)<1e-9?'':num(k)}π ${u}</p>`:''}</div>`).join('');
  $('fm').innerHTML=clean(m.lines.map(x=>`<div>${x}</div>`).join(''));
  $('note').innerHTML=b.note(p,d)+'Los cálculos usan valores sin redondear; solo el resultado se aproxima a 2 decimales.';
  SB.dirty=true;}
 function netLabel(){$('netBtn').textContent=st.tT>0.5?'Armar el cuerpo':'Desarmar: ver red';}
 
+function cmpWire(sc,p,d){let o='';const c=COL.sel;
+ if(st.key==='piramide'){const B=ngon(p.n,d.R,0),Tp=ngon(p.n,d.R,p.h);o+=plv(sc,Tp.concat([Tp[0]]),c,2,.9);B.forEach((q,i)=>o+=L(sc,q,Tp[i],c,1.8,true,.85));}
+ else{const B=disc(p.r,0),Tp=disc(p.r,p.h);o+=plv(sc,Tp.concat([Tp[0]]),c,2,.9);let i0=0,i1=0;B.forEach((q,i)=>{const x=sc.pr(q)[0];if(x<sc.pr(B[i0])[0])i0=i;if(x>sc.pr(B[i1])[0])i1=i;});[i0,i1].forEach(i=>o+=L(sc,B[i],Tp[i],c,1.8,true,.85));}
+ const TT=(st.key==='piramide'?ngon(p.n,d.R,p.h):disc(p.r,p.h)).map(sc.pr),top=[sc.pr([0,p.h,0])[0],Math.min(...TT.map(q=>q[1]))];o+=T(top[0],Math.max(14,top[1]-14),`${st.key==='cono'?'cilindro':'prisma'}: V = 3 · V${st.key==='cono'?' del cono':' de la pirámide'}`,c);return o;}
 function renderBody(){const sc=SB,b=BODIES[st.key],p=st.p,d=st.d,t=ease(st.t);if(!p)return;
  const polys=b.build(p,d,t),bb=bbox(polys);sc.ctr=bb.c;sc.S=0.42*Math.min(sc.W,sc.H)/Math.max(bb.r,st.rad0);
  const info=polys.map((po,i)=>{const pp=po.pts.map(sc.pr);const n=mulS(newell(po.pts),st.orient[i]||1);return{po,i,pp,z:pp.reduce((s,q)=>s+q[2],0)/pp.length,front:sc.rot(n)[2]>1e-9};});
@@ -371,6 +377,7 @@ function renderBody(){const sc=SB,b=BODIES[st.key],p=st.p,d=st.d,t=ease(st.t);if
   if(o.po.hard[k]){if(!flat&&!o.front)hid+=L(sc,a,bq,'var(--ink)',1,true,.4);else vis+=L(sc,a,bq,'var(--ink)',1.5,false,.85);}
   else if(o.po.strip&&k===o.po.sil&&!flat){const nx=info[o.i+1];if(nx&&nx.po.fid===o.po.fid&&nx.front!==o.front)vis+=L(sc,a,bq,'var(--ink)',1.5,false,.85);}}});
  out+=hid+vis+b.overlay(sc,p,d,polys,st.sel,st.t);
+ if($('cmp').checked&&st.t<0.005&&(st.key==='piramide'||st.key==='cono'))out+=cmpWire(sc,p,d);
  sc.svg.innerHTML=out;}
 
 function pickFace(f){st.sel=f;update();}
@@ -444,6 +451,7 @@ $('fsel').onchange=e=>pickFace(e.target.value);
 $('pre').onclick=()=>{const b=BODIES[st.key];if(st.key==='cono')b.ti=(b.ti+1)%b.TR.length;loadPreset(st.p.n);};
 $('reg').onchange=e=>{st.p.reg=e.target.checked;update();};
 $('vom').onchange=()=>{SB.dirty=true;};
+$('cmp').onchange=()=>{update();};
 $('netBtn').onclick=()=>{st.tT=st.tT>0.5?0:1;netLabel();SB.auto=false;$('spin').textContent='Iniciar giro';SB.goto(st.tT?VIEWS[3]():VIEWS[0]());};
 $('net').oninput=e=>{st.t=st.tT=+e.target.value/100;netLabel();SB.dirty=true;};
 document.querySelectorAll('[data-v]').forEach(x=>x.onclick=()=>{SB.auto=false;$('spin').textContent='Iniciar giro';SB.goto(VIEWS[+x.dataset.v]());});
@@ -468,6 +476,22 @@ function frame(){const sc=view==='rev'?SR:(view==='body'?SB:null);
  requestAnimationFrame(frame);}
 requestAnimationFrame(frame);
 }
+</script>
+<style>
+.mclase{margin-left:4px;font:inherit;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--line,#cbd5e1);background:#fff;color:#163a5f;cursor:pointer;white-space:nowrap}
+.mclase[aria-pressed="true"]{background:#163a5f;color:#fff;border-color:#163a5f}
+@media(min-width:901px){
+body.clase .concept,body.clase .note,body.clase .hint,body.clase .panel details,body.clase .panel .box:has(> details:only-child){display:none!important}
+body.clase .work{grid-template-columns:minmax(0,2.2fr) minmax(280px,1fr)}
+body.clase .fig{height:clamp(420px,76vh,920px)}
+body.clase .stepTxt{font-size:19px}}
+@media(max-width:900px){.mclase{display:none}}
+</style>
+<script>
+(function(){var K='orbita-modo-clase',on=false;try{on=localStorage.getItem(K)==='1';}catch(e){}
+var b=document.createElement('button');b.type='button';b.className='mclase';b.textContent='Modo clase';b.title='Oculta las explicaciones y agranda la figura para proyectar';
+function set(v){on=v;document.body.classList.toggle('clase',on);b.setAttribute('aria-pressed',on?'true':'false');try{localStorage.setItem(K,on?'1':'0');}catch(e){}setTimeout(function(){window.dispatchEvent(new Event('resize'));},30);}
+b.onclick=function(){set(!on);};var h=document.querySelector('.brand')||document.querySelector('header');if(h)h.appendChild(b);set(on);})();
 </script>
 </body>
 </html>

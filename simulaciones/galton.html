@@ -87,7 +87,7 @@ input[type=range]{accent-color:var(--sel);width:100%;height:28px}
 <div>
 <div class="stagehead"><h1>Tabla de Galton</h1><div class="legend"><span><i style="background:var(--sel)"></i>Bolitas</span><span><i style="background:var(--coral)"></i>Distribución teórica (binomial)</span></div></div>
 <div class="fig plain"><canvas id="gcv" role="img" aria-label="Tabla de Galton con bolitas cayendo en casilleros"></canvas></div>
-<div class="tools"><span style="font-weight:600">Soltar:</span><button class="pri" data-b="100">100</button><button data-b="200">200</button><button data-b="400">400</button><button data-b="800">800</button><button data-b="1000">1000</button><button id="gClear">Vaciar</button></div>
+<div class="tools"><span style="font-weight:600">Soltar:</span><button class="pri" data-b="100">100</button><button data-b="200">200</button><button data-b="400">400</button><button data-b="800">800</button><button data-b="1000">1000</button><button id="gFol">Seguir una bolita</button><button id="gClear">Vaciar</button></div>
 </div>
 <aside class="panel">
 <p class="concept">Cada bolita choca con un clavo en cada nivel y rebota a la <b>izquierda</b> o a la <b>derecha</b> con la misma probabilidad. El casillero donde cae depende de <b>cuántas veces rebotó a la derecha</b>. Al soltar muchas bolitas aparece una forma de <b>campana</b>.</p>
@@ -114,12 +114,13 @@ const nf=(x,d=1)=>{const r=Math.round(x*10**d)/10**d;return(Object.is(r,-0)?0:r)
 const comb=(n,k)=>{let r=1;for(let i=1;i<=k;i++)r=r*(n-k+i)/i;return Math.round(r);};
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const G={L:12,p:0.5,counts:[],queue:0,balls:[],target:0,sp:'normal',curve:true,pas:false,last:0,acc:0};
-function reset(){G.counts=Array(G.L+1).fill(0);G.queue=0;G.balls=[];G.target=0;}
+function reset(){G.fol=null;G.counts=Array(G.L+1).fill(0);G.queue=0;G.balls=[];G.target=0;}
 reset();
 const SP={normal:{rate:70,lev:13},rapida:{rate:300,lev:38}};
 document.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{const k=+b.dataset.b;if(G.target+k>5000)return;G.target+=k;
  if(G.sp==='inst'||reduce){for(let i=0;i<k;i++){let r=0;for(let j=0;j<G.L;j++)if(Math.random()<G.p)r++;G.counts[r]++;}}else G.queue+=k;panel();});
-$('gClear').onclick=()=>{reset();panel();};
+$('gClear').onclick=()=>{reset();G.fol=null;panel();};
+$('gFol').onclick=()=>{if(G.fol&&G.fol.t<G.L)return;const path=[0];for(let i=0;i<G.L;i++)path.push(path[i]+(Math.random()<G.p?1:0));const g=geo;const b={path,t:-0.6,x:g?g.cx:0,y:8,fall:0,follow:true};G.balls.push(b);G.fol=b;G.target+=1;panel();};
 $('gL').onchange=e=>{G.L=+e.target.value;reset();panel();};
 $('gSp').onchange=e=>{G.sp=e.target.value;if(G.sp==='inst'){const q=G.queue+G.balls.length;G.balls=[];G.queue=0;for(let i=0;i<q;i++){let r=0;for(let j=0;j<G.L;j++)if(Math.random()<G.p)r++;G.counts[r]++;}}panel();};
 $('gCurve').onchange=e=>{G.curve=e.target.checked;};
@@ -144,7 +145,7 @@ function draw(){const g=layout(),{W,H,L,s,v,cx,top,yb0,ybB}=g;ctx.clearRect(0,0,
  ctx.strokeStyle='#16202b';ctx.lineWidth=1.6;for(let k=0;k<=L+1;k++){const x=cx+(k-L/2-0.5)*s;ctx.beginPath();ctx.moveTo(x,yb0);ctx.lineTo(x,ybB);ctx.stroke();}
  ctx.beginPath();ctx.moveTo(cx-(L/2+0.5)*s,ybB);ctx.lineTo(cx+(L/2+0.5)*s,ybB);ctx.stroke();
  // pilas
- const binW=s*0.86,binH=ybB-yb0-4,pmax=Math.max(...Array.from({length:L+1},(_,k)=>theo(k))),N=Math.max(G.target,1),expMax=Math.max(N*pmax*1.18,Math.max(...G.counts),8);
+ const binW=s*0.86,binH=ybB-yb0-4,pmax=Math.max(...Array.from({length:L+1},(_,k)=>theo(k))),N=G.target<=200?200:G.target<=1000?1000:G.target<=2000?2000:5000,expMax=Math.max(N*pmax*1.18,Math.max(...G.counts),8);
  let d=Math.sqrt(binW*binH/expMax);let cols=Math.max(1,Math.floor(binW/d));d=Math.min(binW/cols,d);while(cols*Math.floor(binH/d)<expMax&&d>1){d*=0.95;cols=Math.max(1,Math.floor(binW/d));}
  const dots=d>=3.2;G.geoStack={d,cols,binW};
  for(let k=0;k<=L;k++){const c=G.counts[k],x0=binX(k)-cols*d/2;
@@ -157,18 +158,25 @@ function draw(){const g=layout(),{W,H,L,s,v,cx,top,yb0,ybB}=g;ctx.clearRect(0,0,
   ctx.fillStyle='#D85A30';ctx.font='500 12px Lexend,system-ui,sans-serif';ctx.textAlign='left';ctx.textBaseline='bottom';ctx.fillText('- - esperado con '+G.target+' bolitas',10,H-8);}
  // bolitas en vuelo
  ctx.fillStyle='#D4537E';const br=Math.max(2.5,Math.min(5.5,s*0.13));
- G.balls.forEach(b=>{ctx.beginPath();ctx.arc(b.x,b.y,br,0,7);ctx.fill();});
+ G.balls.forEach(b=>{if(b.follow)return;ctx.beginPath();ctx.arc(b.x,b.y,br,0,7);ctx.fill();});
+ const F=G.fol;if(F){const n=Math.max(0,Math.min(G.L,Math.floor(F.t)+1)),pts=[];for(let i=0;i<n;i++)pts.push(g.peg(i,F.path[i]));
+  ctx.strokeStyle='#BA7517';ctx.lineWidth=3;ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));if(F.t>=0)ctx.lineTo(F.x,F.y);ctx.stroke();
+  pts.forEach(p=>{ctx.fillStyle='#BA7517';ctx.beginPath();ctx.arc(p[0],p[1],pr+2.5,0,7);ctx.fill();});
+  if(F.t<G.L||G.balls.includes(F)){ctx.fillStyle='#BA7517';ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(F.x,F.y,br+3,0,7);ctx.fill();ctx.stroke();}
+  const dec=F.path.slice(1,Math.max(1,Math.min(G.L+1,Math.floor(F.t)+1))).map((v,i)=>v>F.path[i]?'D':'I'),k=dec.filter(x=>x==='D').length;
+  ctx.fillStyle='#8a5a10';ctx.font='600 13px Lexend,system-ui,sans-serif';ctx.textAlign='right';ctx.textBaseline='top';
+  ctx.fillText('Camino: '+(dec.join(' ')||'…'),W-10,10);ctx.fillText(F.t>=G.L?`${k} veces a la derecha → casillero ${k}`:`a la derecha: ${k}`,W-10,28);}
  // contador de cola
  ctx.fillStyle='#5b6675';ctx.font='500 13px Lexend,system-ui,sans-serif';ctx.textAlign='left';ctx.textBaseline='top';if(G.queue>0)ctx.fillText(`por soltar: ${G.queue}`,10,10);}
-function step(dt){if(G.sp==='inst'){return;}const sp=SP[G.sp],g=geo;if(!g)return;
+function step(dt){if(G.sp==='inst'&&!G.balls.length){return;}const sp=SP[G.sp]||SP.normal,g=geo;if(!g)return;
  G.acc+=dt*sp.rate;while(G.acc>=1&&G.queue>0){G.acc-=1;G.queue--;const path=[0];for(let i=0;i<G.L;i++)path.push(path[i]+(Math.random()<G.p?1:0));G.balls.push({path,t:-0.6,x:g.cx,y:8,fall:0});}
  if(G.queue===0)G.acc=0;
  const done=[];
- G.balls.forEach((b,idx)=>{if(b.t<G.L){b.t=Math.min(G.L,b.t+dt*sp.lev);if(b.t<0){b.x=g.cx;b.y=g.top-14+b.t*20;return;}
+ G.balls.forEach((b,idx)=>{const lev=b.follow?2.2:sp.lev;if(b.t<G.L){b.t=Math.min(G.L,b.t+dt*lev);if(b.t<0){b.x=g.cx;b.y=g.top-14+b.t*20;return;}
    const i=Math.floor(b.t),u=b.t-i;if(i>=G.L){const k=b.path[G.L];b.x=binX(k);b.y=g.top+G.L*g.v-g.v*0.5;return;}
    const[xa,ya]=g.peg(i,b.path[i]),xb=i+1<G.L?g.peg(i+1,b.path[i+1])[0]:binX(b.path[G.L]),yb=g.top+(i+1)*g.v;const hop=g.v*0.35*Math.sin(Math.PI*u);
    b.x=xa+(xb-xa)*u;b.y=ya-g.v*0.32+(yb-ya)*u-hop;}
-  else{const k=b.path[G.L],st=G.geoStack;if(!st)return;const row=Math.floor(G.counts[k]/st.cols),yTop=g.ybB-row*st.d-st.d/2;b.fall+=dt*sp.lev*g.v*1.6;b.x=binX(k);b.y=Math.min(yTop,g.yb0+b.fall);if(b.y>=yTop-0.5){G.counts[k]++;done.push(idx);}}});
+  else{const k=b.path[G.L],st=G.geoStack;if(!st)return;const row=Math.floor(G.counts[k]/st.cols),yTop=g.ybB-row*st.d-st.d/2;b.fall+=dt*lev*g.v*1.6;b.x=binX(k);b.y=Math.min(yTop,g.yb0+b.fall);if(b.y>=yTop-0.5){G.counts[k]++;done.push(idx);}}});
  if(done.length){G.balls=G.balls.filter((_,i)=>!done.includes(i));panel();}}
 let tPrev=performance.now(),tPanel=0;
 (function loop(t){const dt=Math.min(0.05,(t-tPrev)/1000);tPrev=t;step(dt);draw();requestAnimationFrame(loop);})(tPrev);
@@ -187,6 +195,22 @@ function panel(){const L=G.L,N=G.counts.reduce((a,b)=>a+b,0),fly=G.queue+G.balls
  $('gFm').innerHTML=Lx.map(x=>`<div>${x}</div>`).join('');}
 panel();
 }
+</script>
+<style>
+.mclase{margin-left:4px;font:inherit;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--line,#cbd5e1);background:#fff;color:#163a5f;cursor:pointer;white-space:nowrap}
+.mclase[aria-pressed="true"]{background:#163a5f;color:#fff;border-color:#163a5f}
+@media(min-width:901px){
+body.clase .concept,body.clase .note,body.clase .hint,body.clase .panel details,body.clase .panel .box:has(> details:only-child){display:none!important}
+body.clase .work{grid-template-columns:minmax(0,2.2fr) minmax(280px,1fr)}
+body.clase .fig{height:clamp(420px,76vh,920px)}
+body.clase .stepTxt{font-size:19px}}
+@media(max-width:900px){.mclase{display:none}}
+</style>
+<script>
+(function(){var K='orbita-modo-clase',on=false;try{on=localStorage.getItem(K)==='1';}catch(e){}
+var b=document.createElement('button');b.type='button';b.className='mclase';b.textContent='Modo clase';b.title='Oculta las explicaciones y agranda la figura para proyectar';
+function set(v){on=v;document.body.classList.toggle('clase',on);b.setAttribute('aria-pressed',on?'true':'false');try{localStorage.setItem(K,on?'1':'0');}catch(e){}setTimeout(function(){window.dispatchEvent(new Event('resize'));},30);}
+b.onclick=function(){set(!on);};var h=document.querySelector('.brand')||document.querySelector('header');if(h)h.appendChild(b);set(on);})();
 </script>
 </body>
 </html>
