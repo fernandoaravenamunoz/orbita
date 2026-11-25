@@ -4,7 +4,7 @@
 
 ## 1. Qué es
 
-Sitio web de **Feñaño (Prof. Fernando Aravena, matemáticas y física, Temuco)** para compartir con sus estudiantes guías, simulaciones, videos, juegos y divulgación científica.
+Sitio web de **Feñaño (Fernando J. Aravena Muñoz, matemáticas y física, Temuco)** para compartir con sus estudiantes guías, simulaciones, videos, juegos y divulgación científica.
 
 - **Sitio publicado:** https://fernandoaravenamunoz.github.io/orbita/
 - **Repositorio (público):** https://github.com/fernandoaravenamunoz/orbita
@@ -34,7 +34,7 @@ sitemap.xml                   para Google (lista páginas y PDF)
 googleef0239d5e0f1f3b2.html   archivo de verificación de Google Search Console
 imagen-compartir.jpg          imagen de vista previa al compartir el link (1200×630)
 juegos/                       10 juegos, cada uno es un .html independiente
-simulaciones/                 8 simulaciones propias en HTML (fracciones, enteros, cuerpos-geometricos, homotecias, tales, euclides, pi, angulos)
+simulaciones/                 10 simulaciones propias en HTML (fracciones, enteros, cuerpos-geometricos, homotecias, tales, euclides, pi, angulos, monedas, galton)
 materiales/1medio/            15 PDF
 materiales/2medio/            10 PDF
 materiales/7basico/           4 PDF
@@ -47,7 +47,7 @@ materiales/curiosa/           oc01–oc10.svg (ilustraciones de Órbita Curiosa)
 | Ruta | Sección | Contenido |
 |---|---|---|
 | `#inicio` | Inicio | Portada y seis accesos: Cursos, Simulaciones, Juegos, Observatorio, Órbita Curiosa y Entregar tarea |
-| `#simulaciones` | Simulaciones | Herramientas interactivas propias (`datos.js → simulaciones`), en tarjetas con lámina, temas y botón «Abrir simulación» (por decisión del profesor, sin curso ni OA). Hoy: Operando con fracciones, La recta de los enteros, Cuerpos geométricos 3D, Homotecias, Teorema de Tales, Teorema de Euclides, El número π y Ángulos de los polígonos |
+| `#simulaciones` | Simulaciones | Herramientas interactivas propias (`datos.js → simulaciones`), en tarjetas con lámina, temas y botón «Abrir simulación» (por decisión del profesor, sin curso ni OA). Hoy: Operando con fracciones, La recta de los enteros, Cuerpos geométricos 3D, Homotecias, Teorema de Tales, Teorema de Euclides, El número π, Ángulos de los polígonos, Lanzamiento de monedas y Tabla de Galton |
 | `#cursos` / `#curso-ID` | Cursos | Por curso: **Guías por unidad** y una sección aparte de **Simulaciones y videos** |
 | `#juegos` / `#juego-ID` | Juegos | Estilo arcade (cartuchos J01–J10); es la única sección con estética de videojuego |
 | `#difusion` | Observatorio | Divulgación científica: 25 videos de YouTube con miniatura local y créditos, más 2 artículos, agrupados por categoría |
@@ -77,6 +77,8 @@ materiales/curiosa/           oc01–oc10.svg (ilustraciones de Órbita Curiosa)
 - **Teorema de Euclides** (`euclides.html`, I° medio, semejanza): triángulo con ángulo recto en C, altura CD, proyecciones p (de a) y q (de b). Los seis datos (a, b, c, h, p, q) se cambian con barra o escribiéndolos; se mantiene fijo el último dato cambiado (o el que se elija) y se recalcula el resto para que siga siendo rectángulo, con aviso si el valor es imposible. Muestra h² = p·q, a² = p·c, b² = q·c, h = a·b/c, c = p + q y Pitágoras: fórmula, valores y resultados. Opción «Ver áreas» con cuadrados y rectángulos equivalentes.
 - **El número π** (`pi.html`): radio ajustable (barra o texto) con r, d = 2r y C en una caja en la esquina. Pestaña «Desenrollar»: la circunferencia rueda y deja su borde como segmento; se copian 3 diámetros encima, una 4.ª copia no cabe, y una regla y una lupa miden lo que sobra (≈ 0,142 d). Pestaña «Acostar el diámetro»: el diámetro se curva sobre la circunferencia 3 veces y una huincha curva más una lupa (vista estirada) miden el trozo sin cubrir. Tabla de mediciones para comparar varios radios (C : d constante).
 - **Ángulos de los polígonos** (`angulos.html`): triángulo, cuadrilátero, pentágono, hexágono y octágono (presets con ángulos enteros, «Otra forma» al azar, «Polígono regular», vértices arrastrables manteniendo convexidad). Cada esquina es una pieza de color que se arrastra o se toca para llevarla a la «mesa de armado», donde se acomoda junto a la anterior. Interiores: el triángulo forma un ángulo extendido (180°), el cuadrilátero un ángulo completo, y desde el pentágono cada vuelta va en su propio círculo (1.ª vuelta, 2.ª vuelta, media vuelta; la pieza que completa una vuelta se parte). Exteriores: prolongación punteada de cada lado; las piezas siempre completan 360°; opción de ver el interior junto al exterior (suplementarios). Panel con la suma valorizada (redondeo a 1 decimal que conserva la suma), tabla de los 5 polígonos y explicación con triangulación.
+- **Lanzamiento de monedas** (`monedas.html`): de 1 a 7 monedas por lanzamiento, hasta 500 lanzamientos (botones 1, 10, 50, 100 y «Hasta 500»); monedas con «CARA» (azul) y «SELLO» (naranja); registro en matriz «En orden» o «Agrupados por número de caras»; tablas por número de caras y por resultado (hasta 4 monedas). Pestaña «Variable aleatoria»: X = número de caras, número de sellos, caras − sellos, al menos una cara (0/1) o moneda de la primera cara; tabla con casos, P(X = x), F(x), frecuencias; gráficos de la función de probabilidad y de la función de distribución (teórica en azul, experimental en ámbar).
+- **Tabla de Galton** (`galton.html`): 10 a 14 niveles de clavos; soltar 100, 200, 400, 800 o 1000 bolitas (acumulables hasta 5000) con velocidad normal, rápida o instantánea; bolitas animadas que se apilan en los casilleros; distribución teórica binomial superpuesta; opción de triángulo de Pascal en los clavos; probabilidad de rebote a la derecha ajustable (0,1 a 0,9); tabla de casilleros con % obtenido, % teórico y número de caminos.
 - Criterios comunes: avance paso a paso, modo **predecir** (oculta el resultado hasta revelarlo), sin modo desafío por decisión del profesor, y sin guardar datos de estudiantes.
 - La lámina de la tarjeta es un SVG en `app.js` (`DIBUJOS_SIM`); si `dibujo` no existe, usa uno genérico.
 
@@ -112,6 +114,8 @@ materiales/curiosa/           oc01–oc10.svg (ilustraciones de Órbita Curiosa)
 - El artículo de Poincaré (Monthly, 1981) existe, pero no se confirmó el autor "Kenneth R. Meyer"; su enlace abre una búsqueda en JSTOR.
 
 ## 5. Identidad visual
+
+- **Pie de página (todas las páginas):** «Fernando J. Aravena Muñoz / Licenciado en ciencias exactas / Profesor de matemáticas y física / Temuco, Chile». En el sitio sale de `datos.js` (`docente`, `formacion`, `colegio`); en simulaciones y juegos está escrito al final de cada `.html` (claro en simulaciones, marino en juegos).
 
 - **Estilo:** retrofuturismo Space Age editorial, con fondo crema, marino y acentos cálidos. Lleva una franja modular de figuras geométricas bajo las cabeceras.
 - **Paleta** (`estilos.css`):

@@ -22,7 +22,9 @@
 const SITIO = {
   titulo: "Órbita Matemática",
   subtitulo: "Material de matemáticas y física para mis estudiantes",
-  docente: "Prof. Fernando Aravena",
+  docente: "Fernando J. Aravena Muñoz",
+  // Líneas bajo el nombre en el pie de página (puedes agregar o quitar líneas)
+  formacion: ["Licenciado en ciencias exactas", "Profesor de matemáticas y física"],
   colegio: "Temuco, Chile",
 
   /* Enlace al Formulario de Google para entregar tareas.
@@ -284,6 +286,22 @@ const SITIO = {
       temas: ["Ángulos interiores", "Ángulos exteriores", "Ángulo extendido", "(n − 2) · 180°", "360°", "Triangulación"],
       url: "simulaciones/angulos.html",
       dibujo: "angulos",
+      fecha: "2026-11-25"
+    },
+    {
+      nombre: "Lanzamiento de monedas",
+      descripcion: "Lanza de 1 a 7 monedas a la vez, hasta 500 veces. Cada resultado queda registrado en una matriz, en orden o agrupado por número de caras. Define una variable aleatoria y construye su función de probabilidad y su función de distribución.",
+      temas: ["Cara y sello", "Espacio muestral", "Frecuencia relativa", "Variable aleatoria", "f(x) y F(x)"],
+      url: "simulaciones/monedas.html",
+      dibujo: "monedas",
+      fecha: "2026-11-25"
+    },
+    {
+      nombre: "Tabla de Galton",
+      descripcion: "Suelta 100, 200, 400, 800 o 1000 bolitas por un tablero de 10 a 14 niveles de clavos y mira cómo se reparten en los casilleros. Compara con la distribución binomial y descubre el triángulo de Pascal en los clavos.",
+      temas: ["Azar", "Distribución binomial", "Triángulo de Pascal", "Campana de Gauss"],
+      url: "simulaciones/galton.html",
+      dibujo: "galton",
       fecha: "2026-11-25"
     }
     // Para agregar otra simulación: sube su archivo .html a la carpeta "simulaciones"

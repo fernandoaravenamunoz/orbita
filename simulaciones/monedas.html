@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lanzamiento de monedas · Órbita Matemática</title>
+<meta name="description" content="Simulación interactiva: lanza de 1 a 7 monedas hasta 500 veces, registra cara y sello, calcula frecuencias y probabilidades, y construye la función de probabilidad y la función de distribución de una variable aleatoria.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+:root{color-scheme:light;--bg:#ffffff;--ink:#16202b;--mut:#5b6675;--line:#dde4ec;--grid:#edf1f6;--band:#163a5f;--card:#f2f6fb;--sel:#378ADD;--coral:#D85A30;--teal:#1D9E75;--vio:#7F77DD;--amb:#BA7517;--pink:#D4537E}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Lexend,system-ui,sans-serif;overflow-x:clip}
+h1,h2{font-weight:600;line-height:1.1;margin:0;text-wrap:balance}
+button,input{font:inherit;color:inherit}
+button{min-height:40px;padding:6px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);cursor:pointer}
+button:hover{border-color:var(--mut)}button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
+button.on{border-color:var(--sel);color:var(--sel);background:color-mix(in srgb,var(--sel) 10%,transparent)}
+button.pri{background:var(--band);color:#fff;border-color:var(--band)}
+
+input[type=checkbox]{accent-color:var(--sel);width:18px;height:18px}
+.top{background:#EAF2FB;color:#163a5f;border-bottom:3px solid #378ADD;padding:14px max(4vw,16px);display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:18px;flex-wrap:wrap}
+.volver{color:#163a5f;text-decoration:none;font-size:14px;font-weight:500;padding:6px 10px;border:1px solid rgba(22,58,95,.35);border-radius:999px;background:#fff}.volver:hover{border-color:#163a5f}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs a{color:#163a5f;text-decoration:none;padding:8px 12px;border-radius:999px;font-size:15px;opacity:.82}
+.tabs a:hover{opacity:1;background:rgba(22,58,95,.08)}.tabs a.on{opacity:1;background:#163a5f;color:#fff}
+.band{padding:clamp(20px,3vw,44px) max(4vw,16px)}
+.work{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:24px;max-width:1400px;margin:0 auto}
+.stagehead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 18px;margin-bottom:8px}
+.stagehead h1{font-size:clamp(26px,3vw,36px)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--mut)}
+.legend i{display:inline-block;width:16px;height:10px;border-radius:3px;vertical-align:middle;margin-right:6px}
+.fig{position:relative;height:clamp(340px,58vh,600px);border-radius:16px;border:1px solid var(--line);background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;overflow:hidden}
+.fig svg{position:absolute;inset:0;width:100%;height:100%}
+.hint{position:absolute;left:12px;bottom:8px;margin:0;font-size:13px;color:var(--mut);pointer-events:none}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.stepTxt{font-size:15px;color:var(--ink);flex:1 1 100%;background:var(--card);border-radius:12px;padding:10px 14px;margin:0}
+.panel{display:flex;flex-direction:column;gap:16px}
+.box{background:var(--card);border-radius:14px;padding:14px 16px}
+.box h2{font-size:17px;margin-bottom:10px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}.seg button{min-height:36px;padding:4px 12px;font-size:14px}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--mut);margin-top:10px}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px}.row button{min-height:34px;padding:3px 10px;font-size:14px}
+.mets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.met{background:var(--card);border-radius:12px;padding:10px 14px}.met p{margin:0}.met .l{font-size:13px;color:var(--mut)}.met .v{font-size:clamp(19px,2vw,23px);font-weight:600}.met .s{font-size:13px;color:var(--mut)}
+.fm div{font-size:15px;line-height:1.7;padding:4px 0;border-bottom:1px dashed var(--line)}.fm div:last-child{border:0}.fm b{font-weight:600}
+details summary{cursor:pointer;font-weight:600;font-size:17px;min-height:32px}
+.concept{border-left:4px solid var(--vio);background:color-mix(in srgb,var(--vio) 9%,transparent);padding:10px 14px;font-size:15px;margin:0}
+.concept b{color:var(--coral);font-weight:600}
+.note{font-size:13px;color:var(--mut);margin:0}
+.warn{border-left:4px solid var(--amb);background:color-mix(in srgb,var(--amb) 10%,transparent);padding:8px 12px;font-size:14px;margin:0}
+[hidden]{display:none!important}
+.fx{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.08;margin:0 .1em;font-size:.92em}
+.fx>span{padding:0 .2em}.fx>span:first-child{border-bottom:1.6px solid currentColor}
+.frin{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.fr{display:inline-flex;flex-direction:column;align-items:center;gap:4px;padding:6px 8px;border-radius:12px;background:var(--bg)}
+.fr .bar{width:100%;border-top:3px solid currentColor}
+.fr.t{color:var(--teal)}.fr.c{color:var(--coral)}
+.stp{display:inline-flex;align-items:center;gap:4px}
+.stp button{min-height:34px;width:34px;padding:0;font-size:18px;line-height:1;color:var(--ink)}
+.stp output{min-width:2.4ch;text-align:center;font-weight:600;font-size:22px}
+.op{font-size:30px;font-weight:600;color:var(--mut)}
+.lbl{font-size:13px;color:var(--mut);display:block;margin-bottom:6px}
+@media(max-width:900px){.work{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.fig{height:360px}.tabs a{padding:6px 9px;font-size:14px}}
+
+:root{--cara:#378ADD;--sello:#D85A30}
+.coins{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;align-items:center;min-height:120px;padding:18px;border-radius:16px;border:1px solid var(--line);background:#F7FAFD}
+.coin{width:84px;height:84px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:15px;letter-spacing:.04em;border:4px solid;box-shadow:inset 0 -4px 0 rgba(0,0,0,.08)}
+.coin.c{background:#E4F0FC;color:#174A80;border-color:var(--cara)}.coin.s{background:#FCE9E1;color:#8E3414;border-color:var(--sello)}
+.coin.e{background:#fff;color:var(--mut);border-color:var(--line);border-style:dashed;font-weight:500;font-size:13px}
+.coin.flip{animation:flip .55s ease-in-out}
+@keyframes flip{0%{transform:rotateY(0) translateY(0)}35%{transform:rotateY(540deg) translateY(-26px)}100%{transform:rotateY(1080deg) translateY(0)}}
+@media(prefers-reduced-motion:reduce){.coin.flip{animation:none}}
+.cc{color:var(--cara);font-weight:700}.ss{color:var(--sello);font-weight:700}
+.mtx{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--cw,76px),1fr));gap:4px;max-height:330px;overflow:auto;padding:4px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.cell{border:1px solid var(--line);border-radius:6px;padding:2px 4px;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;display:flex;justify-content:space-between;gap:4px;background:#FAFBFD}
+.cell i{font-style:normal;color:var(--mut);font-size:10px;align-self:center}
+.cell.new{outline:2px solid var(--vio)}
+.grp{display:flex;gap:6px;align-items:flex-end;overflow:auto;max-height:360px;padding:6px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.gcol{flex:1 1 0;min-width:54px;display:flex;flex-direction:column-reverse;gap:2px;align-items:stretch}
+.gcol .gh{font-weight:600;text-align:center;font-size:13px;padding-top:4px;border-top:2px solid var(--ink);position:sticky;bottom:0;background:var(--bg)}
+.gcol .gc{font-family:ui-monospace,Menlo,monospace;font-size:10px;text-align:center;border-radius:3px;padding:1px 0;background:#EEF3F9;line-height:1.2}
+.tbl{width:100%;border-collapse:collapse;font-size:14.5px}.tbl th{font-weight:500;color:var(--mut);text-align:right;font-size:12.5px;padding:4px 6px;border-bottom:1px solid var(--line)}.tbl td{padding:5px 6px;border-bottom:1px dashed var(--line);text-align:right;white-space:nowrap}
+.tbl td:first-child,.tbl th:first-child{text-align:center}
+.bar{display:inline-block;height:9px;border-radius:3px;background:var(--vio);vertical-align:middle}
+select{min-height:38px;border-radius:10px;border:1px solid var(--line);background:var(--bg);padding:4px 10px;font:inherit;font-size:15px;color:inherit;max-width:100%}
+.chart{width:100%;height:300px;display:block}
+.charts{display:grid;gap:16px}
+.cap{font-size:14px;color:var(--mut);margin:0 0 4px}
+.big{font-size:clamp(22px,2.5vw,28px);font-weight:600}
+.tblw{overflow-x:auto}
+</style>
+</head>
+<body>
+<header class="top">
+<div class="brand"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" stroke="#163a5f" stroke-width="3" aria-hidden="true"><circle cx="24" cy="32" r="16"/><circle cx="42" cy="32" r="16"/></svg><span>Lanzamiento de monedas</span><a class="volver" href="../index.html#simulaciones" target="_top">← Órbita Matemática</a></div>
+<nav class="tabs" id="tabs"><a href="#lanzar" data-r="lanzar">Lanzar y registrar</a><a href="#variable" data-r="variable">Variable aleatoria</a></nav>
+</header>
+<main>
+<section id="vL" class="band" hidden>
+<div class="work">
+<div>
+<div class="stagehead"><h1>Lanzar monedas</h1><div class="legend"><span><span class="cc">C</span> = cara</span><span><span class="ss">S</span> = sello</span></div></div>
+<div class="coins" id="coins" aria-live="polite"></div>
+<p class="note" id="lastTxt" style="margin:8px 0 14px;text-align:center"></p>
+<div class="fh" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px"><h2 style="font-size:18px;margin:0">Registro de resultados</h2><div class="seg" id="view"><button data-v="orden">En orden</button><button data-v="grupo">Agrupados por número de caras</button></div></div>
+<div id="mtxBox"></div>
+</div>
+<aside class="panel">
+<p class="concept">Al lanzar una moneda hay dos resultados igual de probables: <b>cara</b> o <b>sello</b>. Con varias monedas, el <b>espacio muestral</b> crece: con n monedas hay <b>2ⁿ</b> resultados posibles. ¿Se parecen las frecuencias a las probabilidades cuando lanzamos muchas veces?</p>
+<div class="box"><h2>Monedas por lanzamiento</h2><div class="seg" id="nSeg"></div>
+<p class="note" style="margin-top:8px" id="omega"></p><p class="note">Al cambiar el número de monedas se borran los lanzamientos anteriores.</p></div>
+<div class="box"><h2>Lanzar</h2>
+<div class="row" style="margin-top:0"><button class="pri" data-k="1">Lanzar 1 vez</button><button data-k="10">10 veces</button><button data-k="50">50 veces</button><button data-k="100">100 veces</button><button data-k="500">Hasta 500</button></div>
+<div class="row"><button id="reset">Borrar todo</button></div>
+<p class="big" id="count" style="margin:10px 0 0"></p><p class="note">Máximo: 500 lanzamientos.</p></div>
+<div class="box"><h2>Número de caras por lanzamiento</h2><div class="tblw"><table class="tbl" id="tCaras"></table></div></div>
+<div class="box" id="seqBox"><h2>Por resultado</h2><div class="tblw"><table class="tbl" id="tSeq"></table></div></div>
+</aside>
+</div>
+</section>
+
+<section id="vV" class="band" hidden>
+<div class="work">
+<div>
+<div class="stagehead"><h1 id="vTitle">Variable aleatoria</h1><div class="legend"><span><i style="background:var(--sel)"></i>Teórica</span><span><i style="background:var(--amb)"></i>Experimental (con tus lanzamientos)</span></div></div>
+<div class="charts">
+<div class="box" style="background:var(--bg);border:1px solid var(--line)"><p class="cap"><b>Función de probabilidad</b> f(x) = P(X = x)</p><svg class="chart" id="cP" role="img" aria-label="Gráfico de la función de probabilidad"></svg></div>
+<div class="box" style="background:var(--bg);border:1px solid var(--line)"><p class="cap"><b>Función de distribución</b> F(x) = P(X ≤ x)</p><svg class="chart" id="cF" role="img" aria-label="Gráfico de la función de distribución"></svg></div>
+</div>
+</div>
+<aside class="panel">
+<p class="concept">Una <b>variable aleatoria</b> X asigna un número a cada resultado del experimento. Su <b>función de probabilidad</b> dice qué tan probable es cada valor, y su <b>función de distribución</b> acumula esas probabilidades: F(x) = P(X ≤ x).</p>
+<div class="box"><h2>Define la variable</h2>
+<select id="vSel"><option value="caras">X = número de caras</option><option value="sellos">X = número de sellos</option><option value="dif">X = caras − sellos</option><option value="alm">X = 1 si sale al menos una cara; 0 si no</option><option value="pri">X = moneda en que sale la primera cara (0 si no sale)</option></select>
+<p class="note" id="vInfo" style="margin-top:8px"></p></div>
+<div class="box"><h2>Tabla de la variable</h2><div class="tblw"><table class="tbl" id="tV"></table></div><p class="note" style="margin-top:6px">fᵣ = frecuencia relativa de tus lanzamientos. Mientras más lances, más se acerca a la probabilidad teórica.</p></div>
+<div class="box"><details open><summary>Cómo se calcula</summary><div class="fm" id="vFm"></div></details></div>
+</aside>
+</div>
+</section>
+</main>
+<footer class="pie-sim" style="background:#EAF2FB;color:#163a5f;border-top:3px solid #378ADD;padding:18px max(4vw,16px);font:400 14px/1.55 Lexend,system-ui,sans-serif;margin-top:24px"><strong style="font-weight:600;font-size:15.5px">Fernando J. Aravena Muñoz</strong><br>Licenciado en ciencias exactas<br>Profesor de matemáticas y física<br><span style="color:#5b6675">Temuco, Chile</span></footer>
+<script>
+{
+const $=id=>document.getElementById(id);
+const nf=(x,d=4)=>{const r=Math.round(x*10**d)/10**d;return(Object.is(r,-0)?0:r).toLocaleString('es-CL',{maximumFractionDigits:d});};
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b]}return a||1};
+const Fr=(a,b)=>{const g=gcd(a,b);a/=g;b/=g;return b===1?`${a}`:`<span class="fx"><span>${a}</span><span>${b}</span></span>`;};
+const comb=(n,k)=>{let r=1;for(let i=1;i<=k;i++)r=r*(n-k+i)/i;return Math.round(r);};
+const MAXT=500,reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const M={n:3,data:[],view:'orden',v:'caras',last:-1};
+const seqTxt=r=>r.map(c=>c?'<span class="cc">C</span>':'<span class="ss">S</span>').join('');
+$('nSeg').innerHTML=[1,2,3,4,5,6,7].map(n=>`<button data-n="${n}">${n}</button>`).join('');
+$('nSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;const n=+b.dataset.n;if(n===M.n)return;M.n=n;M.data=[];M.last=-1;upd(true);};
+$('view').onclick=e=>{const b=e.target.closest('button');if(!b)return;M.view=b.dataset.v;upd();};
+document.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{const k=+b.dataset.k,left=MAXT-M.data.length,m=k===500?left:Math.min(k,left);if(m<=0)return;
+ for(let i=0;i<m;i++)M.data.push(Array.from({length:M.n},()=>Math.random()<.5?1:0));M.last=M.data.length-1;M.flip=true;M.batch=m;upd();});
+$('reset').onclick=()=>{M.data=[];M.last=-1;upd(true);};
+$('vSel').onchange=e=>{M.v=e.target.value;upd();};
+
+/* variables */
+const VAR={caras:{f:r=>r.reduce((a,b)=>a+b,0),t:'número de caras'},sellos:{f:r=>r.length-r.reduce((a,b)=>a+b,0),t:'número de sellos'},dif:{f:r=>2*r.reduce((a,b)=>a+b,0)-r.length,t:'caras − sellos'},
+ alm:{f:r=>r.some(x=>x)?1:0,t:'1 si sale al menos una cara; 0 si no'},pri:{f:r=>{const i=r.indexOf(1);return i<0?0:i+1;},t:'moneda en que sale la primera cara (0 si no sale)'}};
+function allOutcomes(n){const L=[];for(let m=0;m<(1<<n);m++)L.push(Array.from({length:n},(_,i)=>(m>>(n-1-i))&1));return L;}
+function dist(vk){const n=M.n,f=VAR[vk].f,O=allOutcomes(n),T=new Map();O.forEach(r=>{const x=f(r);T.set(x,(T.get(x)||0)+1);});
+ const xs=[...T.keys()].sort((a,b)=>a-b),E=new Map(xs.map(x=>[x,0]));M.data.forEach(r=>{const x=f(r);E.set(x,(E.get(x)||0)+1);});return{xs,T,E,N:M.data.length,tot:1<<n};}
+
+/* ---------- pestaña lanzar ---------- */
+function updL(resetCoins){const n=M.n,N=M.data.length;
+ document.querySelectorAll('#nSeg button').forEach(b=>b.classList.toggle('on',+b.dataset.n===n));
+ document.querySelectorAll('#view button').forEach(b=>b.classList.toggle('on',b.dataset.v===M.view));
+ document.querySelectorAll('[data-k]').forEach(b=>b.disabled=N>=MAXT);
+ $('omega').innerHTML=`Con ${n} moneda${n>1?'s':''} hay 2${'⁰¹²³⁴⁵⁶⁷'[n]} = <b>${1<<n}</b> resultados posibles, todos igual de probables (${Fr(1,1<<n)} cada uno).`;
+ $('count').innerHTML=`${N} lanzamiento${N!==1?'s':''} <span style="font-size:15px;color:var(--mut);font-weight:500">· ${N*n} monedas</span>`;
+ const last=M.last>=0?M.data[M.last]:null;
+ $('coins').innerHTML=(last||Array(n).fill(-1)).map(c=>`<div class="coin ${c===1?'c':c===0?'s':'e'} ${M.flip?'flip':''}">${c===1?'CARA':c===0?'SELLO':'?'}</div>`).join('');
+ $('lastTxt').innerHTML=last?`Lanzamiento n.º ${M.last+1}: ${seqTxt(last)} → ${last.reduce((a,b)=>a+b,0)} cara${last.reduce((a,b)=>a+b,0)!==1?'s':''}${M.batch>1?` <span style="color:var(--mut)">(se hicieron ${M.batch} lanzamientos; aquí ves el último)</span>`:''}`:'Presiona «Lanzar» para comenzar.';
+ M.flip=false;
+ // matriz
+ if(M.view==='orden'){$('mtxBox').innerHTML=N?`<div class="mtx" style="--cw:${n*10+40}px">${M.data.map((r,i)=>`<div class="cell ${i===M.last?'new':''}"><i>${i+1}</i><span>${seqTxt(r)}</span></div>`).join('')}</div>`:'<p class="note">Aquí aparecerá cada lanzamiento, en orden.</p>';
+  const m=$('mtxBox').querySelector('.mtx');if(m)m.scrollTop=m.scrollHeight;}
+ else{const cols=Array.from({length:n+1},()=>[]);M.data.forEach((r,i)=>cols[r.reduce((a,b)=>a+b,0)].push(r));
+  $('mtxBox').innerHTML=`<div class="grp">${cols.map((c,k)=>`<div class="gcol"><div class="gh">${k} cara${k!==1?'s':''}<br><span style="color:var(--mut);font-weight:500">${c.length}</span></div>${c.map(r=>`<div class="gc">${seqTxt(r)}</div>`).join('')}</div>`).join('')}</div>`;}
+ // tabla caras
+ const D=dist('caras'),mx=Math.max(1,...[...D.E.values()]);
+ $('tCaras').innerHTML=`<tr><th>Caras</th><th>Frecuencia</th><th>fᵣ</th><th>Probabilidad</th><th></th></tr>`+D.xs.map(x=>{const e=D.E.get(x),t=D.T.get(x);return `<tr><td>${x}</td><td>${e}</td><td>${N?nf(e/N,3):'–'}</td><td>${Fr(t,D.tot)} ≈ ${nf(t/D.tot,3)}</td><td style="text-align:left;width:30%"><span class="bar" style="width:${(e/mx*100).toFixed(0)}%"></span></td></tr>`;}).join('')+`<tr><td><b>Total</b></td><td><b>${N}</b></td><td>${N?1:'–'}</td><td>1</td><td></td></tr>`;
+ // por resultado
+ $('seqBox').hidden=n>4;
+ if(n<=4){const O=allOutcomes(n),cnt=new Map(O.map(r=>[r.join(''),0]));M.data.forEach(r=>cnt.set(r.join(''),cnt.get(r.join(''))+1));
+  $('tSeq').innerHTML=`<tr><th>Resultado</th><th>Frecuencia</th><th>fᵣ</th><th>Probabilidad</th></tr>`+O.map(r=>{const e=cnt.get(r.join(''));return `<tr><td style="font-family:ui-monospace,monospace">${seqTxt(r)}</td><td>${e}</td><td>${N?nf(e/N,3):'–'}</td><td>${Fr(1,1<<n)} ≈ ${nf(1/(1<<n),3)}</td></tr>`;}).join('');}}
+
+/* ---------- pestaña variable ---------- */
+function axisChart(svg,xs,yMax,yTicks,draw){const W=svg.clientWidth||600,H=svg.clientHeight||300;svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+ const ml=48,mr=16,mt=14,mb=36,pw=W-ml-mr,ph=H-mt-mb,x0=Math.min(...xs),x1=Math.max(...xs),span=Math.max(1,x1-x0),pad=0.8;
+ const X=x=>ml+(x-x0+pad)/(span+2*pad)*pw,Y=y=>mt+ph-(y/yMax)*ph;let o='';
+ yTicks.forEach(t=>{o+=`<line x1="${ml}" y1="${Y(t).toFixed(1)}" x2="${W-mr}" y2="${Y(t).toFixed(1)}" stroke="var(--line)"/><text x="${ml-8}" y="${Y(t).toFixed(1)}" font-size="12" fill="var(--mut)" text-anchor="end" dominant-baseline="middle">${nf(t,2)}</text>`;});
+ o+=`<line x1="${ml}" y1="${Y(0)}" x2="${W-mr}" y2="${Y(0)}" stroke="var(--ink)" stroke-width="1.5"/>`;
+ xs.forEach(x=>{o+=`<text x="${X(x).toFixed(1)}" y="${H-12}" font-size="13" fill="var(--ink)" text-anchor="middle">${x<0?'−'+Math.abs(x):x}</text>`;});
+ o+=`<text x="${W-mr}" y="${H-12}" font-size="12" fill="var(--mut)" text-anchor="end">x</text>`;
+ svg.innerHTML=o+draw(X,Y,{x0,x1,pad,ml,W,mr});}
+function updV(){const D=dist(M.v),N=D.N,xs=D.xs;
+ $('vTitle').textContent=`X = ${VAR[M.v].t}`;$('vSel').value=M.v;
+ $('vInfo').innerHTML=`Con ${M.n} moneda${M.n>1?'s':''}. Valores posibles de X: {${xs.map(x=>x<0?'−'+Math.abs(x):x).join(', ')}}. ${N?`Usando tus ${N} lanzamientos.`:'Aún no hay lanzamientos: ve a «Lanzar y registrar».'}`;
+ let accT=0,accE=0;const rows=xs.map(x=>{const t=D.T.get(x)/D.tot,e=N?D.E.get(x)/N:0;accT+=t;accE+=e;return{x,t,e,ct:D.T.get(x),f:D.E.get(x),Ft:accT,Fe:accE};});
+ $('tV').innerHTML=`<tr><th>x</th><th>Casos</th><th>P(X = x)</th><th>F(x)</th><th>Frecuencia</th><th>fᵣ</th><th>fᵣ acumulada</th></tr>`+rows.map(r=>`<tr><td>${r.x<0?'−'+Math.abs(r.x):r.x}</td><td>${r.ct}</td><td>${Fr(r.ct,D.tot)} ≈ ${nf(r.t,3)}</td><td>${nf(r.Ft,3)}</td><td>${r.f}</td><td>${N?nf(r.e,3):'–'}</td><td>${N?nf(r.Fe,3):'–'}</td></tr>`).join('');
+ const yMax=Math.min(1,Math.ceil(Math.max(...rows.map(r=>Math.max(r.t,r.e)))*10+.5)/10);
+ const ticks=[];for(let t=0;t<=yMax+1e-9;t+=yMax>0.5?0.2:0.1)ticks.push(Math.round(t*10)/10);
+ axisChart($('cP'),xs,yMax,ticks,(X,Y)=>{const bw=Math.min(34,(X(xs[0]+1)-X(xs[0]))*0.32);let o='';rows.forEach(r=>{const x=X(r.x);
+  o+=`<rect x="${(x-bw-1).toFixed(1)}" y="${Y(r.t).toFixed(1)}" width="${bw}" height="${(Y(0)-Y(r.t)).toFixed(1)}" fill="#378ADD" fill-opacity=".85" rx="3"/>`;
+  if(N)o+=`<rect x="${(x+1).toFixed(1)}" y="${Y(r.e).toFixed(1)}" width="${bw}" height="${(Y(0)-Y(r.e)).toFixed(1)}" fill="#BA7517" fill-opacity=".85" rx="3"/>`;
+  o+=`<text x="${(x-bw/2-1).toFixed(1)}" y="${(Y(r.t)-8).toFixed(1)}" font-size="11" fill="#1d5ea8" text-anchor="middle">${nf(r.t,3)}</text>`;});return o;});
+ axisChart($('cF'),xs,1,[0,0.2,0.4,0.6,0.8,1],(X,Y,g)=>{const xl=g.ml,xr=g.W-g.mr;let o='';
+  const step=(key,col,dash)=>{let s='';let prevY=0,prevX=xl;rows.forEach((r,i)=>{const x=X(r.x);s+=`<line x1="${prevX.toFixed(1)}" y1="${Y(prevY).toFixed(1)}" x2="${x.toFixed(1)}" y2="${Y(prevY).toFixed(1)}" stroke="${col}" stroke-width="3" ${dash?'stroke-dasharray="6 5"':''}/>`;
+    s+=`<circle cx="${x.toFixed(1)}" cy="${Y(prevY).toFixed(1)}" r="4.5" fill="var(--bg)" stroke="${col}" stroke-width="2"/>`;prevY=r[key];prevX=x;s+=`<circle cx="${x.toFixed(1)}" cy="${Y(prevY).toFixed(1)}" r="4.5" fill="${col}"/>`;});
+   s+=`<line x1="${prevX.toFixed(1)}" y1="${Y(prevY).toFixed(1)}" x2="${xr}" y2="${Y(prevY).toFixed(1)}" stroke="${col}" stroke-width="3" ${dash?'stroke-dasharray="6 5"':''}/>`;return s;};
+  o+=step('Ft','#378ADD',false);if(N)o+=step('Fe','#BA7517',true);return o;});
+ const L=[`<b>Espacio muestral:</b> con ${M.n} moneda${M.n>1?'s':''} hay 2${'⁰¹²³⁴⁵⁶⁷'[M.n]} = ${D.tot} resultados igual de probables.`,
+  `<b>P(X = x)</b> = casos favorables : casos totales. Por ejemplo, P(X = ${rows[0].x<0?'−'+Math.abs(rows[0].x):rows[0].x}) = ${rows[0].ct} : ${D.tot} = ${Fr(rows[0].ct,D.tot)}.`,
+  `<b>La suma de todas las probabilidades es 1:</b> ${rows.map(r=>Fr(r.ct,D.tot)).join(' + ')} = 1.`,
+  `<b>F(x) = P(X ≤ x)</b> suma las probabilidades hasta x. Por eso es una «escalera» que nunca baja, parte en 0 y termina en 1. El punto lleno marca el valor que toma F en cada salto.`];
+ if(M.v==='caras'||M.v==='sellos')L.push(`<b>Coeficiente binomial:</b> los casos con k ${M.v} se cuentan con C(${M.n}, k). Por ejemplo, C(${M.n}, ${Math.floor(M.n/2)}) = ${comb(M.n,Math.floor(M.n/2))}.`);
+ $('vFm').innerHTML=L.map(x=>`<div>${x}</div>`).join('');}
+
+let view='lanzar';
+function upd(){if(view==='lanzar')updL();else updV();}
+function route(){view=(location.hash||'').slice(1)==='variable'?'variable':'lanzar';document.querySelectorAll('#tabs a').forEach(a=>a.classList.toggle('on',a.dataset.r===view));$('vL').hidden=view!=='lanzar';$('vV').hidden=view==='lanzar';upd();}
+window.addEventListener('hashchange',route);
+new ResizeObserver(()=>{if(view==='variable')updV();}).observe(document.body);
+route();
+}
+</script>
+</body>
+</html>

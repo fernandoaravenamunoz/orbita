@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tabla de Galton · Órbita Matemática</title>
+<meta name="description" content="Simulación interactiva de la tabla de Galton: suelta de 100 a 1000 bolitas, observa cómo se distribuyen en los casilleros y compáralo con la distribución binomial y el triángulo de Pascal.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+:root{color-scheme:light;--bg:#ffffff;--ink:#16202b;--mut:#5b6675;--line:#dde4ec;--grid:#edf1f6;--band:#163a5f;--card:#f2f6fb;--sel:#378ADD;--coral:#D85A30;--teal:#1D9E75;--vio:#7F77DD;--amb:#BA7517;--pink:#D4537E}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Lexend,system-ui,sans-serif;overflow-x:clip}
+h1,h2{font-weight:600;line-height:1.1;margin:0;text-wrap:balance}
+button,input{font:inherit;color:inherit}
+button{min-height:40px;padding:6px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);cursor:pointer}
+button:hover{border-color:var(--mut)}button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
+button.on{border-color:var(--sel);color:var(--sel);background:color-mix(in srgb,var(--sel) 10%,transparent)}
+button.pri{background:var(--band);color:#fff;border-color:var(--band)}
+
+input[type=checkbox]{accent-color:var(--sel);width:18px;height:18px}
+.top{background:#EAF2FB;color:#163a5f;border-bottom:3px solid #378ADD;padding:14px max(4vw,16px);display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:18px;flex-wrap:wrap}
+.volver{color:#163a5f;text-decoration:none;font-size:14px;font-weight:500;padding:6px 10px;border:1px solid rgba(22,58,95,.35);border-radius:999px;background:#fff}.volver:hover{border-color:#163a5f}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs a{color:#163a5f;text-decoration:none;padding:8px 12px;border-radius:999px;font-size:15px;opacity:.82}
+.tabs a:hover{opacity:1;background:rgba(22,58,95,.08)}.tabs a.on{opacity:1;background:#163a5f;color:#fff}
+.band{padding:clamp(20px,3vw,44px) max(4vw,16px)}
+.work{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:24px;max-width:1400px;margin:0 auto}
+.stagehead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 18px;margin-bottom:8px}
+.stagehead h1{font-size:clamp(26px,3vw,36px)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--mut)}
+.legend i{display:inline-block;width:16px;height:10px;border-radius:3px;vertical-align:middle;margin-right:6px}
+.fig{position:relative;height:clamp(340px,58vh,600px);border-radius:16px;border:1px solid var(--line);background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;overflow:hidden}
+.fig svg{position:absolute;inset:0;width:100%;height:100%}
+.hint{position:absolute;left:12px;bottom:8px;margin:0;font-size:13px;color:var(--mut);pointer-events:none}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.stepTxt{font-size:15px;color:var(--ink);flex:1 1 100%;background:var(--card);border-radius:12px;padding:10px 14px;margin:0}
+.panel{display:flex;flex-direction:column;gap:16px}
+.box{background:var(--card);border-radius:14px;padding:14px 16px}
+.box h2{font-size:17px;margin-bottom:10px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}.seg button{min-height:36px;padding:4px 12px;font-size:14px}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--mut);margin-top:10px}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px}.row button{min-height:34px;padding:3px 10px;font-size:14px}
+.mets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.met{background:var(--card);border-radius:12px;padding:10px 14px}.met p{margin:0}.met .l{font-size:13px;color:var(--mut)}.met .v{font-size:clamp(19px,2vw,23px);font-weight:600}.met .s{font-size:13px;color:var(--mut)}
+.fm div{font-size:15px;line-height:1.7;padding:4px 0;border-bottom:1px dashed var(--line)}.fm div:last-child{border:0}.fm b{font-weight:600}
+details summary{cursor:pointer;font-weight:600;font-size:17px;min-height:32px}
+.concept{border-left:4px solid var(--vio);background:color-mix(in srgb,var(--vio) 9%,transparent);padding:10px 14px;font-size:15px;margin:0}
+.concept b{color:var(--coral);font-weight:600}
+.note{font-size:13px;color:var(--mut);margin:0}
+.warn{border-left:4px solid var(--amb);background:color-mix(in srgb,var(--amb) 10%,transparent);padding:8px 12px;font-size:14px;margin:0}
+[hidden]{display:none!important}
+.fx{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.08;margin:0 .1em;font-size:.92em}
+.fx>span{padding:0 .2em}.fx>span:first-child{border-bottom:1.6px solid currentColor}
+.frin{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.fr{display:inline-flex;flex-direction:column;align-items:center;gap:4px;padding:6px 8px;border-radius:12px;background:var(--bg)}
+.fr .bar{width:100%;border-top:3px solid currentColor}
+.fr.t{color:var(--teal)}.fr.c{color:var(--coral)}
+.stp{display:inline-flex;align-items:center;gap:4px}
+.stp button{min-height:34px;width:34px;padding:0;font-size:18px;line-height:1;color:var(--ink)}
+.stp output{min-width:2.4ch;text-align:center;font-weight:600;font-size:22px}
+.op{font-size:30px;font-weight:600;color:var(--mut)}
+.lbl{font-size:13px;color:var(--mut);display:block;margin-bottom:6px}
+@media(max-width:900px){.work{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.fig{height:360px}.tabs a{padding:6px 9px;font-size:14px}}
+
+.fig.plain{background-image:none;height:clamp(460px,72vh,720px);background:#FBFCFE}
+.fig canvas{position:absolute;inset:0;width:100%;height:100%}
+@media(max-width:600px){.fig.plain{height:560px}}
+select{min-height:38px;border-radius:10px;border:1px solid var(--line);background:var(--bg);padding:4px 10px;font:inherit;font-size:15px;color:inherit}
+input[type=range]{accent-color:var(--sel);width:100%;height:28px}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}.tbl th{font-weight:500;color:var(--mut);text-align:right;font-size:12.5px;padding:4px 6px;border-bottom:1px solid var(--line)}.tbl td{padding:4px 6px;border-bottom:1px dashed var(--line);text-align:right}
+.tbl td:first-child,.tbl th:first-child{text-align:center}
+.big{font-size:clamp(22px,2.5vw,28px);font-weight:600;margin:8px 0 0}
+.tblw{overflow-x:auto;max-height:420px;overflow-y:auto}
+</style>
+</head>
+<body>
+<header class="top">
+<div class="brand"><svg width="26" height="26" viewBox="0 0 64 64" fill="#163a5f" aria-hidden="true"><circle cx="32" cy="10" r="3"/><circle cx="26" cy="20" r="3"/><circle cx="38" cy="20" r="3"/><circle cx="20" cy="30" r="3"/><circle cx="32" cy="30" r="3"/><circle cx="44" cy="30" r="3"/><path d="M10 40 V58 M20 40 V58 M30 40 V58 M40 40 V58 M50 40 V58 M10 58 H54 M54 40 V58" stroke="#163a5f" stroke-width="2.5" fill="none"/><rect x="31" y="46" width="8" height="12"/><rect x="21" y="50" width="8" height="8"/><rect x="41" y="52" width="8" height="6"/></svg><span>Tabla de Galton</span><a class="volver" href="../index.html#simulaciones" target="_top">← Órbita Matemática</a></div>
+</header>
+<main>
+<section class="band">
+<div class="work">
+<div>
+<div class="stagehead"><h1>Tabla de Galton</h1><div class="legend"><span><i style="background:var(--sel)"></i>Bolitas</span><span><i style="background:var(--coral)"></i>Distribución teórica (binomial)</span></div></div>
+<div class="fig plain"><canvas id="gcv" role="img" aria-label="Tabla de Galton con bolitas cayendo en casilleros"></canvas></div>
+<div class="tools"><span style="font-weight:600">Soltar:</span><button class="pri" data-b="100">100</button><button data-b="200">200</button><button data-b="400">400</button><button data-b="800">800</button><button data-b="1000">1000</button><button id="gClear">Vaciar</button></div>
+</div>
+<aside class="panel">
+<p class="concept">Cada bolita choca con un clavo en cada nivel y rebota a la <b>izquierda</b> o a la <b>derecha</b> con la misma probabilidad. El casillero donde cae depende de <b>cuántas veces rebotó a la derecha</b>. Al soltar muchas bolitas aparece una forma de <b>campana</b>.</p>
+<div class="box"><h2>Tablero</h2>
+<div class="row" style="margin-top:0"><label class="chk" style="margin:0">Niveles de clavos: <select id="gL"><option>10</option><option>11</option><option selected>12</option><option>13</option><option>14</option></select></label>
+<label class="chk" style="margin:0">Velocidad: <select id="gSp"><option value="normal">Normal</option><option value="rapida">Rápida</option><option value="inst">Instantánea</option></select></label></div>
+<label class="chk"><input type="checkbox" id="gCurve" checked> Mostrar la distribución teórica</label>
+<label class="chk"><input type="checkbox" id="gPas"> Mostrar el triángulo de Pascal en los clavos</label>
+<div class="row"><label class="chk" style="margin:0;flex:1 1 100%">Probabilidad de rebotar a la derecha: <b id="gPo" style="color:var(--ink)">0,5</b></label><input type="range" id="gP" min="0.1" max="0.9" step="0.05" value="0.5"></div>
+<p class="note">Cambiar los niveles o la probabilidad vacía el tablero.</p>
+</div>
+<div class="box"><h2>Resultados</h2><p class="big" id="gN"></p><p class="note" id="gMean"></p></div>
+<div class="box"><h2>Casilleros</h2><div class="tblw"><table class="tbl" id="gTbl"></table></div></div>
+<div class="box"><details open><summary>¿Por qué una campana?</summary><div class="fm" id="gFm"></div></details></div>
+</aside>
+</div>
+</section>
+</main>
+<footer class="pie-sim" style="background:#EAF2FB;color:#163a5f;border-top:3px solid #378ADD;padding:18px max(4vw,16px);font:400 14px/1.55 Lexend,system-ui,sans-serif;margin-top:24px"><strong style="font-weight:600;font-size:15.5px">Fernando J. Aravena Muñoz</strong><br>Licenciado en ciencias exactas<br>Profesor de matemáticas y física<br><span style="color:#5b6675">Temuco, Chile</span></footer>
+<script>
+{
+const $=id=>document.getElementById(id);
+const nf=(x,d=1)=>{const r=Math.round(x*10**d)/10**d;return(Object.is(r,-0)?0:r).toLocaleString('es-CL',{maximumFractionDigits:d});};
+const comb=(n,k)=>{let r=1;for(let i=1;i<=k;i++)r=r*(n-k+i)/i;return Math.round(r);};
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const G={L:12,p:0.5,counts:[],queue:0,balls:[],target:0,sp:'normal',curve:true,pas:false,last:0,acc:0};
+function reset(){G.counts=Array(G.L+1).fill(0);G.queue=0;G.balls=[];G.target=0;}
+reset();
+const SP={normal:{rate:70,lev:13},rapida:{rate:300,lev:38}};
+document.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{const k=+b.dataset.b;if(G.target+k>5000)return;G.target+=k;
+ if(G.sp==='inst'||reduce){for(let i=0;i<k;i++){let r=0;for(let j=0;j<G.L;j++)if(Math.random()<G.p)r++;G.counts[r]++;}}else G.queue+=k;panel();});
+$('gClear').onclick=()=>{reset();panel();};
+$('gL').onchange=e=>{G.L=+e.target.value;reset();panel();};
+$('gSp').onchange=e=>{G.sp=e.target.value;if(G.sp==='inst'){const q=G.queue+G.balls.length;G.balls=[];G.queue=0;for(let i=0;i<q;i++){let r=0;for(let j=0;j<G.L;j++)if(Math.random()<G.p)r++;G.counts[r]++;}}panel();};
+$('gCurve').onchange=e=>{G.curve=e.target.checked;};
+$('gPas').onchange=e=>{G.pas=e.target.checked;};
+$('gP').oninput=e=>{G.p=+e.target.value;$('gPo').textContent=nf(G.p,2);reset();panel();};
+const theo=k=>comb(G.L,k)*Math.pow(G.p,k)*Math.pow(1-G.p,G.L-k);
+
+const cv=$('gcv'),ctx=cv.getContext('2d');let geo=null;
+function layout(){const r=cv.getBoundingClientRect(),dpr=window.devicePixelRatio||1,W=r.width,H=r.height;
+ if(cv.width!==Math.round(W*dpr)||cv.height!==Math.round(H*dpr)){cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);}ctx.setTransform(dpr,0,0,dpr,0,0);
+ const L=G.L,top=46,Hp=H*0.5,s=Math.min((W-24)/(L+1),Hp/L*1.25),v=Hp/L,cx=W/2,yb0=top+L*v+6,ybB=H-30;
+ geo={W,H,L,top,s,v,cx,yb0,ybB,peg:(i,j)=>[cx+(j-i/2)*s,top+i*v]};return geo;}
+function binX(k){return geo.cx+(k-geo.L/2)*geo.s;}
+function draw(){const g=layout(),{W,H,L,s,v,cx,top,yb0,ybB}=g;ctx.clearRect(0,0,W,H);
+ // embudo
+ ctx.strokeStyle='#16202b';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx-s*1.2,8);ctx.lineTo(cx-s*0.35,top-14);ctx.moveTo(cx+s*1.2,8);ctx.lineTo(cx+s*0.35,top-14);ctx.stroke();
+ // clavos
+ const pr=Math.max(2,Math.min(5,s*0.09));
+ for(let i=0;i<L;i++)for(let j=0;j<=i;j++){const[x,y]=g.peg(i,j);ctx.fillStyle='#16202b';ctx.beginPath();ctx.arc(x,y,pr,0,7);ctx.fill();
+  if(G.pas){const c=comb(i,j);ctx.font=`600 ${Math.max(8,Math.min(12,s*0.26))}px Lexend,system-ui,sans-serif`;ctx.fillStyle='#7F77DD';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(c,x,y-pr-1);}}
+ // casilleros
+ ctx.strokeStyle='#16202b';ctx.lineWidth=1.6;for(let k=0;k<=L+1;k++){const x=cx+(k-L/2-0.5)*s;ctx.beginPath();ctx.moveTo(x,yb0);ctx.lineTo(x,ybB);ctx.stroke();}
+ ctx.beginPath();ctx.moveTo(cx-(L/2+0.5)*s,ybB);ctx.lineTo(cx+(L/2+0.5)*s,ybB);ctx.stroke();
+ // pilas
+ const binW=s*0.86,binH=ybB-yb0-4,pmax=Math.max(...Array.from({length:L+1},(_,k)=>theo(k))),N=Math.max(G.target,1),expMax=Math.max(N*pmax*1.18,Math.max(...G.counts),8);
+ let d=Math.sqrt(binW*binH/expMax);let cols=Math.max(1,Math.floor(binW/d));d=Math.min(binW/cols,d);while(cols*Math.floor(binH/d)<expMax&&d>1){d*=0.95;cols=Math.max(1,Math.floor(binW/d));}
+ const dots=d>=3.2;G.geoStack={d,cols,binW};
+ for(let k=0;k<=L;k++){const c=G.counts[k],x0=binX(k)-cols*d/2;
+  if(dots){ctx.fillStyle='#378ADD';for(let i=0;i<c;i++){const col=i%cols,row=Math.floor(i/cols);const x=x0+col*d+d/2,y=ybB-row*d-d/2;if(y<yb0)break;ctx.beginPath();ctx.arc(x,y,d*0.42,0,7);ctx.fill();}}
+  else{const h=Math.min(binH,c/cols*d);ctx.fillStyle='#378ADD';ctx.fillRect(x0,ybB-h,cols*d,h);}
+  ctx.fillStyle='#16202b';ctx.font=`600 ${Math.max(10,Math.min(13,s*0.3))}px Lexend,system-ui,sans-serif`;ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(c,binX(k),ybB+5);}
+ // teórica
+ if(G.curve&&G.target>0){ctx.strokeStyle='#D85A30';ctx.lineWidth=2.4;ctx.setLineDash([6,4]);ctx.beginPath();
+  for(let k=0;k<=L;k++){const h=Math.min(binH,G.target*theo(k)/cols*d),y=ybB-h;const x1=binX(k)-s/2+2,x2=binX(k)+s/2-2;if(k===0)ctx.moveTo(x1,y);else ctx.lineTo(x1,y);ctx.lineTo(x2,y);}ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#D85A30';ctx.font='500 12px Lexend,system-ui,sans-serif';ctx.textAlign='left';ctx.textBaseline='bottom';ctx.fillText('- - esperado con '+G.target+' bolitas',10,H-8);}
+ // bolitas en vuelo
+ ctx.fillStyle='#D4537E';const br=Math.max(2.5,Math.min(5.5,s*0.13));
+ G.balls.forEach(b=>{ctx.beginPath();ctx.arc(b.x,b.y,br,0,7);ctx.fill();});
+ // contador de cola
+ ctx.fillStyle='#5b6675';ctx.font='500 13px Lexend,system-ui,sans-serif';ctx.textAlign='left';ctx.textBaseline='top';if(G.queue>0)ctx.fillText(`por soltar: ${G.queue}`,10,10);}
+function step(dt){if(G.sp==='inst'){return;}const sp=SP[G.sp],g=geo;if(!g)return;
+ G.acc+=dt*sp.rate;while(G.acc>=1&&G.queue>0){G.acc-=1;G.queue--;const path=[0];for(let i=0;i<G.L;i++)path.push(path[i]+(Math.random()<G.p?1:0));G.balls.push({path,t:-0.6,x:g.cx,y:8,fall:0});}
+ if(G.queue===0)G.acc=0;
+ const done=[];
+ G.balls.forEach((b,idx)=>{if(b.t<G.L){b.t=Math.min(G.L,b.t+dt*sp.lev);if(b.t<0){b.x=g.cx;b.y=g.top-14+b.t*20;return;}
+   const i=Math.floor(b.t),u=b.t-i;if(i>=G.L){const k=b.path[G.L];b.x=binX(k);b.y=g.top+G.L*g.v-g.v*0.5;return;}
+   const[xa,ya]=g.peg(i,b.path[i]),xb=i+1<G.L?g.peg(i+1,b.path[i+1])[0]:binX(b.path[G.L]),yb=g.top+(i+1)*g.v;const hop=g.v*0.35*Math.sin(Math.PI*u);
+   b.x=xa+(xb-xa)*u;b.y=ya-g.v*0.32+(yb-ya)*u-hop;}
+  else{const k=b.path[G.L],st=G.geoStack;if(!st)return;const row=Math.floor(G.counts[k]/st.cols),yTop=g.ybB-row*st.d-st.d/2;b.fall+=dt*sp.lev*g.v*1.6;b.x=binX(k);b.y=Math.min(yTop,g.yb0+b.fall);if(b.y>=yTop-0.5){G.counts[k]++;done.push(idx);}}});
+ if(done.length){G.balls=G.balls.filter((_,i)=>!done.includes(i));panel();}}
+let tPrev=performance.now(),tPanel=0;
+(function loop(t){const dt=Math.min(0.05,(t-tPrev)/1000);tPrev=t;step(dt);draw();requestAnimationFrame(loop);})(tPrev);
+function panel(){const L=G.L,N=G.counts.reduce((a,b)=>a+b,0),fly=G.queue+G.balls.length;
+ $('gN').innerHTML=`${N} bolita${N!==1?'s':''} en los casilleros${fly?` <span style="font-size:15px;color:var(--mut);font-weight:500">· ${fly} cayendo</span>`:''}`;
+ const mean=N?G.counts.reduce((s,c,k)=>s+c*k,0)/N:0;
+ $('gMean').innerHTML=N?`Promedio de rebotes a la derecha: <b>${nf(mean,2)}</b> · valor esperado teórico: n · p = ${L} · ${nf(G.p,2)} = <b>${nf(L*G.p,2)}</b>`:'Suelta bolitas con los botones bajo el tablero.';
+ $('gTbl').innerHTML=`<tr><th>Casillero k</th><th>Bolitas</th><th>% obtenido</th><th>% teórico</th>${G.p===0.5?'<th>Caminos</th>':''}</tr>`+G.counts.map((c,k)=>`<tr><td>${k}</td><td>${c}</td><td>${N?nf(c/N*100,1)+' %':'–'}</td><td>${nf(theo(k)*100,1)} %</td>${G.p===0.5?`<td>${comb(L,k)}</td>`:''}</tr>`).join('');
+ const total=2**L;
+ const Lx=[`<b>Cada clavo es una decisión:</b> la bolita va a la derecha con probabilidad p = ${nf(G.p,2)} y a la izquierda con 1 − p = ${nf(1-G.p,2)}. En total toma ${L} decisiones.`,
+  `<b>El casillero k</b> es el número de veces que rebotó a la derecha. Para llegar al casillero k hay <b>C(${L}, k)</b> caminos distintos: son los números del <b>triángulo de Pascal</b> (actívalo en los clavos).`,
+  G.p===0.5?`<b>Con p = 0,5</b>, todos los caminos son igual de probables: hay 2<sup>${L}</sup> = ${total.toLocaleString('es-CL')} caminos, y P(casillero k) = C(${L}, k) : ${total.toLocaleString('es-CL')}. Por ejemplo, el casillero del centro tiene ${comb(L,Math.floor(L/2))} caminos: ${nf(comb(L,Math.floor(L/2))/total*100,1)} %.`
+   :`<b>Con p = ${nf(G.p,2)}</b>, P(casillero k) = C(${L}, k) · p<sup>k</sup> · (1 − p)<sup>${L} − k</sup>. La campana se corre hacia el lado más probable.`,
+  `<b>Los casilleros del centro</b> tienen muchos más caminos que los de los bordes: llegar al borde exige rebotar siempre hacia el mismo lado. Por eso las bolitas se amontonan en el centro.`,
+  `<b>Distribución binomial:</b> el número de rebotes a la derecha sigue una distribución binomial B(${L}; ${nf(G.p,2)}). Con muchos niveles y muchas bolitas, su forma se parece a la <b>campana de Gauss</b> (distribución normal).`];
+ $('gFm').innerHTML=Lx.map(x=>`<div>${x}</div>`).join('');}
+panel();
+}
+</script>
+</body>
+</html>
