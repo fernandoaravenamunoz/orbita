@@ -34,7 +34,7 @@ sitemap.xml                   para Google (lista páginas y PDF)
 googleef0239d5e0f1f3b2.html   archivo de verificación de Google Search Console
 imagen-compartir.jpg          imagen de vista previa al compartir el link (1200×630)
 juegos/                       10 juegos, cada uno es un .html independiente
-simulaciones/                 simulaciones propias en HTML (cuerpos-geometricos.html)
+simulaciones/                 4 simulaciones propias en HTML (fracciones, enteros, cuerpos-geometricos, homotecias)
 materiales/1medio/            15 PDF
 materiales/2medio/            10 PDF
 materiales/7basico/           4 PDF
@@ -47,7 +47,7 @@ materiales/curiosa/           oc01–oc10.svg (ilustraciones de Órbita Curiosa)
 | Ruta | Sección | Contenido |
 |---|---|---|
 | `#inicio` | Inicio | Portada y seis accesos: Cursos, Simulaciones, Juegos, Observatorio, Órbita Curiosa y Entregar tarea |
-| `#simulaciones` | Simulaciones | Herramientas interactivas propias (`datos.js → simulaciones`), en tarjetas con lámina, curso/OA, temas y botón «Abrir simulación». Hoy: **Cuerpos geométricos 3D** (`simulaciones/cuerpos-geometricos.html`, I° medio, OA 7) |
+| `#simulaciones` | Simulaciones | Herramientas interactivas propias (`datos.js → simulaciones`), en tarjetas con lámina, curso/OA, temas y botón «Abrir simulación». Hoy: Operando con fracciones, La recta de los enteros, Cuerpos geométricos 3D y Homotecias |
 | `#cursos` / `#curso-ID` | Cursos | Por curso: **Guías por unidad** y una sección aparte de **Simulaciones y videos** |
 | `#juegos` / `#juego-ID` | Juegos | Estilo arcade (cartuchos J01–J10); es la única sección con estética de videojuego |
 | `#difusion` | Observatorio | Divulgación científica: 25 videos de YouTube con miniatura local y créditos, más 2 artículos, agrupados por categoría |
@@ -69,6 +69,10 @@ materiales/curiosa/           oc01–oc10.svg (ilustraciones de Órbita Curiosa)
 
 - Cada simulación es un `.html` independiente en `simulaciones/`, con campos `nombre`, `cursos`, `descripcion`, `temas`, `url`, `dibujo` y `fecha`.
 - **Cuerpos geométricos 3D:** prismas, pirámides, cilindros y conos (girar, desarmar en red, cara seleccionada, áreas y volumen con desarrollo) y cuerpos de revolución (rectángulo, triángulo rectángulo, trapecio rectángulo, semicírculo). Tiene un botón «← Órbita Matemática» que vuelve a `#simulaciones`.
+- **Operando con fracciones** (`fracciones.html`, 7° básico, OA 2 · OA 3): pestaña Multiplicación (modelo de área: primer factor en columnas, segundo en filas, producto = zona común; admite impropias y decimales con denominador 10) y pestaña División (modo «cubrir»: cuántas veces cabe el divisor, con el resto medido en divisores; modo «repartir»: dividir por un natural).
+- **La recta de los enteros** (`enteros.html`): pestaña Adición y sustracción (7° OA 1: flechas, restar = sumar el opuesto, contexto de dinero o temperatura) y pestaña Multiplicación y división (8° OA 1: repetir la flecha y girar 180° si el factor es negativo, secuencia de productos para descubrir la regla, tabla de signos).
+- **Homotecias** (`homotecias.html`, I° medio, OA 8 · OA 11): figuras estrella, vela, árbol, casa, triángulo, cuadrilátero y pentágono (estas tres con vértices móviles); k de −3 a 3; centro O arrastrable; cámara oscura; medidas de OA′/OA, perímetro (× |k|), área (× k²) y ángulos. Pestaña vectorial: plano cartesiano, tabla OP → k · OP → P′, vector AB → A′B′ y composición de dos homotecias (k₁ · k₂).
+- Criterios comunes: avance paso a paso, modo **predecir** (oculta el resultado hasta revelarlo), sin modo desafío por decisión del profesor, y sin guardar datos de estudiantes.
 - La lámina de la tarjeta es un SVG en `app.js` (`DIBUJOS_SIM`); si `dibujo` no existe, usa uno genérico.
 
 ### Juegos (`juegos/*.html`)

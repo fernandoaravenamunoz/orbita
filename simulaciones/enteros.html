@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>La recta de los enteros · Órbita Matemática</title>
+<meta name="description" content="Simulación interactiva: adición y sustracción de números enteros en la recta numérica (7° básico) y multiplicación y división con la regla de los signos (8° básico).">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#10151b);--ink:light-dark(#16202b,#e6ecf2);--mut:light-dark(#5b6675,#9aa7b5);--line:light-dark(#dde4ec,#28323d);--grid:light-dark(#edf1f6,#19212a);--band:light-dark(#163a5f,#0b2035);--card:light-dark(#f4f7fa,#17202a);--sel:#378ADD;--coral:#D85A30;--teal:#1D9E75;--vio:#7F77DD;--amb:#BA7517;--pink:#D4537E}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Lexend,system-ui,sans-serif;overflow-x:clip}
+h1,h2{font-weight:600;line-height:1.1;margin:0;text-wrap:balance}
+button,input{font:inherit;color:inherit}
+button{min-height:40px;padding:6px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);cursor:pointer}
+button:hover{border-color:var(--mut)}button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
+button.on{border-color:var(--sel);color:var(--sel);background:color-mix(in srgb,var(--sel) 10%,transparent)}
+button.pri{background:var(--band);color:#fff;border-color:var(--band)}
+@media(prefers-color-scheme:dark){button.pri{background:#2b5f93;border-color:#2b5f93}}
+input[type=checkbox]{accent-color:var(--sel);width:18px;height:18px}
+.top{background:var(--band);color:#fff;padding:14px max(4vw,16px);display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:18px;flex-wrap:wrap}
+.volver{color:#fff;text-decoration:none;font-size:14px;font-weight:500;opacity:.82;padding:6px 10px;border:1px solid rgba(255,255,255,.35);border-radius:999px}.volver:hover{opacity:1;background:rgba(255,255,255,.1)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs a{color:#fff;text-decoration:none;padding:8px 12px;border-radius:999px;font-size:15px;opacity:.82}
+.tabs a:hover{opacity:1;background:rgba(255,255,255,.1)}.tabs a.on{opacity:1;background:#fff;color:#163a5f}
+.band{padding:clamp(20px,3vw,44px) max(4vw,16px)}
+.work{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:24px;max-width:1400px;margin:0 auto}
+.stagehead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 18px;margin-bottom:8px}
+.stagehead h1{font-size:clamp(26px,3vw,36px)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--mut)}
+.legend i{display:inline-block;width:16px;height:10px;border-radius:3px;vertical-align:middle;margin-right:6px}
+.fig{position:relative;height:clamp(340px,58vh,600px);border-radius:16px;border:1px solid var(--line);background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;overflow:hidden}
+.fig svg{position:absolute;inset:0;width:100%;height:100%}
+.hint{position:absolute;left:12px;bottom:8px;margin:0;font-size:13px;color:var(--mut);pointer-events:none}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.stepTxt{font-size:15px;color:var(--ink);flex:1 1 100%;background:var(--card);border-radius:12px;padding:10px 14px;margin:0}
+.panel{display:flex;flex-direction:column;gap:16px}
+.box{background:var(--card);border-radius:14px;padding:14px 16px}
+.box h2{font-size:17px;margin-bottom:10px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}.seg button{min-height:36px;padding:4px 12px;font-size:14px}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--mut);margin-top:10px}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px}.row button{min-height:34px;padding:3px 10px;font-size:14px}
+.mets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.met{background:var(--card);border-radius:12px;padding:10px 14px}.met p{margin:0}.met .l{font-size:13px;color:var(--mut)}.met .v{font-size:clamp(19px,2vw,23px);font-weight:600}.met .s{font-size:13px;color:var(--mut)}
+.fm div{font-size:15px;line-height:1.7;padding:4px 0;border-bottom:1px dashed var(--line)}.fm div:last-child{border:0}.fm b{font-weight:600}
+details summary{cursor:pointer;font-weight:600;font-size:17px;min-height:32px}
+.concept{border-left:4px solid var(--vio);background:color-mix(in srgb,var(--vio) 9%,transparent);padding:10px 14px;font-size:15px;margin:0}
+.concept b{color:var(--coral);font-weight:600}
+.note{font-size:13px;color:var(--mut);margin:0}
+.warn{border-left:4px solid var(--amb);background:color-mix(in srgb,var(--amb) 10%,transparent);padding:8px 12px;font-size:14px;margin:0}
+[hidden]{display:none!important}
+.fx{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.08;margin:0 .1em;font-size:.92em}
+.fx>span{padding:0 .2em}.fx>span:first-child{border-bottom:1.6px solid currentColor}
+.frin{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.fr{display:inline-flex;flex-direction:column;align-items:center;gap:4px;padding:6px 8px;border-radius:12px;background:var(--bg)}
+.fr .bar{width:100%;border-top:3px solid currentColor}
+.fr.t{color:var(--teal)}.fr.c{color:var(--coral)}
+.stp{display:inline-flex;align-items:center;gap:4px}
+.stp button{min-height:34px;width:34px;padding:0;font-size:18px;line-height:1;color:var(--ink)}
+.stp output{min-width:2.4ch;text-align:center;font-weight:600;font-size:22px}
+.op{font-size:30px;font-weight:600;color:var(--mut)}
+.lbl{font-size:13px;color:var(--mut);display:block;margin-bottom:6px}
+@media(max-width:900px){.work{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.fig{height:360px}.tabs a{padding:6px 9px;font-size:14px}}
+
+.expr{display:flex;align-items:flex-start;flex-wrap:wrap;gap:4px 8px;font-size:clamp(24px,2.6vw,30px);font-weight:600;margin:4px 0 2px}
+.expr .it{display:flex;flex-direction:column;align-items:center}
+.expr .it small{font-size:11px;font-weight:500;color:var(--mut);margin-top:2px;white-space:nowrap}
+.expr .t{color:var(--teal)}.expr .c{color:var(--coral)}.expr .v{color:var(--vio)}
+.expr .opb{border:2px solid var(--ink);border-radius:8px;padding:0 8px;line-height:1.15}
+.expr2{font-size:17px;color:var(--mut);margin:6px 0 0}
+.sgn{display:grid;grid-template-columns:auto repeat(2,1fr);gap:4px;font-size:15px;text-align:center}
+.sgn span{padding:6px;border-radius:8px;background:var(--bg)}.sgn .h{background:none;color:var(--mut);font-size:13px}
+.sgn .on{background:color-mix(in srgb,var(--vio) 22%,var(--bg));font-weight:600}
+.pat{width:100%;border-collapse:collapse;font-size:15px}.pat td{padding:5px 8px;border-bottom:1px dashed var(--line)}
+.pat tr{cursor:pointer}.pat tr:hover td{background:var(--bg)}.pat tr.cur td{font-weight:600;color:var(--vio)}
+.pat td:last-child{text-align:right;font-weight:600}
+select{min-height:36px;border-radius:10px;border:1px solid var(--line);background:var(--bg);padding:4px 10px;font:inherit;font-size:14px;color:inherit}
+.ctx{font-size:15px;margin:10px 0 0;padding:10px 12px;border-radius:10px;background:var(--bg)}
+</style>
+</head>
+<body>
+<header class="top">
+<div class="brand"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M4 40 H60 M12 34 V46 M32 34 V46 M52 34 V46"/><path d="M32 24 H52 M46 18 L52 24 L46 30"/></svg><span>La recta de los enteros</span><a class="volver" href="../index.html#simulaciones" target="_top">← Órbita Matemática</a></div>
+<nav class="tabs" id="tabs"><a href="#suma" data-r="suma">Adición y sustracción · 7°</a><a href="#multiplicacion" data-r="multiplicacion">Multiplicación y división · 8°</a></nav>
+</header>
+<main>
+<section id="vSum" class="band" hidden>
+<div class="work">
+<div>
+<div class="stagehead"><h1>Adición y sustracción</h1><div class="legend"><span><i style="background:var(--teal)"></i>Primer número</span><span><i style="background:var(--coral)"></i>Segundo número</span><span><i style="background:var(--vio)"></i>Resultado</span></div></div>
+<div class="fig"><svg id="ssv" role="img" aria-label="Recta numérica con la operación entre enteros"></svg><p class="hint">Cada número es una flecha: el signo indica hacia dónde apunta</p></div>
+<div class="tools"><button id="sPrev">◀ Paso anterior</button><button id="sNext" class="pri">Paso siguiente ▶</button><button id="sAll">Ver todo</button><button id="sRev" hidden class="pri">Revelar</button><p class="stepTxt" id="sStep"></p></div>
+</div>
+<aside class="panel">
+<p class="concept">El <b>signo de un número</b> (+ o −) dice hacia dónde apunta su flecha. El <b>signo de la operación</b> dice qué hacemos con ella: sumar es poner la flecha a continuación; restar es poner la flecha <b>dada vuelta</b>, es decir, sumar el opuesto.</p>
+<div class="box"><h2>Operación</h2>
+<div class="expr" id="sExpr"></div><p class="expr2" id="sExpr2"></p>
+<div class="frin" style="margin-top:12px"><span class="fr t"><span class="stp" data-key="sa"><button data-d="-1" aria-label="Disminuir primer número">−</button><output id="o_sa"></output><button data-d="1" aria-label="Aumentar primer número">+</button></span></span><span class="seg" id="sOp"><button data-o="+">+ Sumar</button><button data-o="-">− Restar</button></span><span class="fr c"><span class="stp" data-key="sb"><button data-d="-1" aria-label="Disminuir segundo número">−</button><output id="o_sb"></output><button data-d="1" aria-label="Aumentar segundo número">+</button></span></span></div>
+<span class="lbl" style="margin-top:12px">Ejemplos</span><div class="row" id="sPre" style="margin-top:0"></div>
+<div class="row"><label class="chk" style="margin:0">Contexto <select id="sCtx"><option value="">Sin contexto</option><option value="din">Dinero (saldo y deudas)</option><option value="tem">Temperatura</option></select></label></div>
+<p class="ctx" id="sCtxT" hidden></p>
+<label class="chk"><input type="checkbox" id="sHide"> Predecir: ocultar el resultado hasta revelarlo</label>
+</div>
+<div class="mets" id="sMets"></div>
+<div class="box"><details open><summary>Desarrollo</summary><div class="fm" id="sFm"></div></details></div>
+</aside>
+</div>
+</section>
+
+<section id="vMul" class="band" hidden>
+<div class="work">
+<div>
+<div class="stagehead"><h1 id="uTitle">Multiplicación de enteros</h1><div class="legend" id="uLeg"></div></div>
+<div class="fig"><svg id="usv" role="img" aria-label="Recta numérica con la multiplicación o división de enteros"></svg><p class="hint">Multiplicar por un número negativo = repetir y luego girar la flecha 180°</p></div>
+<div class="tools"><button id="uPrev">◀ Paso anterior</button><button id="uNext" class="pri">Paso siguiente ▶</button><button id="uAll">Ver todo</button><button id="uRev" hidden class="pri">Revelar</button><p class="stepTxt" id="uStep"></p></div>
+</div>
+<aside class="panel">
+<p class="concept">Multiplicar por <b>−1</b> es <b>girar la flecha 180°</b> en torno al cero: queda del mismo largo, apuntando al lado opuesto. Por eso (−3) · 2 es «3 veces 2, y luego girar», y dos giros seguidos devuelven la flecha a su lado.</p>
+<div class="box"><h2>Operación</h2>
+<div class="seg" id="uOp"><button data-o="m">· Multiplicar</button><button data-o="d">: Dividir</button></div>
+<div class="expr" id="uExpr" style="margin-top:12px"></div><p class="expr2" id="uExpr2"></p>
+<div class="frin" style="margin-top:10px" id="uInM"><span class="fr t"><span class="stp" data-key="ua"><button data-d="-1" aria-label="Disminuir primer factor">−</button><output id="o_ua"></output><button data-d="1" aria-label="Aumentar primer factor">+</button></span></span><span class="op">·</span><span class="fr c"><span class="stp" data-key="ub"><button data-d="-1" aria-label="Disminuir segundo factor">−</button><output id="o_ub"></output><button data-d="1" aria-label="Aumentar segundo factor">+</button></span></span></div>
+<div class="frin" style="margin-top:10px" id="uInD"><span class="fr t"><span class="stp" data-key="ud"><button data-d="-1" aria-label="Disminuir dividendo">−</button><output id="o_ud"></output><button data-d="1" aria-label="Aumentar dividendo">+</button></span></span><span class="op">:</span><span class="fr c"><span class="stp" data-key="un"><button data-d="-1" aria-label="Disminuir divisor">−</button><output id="o_un"></output><button data-d="1" aria-label="Aumentar divisor">+</button></span></span></div>
+<span class="lbl" style="margin-top:12px">Ejemplos</span><div class="row" id="uPre" style="margin-top:0"></div>
+<label class="chk"><input type="checkbox" id="uHide"> Predecir: ocultar el resultado hasta revelarlo</label>
+</div>
+<div class="mets" id="uMets"></div>
+<div class="box" id="uPatBox"><h2>Secuencia: descubre la regla</h2><table class="pat" id="uPat"></table>
+<div class="row"><button id="uPatNext" class="pri">Siguiente fila ▶</button><button id="uPatReset">Reiniciar</button></div><p class="note" id="uPatNote" style="margin-top:8px"></p></div>
+<div class="box"><h2>Regla de los signos</h2><div class="sgn" id="uSgn"></div></div>
+<div class="box"><details open><summary>Desarrollo</summary><div class="fm" id="uFm"></div></details></div>
+</aside>
+</div>
+</section>
+</main>
+<script>
+{
+const $=id=>document.getElementById(id);
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const C={teal:'#1D9E75',coral:'#D85A30',vio:'#7F77DD',amb:'#BA7517'};
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b]}return a||1};
+const nf=x=>(Math.round(x*1000)/1000).toLocaleString('es-CL',{maximumFractionDigits:3});
+const M_='−';
+const sN=x=>x<0?M_+Math.abs(x):String(x);           // −3, 5
+const pN=x=>x<0?`(${M_}${Math.abs(x)})`:`${x}`;      // (−3), 5
+const pS=x=>x<0?`(${M_}${Math.abs(x)})`:`(+${x})`;   // (−3), (+5)
+const F=(n,d)=>{const g=gcd(n,d);n/=g;d/=g;if(d<0){n=-n;d=-d;}return d===1?sN(n):`${n<0?M_:''}<span class="fx"><span>${Math.abs(n)}</span><span>${d}</span></span>`;};
+const Ft=(n,d)=>{const g=gcd(n,d);n/=g;d/=g;if(d<0){n=-n;d=-d;}return d===1?sN(n):`${n<0?M_:''}${Math.abs(n)}/${d}`;};
+const F1=x=>x.toFixed(1);
+function T(x,y,s,c,o={}){return `<text x="${F1(x)}" y="${F1(y)}" fill="${c}" font-size="${o.fs||15}" font-weight="${o.fw||600}" text-anchor="${o.a||'middle'}" dominant-baseline="middle" style="paint-order:stroke;stroke:var(--bg);stroke-width:${o.sw??5}px;stroke-linejoin:round">${s}</text>`;}
+function Ln(x1,y1,x2,y2,c,w,o={}){return `<line x1="${F1(x1)}" y1="${F1(y1)}" x2="${F1(x2)}" y2="${F1(y2)}" stroke="${c}" stroke-width="${w}" opacity="${o.op??1}" ${o.dash?`stroke-dasharray="${o.dash}"`:''} stroke-linecap="round"/>`;}
+function Arr(x1,y1,x2,y2,c,w,o={}){const L=Math.hypot(x2-x1,y2-y1);if(L<2)return `<circle cx="${F1(x1)}" cy="${F1(y1)}" r="5" fill="${c}"/>`;const ux=(x2-x1)/L,uy=(y2-y1)/L,h=Math.min(14,L*.45),bx=x2-ux*h,by=y2-uy*h;
+ return Ln(x1,y1,bx,by,c,w,o)+`<polygon points="${F1(x2)},${F1(y2)} ${F1(bx-uy*h*.55)},${F1(by+ux*h*.55)} ${F1(bx+uy*h*.55)},${F1(by-ux*h*.55)}" fill="${c}" opacity="${o.op??1}"/>`;}
+function stp(k,l){return `<span class="stp" data-key="${k}"><button data-d="-1" aria-label="Disminuir ${l}">−</button><output id="o_${k}"></output><button data-d="1" aria-label="Aumentar ${l}">+</button></span>`;}
+function axis(W,y,R,xOf){let s=Ln(xOf(-R)-12,y,xOf(R)+12,y,'var(--ink)',2);const px=xOf(1)-xOf(0),every=px>=24?1:px>=12?2:px>=5?5:10;
+ for(let k=-R;k<=R;k++){const x=xOf(k),big=k%every===0;if(px<4&&!big)continue;s+=Ln(x,y-(big?9:5),x,y+(big?9:5),'var(--ink)',k===0?3:big?1.8:1);if(big)s+=T(x,y+24,sN(k),'var(--ink)',{fs:k===0?16:14,fw:k===0?700:500});}return s;}
+function sv(id){const s=$(id),W=s.clientWidth||600,H=s.clientHeight||420;s.setAttribute('viewBox',`0 0 ${W} ${H}`);return{s,W,H};}
+
+/* ---------- estado ---------- */
+const S={sa:-3,sop:'+',sb:5,sStep:0,sHide:false,sRev:false,ctx:'',
+ uop:'m',ua:-3,ub:2,ud:-12,un:3,uStep:0,uHide:false,uRev:false,t0:0,anim:false,pat:4};
+const LIM={sa:[-12,12],sb:[-12,12],ua:[-6,6],ub:[-8,8],ud:[-24,24],un:[-6,6]};
+document.addEventListener('click',e=>{const b=e.target.closest('.stp button');if(!b)return;const k=b.parentNode.dataset.key;let v=S[k]+(+b.dataset.d);if(k==='un'&&v===0)v+=+b.dataset.d;
+ S[k]=Math.max(LIM[k][0],Math.min(LIM[k][1],v));if(S[k]===0&&k==='un')S[k]=1;
+ if(k[0]==='s')S.sRev=false;else{S.uRev=false;if(S.uStep>=2)S.t0=performance.now();}upd();});
+
+/* ---------- adición y sustracción ---------- */
+const SPRE=[['(−3) + 5',-3,'+',5],['(−4) + (−2)',-4,'+',-2],['6 + (−9)',6,'+',-9],['3 − 5',3,'-',5],['3 − (−5)',3,'-',-5],['(−2) − (−6)',-2,'-',-6],['7 + (−7)',7,'+',-7]];
+$('sPre').innerHTML=SPRE.map((p,i)=>`<button data-i="${i}">${p[0]}</button>`).join('');
+$('sPre').onclick=e=>{const b=e.target.closest('button');if(!b)return;[,S.sa,S.sop,S.sb]=SPRE[+b.dataset.i];S.sStep=0;S.sRev=false;upd();};
+$('sOp').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.sop=b.dataset.o;S.sRev=false;upd();};
+$('sCtx').onchange=e=>{S.ctx=e.target.value;upd();};
+$('sPrev').onclick=()=>{S.sStep=Math.max(0,S.sStep-1);upd();};$('sNext').onclick=()=>{S.sStep=Math.min(2,S.sStep+1);upd();};$('sAll').onclick=()=>{S.sStep=2;upd();};
+$('sRev').onclick=()=>{S.sRev=true;upd();};$('sHide').onchange=e=>{S.sHide=e.target.checked;S.sRev=false;upd();};
+function sData(){const a=S.sa,b=S.sb,sub=S.sop==='-',m=sub?-b:b;return{a,b,sub,m,r:a+m};}
+function ctxText(D,hid){const{a,b,sub,r}=D,ab=Math.abs,P=x=>(x*1000).toLocaleString('es-CL');const res=hid?'… (predice el resultado)':'';
+ if(S.ctx==='din'){const ini=a>=0?`Tienes $${P(a)}`:`Debes $${P(ab(a))} (tu saldo es ${M_}$${P(ab(a))})`;
+  const acc=!sub?(b>=0?`recibes $${P(b)}`:`contraes una deuda nueva de $${P(ab(b))}`):(b>=0?`gastas $${P(b)}`:`te perdonan una deuda de $${P(ab(b))} (te quitan una deuda: restar un negativo)`);
+  const fin=hid?res:(r>=0?`Tu saldo queda en $${P(r)}.`:`Quedas debiendo $${P(ab(r))}: saldo ${M_}$${P(ab(r))}.`);
+  return `<b>Dinero:</b> ${ini} y ${acc}. ${fin} <span style="color:var(--mut)">(Cada unidad de la recta = $1.000.)</span>`;}
+ if(S.ctx==='tem'){if(!sub){const fin=hid?res:`La temperatura final es ${sN(r)} °C.`;return `<b>Temperatura:</b> A las 18 h hay ${sN(a)} °C y durante la noche la temperatura ${b>=0?`sube ${b} °C`:`baja ${ab(b)} °C`}. ${fin}`;}
+  const fin=hid?res:(r>0?`La temperatura subió ${r} °C.`:r<0?`La temperatura bajó ${ab(r)} °C.`:'No cambió.');
+  return `<b>Temperatura (restar = comparar):</b> En la mañana había ${sN(b)} °C y a mediodía ${sN(a)} °C. ¿Cuánto cambió? Se calcula final − inicial: ${pN(a)} − ${pN(b)}. ${fin}`;}
+ return '';}
+function renderSum(){const{s,W,H}=sv('ssv'),D=sData(),{a,b,sub,m,r}=D,st=S.sStep,hid=S.sHide&&!S.sRev;
+ const R=Math.max(10,Math.abs(a)+1,Math.abs(r)+1,Math.abs(a+b)+1),pad=Math.max(26,W*0.05),xOf=v=>pad+(v+R)*(W-2*pad)/(2*R);
+ const yL=H*0.7,y1=yL-150,y2=yL-80;let o=axis(W,yL,R,xOf);
+ o+=Arr(xOf(0),y1,xOf(a),y1,C.teal,4)+T((xOf(0)+xOf(a))/2,y1-20,pS(a),C.teal,{fs:17})+Ln(xOf(a),y1,xOf(a),yL,C.teal,1.4,{dash:'4 5',op:.7})+Ln(xOf(0),y1-10,xOf(0),y1+10,C.teal,2);
+ if(st>=1){if(sub){o+=Arr(xOf(a),y2,xOf(a+b),y2,'var(--mut)',3,{dash:'6 6',op:.55})+T((xOf(a)+xOf(a+b))/2,y2+20,`${pS(b)} se da vuelta`,'var(--mut)',{fs:13,fw:500});
+    const xa=xOf(a),xg=xOf(a+b),xr=xOf(a-b),hA=Math.min(60,Math.abs(xg-xr)/2+10);if(b!==0)o+=`<path d="M${F1(xg)} ${F1(y2-8)} Q ${F1(xa)} ${F1(y2-8-hA)} ${F1(xr)} ${F1(y2-8)}" fill="none" stroke="var(--mut)" stroke-width="1.6" stroke-dasharray="3 4"/>`;
+    o+=Arr(xOf(a),y2,xOf(a+m),y2,C.coral,4)+T((xOf(a)+xOf(a+m))/2,y2+22,`− ${pS(b)} = + ${pS(m)}`,C.coral,{fs:16});}
+  else o+=Arr(xOf(a),y2,xOf(a+m),y2,C.coral,4)+T((xOf(a)+xOf(a+m))/2,y2-20,`+ ${pS(b)}`,C.coral,{fs:17});
+  o+=Ln(xOf(a),y1,xOf(a),y2,C.teal,1.4,{dash:'4 5',op:.7});}
+ if(st>=2&&!hid){o+=Ln(xOf(r),y2,xOf(r),yL,C.vio,2,{dash:'5 5'})+`<circle cx="${F1(xOf(r))}" cy="${F1(yL)}" r="8" fill="${C.vio}"/>`+T(xOf(r),yL+50,`resultado: ${sN(r)}`,C.vio,{fs:17});}
+ if(st>=2&&hid)o+=T(xOf(r),yL+50,'¿?',C.vio,{fs:20});
+ s.innerHTML=o;}
+function updSum(){const D=sData(),{a,b,sub,m,r}=D,hid=S.sHide&&!S.sRev,q='<b>?</b>';
+ $('o_sa').textContent=sN(S.sa);$('o_sb').textContent=sN(S.sb);document.querySelectorAll('#sOp button').forEach(x=>x.classList.toggle('on',x.dataset.o===S.sop));
+ $('sRev').hidden=!(hid&&S.sStep===2);
+ const it=(v,cl,cap)=>`<span class="it"><span class="${cl}">${v}</span><small>${cap}</small></span>`;
+ $('sExpr').innerHTML=it(pS(a),'t','número')+it(sub?M_:'+','opb','operación')+it(pS(b),'c','número')+it('=','','')+it(hid?'?':sN(r),'v','resultado');
+ $('sExpr2').innerHTML=sub?`Restar es sumar el opuesto: ${pN(a)} − ${pS(b)} = ${pN(a)} + ${pS(m)}`:'&nbsp;';
+ const txt=[`Primer número: la flecha de ${pS(a)} parte del 0 y apunta ${a>0?'a la derecha':a<0?'a la izquierda':'a ningún lado (es el 0)'}.`,
+  sub?`Restar ${pS(b)}: la flecha de ${pS(b)} <b>se da vuelta</b> y queda ${pS(m)}. Se pone a continuación de la primera.`:`Sumar ${pS(b)}: su flecha se pone <b>a continuación</b> de la primera, ${b>0?'hacia la derecha':b<0?'hacia la izquierda':'sin moverse'}.`,
+  hid?`¿Dónde termina la segunda flecha? Anota tu predicción y presiona <b>Revelar</b>.`:`La segunda flecha termina en <b>${sN(r)}</b>: ${pN(a)} ${sub?M_:'+'} ${pS(b)} = ${sN(r)}.`];
+ $('sStep').innerHTML=`<span style="color:var(--mut)">Paso ${S.sStep} de 2 · </span>`+txt[S.sStep];
+ const why=(x,y)=>{if(x===0||y===0)return 'Uno de los sumandos es 0.';if(Math.sign(x)===Math.sign(y))return `Mismo signo: se suman ${Math.abs(x)} + ${Math.abs(y)} y se conserva el signo.`;if(Math.abs(x)===Math.abs(y))return 'Son opuestos: se anulan.';const big=Math.abs(x)>Math.abs(y)?x:y;return `Signos distintos: se restan ${Math.max(Math.abs(x),Math.abs(y))} − ${Math.min(Math.abs(x),Math.abs(y))} y gana el signo de ${pS(big)}, que está más lejos del 0.`;};
+ $('sMets').innerHTML=[['Resultado',hid?q:sN(r)],['Se calcula como',`${pN(a)} + ${pS(m)}`],['Segunda flecha',m===0?'no se mueve':`${Math.abs(m)} lugar${Math.abs(m)>1?'es':''} a la ${m>0?'derecha':'izquierda'}`],['¿Por qué ese signo?',hid?q:`<span style="font-size:14px;font-weight:500">${why(a,m)}</span>`]]
+  .map(([l,v])=>`<div class="met"><p class="l">${l}</p><p class="v">${v}</p></div>`).join('');
+ const L=[`<b>Signo del número y signo de la operación:</b> en ${pN(a)} ${sub?M_:'+'} ${pS(b)}, el «${sub?M_:'+'}» del medio es la operación; los signos dentro de los paréntesis son parte de los números.`];
+ if(sub)L.push(`<b>Restar es sumar el opuesto:</b> el opuesto de ${pS(b)} es ${pS(m)}, entonces ${pN(a)} − ${pS(b)} = ${pN(a)} + ${pS(m)}${hid?'':' = '+sN(r)}.`);
+ L.push(`<b>Regla de la adición:</b> ${hid?'(se muestra al revelar)':why(a,m)}`);
+ if(!hid&&r===0&&a!==0)L.push(`<b>Inverso aditivo:</b> ${pS(a)} y ${pS(m)} son opuestos, por eso suman 0.`);
+ L.push(`<b>Para generalizar:</b> a + (${M_}b) = a ${M_} b · a ${M_} (${M_}b) = a + b · ${M_}a + (${M_}b) = ${M_}a ${M_} b`);
+ $('sFm').innerHTML=L.map(x=>`<div>${x}</div>`).join('');
+ const ct=ctxText(D,hid);$('sCtxT').hidden=!ct;$('sCtxT').innerHTML=ct;
+ renderSum();}
+
+/* ---------- multiplicación y división ---------- */
+const UPRE={m:[['3 · (−2)',3,-2],['(−3) · 2',-3,2],['(−3) · (−2)',-3,-2],['(−1) · 5',-1,5],['(−1) · (−4)',-1,-4],['(−4) · 0',-4,0]],d:[['(−12) : 3',-12,3],['12 : (−3)',12,-3],['(−12) : (−3)',-12,-3],['(−7) : 2',-7,2],['(−20) : 5',-20,5]]};
+function drawUPre(){$('uPre').innerHTML=UPRE[S.uop].map((p,i)=>`<button data-i="${i}">${p[0]}</button>`).join('');}
+$('uPre').onclick=e=>{const b=e.target.closest('button');if(!b)return;const p=UPRE[S.uop][+b.dataset.i];if(S.uop==='m')[,S.ua,S.ub]=p;else[,S.ud,S.un]=p;S.uStep=0;S.uRev=false;upd();};
+$('uOp').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.uop=b.dataset.o;S.uStep=0;S.uRev=false;drawUPre();upd();};
+function setU(s){const o=S.uStep;S.uStep=Math.max(0,Math.min(2,s));if(S.uStep===2&&o<2)S.t0=performance.now();upd();}
+$('uPrev').onclick=()=>setU(S.uStep-1);$('uNext').onclick=()=>setU(S.uStep+1);$('uAll').onclick=()=>setU(2);
+$('uRev').onclick=()=>{S.uRev=true;S.t0=performance.now();upd();};$('uHide').onchange=e=>{S.uHide=e.target.checked;S.uRev=false;upd();};
+$('uPatNext').onclick=()=>{S.pat=Math.min(7,S.pat+1);const k=3-(S.pat-1);S.ua=k;S.uop='m';S.uStep=2;S.t0=performance.now();S.uRev=true;drawUPre();upd();};
+$('uPatReset').onclick=()=>{S.pat=4;upd();};
+$('uPat').onclick=e=>{const tr=e.target.closest('tr');if(!tr||tr.dataset.k===undefined)return;const k=+tr.dataset.k;if(3-k>=S.pat)return;S.ua=k;S.uop='m';S.uStep=2;S.t0=performance.now();drawUPre();upd();};
+function uData(){if(S.uop==='m'){const a=S.ua,b=S.ub;return{mul:true,a,b,mag:Math.abs(a)*b,neg:a<0,r:a*b};}const d=S.ud,n=S.un;return{mul:false,d,n,part:d/Math.abs(n),neg:n<0,r:d/n};}
+function renderMul(){const{s,W,H}=sv('usv'),D=uData(),st=S.uStep,hid=S.uHide&&!S.uRev;
+ const ext=D.mul?Math.max(Math.abs(D.b),Math.abs(D.r)):Math.max(Math.abs(D.d),Math.abs(D.r));
+ const R=Math.max(8,Math.ceil(ext)+1),pad=Math.max(26,W*0.05),xOf=v=>pad+(v+R)*(W-2*pad)/(2*R),U=xOf(1)-xOf(0);
+ const yL=Math.min(H*0.8,H-92),yA=yL-46,yB=yL-92;let o=axis(W,yL,R,xOf);S.anim=false;const x0=xOf(0);
+ let th=Math.PI;if(st===2&&D.neg&&!hid){const dt=reduce?1e9:performance.now()-S.t0;th=Math.min(Math.PI,dt/1300*Math.PI);S.anim=th<Math.PI;}
+ const rot=(L,y,c)=>{const ry=Math.min(Math.abs(L),y-24),ex=x0+L*Math.cos(th),ey=y-ry*Math.sin(th);let p='';
+   p+=`<path d="M${F1(x0+L)} ${F1(y)} A ${F1(Math.abs(L))} ${F1(ry)} 0 0 ${L>0?0:1} ${F1(x0-L)} ${F1(y)}" fill="none" stroke="${C.vio}" stroke-width="1.6" stroke-dasharray="4 5" opacity=".7"/>`;
+   p+=Arr(x0,y,ex,ey,c,4.5);if(th>=Math.PI-1e-6)p+=T(x0,y-ry-16,'giro de 180°',C.vio,{fs:14});return p;};
+ if(D.mul){const{a,b,mag,r}=D,n=Math.abs(a);
+  if(st===0||n===0||b===0)o+=Arr(x0,yB,xOf(b),yB,C.coral,4)+T((x0+xOf(b))/2,yB-18,pS(b),C.coral,{fs:17});
+  if(st>=1&&n>0&&b!==0){for(let i=0;i<n;i++){const xa=xOf(i*b),xb=xOf((i+1)*b),yy=yA-(i%2)*12;o+=Arr(xa,yy,xb,yy,C.coral,4,{op:st===2&&D.neg?.35:1});if(U*Math.abs(b)>26)o+=T((xa+xb)/2,yy-16,i+1,C.coral,{fs:13,sw:3,fw:500});}
+   o+=T((x0+xOf(mag))/2,yA+20+(n>1?0:0),`${n} ${n===1?'vez':'veces'} ${pS(b)} = ${sN(mag)}`,C.coral,{fs:14,fw:500});}
+  if(st>=2){if(D.neg&&!hid&&mag!==0)o+=rot(xOf(mag)-x0,yA,C.vio);
+   if(!hid&&(!S.anim))o+=Ln(xOf(r),yA,xOf(r),yL,C.vio,2,{dash:'5 5'})+`<circle cx="${F1(xOf(r))}" cy="${F1(yL)}" r="8" fill="${C.vio}"/>`+T(xOf(r),yL+44,`resultado: ${sN(r)}`,C.vio,{fs:17,a:xOf(r)<90?'start':xOf(r)>W-90?'end':'middle'});
+   if(hid)o+=T(xOf(r),yL+44,'¿?',C.vio,{fs:20});}
+ }else{const{d,n,part,r}=D,k=Math.abs(n);
+  o+=Arr(x0,yB,xOf(d),yB,C.teal,4)+T((x0+xOf(d))/2,yB-18,`${pS(d)}`,C.teal,{fs:17});
+  if(st>=1){for(let i=1;i<k;i++){const x=xOf(i*part);o+=Ln(x,yB-9,x,yB+9,'var(--ink)',2);}
+   o+=Arr(x0,yA,xOf(part),yA,C.coral,4.5,{op:st===2&&D.neg?.35:1})+T((x0+xOf(part))/2,yA+20,`una de ${k} partes: ${Ft(d,k)}`,C.coral,{fs:14,fw:500});}
+  if(st>=2){if(D.neg&&!hid&&part!==0)o+=rot(xOf(part)-x0,yA,C.vio);
+   if(!hid&&!S.anim)o+=Ln(xOf(r),yA,xOf(r),yL,C.vio,2,{dash:'5 5'})+`<circle cx="${F1(xOf(r))}" cy="${F1(yL)}" r="8" fill="${C.vio}"/>`+T(xOf(r),yL+44,`resultado: ${Ft(d,n)}`,C.vio,{fs:17,a:xOf(r)<90?'start':xOf(r)>W-90?'end':'middle'});
+   if(hid)o+=T(xOf(r),yL+44,'¿?',C.vio,{fs:20});}}
+ s.innerHTML=o;}
+function updMul(){const D=uData(),hid=S.uHide&&!S.uRev,q='<b>?</b>',m=D.mul;
+ ['ua','ub','ud','un'].forEach(k=>$('o_'+k).textContent=sN(S[k]));
+ document.querySelectorAll('#uOp button').forEach(x=>x.classList.toggle('on',x.dataset.o===S.uop));$('uInM').hidden=!m;$('uInD').hidden=m;
+ $('uRev').hidden=!(hid&&S.uStep===2);$('uPatBox').hidden=!m;
+ $('uTitle').textContent=m?'Multiplicación de enteros':'División de enteros';
+ $('uLeg').innerHTML=(m?[['coral','Segundo factor repetido'],['vio','Resultado (giro si el primer factor es negativo)']]:[['teal','Dividendo'],['coral','Una de las partes'],['vio','Resultado']]).map(([c,s])=>`<span><i style="background:var(--${c})"></i>${s}</span>`).join('');
+ const it=(v,cl,cap)=>`<span class="it"><span class="${cl}">${v}</span><small>${cap}</small></span>`;
+ const res=m?sN(D.r):Ft(D.d,D.n);
+ $('uExpr').innerHTML=m?it(pN(D.a),'t','primer factor')+it('·','','')+it(pN(D.b),'c','segundo factor')+it('=','','')+it(hid?'?':res,'v','producto'):it(pN(D.d),'t','dividendo')+it(':','','')+it(pN(D.n),'c','divisor')+it('=','','')+it(hid?'?':res,'v','cociente');
+ $('uExpr2').innerHTML=m?(D.a<0?`${pN(D.a)} · ${pN(D.b)} = ${M_}(${Math.abs(D.a)} · ${pN(D.b)}): repetir ${Math.abs(D.a)} veces y girar`:`${D.a} · ${pN(D.b)}: repetir ${D.a} ${D.a===1?'vez':'veces'} la flecha de ${pS(D.b)}`):(D.n<0?`Repartir en ${Math.abs(D.n)} partes y girar 180°`:`Repartir en ${D.n} partes iguales`);
+ let txt;
+ if(m){const{a,b,mag}=D,n=Math.abs(a);txt=[`El segundo factor es la flecha de ${pS(b)}.`,n===0?`El primer factor es 0: la flecha se repite 0 veces, así que no hay recorrido.`:b===0?`La flecha de 0 no tiene largo: repetirla no avanza nada.`:`Se repite la flecha <b>${n} ${n===1?'vez':'veces'}</b>: ${n} · ${pN(b)} = ${sN(mag)}.`,
+  hid?(a<0?`El primer factor es negativo: ¿qué le pasa a la flecha de ${sN(mag)}? ¿Dónde termina? Predice y presiona <b>Revelar</b>.`:`¿Dónde termina? Predice y presiona <b>Revelar</b>.`):(a<0&&mag!==0?`Como el primer factor es <b>negativo</b>, la flecha <b>gira 180°</b> en torno al 0: ${sN(mag)} pasa a ser <b>${sN(-mag)}</b>.`:`El resultado es <b>${sN(D.r)}</b>.`)];}
+ else{const{d,n}=D,k=Math.abs(n);txt=[`El dividendo es la flecha de ${pS(d)}.`,`Se reparte en <b>${k}</b> partes iguales: cada parte mide ${Ft(d,k)}.`,
+  hid?`¿Cuál es el cociente? Predice y presiona <b>Revelar</b>.`:(n<0?`Como el divisor es <b>negativo</b>, la parte <b>gira 180°</b>: ${Ft(d,k)} pasa a ser <b>${Ft(-d,k)}</b>.`:`El cociente es <b>${Ft(d,n)}</b>.`)];}
+ $('uStep').innerHTML=`<span style="color:var(--mut)">Paso ${S.uStep} de 2 · </span>`+txt[S.uStep];
+ const sg=(x,y)=>x===0||y===0?'Hay un 0':Math.sign(x)===Math.sign(y)?'Signos iguales → positivo':'Signos distintos → negativo';
+ if(m)$('uMets').innerHTML=[['Producto',hid?q:sN(D.r)],['Sin signos',`${Math.abs(D.a)} · ${Math.abs(D.b)} = ${Math.abs(D.a*D.b)}`],['Signo',hid?q:`<span style="font-size:15px">${sg(D.a,D.b)}</span>`],['Giros de 180°',D.a<0?'1 (primer factor negativo)':'0']].map(([l,v])=>`<div class="met"><p class="l">${l}</p><p class="v">${v}</p></div>`).join('');
+ else $('uMets').innerHTML=[['Cociente',hid?q:Ft(D.d,D.n)+(D.d%D.n?` <span style="font-size:15px;color:var(--mut)">≈ ${nf(D.r)}</span>`:'')],['Sin signos',`${Math.abs(D.d)} : ${Math.abs(D.n)} = ${Ft(Math.abs(D.d),Math.abs(D.n))}`],['Signo',hid?q:`<span style="font-size:15px">${sg(D.d,D.n)}</span>`],['Comprobación',hid?q:`${pN(D.n)} · ${D.d%D.n?'('+Ft(D.d,D.n)+')':pN(D.r)} = ${sN(D.d)}`]].map(([l,v])=>`<div class="met"><p class="l">${l}</p><p class="v">${v}</p></div>`).join('');
+ // secuencia
+ if(m){const b=D.b;let h='';for(let k=3;k>=-3;k--){const i=3-k,vis=i<S.pat;h+=`<tr data-k="${k}" class="${k===D.a?'cur':''}"><td>${pN(k)} · ${pN(b)}</td><td>${vis?sN(k*b):'?'}</td></tr>`;}
+  $('uPat').innerHTML=h;$('uPatNext').disabled=S.pat>=7;
+  $('uPatNote').innerHTML=b===0?'Con 0 como segundo factor, todos los productos son 0.':`Cada vez que el primer factor baja en 1, el producto <b>${b<0?'sube':'baja'} en ${Math.abs(b)}</b>. Predice la fila siguiente antes de mostrarla: ¿qué pasa al cruzar el 0?`;}
+ const sa=m?D.a:D.d,sb=m?D.b:D.n,cell=(x,y)=>(x>0&&y>0)||(x<0&&y<0)?'+':'−',on=(i,j)=>sa!==0&&sb!==0&&(i>0)===(sa>0)&&(j>0)===(sb>0)?'on':'';
+ const op=m?'·':':';$('uSgn').innerHTML=`<span class="h"></span><span class="h">${op} (+)</span><span class="h">${op} (−)</span><span class="h">(+)</span><span class="${on(1,1)}">+</span><span class="${on(1,-1)}">−</span><span class="h">(−)</span><span class="${on(-1,1)}">−</span><span class="${on(-1,-1)}">+</span>`;
+ let L;
+ if(m){const{a,b}=D;L=[`<b>Multiplicar es repetir:</b> ${Math.abs(a)} · ${pN(b)} es sumar ${Math.abs(a)} veces ${pS(b)}${Math.abs(a)>0&&Math.abs(a)<=5?': '+Array(Math.abs(a)).fill(pS(b)).join(' + ')+' = '+sN(Math.abs(a)*b):''}.`,
+  `<b>Factor negativo:</b> ${pN(a<0?a:-Math.max(1,Math.abs(a)))} = ${M_}1 · ${Math.max(1,Math.abs(a))}. Multiplicar por ${M_}1 gira la flecha 180°.`,
+  `<b>Regla de los signos:</b> ${hid?'(se muestra al revelar)':`${sg(a,b)}: ${pN(a)} · ${pN(b)} = ${sN(D.r)}`}.`,
+  `<b>¿Por qué (${M_}) · (${M_}) = (+)?</b> El segundo factor negativo ya apunta a la izquierda; el primer factor negativo lo hace girar 180°, y vuelve a apuntar a la derecha.`];}
+ else{const{d,n}=D;L=[`<b>Dividir es repartir:</b> ${pN(d)} : ${Math.abs(n)} reparte la flecha de ${pS(d)} en ${Math.abs(n)} partes iguales de ${Ft(d,Math.abs(n))}.`,
+  n<0?`<b>Divisor negativo:</b> dividir por ${pN(n)} es dividir por ${Math.abs(n)} y luego girar 180° (multiplicar por ${M_}1).`:`<b>Divisor positivo:</b> la parte conserva la dirección del dividendo.`,
+  `<b>Regla de los signos:</b> ${hid?'(se muestra al revelar)':`${sg(d,n)}: ${pN(d)} : ${pN(n)} = ${Ft(d,n)}`}.`,
+  `<b>La división comprueba con la multiplicación:</b> si ${pN(d)} : ${pN(n)} = c, entonces c · ${pN(n)} = ${sN(d)}. Por eso la división sigue la misma regla de los signos.`];}
+ $('uFm').innerHTML=L.map(x=>`<div>${x}</div>`).join('');
+ renderMul();}
+
+/* ---------- rutas ---------- */
+let view='suma';
+function upd(){if(view==='suma')updSum();else updMul();}
+function route(){const h=(location.hash||'').slice(1);view=h==='multiplicacion'?'multiplicacion':'suma';
+ document.querySelectorAll('#tabs a').forEach(a=>a.classList.toggle('on',a.dataset.r===view));$('vSum').hidden=view!=='suma';$('vMul').hidden=view==='suma';upd();}
+window.addEventListener('hashchange',route);
+new ResizeObserver(()=>upd()).observe(document.body);
+drawUPre();route();
+(function loop(){if(view==='multiplicacion'&&S.anim){renderMul();}requestAnimationFrame(loop);})();
+}
+</script>
+</body>
+</html>

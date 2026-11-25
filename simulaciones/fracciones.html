@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Operando con fracciones · Órbita Matemática</title>
+<meta name="description" content="Simulación interactiva: multiplicación de fracciones con el modelo de área y división de fracciones como cubrir o repartir. 7° básico.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#10151b);--ink:light-dark(#16202b,#e6ecf2);--mut:light-dark(#5b6675,#9aa7b5);--line:light-dark(#dde4ec,#28323d);--grid:light-dark(#edf1f6,#19212a);--band:light-dark(#163a5f,#0b2035);--card:light-dark(#f4f7fa,#17202a);--sel:#378ADD;--coral:#D85A30;--teal:#1D9E75;--vio:#7F77DD;--amb:#BA7517;--pink:#D4537E}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Lexend,system-ui,sans-serif;overflow-x:clip}
+h1,h2{font-weight:600;line-height:1.1;margin:0;text-wrap:balance}
+button,input{font:inherit;color:inherit}
+button{min-height:40px;padding:6px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);cursor:pointer}
+button:hover{border-color:var(--mut)}button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
+button.on{border-color:var(--sel);color:var(--sel);background:color-mix(in srgb,var(--sel) 10%,transparent)}
+button.pri{background:var(--band);color:#fff;border-color:var(--band)}
+@media(prefers-color-scheme:dark){button.pri{background:#2b5f93;border-color:#2b5f93}}
+input[type=checkbox]{accent-color:var(--sel);width:18px;height:18px}
+.top{background:var(--band);color:#fff;padding:14px max(4vw,16px);display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:18px;flex-wrap:wrap}
+.volver{color:#fff;text-decoration:none;font-size:14px;font-weight:500;opacity:.82;padding:6px 10px;border:1px solid rgba(255,255,255,.35);border-radius:999px}.volver:hover{opacity:1;background:rgba(255,255,255,.1)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs a{color:#fff;text-decoration:none;padding:8px 12px;border-radius:999px;font-size:15px;opacity:.82}
+.tabs a:hover{opacity:1;background:rgba(255,255,255,.1)}.tabs a.on{opacity:1;background:#fff;color:#163a5f}
+.band{padding:clamp(20px,3vw,44px) max(4vw,16px)}
+.work{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:24px;max-width:1400px;margin:0 auto}
+.stagehead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 18px;margin-bottom:8px}
+.stagehead h1{font-size:clamp(26px,3vw,36px)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--mut)}
+.legend i{display:inline-block;width:16px;height:10px;border-radius:3px;vertical-align:middle;margin-right:6px}
+.fig{position:relative;height:clamp(340px,58vh,600px);border-radius:16px;border:1px solid var(--line);background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;overflow:hidden}
+.fig svg{position:absolute;inset:0;width:100%;height:100%}
+.hint{position:absolute;left:12px;bottom:8px;margin:0;font-size:13px;color:var(--mut);pointer-events:none}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.stepTxt{font-size:15px;color:var(--ink);flex:1 1 100%;background:var(--card);border-radius:12px;padding:10px 14px;margin:0}
+.panel{display:flex;flex-direction:column;gap:16px}
+.box{background:var(--card);border-radius:14px;padding:14px 16px}
+.box h2{font-size:17px;margin-bottom:10px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}.seg button{min-height:36px;padding:4px 12px;font-size:14px}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--mut);margin-top:10px}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px}.row button{min-height:34px;padding:3px 10px;font-size:14px}
+.mets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.met{background:var(--card);border-radius:12px;padding:10px 14px}.met p{margin:0}.met .l{font-size:13px;color:var(--mut)}.met .v{font-size:clamp(19px,2vw,23px);font-weight:600}.met .s{font-size:13px;color:var(--mut)}
+.fm div{font-size:15px;line-height:1.7;padding:4px 0;border-bottom:1px dashed var(--line)}.fm div:last-child{border:0}.fm b{font-weight:600}
+details summary{cursor:pointer;font-weight:600;font-size:17px;min-height:32px}
+.concept{border-left:4px solid var(--vio);background:color-mix(in srgb,var(--vio) 9%,transparent);padding:10px 14px;font-size:15px;margin:0}
+.concept b{color:var(--coral);font-weight:600}
+.note{font-size:13px;color:var(--mut);margin:0}
+.warn{border-left:4px solid var(--amb);background:color-mix(in srgb,var(--amb) 10%,transparent);padding:8px 12px;font-size:14px;margin:0}
+[hidden]{display:none!important}
+.fx{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.08;margin:0 .1em;font-size:.92em}
+.fx>span{padding:0 .2em}.fx>span:first-child{border-bottom:1.6px solid currentColor}
+.frin{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.fr{display:inline-flex;flex-direction:column;align-items:center;gap:4px;padding:6px 8px;border-radius:12px;background:var(--bg)}
+.fr .bar{width:100%;border-top:3px solid currentColor}
+.fr.t{color:var(--teal)}.fr.c{color:var(--coral)}
+.stp{display:inline-flex;align-items:center;gap:4px}
+.stp button{min-height:34px;width:34px;padding:0;font-size:18px;line-height:1;color:var(--ink)}
+.stp output{min-width:2.4ch;text-align:center;font-weight:600;font-size:22px}
+.op{font-size:30px;font-weight:600;color:var(--mut)}
+.lbl{font-size:13px;color:var(--mut);display:block;margin-bottom:6px}
+@media(max-width:900px){.work{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.fig{height:360px}.tabs a{padding:6px 9px;font-size:14px}}
+</style>
+</head>
+<body>
+<header class="top">
+<div class="brand"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" stroke="#fff" stroke-width="3" aria-hidden="true"><rect x="8" y="8" width="48" height="48"/><path d="M8 40 H56 M36 8 V56"/></svg><span>Operando con fracciones</span><a class="volver" href="../index.html#simulaciones" target="_top">← Órbita Matemática</a></div>
+<nav class="tabs" id="tabs"><a href="#multiplicacion" data-r="multiplicacion">Multiplicación</a><a href="#division" data-r="division">División</a></nav>
+</header>
+<main>
+<section id="vMul" class="band" hidden>
+<div class="work">
+<div>
+<div class="stagehead"><h1>Multiplicación de fracciones</h1><div class="legend"><span><i style="background:var(--teal)"></i>Primer factor (columnas)</span><span><i style="background:var(--coral)"></i>Segundo factor (filas)</span><span><i style="background:var(--vio)"></i>Producto (zona común)</span></div></div>
+<div class="fig"><svg id="msv" role="img" aria-label="Modelo de área de la multiplicación de fracciones"></svg><p class="hint">Modelo de área: la unidad es el cuadrado completo</p></div>
+<div class="tools"><button id="mPrev">◀ Paso anterior</button><button id="mNext" class="pri">Paso siguiente ▶</button><button id="mAll">Ver todo</button><button id="mRev" hidden class="pri">Revelar</button><p class="stepTxt" id="mStep"></p></div>
+</div>
+<aside class="panel">
+<p class="concept">Multiplicar <span class="fx"><span>a</span><span>b</span></span> · <span class="fx"><span>c</span><span>d</span></span> es calcular <b>una fracción de otra fracción</b>. La unidad es un cuadrado: el primer factor se marca en columnas, el segundo en filas, y el producto es la zona donde <b>se cruzan</b>.</p>
+<div class="box"><h2>Factores</h2>
+<div class="frin"><span class="fr t" id="frA"></span><span class="op">·</span><span class="fr c" id="frC"></span></div>
+<span class="lbl" style="margin-top:12px">Ejemplos</span><div class="row" id="mPre" style="margin-top:0"></div>
+<label class="chk"><input type="checkbox" id="mHide"> Predecir: ocultar el resultado hasta revelarlo</label>
+</div>
+<div class="mets" id="mMets"></div>
+<div class="box"><details open><summary>Desarrollo</summary><div class="fm" id="mFm"></div></details></div>
+</aside>
+</div>
+</section>
+
+<section id="vDiv" class="band" hidden>
+<div class="work">
+<div>
+<div class="stagehead"><h1 id="dTitle">División de fracciones</h1><div class="legend" id="dLeg"></div></div>
+<div class="fig"><svg id="dsv" role="img" aria-label="Recta numérica con la división de fracciones"></svg><p class="hint" id="dHint"></p></div>
+<div class="tools"><button id="dPrev">◀ Paso anterior</button><button id="dNext" class="pri">Paso siguiente ▶</button><button id="dAll">Ver todo</button><button id="dRev" hidden class="pri">Revelar</button><p class="stepTxt" id="dStep"></p></div>
+</div>
+<aside class="panel">
+<p class="concept" id="dConcept"></p>
+<div class="box"><h2>¿Cómo dividimos?</h2>
+<div class="seg" id="dMode"><button data-m="cubrir">Cubrir: ¿cuántas veces cabe?</button><button data-m="repartir">Repartir en partes iguales</button></div>
+<div class="frin" style="margin-top:14px"><span class="fr t" id="frP"></span><span class="op">:</span><span class="fr c" id="frR"></span><span class="fr c" id="frN"></span></div>
+<span class="lbl" style="margin-top:12px">Ejemplos</span><div class="row" id="dPre" style="margin-top:0"></div>
+<label class="chk"><input type="checkbox" id="dHide"> Predecir: ocultar el resultado hasta revelarlo</label>
+</div>
+<div class="mets" id="dMets"></div>
+<div class="box"><details open><summary>Desarrollo</summary><div class="fm" id="dFm"></div></details></div>
+</aside>
+</div>
+</section>
+</main>
+<script>
+{
+const $=id=>document.getElementById(id);
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const C={teal:'#1D9E75',coral:'#D85A30',vio:'#7F77DD',amb:'#BA7517',ink:'var(--ink)',mut:'var(--mut)',bg:'var(--bg)'};
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b]}return a||1};
+const lcm=(a,b)=>a/gcd(a,b)*b;
+const nf=x=>(Math.round(x*1000)/1000).toLocaleString('es-CL',{maximumFractionDigits:3});
+const F=(n,d)=>d===1?`${n}`:`<span class="fx"><span>${n}</span><span>${d}</span></span>`;
+const Ft=(n,d)=>d===1?`${n}`:`${n}/${d}`;
+function simp(n,d){const g=gcd(n,d);return[n/g,d/g];}
+function mixed(n,d){const[a,b]=simp(n,d);if(b===1||a<b)return F(a,b);const w=Math.floor(a/b),r=a-w*b;return r?`${w}${F(r,b)}`:`${w}`;}
+function simpChain(n,d){const[a,b]=simp(n,d);let s=F(n,d);if(a!==n)s+=` = ${F(a,b)}`;if(b>1&&a>b)s+=` = ${mixed(a,b)}`;return s;}
+function decExact(n,d){let x=d/gcd(n,d);while(x%2===0)x/=2;while(x%5===0)x/=5;return x===1;}
+const F1=x=>x.toFixed(1);
+function T(x,y,s,c,o={}){return `<text x="${F1(x)}" y="${F1(y)}" fill="${c}" font-size="${o.fs||15}" font-weight="${o.fw||600}" text-anchor="${o.a||'middle'}" dominant-baseline="middle" style="paint-order:stroke;stroke:var(--bg);stroke-width:${o.sw??5}px;stroke-linejoin:round">${s}</text>`;}
+function R(x,y,w,h,fill,op,stroke,sw,extra=''){return `<rect x="${F1(x)}" y="${F1(y)}" width="${F1(Math.max(0,w))}" height="${F1(Math.max(0,h))}" fill="${fill}" fill-opacity="${op}" ${stroke?`stroke="${stroke}" stroke-width="${sw}"`:''} ${extra}/>`;}
+function Ln(x1,y1,x2,y2,c,w,o={}){return `<line x1="${F1(x1)}" y1="${F1(y1)}" x2="${F1(x2)}" y2="${F1(y2)}" stroke="${c}" stroke-width="${w}" opacity="${o.op??1}" ${o.dash?`stroke-dasharray="${o.dash}"`:''} stroke-linecap="round"/>`;}
+
+/* ---------- estado ---------- */
+const S={ma:2,mb:3,mc:3,md:4,mStep:0,mHide:false,mRev:false,
+ mode:'cubrir',dp:2,dq:1,dr:3,ds:4,dn:3,dStep:0,dHide:false,dRev:false,anim:0,t0:0};
+const LIM={ma:()=>[0,2*S.mb],mb:()=>[1,10],mc:()=>[0,2*S.md],md:()=>[1,10],dp:()=>[1,4*S.dq],dq:()=>[1,10],dr:()=>[1,3*S.ds],ds:()=>[1,10],dn:()=>[1,10]};
+const cl=(k)=>{const[a,b]=LIM[k]();S[k]=Math.min(b,Math.max(a,S[k]));};
+function stp(k,l){return `<span class="stp" data-key="${k}"><button data-d="-1" aria-label="Disminuir ${l}">−</button><output id="o_${k}"></output><button data-d="1" aria-label="Aumentar ${l}">+</button></span>`;}
+function frHTML(n,d,ln,ld){return stp(n,ln)+'<span class="bar"></span>'+stp(d,ld);}
+$('frA').innerHTML=frHTML('ma','mb','numerador del primer factor','denominador del primer factor');
+$('frC').innerHTML=frHTML('mc','md','numerador del segundo factor','denominador del segundo factor');
+$('frP').innerHTML=frHTML('dp','dq','numerador del dividendo','denominador del dividendo');
+$('frR').innerHTML=frHTML('dr','ds','numerador del divisor','denominador del divisor');
+$('frN').innerHTML=stp('dn','divisor (número natural)');
+document.addEventListener('click',e=>{const b=e.target.closest('.stp button');if(!b)return;const k=b.parentNode.dataset.key;S[k]+=+b.dataset.d;cl(k);['ma','mc','dp','dr'].forEach(cl);
+ if(k[0]==='m'){S.mRev=false;}else{S.dRev=false;if(S.dStep>=2)S.t0=performance.now();}upd();});
+
+/* ---------- presets ---------- */
+const MPRE=[['2/3 · 3/4',2,3,3,4],['1/2 · 1/2',1,2,1,2],['3/5 · 2/3',3,5,2,3],['4/5 · 5/4',4,5,5,4],['3/2 · 1/3',3,2,1,3],['0,3 · 0,4',3,10,4,10]];
+$('mPre').innerHTML=MPRE.map((p,i)=>`<button data-i="${i}">${p[0]}</button>`).join('');
+$('mPre').onclick=e=>{const b=e.target.closest('button');if(!b)return;const p=MPRE[+b.dataset.i];[S.ma,S.mb,S.mc,S.md]=p.slice(1);S.mStep=0;S.mRev=false;upd();};
+const DPRE={cubrir:[['2 : 3/4',2,1,3,4],['3/4 : 1/8',3,4,1,8],['0,75 : 0,25',3,4,1,4],['5/2 : 1/2',5,2,1,2],['1/2 : 3/4',1,2,3,4],['3 : 2/5',3,1,2,5]],
+ repartir:[['3/4 : 3',3,4,3],['2/3 : 4',2,3,4],['5 : 2',5,1,2],['1/2 : 5',1,2,5]]};
+function drawDPre(){$('dPre').innerHTML=DPRE[S.mode].map((p,i)=>`<button data-i="${i}">${p[0]}</button>`).join('');}
+$('dPre').onclick=e=>{const b=e.target.closest('button');if(!b)return;const p=DPRE[S.mode][+b.dataset.i];if(S.mode==='cubrir')[S.dp,S.dq,S.dr,S.ds]=p.slice(1);else[S.dp,S.dq,S.dn]=p.slice(1);S.dStep=0;S.dRev=false;upd();};
+$('dMode').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.mode=b.dataset.m;S.dStep=0;S.dRev=false;drawDPre();upd();};
+
+/* ---------- pasos ---------- */
+$('mPrev').onclick=()=>{S.mStep=Math.max(0,S.mStep-1);upd();};
+$('mNext').onclick=()=>{S.mStep=Math.min(3,S.mStep+1);upd();};
+$('mAll').onclick=()=>{S.mStep=3;upd();};
+$('mRev').onclick=()=>{S.mRev=true;upd();};
+$('mHide').onchange=e=>{S.mHide=e.target.checked;S.mRev=false;upd();};
+const dMax=()=>S.mode==='cubrir'?3:2;
+function setD(s){const old=S.dStep;S.dStep=Math.max(0,Math.min(dMax(),s));if(S.dStep>=2&&old<2)S.t0=performance.now();upd();}
+$('dPrev').onclick=()=>setD(S.dStep-1);$('dNext').onclick=()=>setD(S.dStep+1);$('dAll').onclick=()=>setD(dMax());
+$('dRev').onclick=()=>{S.dRev=true;upd();};
+$('dHide').onchange=e=>{S.dHide=e.target.checked;S.dRev=false;upd();};
+
+/* ---------- multiplicación ---------- */
+function mData(){const{ma:a,mb:b,mc:c,md:d}=S;return{a,b,c,d,n:a*c,den:b*d};}
+function renderMul(){const sv=$('msv'),W=sv.clientWidth||600,H=sv.clientHeight||420;sv.setAttribute('viewBox',`0 0 ${W} ${H}`);
+ const{a,b,c,d}=mData(),nx=Math.max(1,Math.ceil(a/b-1e-9)),ny=Math.max(1,Math.ceil(c/d-1e-9));
+ const m=Math.min(64,W*0.12),U=Math.min((W-2*m)/nx,(H-2*m-20)/ny),x0=(W-U*nx)/2,y0=(H-U*ny)/2+4;
+ const st=S.mStep,show3=st>=3&&(!S.mHide||S.mRev);let o='';
+ for(let i=0;i<nx;i++)for(let j=0;j<ny;j++)o+=R(x0+i*U,y0+j*U,U,U,'var(--bg)',1);
+ if(st>=1){o+=R(x0,y0,U*a/b,U*ny,C.teal,.26);for(let k=1;k<nx*b;k++){const x=x0+k*U/b;o+=Ln(x,y0,x,y0+U*ny,C.teal,k%b?1:0,{op:.7});}}
+ if(st>=2){o+=R(x0,y0,U*nx,U*c/d,C.coral,.26);for(let k=1;k<ny*d;k++){const y=y0+k*U/d;o+=Ln(x0,y,x0+U*nx,y,C.coral,k%d?1:0,{op:.7});}}
+ if(show3&&a*c>0){o+=R(x0,y0,U*a/b,U*c/d,'var(--bg)',1)+R(x0,y0,U*a/b,U*c/d,C.vio,.3);for(let i=1;i<a;i++){const x=x0+i*U/b;o+=Ln(x,y0,x,y0+U*c/d,C.vio,1,{op:.8});}for(let j=1;j<c;j++){const y=y0+j*U/d;o+=Ln(x0,y,x0+U*a/b,y,C.vio,1,{op:.8});}o+=R(x0,y0,U*a/b,U*c/d,'none',0,C.vio,3.5);
+  const cw=U/b,ch=U/d;if(a*c<=80&&Math.min(cw,ch)>=20){let k=1;for(let j=0;j<c;j++)for(let i=0;i<a;i++){o+=T(x0+(i+.5)*cw,y0+(j+.5)*ch,k++,C.vio,{fs:Math.min(14,cw*.42),sw:3});}}}
+ for(let i=0;i<nx;i++)for(let j=0;j<ny;j++)o+=R(x0+i*U,y0+j*U,U,U,'none',0,'var(--ink)',2.2);
+ if(st>=1&&a>0){const y=y0-18,x2=x0+U*a/b;o+=Ln(x0,y,x2,y,C.teal,3)+Ln(x0,y-6,x0,y+6,C.teal,2)+Ln(x2,y-6,x2,y+6,C.teal,2)+T((x0+x2)/2,y-14,Ft(a,b),C.teal,{fs:17});}
+ if(st>=2&&c>0){const x=x0-18,y2=y0+U*c/d;o+=Ln(x,y0,x,y2,C.coral,3)+Ln(x-6,y0,x+6,y0,C.coral,2)+Ln(x-6,y2,x+6,y2,C.coral,2)+T(x-10,(y0+y2)/2,Ft(c,d),C.coral,{fs:17,a:'end'});}
+ o+=T(x0+U/2,y0+U*ny+18,'1 unidad','var(--mut)',{fs:13,fw:500});
+ sv.innerHTML=o;}
+function updMul(){const{a,b,c,d,n,den}=mData();['ma','mb','mc','md'].forEach(k=>$('o_'+k).textContent=S[k]);
+ const hid=S.mHide&&!S.mRev,q='<b>?</b>';$('mRev').hidden=!(S.mHide&&!S.mRev&&S.mStep===3);
+ const txt=[`La <b>unidad</b> es el cuadrado completo. Vamos a calcular ${F(a,b)} de ${F(c,d)}.`,
+  `Primer factor: la unidad se divide en <b>${b} columna${b>1?'s':''}</b> iguales y se pintan <b>${a}</b>. Eso es ${F(a,b)}.`,
+  `Segundo factor: la unidad se divide en <b>${d} fila${d>1?'s':''}</b> iguales y se pintan <b>${c}</b>. Eso es ${F(c,d)}. Ahora la unidad tiene ${b} · ${d} = <b>${den}</b> celdas.`,
+  hid?`¿Cuántas celdas tiene la zona donde se cruzan los colores? ¿Qué fracción de la unidad es? Anota tu predicción y presiona <b>Revelar</b>.`:`La zona común tiene ${a} · ${c} = <b>${n}</b> celdas de las ${den} que forman la unidad: ${F(a,b)} · ${F(c,d)} = ${F(n,den)}.`];
+ $('mStep').innerHTML=`<span style="color:var(--mut)">Paso ${S.mStep} de 3 · </span>`+txt[S.mStep];
+ const decOK=decExact(a,b)&&decExact(c,d),dv=x=>nf(x);
+ $('mMets').innerHTML=[['Producto',hid?q:simpChain(n,den)],['Celdas de la zona común',hid?q:`${n} de ${den}`],['Cada celda vale',F(1,den)+' de la unidad'],['En decimales',decOK?`${dv(a/b)} · ${dv(c/d)} = ${hid?'?':dv(a*c/(b*d))}`:`≈ ${dv(a/b)} · ${dv(c/d)} ≈ ${hid?'?':dv(a*c/(b*d))}`]]
+  .map(([l,v])=>`<div class="met"><p class="l">${l}</p><p class="v">${v}</p></div>`).join('');
+ const rel=(x,y)=>x<y?'menor':x>y?'mayor':'igual';
+ const cmp=(f1,f2,x1,x2)=>x2===1?`Como ${f2} es igual a 1, el producto es igual a ${f1}.`:`Como ${f2} es ${x2<1?'menor':'mayor'} que 1, el producto es ${x2<1?'menor':'mayor'} que ${f1}.`;
+ const L=[`<b>Lectura:</b> ${F(a,b)} · ${F(c,d)} se lee «${F(a,b)} de ${F(c,d)}».`,
+  `<b>Celdas:</b> ${b} columnas · ${d} filas = ${den} celdas iguales; cada una vale ${F(1,den)}.`,
+  `<b>Zona común:</b> ${a} columna${a!==1?'s':''} · ${c} fila${c!==1?'s':''} = ${hid?q:n+' celda'+(n!==1?'s':'')}.`,
+  `<b>Regla:</b> ${F(a,b)} · ${F(c,d)} = ${F(`${a} · ${c}`,`${b} · ${d}`)} = ${hid?q:simpChain(n,den)}`];
+ if(!hid&&n>0)L.push(`<b>Comparación:</b> ${cmp(F(a,b),F(c,d),a/b,c/d)} ${cmp(F(c,d),F(a,b),c/d,a/b)}`);
+ if(n===0)L.push(`Si un factor es 0, no hay zona común: el producto es 0.`);
+ if(decOK&&(b===10||d===10||b===100||d===100)&&!hid)L.push(`<b>Con decimales:</b> ${dv(a/b)} · ${dv(c/d)} = ${dv(a*c/(b*d))}, porque ${F(a,b)} · ${F(c,d)} = ${F(n,den)}.`);
+ $('mFm').innerHTML=L.map(x=>`<div>${x}</div>`).join('');
+ renderMul();}
+
+/* ---------- división ---------- */
+function dData(){const{dp:p,dq:q,dr:r,ds:s,dn:n}=S;if(S.mode==='repartir')return{p,q,n,part:[p,q*n]};const L=lcm(q,s),P=p*L/q,Rr=r*L/s,k=Math.floor(P/Rr),rem=P-k*Rr;return{p,q,r,s,L,P,R:Rr,k,rem};}
+function axis(o,xL,U,M,y,q,s){o.s+=Ln(xL-10,y,xL+U*M+14,y,'var(--ink)',2);
+ if(q&&U/q>=5)for(let k=1;k<M*q;k++)if(k%q)o.s+=Ln(xL+k*U/q,y-7,xL+k*U/q,y,C.teal,1.4,{op:.8});
+ if(s&&U/s>=5)for(let k=1;k<M*s;k++)if(k%s)o.s+=Ln(xL+k*U/s,y,xL+k*U/s,y+7,C.coral,1.4,{op:.8});
+ for(let i=0;i<=M;i++){const x=xL+i*U;o.s+=Ln(x,y-11,x,y+11,'var(--ink)',2)+T(x,y+26,i,'var(--ink)',{fs:15});}}
+function renderDiv(){const sv=$('dsv'),W=sv.clientWidth||600,H=sv.clientHeight||420;sv.setAttribute('viewBox',`0 0 ${W} ${H}`);
+ const D=dData(),st=S.dStep,hid=S.dHide&&!S.dRev,o={s:''},m=Math.max(28,W*0.06);S.anim=false;
+ if(S.mode==='cubrir'){const dv=D.r/D.s,Dd=D.p/D.q,M=Math.max(1,Math.ceil(Math.max(Dd,(D.k+(D.rem?1:0))*dv,dv)-1e-9)),U=(W-2*m)/M,xL=m,yA=H*0.5;
+  const yB=yA-86,yC=yA+44,hB=34;
+  axis(o,xL,U,M,yA,D.q,D.s);
+  o.s+=R(xL,yB,U*Dd,hB,C.teal,.3,C.teal,2,'rx="4"')+T(xL+U*Dd/2,yB-16,'Dividendo '+Ft(D.p,D.q),C.teal,{fs:16});
+  o.s+=Ln(xL+U*Dd,yB,xL+U*Dd,yC+hB+6,C.teal,1.6,{dash:'5 5',op:.8});
+  let shown=0;if(st===1)shown=Math.min(1,D.k);else if(st>=2){const dt=reduce?1e9:performance.now()-S.t0,iv=Math.min(380,2600/Math.max(1,D.k));shown=Math.min(D.k,Math.floor(dt/iv)+1);S.anim=shown<D.k;}
+  if(st>=1&&D.k===0&&(st<3||hid))o.s+=R(xL,yC,U*dv,hB,C.coral,.15,C.coral,2,'stroke-dasharray="6 5" rx="4"')+T(xL+U*dv/2,yC+hB+20,'Divisor '+Ft(D.r,D.s),C.coral,{fs:15});
+  for(let i=0;i<shown;i++){const x=xL+i*U*dv;o.s+=R(x+1,yC,U*dv-2,hB,C.coral,.3,C.coral,2,'rx="4"');if(U*dv>=22)o.s+=T(x+U*dv/2,yC+hB/2,i+1,C.coral,{fs:Math.min(15,U*dv*.45),sw:3});}
+  if(st===1&&D.k>0)o.s+=T(xL+U*dv/2,yC+hB+20,'Divisor '+Ft(D.r,D.s),C.coral,{fs:15});
+  if(st>=3&&!hid){if(D.rem>0){const x=xL+D.k*U*dv;o.s+=R(x+1,yC,U*dv-2,hB,'none',0,C.coral,2,'stroke-dasharray="6 5" rx="4"')+R(x+1,yC,U*D.rem/D.L-1,hB,C.vio,.38,C.vio,2,'rx="4"');
+    o.s+=T(x+U*D.rem/D.L/2,yC+hB+22,`sobra ${Ft(...simp(D.rem,D.L))} de la unidad = ${Ft(D.rem,D.R)} del divisor`,C.vio,{fs:14,a:x+U*D.rem/D.L/2>W*0.6?'end':'middle'});}
+   o.s+=T(W/2,yC+hB+56,`${Ft(D.p,D.q)} : ${Ft(D.r,D.s)} = ${D.k?D.k:''}${D.rem?(D.k?' + ':'')+Ft(D.rem,D.R):''}`,'var(--ink)',{fs:18});}
+ }else{const Dd=D.p/D.q,M=Math.max(1,Math.ceil(Dd-1e-9)),U=(W-2*m)/M,xL=m,yA=H*0.58,yB=yA-80,hB=40,part=Dd/D.n;
+  axis(o,xL,U,M,yA,D.q*(st>=1?D.n:1),0);
+  o.s+=R(xL,yB,U*Dd,hB,C.teal,.28,C.teal,2,'rx="4"')+T(xL+U*Dd/2,yB-16,'Dividendo '+Ft(D.p,D.q),C.teal,{fs:16});
+  if(st>=1)for(let i=1;i<D.n;i++){const x=xL+i*U*part;o.s+=Ln(x,yB-6,x,yB+hB+6,'var(--ink)',2.2);}
+  if(st>=2){o.s+=R(xL,yB,U*part,hB,C.coral,.45,C.coral,2.5,'rx="4"');if(!hid){const[a,b]=simp(D.p,D.q*D.n);o.s+=T(xL+U*part/2,yB+hB+70,`una parte = ${Ft(a,b)}`,C.coral,{fs:16,a:U*part<120?'start':'middle'});}}
+ }
+ sv.innerHTML=o.s;}
+function updDiv(){const D=dData(),cub=S.mode==='cubrir',hid=S.dHide&&!S.dRev,q='<b>?</b>';
+ ['dp','dq','dr','ds','dn'].forEach(k=>$('o_'+k).textContent=S[k]);$('frR').hidden=!cub;$('frN').hidden=cub;
+ document.querySelectorAll('#dMode button').forEach(b=>b.classList.toggle('on',b.dataset.m===S.mode));
+ if(S.dStep>dMax())S.dStep=dMax();
+ $('dRev').hidden=!(S.dHide&&!S.dRev&&S.dStep===dMax());
+ $('dTitle').textContent=cub?'División de fracciones: cubrir':'División de fracciones: repartir';
+ $('dLeg').innerHTML=(cub?[['teal','Dividendo'],['coral','Divisor'],['vio','Lo que sobra']]:[['teal','Dividendo'],['coral','Una de las partes']]).map(([c,s])=>`<span><i style="background:var(--${c})"></i>${s}</span>`).join('');
+ $('dHint').textContent=cub?'Marcas verdes: divisiones del dividendo · marcas naranjas: del divisor':'Las marcas de la recta muestran las partes';
+ $('dConcept').innerHTML=cub?'Dividir es preguntar <b>cuántas veces cabe</b> el divisor en el dividendo. Se ponen copias del divisor una tras otra hasta cubrir el dividendo, y lo que sobra se mide <b>en divisores</b>, no en unidades.':'Dividir por un número natural es <b>repartir</b> el dividendo en partes iguales. El cociente es el tamaño de <b>una</b> de esas partes.';
+ let txt,mets,L;
+ if(cub){const{p,q:qq,r,s,L:Lc,P,R:Rr,k,rem}=D,res=simp(P,Rr);
+  txt=[`El dividendo ${F(p,qq)} está marcado sobre la recta.`,`La pregunta es: ¿cuántas veces cabe ${F(r,s)} en ${F(p,qq)}? Aquí va la primera copia del divisor.`,
+   k?`Se ponen copias de ${F(r,s)} una tras otra: caben <b>${k}</b> vez${k>1?'es':''} completa${k>1?'s':''}.${rem?' Pero todavía queda un trozo.':''}`:`El divisor es más largo que el dividendo: <b>no cabe ni una vez completa</b>. El cociente será menor que 1.`,
+   hid?`¿Qué parte <b>del divisor</b> alcanza a cubrir el trozo que sobra? ¿Cuál es el cociente? Anota tu predicción y presiona <b>Revelar</b>.`:(rem?`Sobra ${F(...simp(rem,Lc))} de la unidad, que es ${F(rem,Rr)} <b>del divisor</b>. Cociente: ${k?k+' + ':''}${F(rem,Rr)} = ${simpChain(res[0],res[1])}.`:`No sobra nada: el cociente es exactamente <b>${k}</b>.`)];
+  const st3=x=>S.dStep>=2?x:q;
+  mets=[['Cociente',hid?q:simpChain(res[0],res[1])],['Veces completas',st3(k)],['Sobra (de la unidad)',hid?q:(rem?F(...simp(rem,Lc)):'0')],['Sobra (del divisor)',hid?q:(rem?F(rem,Rr):'0')]];
+  L=[`<b>Pregunta:</b> ¿cuántas veces cabe ${F(r,s)} en ${F(p,qq)}?`,
+   `<b>Denominador común:</b> ${F(p,qq)} = ${F(P,Lc)} y ${F(r,s)} = ${F(Rr,Lc)}. Ahora es como preguntar cuántas veces cabe ${Rr} en ${P}.`,
+   `${F(p,qq)} : ${F(r,s)} = ${P} : ${Rr} = ${hid?q:simpChain(res[0],res[1])}`,
+   `<b>Regla:</b> multiplicar por el inverso del divisor: ${F(p,qq)} · ${F(s,r)} = ${hid?q:F(p*s,qq*r)+(simp(p*s,qq*r)[0]!==p*s?' = '+F(...simp(p*s,qq*r)):'')}`];
+  if(!hid){const[c1,c2]=simp(res[0]*r,res[1]*s);L.push(`<b>Comprobación:</b> cociente · divisor = dividendo: ${F(res[0],res[1])} · ${F(r,s)} = ${[F(res[0]*r,res[1]*s),F(c1,c2)].filter((v,i,a)=>a.indexOf(v)===i).join(' = ')} ✓`);}
+  if(rem&&!hid)L.push(`<p class="warn" style="margin:4px 0 0">Ojo: el trozo que sobra mide ${F(...simp(rem,Lc))} de la unidad, pero el cociente cuenta <b>cuántos divisores</b> caben. Por eso se suma ${F(rem,Rr)} y no ${F(...simp(rem,Lc))}.</p>`);
+  if(!hid){const big=P>Rr,eq=P===Rr;L.push(`<b>¿Más grande o más chico?</b> ${eq?'Dividendo y divisor son iguales: el cociente es 1.':Rr<Lc?`El divisor es menor que 1, así que caben más copias que unidades: el cociente (${nf(P/Rr)}) es mayor que el dividendo (${nf(p/qq)}). Dividir no siempre achica.`:`El divisor es mayor o igual que 1, así que el cociente no supera al dividendo.`}`);}
+ }else{const{p,q:qq,n}=D,[a,b]=simp(p,qq*n);
+  txt=[`El dividendo ${F(p,qq)} está marcado sobre la recta.`,`Se reparte en <b>${n}</b> parte${n>1?'s':''} iguales.`,hid?`¿Cuánto mide <b>una</b> de las partes? Anota tu predicción y presiona <b>Revelar</b>.`:`Una parte mide ${F(p,qq)} : ${n} = ${simpChain(p,qq*n)}.`];
+  mets=[['Cada parte',hid?q:simpChain(p,qq*n)],['Número de partes',n],['En decimales',hid?q:'≈ '+nf(p/(qq*n))],['Comprobación',hid?q:`${n} · ${F(a,b)} = ${F(p,qq)}`]];
+  L=[`<b>Repartir:</b> ${F(p,qq)} : ${n} es dividir ${F(p,qq)} en ${n} partes iguales.`,`Cada unidad queda dividida en ${qq} · ${n} = ${qq*n} trozos; ${F(p,qq)} son ${p*n} de esos trozos y cada parte se lleva ${p}.`,
+   `${F(p,qq)} : ${n} = ${F(p,qq)} · ${F(1,n)} = ${hid?q:simpChain(p,qq*n)}`,`Repartir en ${n} partes es lo mismo que calcular ${F(1,n)} de ${F(p,qq)}: la división y la multiplicación por el inverso coinciden.`];}
+ $('dStep').innerHTML=`<span style="color:var(--mut)">Paso ${S.dStep} de ${dMax()} · </span>`+txt[S.dStep];
+ $('dMets').innerHTML=mets.map(([l,v])=>`<div class="met"><p class="l">${l}</p><p class="v">${v}</p></div>`).join('');
+ $('dFm').innerHTML=L.filter(Boolean).map(x=>x.startsWith('<p')?x:`<div>${x}</div>`).join('');
+ renderDiv();}
+
+/* ---------- rutas ---------- */
+let view='multiplicacion';
+function upd(){if(view==='multiplicacion')updMul();else updDiv();}
+function route(){const h=(location.hash||'').slice(1);view=h==='division'?'division':'multiplicacion';
+ document.querySelectorAll('#tabs a').forEach(a=>a.classList.toggle('on',a.dataset.r===view));$('vMul').hidden=view!=='multiplicacion';$('vDiv').hidden=view!=='division';upd();}
+window.addEventListener('hashchange',route);
+new ResizeObserver(()=>upd()).observe(document.body);
+drawDPre();route();
+(function loop(){if(view==='division'&&S.anim){renderDiv();}requestAnimationFrame(loop);})();
+}
+</script>
+</body>
+</html>

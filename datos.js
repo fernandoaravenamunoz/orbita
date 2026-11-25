@@ -223,12 +223,39 @@ const SITIO = {
      --------------------------------------------------------------- */
   simulaciones: [
     {
+      nombre: "Operando con fracciones",
+      cursos: "7° básico · Números · OA 2 · OA 3",
+      descripcion: "Multiplica fracciones cruzando columnas y filas en el modelo de área, y divide fracciones de dos maneras: contando cuántas veces cabe el divisor o repartiendo en partes iguales. Paso a paso y con modo predecir.",
+      temas: ["Multiplicación", "Modelo de área", "División: cubrir", "División: repartir", "Decimales"],
+      url: "simulaciones/fracciones.html",
+      dibujo: "fracciones",
+      fecha: "2026-11-25"
+    },
+    {
+      nombre: "La recta de los enteros",
+      cursos: "7° básico · OA 1 — 8° básico · OA 1",
+      descripcion: "Suma y resta enteros como flechas sobre la recta y distingue el signo del número del signo de la operación. Multiplica y divide con el giro de 180° y descubre la regla de los signos con una secuencia de productos.",
+      temas: ["Adición", "Sustracción", "Sumar el opuesto", "Multiplicación", "División", "Regla de los signos"],
+      url: "simulaciones/enteros.html",
+      dibujo: "enteros",
+      fecha: "2026-11-25"
+    },
+    {
       nombre: "Cuerpos geométricos 3D",
       cursos: "I° medio · Geometría · OA 7",
       descripcion: "Gira prismas, pirámides, cilindros y conos, desármalos en su red y calcula áreas y volumen paso a paso. Incluye cuerpos de revolución: la figura plana que gira y su generatriz.",
       temas: ["Prismas", "Pirámides", "Cilindros", "Conos", "Cuerpos de revolución"],
       url: "simulaciones/cuerpos-geometricos.html",
       dibujo: "cuerpos",
+      fecha: "2026-11-25"
+    },
+    {
+      nombre: "Homotecias",
+      cursos: "I° medio · Geometría · OA 8 · OA 11",
+      descripcion: "Aplica homotecias a una estrella, una vela, un árbol, una casa o a polígonos que tú mueves. Cambia k entre −3 y 3, mira la cámara oscura y comprueba que el área cambia en k². Incluye la homotecia vectorial en el plano cartesiano.",
+      temas: ["Razón k", "Directa e inversa", "Cámara oscura", "Perímetro y área", "Vectores", "Coordenadas"],
+      url: "simulaciones/homotecias.html",
+      dibujo: "homotecia",
       fecha: "2026-11-25"
     }
     // Para agregar otra simulación: sube su archivo .html a la carpeta "simulaciones"

@@ -409,6 +409,33 @@
       <path d="M160 34 L150 143" stroke="#E2571E" stroke-width="2"/>
       <circle cx="262" cy="134" r="2.6" fill="#2C395C"/><circle cx="160" cy="34" r="2.6" fill="#2C395C"/>
     </svg>`,
+    fracciones: `<svg viewBox="0 0 320 180" aria-hidden="true">
+      <rect x="40" y="26" width="128" height="128" fill="#ECE8DC"/>
+      <rect x="40" y="26" width="85.3" height="128" fill="#B9A727" fill-opacity=".35"/>
+      <rect x="40" y="26" width="128" height="96" fill="#E2571E" fill-opacity=".28"/>
+      <rect x="40" y="26" width="85.3" height="96" fill="#2C395C" fill-opacity=".22" stroke="#2C395C" stroke-width="2.2"/>
+      <g stroke="#2C395C" stroke-width="1" opacity=".55"><path d="M82.7 26 V154 M125.3 26 V154 M40 58 H168 M40 90 H168 M40 122 H168"/></g>
+      <rect x="40" y="26" width="128" height="128" fill="none" stroke="#2C395C" stroke-width="1.8"/>
+      <path d="M200 120 H296" stroke="#2C395C" stroke-width="1.6"/><path d="M200 114 V126 M248 114 V126 M296 114 V126" stroke="#2C395C" stroke-width="1.6"/>
+      <rect x="200" y="86" width="96" height="16" fill="#B9A727" fill-opacity=".45" stroke="#2C395C" stroke-width="1.2"/>
+      <rect x="200" y="132" width="36" height="14" fill="#E2571E" fill-opacity=".55" stroke="#2C395C" stroke-width="1.2"/><rect x="236" y="132" width="36" height="14" fill="#E2571E" fill-opacity=".55" stroke="#2C395C" stroke-width="1.2"/><rect x="272" y="132" width="36" height="14" fill="none" stroke="#2C395C" stroke-width="1.2" stroke-dasharray="3 3"/>
+    </svg>`,
+    enteros: `<svg viewBox="0 0 320 180" aria-hidden="true">
+      <path d="M20 132 H300" stroke="#2C395C" stroke-width="1.8"/>
+      <g stroke="#2C395C" stroke-width="1.4"><path d="M40 126 V138 M70 126 V138 M100 126 V138 M130 126 V138 M190 126 V138 M220 126 V138 M250 126 V138 M280 126 V138"/></g>
+      <path d="M160 122 V142" stroke="#2C395C" stroke-width="3"/>
+      <path d="M160 106 H72" stroke="#E2571E" stroke-width="3.5"/><path d="M70 106 l10 -6 v12 z" fill="#E2571E"/>
+      <path d="M72 106 A 88 74 0 0 1 160 32 A 88 74 0 0 1 248 106" fill="none" stroke="#2C395C" stroke-width="1.4" stroke-dasharray="4 5"/>
+      <path d="M160 106 H246" stroke="#B9A727" stroke-width="3.5"/><path d="M250 106 l-10 -6 v12 z" fill="#B9A727"/>
+      <circle cx="160" cy="132" r="4" fill="#2C395C"/>
+    </svg>`,
+    homotecia: `<svg viewBox="0 0 320 180" aria-hidden="true">
+      <path d="M36 150 L189.9 75.9 M36 150 L229.8 18.9 M36 150 L258.3 121.5" stroke="#2C395C" stroke-width="1.1" stroke-dasharray="3 5" opacity=".7" fill="none"/>
+      <polygon points="90.0,124.0 104.0,104.0 114.0,140.0" fill="#B9A727" fill-opacity=".4" stroke="#2C395C" stroke-width="1.6" stroke-linejoin="round"/>
+      <polygon points="165.6,87.6 199.2,39.6 223.2,126.0" fill="#E2571E" fill-opacity=".4" stroke="#2C395C" stroke-width="1.8" stroke-linejoin="round"/>
+      <circle cx="36" cy="150" r="5" fill="#2C395C"/>
+    </svg>`,
+
     generico: `<svg viewBox="0 0 320 180" aria-hidden="true"><g fill="none" stroke="#2C395C" stroke-width="1.6"><circle cx="160" cy="90" r="46" stroke-dasharray="2 5"/><ellipse cx="160" cy="90" rx="96" ry="26" transform="rotate(-18 160 90)"/></g><circle cx="160" cy="90" r="16" fill="#E2571E"/><circle cx="248" cy="62" r="5" fill="#B9A727"/></svg>`
   };
 

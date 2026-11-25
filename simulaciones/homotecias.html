@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Homotecias · Órbita Matemática</title>
+<meta name="description" content="Simulación interactiva de homotecias: figuras reales y geométricas, razón k positiva y negativa, cámara oscura, perímetro y área; homotecia vectorial en el plano cartesiano. I° medio.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#10151b);--ink:light-dark(#16202b,#e6ecf2);--mut:light-dark(#5b6675,#9aa7b5);--line:light-dark(#dde4ec,#28323d);--grid:light-dark(#edf1f6,#19212a);--band:light-dark(#163a5f,#0b2035);--card:light-dark(#f4f7fa,#17202a);--sel:#378ADD;--coral:#D85A30;--teal:#1D9E75;--vio:#7F77DD;--amb:#BA7517;--pink:#D4537E}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Lexend,system-ui,sans-serif;overflow-x:clip}
+h1,h2{font-weight:600;line-height:1.1;margin:0;text-wrap:balance}
+button,input{font:inherit;color:inherit}
+button{min-height:40px;padding:6px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);cursor:pointer}
+button:hover{border-color:var(--mut)}button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
+button.on{border-color:var(--sel);color:var(--sel);background:color-mix(in srgb,var(--sel) 10%,transparent)}
+button.pri{background:var(--band);color:#fff;border-color:var(--band)}
+@media(prefers-color-scheme:dark){button.pri{background:#2b5f93;border-color:#2b5f93}}
+input[type=checkbox]{accent-color:var(--sel);width:18px;height:18px}
+.top{background:var(--band);color:#fff;padding:14px max(4vw,16px);display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:18px;flex-wrap:wrap}
+.volver{color:#fff;text-decoration:none;font-size:14px;font-weight:500;opacity:.82;padding:6px 10px;border:1px solid rgba(255,255,255,.35);border-radius:999px}.volver:hover{opacity:1;background:rgba(255,255,255,.1)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs a{color:#fff;text-decoration:none;padding:8px 12px;border-radius:999px;font-size:15px;opacity:.82}
+.tabs a:hover{opacity:1;background:rgba(255,255,255,.1)}.tabs a.on{opacity:1;background:#fff;color:#163a5f}
+.band{padding:clamp(20px,3vw,44px) max(4vw,16px)}
+.work{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:24px;max-width:1400px;margin:0 auto}
+.stagehead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 18px;margin-bottom:8px}
+.stagehead h1{font-size:clamp(26px,3vw,36px)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--mut)}
+.legend i{display:inline-block;width:16px;height:10px;border-radius:3px;vertical-align:middle;margin-right:6px}
+.fig{position:relative;height:clamp(340px,58vh,600px);border-radius:16px;border:1px solid var(--line);background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;overflow:hidden}
+.fig svg{position:absolute;inset:0;width:100%;height:100%}
+.hint{position:absolute;left:12px;bottom:8px;margin:0;font-size:13px;color:var(--mut);pointer-events:none}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.stepTxt{font-size:15px;color:var(--ink);flex:1 1 100%;background:var(--card);border-radius:12px;padding:10px 14px;margin:0}
+.panel{display:flex;flex-direction:column;gap:16px}
+.box{background:var(--card);border-radius:14px;padding:14px 16px}
+.box h2{font-size:17px;margin-bottom:10px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}.seg button{min-height:36px;padding:4px 12px;font-size:14px}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--mut);margin-top:10px}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px}.row button{min-height:34px;padding:3px 10px;font-size:14px}
+.mets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.met{background:var(--card);border-radius:12px;padding:10px 14px}.met p{margin:0}.met .l{font-size:13px;color:var(--mut)}.met .v{font-size:clamp(19px,2vw,23px);font-weight:600}.met .s{font-size:13px;color:var(--mut)}
+.fm div{font-size:15px;line-height:1.7;padding:4px 0;border-bottom:1px dashed var(--line)}.fm div:last-child{border:0}.fm b{font-weight:600}
+details summary{cursor:pointer;font-weight:600;font-size:17px;min-height:32px}
+.concept{border-left:4px solid var(--vio);background:color-mix(in srgb,var(--vio) 9%,transparent);padding:10px 14px;font-size:15px;margin:0}
+.concept b{color:var(--coral);font-weight:600}
+.note{font-size:13px;color:var(--mut);margin:0}
+.warn{border-left:4px solid var(--amb);background:color-mix(in srgb,var(--amb) 10%,transparent);padding:8px 12px;font-size:14px;margin:0}
+[hidden]{display:none!important}
+.fx{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.08;margin:0 .1em;font-size:.92em}
+.fx>span{padding:0 .2em}.fx>span:first-child{border-bottom:1.6px solid currentColor}
+.frin{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.fr{display:inline-flex;flex-direction:column;align-items:center;gap:4px;padding:6px 8px;border-radius:12px;background:var(--bg)}
+.fr .bar{width:100%;border-top:3px solid currentColor}
+.fr.t{color:var(--teal)}.fr.c{color:var(--coral)}
+.stp{display:inline-flex;align-items:center;gap:4px}
+.stp button{min-height:34px;width:34px;padding:0;font-size:18px;line-height:1;color:var(--ink)}
+.stp output{min-width:2.4ch;text-align:center;font-weight:600;font-size:22px}
+.op{font-size:30px;font-weight:600;color:var(--mut)}
+.lbl{font-size:13px;color:var(--mut);display:block;margin-bottom:6px}
+@media(max-width:900px){.work{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.fig{height:360px}.tabs a{padding:6px 9px;font-size:14px}}
+
+.fig.plain{background-image:none}
+.fig svg{touch-action:none}
+input[type=range]{accent-color:var(--sel);width:100%;height:28px}
+.sl{display:grid;grid-template-columns:5.5em minmax(0,1fr) 3.6em;align-items:center;gap:10px;margin:4px 0}
+.sl label{font-size:14px;color:var(--mut)}.sl output{font-weight:600;text-align:right;font-size:18px}
+.lbl2{font-size:13px;color:var(--mut);margin:12px 0 6px;display:block}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}.tbl th{font-weight:500;color:var(--mut);text-align:left;font-size:12.5px;padding:4px 6px;border-bottom:1px solid var(--line)}.tbl td{padding:6px;border-bottom:1px dashed var(--line);white-space:nowrap}
+.tbl td:first-child{font-weight:600}.tbl .t{color:var(--teal)}.tbl .c{color:var(--coral)}.tbl .v{color:var(--vio)}
+.kbig{font-size:13px;font-weight:500;color:var(--mut)}
+</style>
+</head>
+<body>
+<header class="top">
+<div class="brand"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="52" r="3" fill="#fff"/><path d="M8 52 L58 8 M8 52 L60 40 M8 52 L34 6" stroke-dasharray="3 4" stroke-width="2"/><path d="M22 40 L30 26 L32 37 Z"/><path d="M36 30 L52 2 L56 24 Z"/></svg><span>Homotecias</span><a class="volver" href="../index.html#simulaciones" target="_top">← Órbita Matemática</a></div>
+<nav class="tabs" id="tabs"><a href="#homotecia" data-r="homotecia">Homotecia</a><a href="#vectorial" data-r="vectorial">Homotecia vectorial</a></nav>
+</header>
+<main>
+<section id="vH" class="band" hidden>
+<div class="work">
+<div>
+<div class="stagehead"><h1>Homotecia de centro O y razón k</h1><div class="legend"><span><i style="background:color-mix(in srgb,var(--teal) 35%,transparent);border:1px solid var(--teal)"></i>Figura original</span><span><i style="background:var(--coral)"></i>Imagen</span><span><i style="background:var(--mut)"></i>Rayos desde O</span></div></div>
+<div class="fig plain"><svg id="hsv" role="img" aria-label="Homotecia de una figura"></svg><p class="hint" id="hHint">Arrastra el centro O, la figura o sus vértices · cada cuadro mide 1 cm</p></div>
+<div class="tools" id="hTools"><button id="hShow" class="pri" hidden>Mostrar la imagen</button><p class="stepTxt" id="hTxt"></p></div>
+</div>
+<aside class="panel">
+<p class="concept">Una <b>homotecia</b> de centro O y razón k lleva cada punto P a un punto P′ sobre la recta OP, de modo que <b>OP′ = k · OP</b>. Si k es positivo, P′ queda al mismo lado de O; si es negativo, al <b>lado opuesto</b>: la imagen sale invertida, como en una cámara oscura o en la retina del ojo.</p>
+<div class="box"><h2>Figura</h2>
+<span class="lbl2" style="margin-top:0">Objetos</span><div class="seg" id="hFigR"></div>
+<span class="lbl2">Figuras geométricas (puedes mover sus vértices)</span><div class="seg" id="hFigG"></div>
+<div class="row"><button id="hCam">Ejemplo: cámara oscura</button><button id="hReset">Restablecer posición</button></div>
+</div>
+<div class="box"><h2>Razón de homotecia</h2>
+<div class="sl"><label for="hk">k</label><input type="range" id="hk" min="-3" max="3" step="0.1"><output id="hkO"></output></div>
+<div class="row" id="hkPre" style="margin-top:4px"></div>
+<label class="chk"><input type="checkbox" id="hRays" checked> Mostrar rayos desde O</label>
+<label class="chk"><input type="checkbox" id="hCamC"> Mostrar la cámara oscura (orificio en O)</label>
+<label class="chk"><input type="checkbox" id="hHide"> Predecir: ocultar la imagen y marcar dónde quedará A′</label>
+</div>
+<div class="mets" id="hMets"></div>
+<div class="box"><details open><summary>Medidas y propiedades</summary><div class="fm" id="hFm"></div></details></div>
+</aside>
+</div>
+</section>
+
+<section id="vV" class="band" hidden>
+<div class="work">
+<div>
+<div class="stagehead"><h1>Homotecia vectorial</h1><div class="legend" id="vLeg"></div></div>
+<div class="fig plain"><svg id="vsv" role="img" aria-label="Homotecia vectorial en el plano cartesiano"></svg><p class="hint">Arrastra O, A, B o C a otro punto de la cuadrícula</p></div>
+<div class="tools"><p class="stepTxt" id="vTxt"></p></div>
+</div>
+<aside class="panel">
+<p class="concept">En forma vectorial, la homotecia de centro O y razón k <b>multiplica por k</b> cada vector que sale de O: <b>OP′ = k · OP</b>. Así, P′ = O + k · (P − O). Además, cualquier vector de la figura queda multiplicado por k: <b>A′B′ = k · AB</b>.</p>
+<div class="box"><h2>Razón</h2>
+<div class="sl"><label for="vk">k₁</label><input type="range" id="vk" min="-3" max="3" step="0.5"><output id="vkO"></output></div>
+<label class="chk"><input type="checkbox" id="vAB" checked> Mostrar el vector AB y su imagen A′B′</label>
+<label class="chk"><input type="checkbox" id="vTwo"> Aplicar una segunda homotecia con el mismo centro</label>
+<div class="sl" id="vk2Row" hidden><label for="vk2">k₂</label><input type="range" id="vk2" min="-3" max="3" step="0.5"><output id="vk2O"></output></div>
+<div class="row"><button id="vReset">Restablecer puntos</button></div>
+</div>
+<div class="box"><h2>Coordenadas</h2><table class="tbl" id="vTbl"></table></div>
+<div class="mets" id="vMets"></div>
+<div class="box"><details open><summary>Desarrollo</summary><div class="fm" id="vFm"></div></details></div>
+</aside>
+</div>
+</section>
+</main>
+<script>
+{
+const $=id=>document.getElementById(id);
+const C={teal:'#1D9E75',coral:'#D85A30',vio:'#7F77DD',amb:'#BA7517',pink:'#D4537E',sel:'#378ADD',ink:'var(--ink)'};
+const nf=(x,d=2)=>{const r=Math.round(x*10**d)/10**d;return (Object.is(r,-0)?0:r).toLocaleString('es-CL',{maximumFractionDigits:d});};
+const kS=k=>(k<0?'−':'')+nf(Math.abs(k),2);
+const kP=k=>k<0?`(${kS(k)})`:kS(k);
+const deN=x=>x.startsWith('el ')?'del '+x.slice(3):'de '+x;
+const F1=x=>x.toFixed(1);
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function T(x,y,s,c,o={}){return `<text x="${F1(x)}" y="${F1(y)}" fill="${c}" font-size="${o.fs||15}" font-weight="${o.fw||600}" text-anchor="${o.a||'middle'}" dominant-baseline="middle" style="paint-order:stroke;stroke:var(--bg);stroke-width:${o.sw??5}px;stroke-linejoin:round" pointer-events="none">${s}</text>`;}
+function Ln(a,b,c,w,o={}){return `<line x1="${F1(a[0])}" y1="${F1(a[1])}" x2="${F1(b[0])}" y2="${F1(b[1])}" stroke="${c}" stroke-width="${w}" opacity="${o.op??1}" ${o.dash?`stroke-dasharray="${o.dash}"`:''} stroke-linecap="round" pointer-events="none"/>`;}
+function Arr(a,b,c,w,o={}){const L=Math.hypot(b[0]-a[0],b[1]-a[1]);if(L<3)return '';const ux=(b[0]-a[0])/L,uy=(b[1]-a[1])/L,h=Math.min(13,L*.4),bx=b[0]-ux*h,by=b[1]-uy*h;
+ return Ln(a,[bx,by],c,w,o)+`<polygon points="${F1(b[0])},${F1(b[1])} ${F1(bx-uy*h*.5)},${F1(by+ux*h*.5)} ${F1(bx+uy*h*.5)},${F1(by-ux*h*.5)}" fill="${c}" opacity="${o.op??1}" pointer-events="none"/>`;}
+const PS=p=>p.map(q=>F1(q[0])+','+F1(q[1])).join(' ');
+const dist=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
+const per=p=>p.reduce((s,q,i)=>s+dist(q,p[(i+1)%p.length]),0);
+const area=p=>Math.abs(p.reduce((s,q,i)=>{const r=p[(i+1)%p.length];return s+q[0]*r[1]-r[0]*q[1];},0))/2;
+const ang=(P,A,B)=>{const u=[A[0]-P[0],A[1]-P[1]],v=[B[0]-P[0],B[1]-P[1]];return Math.acos(Math.max(-1,Math.min(1,(u[0]*v[0]+u[1]*v[1])/(Math.hypot(...u)*Math.hypot(...v)))))*180/Math.PI;};
+const P2=(p,int)=>{const a=nf(p[0]),b=nf(p[1]);return Number.isInteger(Math.round(p[0]*100)/100)&&Number.isInteger(Math.round(p[1]*100)/100)?`(${a}, ${b})`:`(${a}; ${b})`;};
+
+/* ---------- figuras ---------- */
+function star(){const p=[];for(let i=0;i<10;i++){const r=i%2?0.72:1.75,t=Math.PI/2+i*Math.PI/5;p.push([r*Math.cos(t),r*Math.sin(t)]);}return p;}
+function reg(n,R){return Array.from({length:n},(_,i)=>{const t=Math.PI/2+i*2*Math.PI/n;return[R*Math.cos(t),R*Math.sin(t)];});}
+const rect=(x1,y1,x2,y2)=>[[x1,y1],[x2,y1],[x2,y2],[x1,y2]];
+const FIGS={
+ estrella:{n:'Estrella',parts:[{pts:star(),col:'amb'}],keys:[[0,0],[0,6],[0,4]],main:0,mainN:'la estrella'},
+ vela:{n:'Vela',parts:[{pts:rect(-.55,-1.8,.55,.7),col:'pink'},{pts:rect(-.05,.7,.05,.98),col:'ink'},{pts:[[0,2.3],[.22,1.8],[.36,1.42],[.3,1.15],[.15,1.0],[0,.97],[-.15,1.0],[-.3,1.15],[-.36,1.42],[-.22,1.8]],col:'amb'}],keys:[[2,0],[0,1],[0,0]],main:0,mainN:'el cuerpo de la vela'},
+ arbol:{n:'Árbol',parts:[{pts:rect(-.28,-2,.28,-1.2),col:'amb'},{pts:[[-1.5,-1.2],[1.5,-1.2],[0,.3]],col:'teal'},{pts:[[-1.2,-.3],[1.2,-.3],[0,1.1]],col:'teal'},{pts:[[-.9,.6],[.9,.6],[0,1.9]],col:'teal'}],keys:[[3,2],[1,1],[0,0]],main:1,mainN:'la copa inferior del árbol'},
+ casa:{n:'Casa',parts:[{pts:rect(-1.3,-1.5,1.3,.6),col:'coral'},{pts:[[-1.6,.6],[1.6,.6],[0,2]],col:'vio'},{pts:rect(-.35,-1.5,.35,-.4),col:'amb'},{pts:rect(.55,-.3,1,.2),col:'sel'}],keys:[[1,2],[0,1],[0,0]],main:0,mainN:'el muro de la casa'},
+ triangulo:{n:'Triángulo',geo:true,base:[[-1.6,-1.2],[1.6,-1.2],[.4,1.6]]},
+ cuadrilatero:{n:'Cuadrilátero',geo:true,base:[[-1.5,-1.2],[1.6,-1],[1.1,1.4],[-1.2,1.1]]},
+ pentagono:{n:'Pentágono',geo:true,base:reg(5,1.6)}
+};
+const NAMES='ABCDE';
+const H={fig:'estrella',O:[-5,-1],pos:[-1.5,0.3],k:2,rays:true,cam:false,hide:false,rev:false,guess:null,geo:{},view:null,drag:null,anim:false};
+Object.keys(FIGS).forEach(k=>{if(FIGS[k].geo)H.geo[k]=FIGS[k].base.map(p=>[...p]);});
+function figParts(){const f=FIGS[H.fig];if(f.geo)return{parts:[{pts:H.geo[H.fig],col:'teal'}],keys:H.geo[H.fig].map((_,i)=>[0,i]),main:0,mainN:'la figura'};return f;}
+function world(){const f=figParts(),[px,py]=H.pos,O=H.O,k=H.k;
+ const orig=f.parts.map(p=>p.pts.map(q=>[q[0]+px,q[1]+py])),img=orig.map(p=>p.map(P=>[O[0]+k*(P[0]-O[0]),O[1]+k*(P[1]-O[1])]));
+ return{f,orig,img,ko:f.keys.map(([a,b])=>orig[a][b]),ki:f.keys.map(([a,b])=>img[a][b])};}
+const RF=['estrella','vela','arbol','casa'],GF=['triangulo','cuadrilatero','pentagono'];
+$('hFigR').innerHTML=RF.map(k=>`<button data-f="${k}">${FIGS[k].n}</button>`).join('');
+$('hFigG').innerHTML=GF.map(k=>`<button data-f="${k}">${FIGS[k].n}</button>`).join('');
+document.querySelectorAll('#hFigR,#hFigG').forEach(el=>el.onclick=e=>{const b=e.target.closest('button');if(!b)return;H.fig=b.dataset.f;H.rev=false;H.guess=null;upd();});
+const KP=[2,1.5,0.5,1,-0.5,-1,-2,0];
+$('hkPre').innerHTML=KP.map(k=>`<button data-k="${k}">k = ${kS(k)}</button>`).join('');
+$('hkPre').onclick=e=>{const b=e.target.closest('button');if(!b)return;H.k=+b.dataset.k;H.rev=false;H.guess=null;upd();};
+$('hk').oninput=e=>{H.k=Math.round(+e.target.value*10)/10;H.rev=false;H.guess=null;upd();};
+$('hRays').onchange=e=>{H.rays=e.target.checked;upd();};
+$('hCamC').onchange=e=>{H.cam=e.target.checked;upd();};
+$('hHide').onchange=e=>{H.hide=e.target.checked;H.rev=false;H.guess=null;upd();};
+$('hShow').onclick=()=>{H.rev=true;upd();};
+$('hCam').onclick=()=>{H.fig='vela';H.k=-0.5;H.O=[0,0];H.pos=[-6,0.3];H.cam=true;$('hCamC').checked=true;H.rev=false;H.guess=null;upd();};
+$('hReset').onclick=()=>{H.O=[-5,-1];H.pos=[-1.5,0.3];if(FIGS[H.fig].geo)H.geo[H.fig]=FIGS[H.fig].base.map(p=>[...p]);H.guess=null;upd();};
+
+/* vista (escala automática) */
+function fitView(V,pts,W,Hh,maxS,instant){let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;pts.forEach(p=>{x0=Math.min(x0,p[0]);x1=Math.max(x1,p[0]);y0=Math.min(y0,p[1]);y1=Math.max(y1,p[1]);});
+ const m=1.2,cx=(x0+x1)/2,cy=(y0+y1)/2,sc=Math.min(maxS,(W-60)/Math.max(4,x1-x0+2*m),(Hh-70)/Math.max(4,y1-y0+2*m));
+ if(!V.v||instant||reduce){V.v={cx,cy,sc};return false;}const v=V.v,a=.22;v.cx+=(cx-v.cx)*a;v.cy+=(cy-v.cy)*a;v.sc+=(sc-v.sc)*a;
+ return Math.abs(cx-v.cx)*v.sc>.5||Math.abs(cy-v.cy)*v.sc>.5||Math.abs(sc-v.sc)>.05;}
+function mk(V,W,Hh){const{cx,cy,sc}=V.v;return{s:p=>[W/2+(p[0]-cx)*sc,Hh/2+12-(p[1]-cy)*sc],w:q=>[(q[0]-W/2)/sc+cx,-(q[1]-Hh/2-12)/sc+cy],sc};}
+function grid(M,W,Hh,axes){const a=M.w([0,Hh]),b=M.w([W,0]),st=M.sc>=14?1:M.sc>=7?2:5;let o='';
+ for(let x=Math.ceil(a[0]/st)*st;x<=b[0];x+=st){const p=M.s([x,0]);o+=Ln([p[0],0],[p[0],Hh],axes&&x===0?'var(--ink)':'var(--line)',axes&&x===0?1.6:1);if(axes&&x!==0&&M.sc*st>=16){o+=T(p[0],Math.min(Hh-14,Math.max(12,M.s([0,0])[1]+14)),x<0?'−'+Math.abs(x):x,'var(--mut)',{fs:11,fw:500,sw:3});}}
+ for(let y=Math.ceil(a[1]/st)*st;y<=b[1];y+=st){const p=M.s([0,y]);o+=Ln([0,p[1]],[W,p[1]],axes&&y===0?'var(--ink)':'var(--line)',axes&&y===0?1.6:1);if(axes&&y!==0&&M.sc*st>=16){o+=T(Math.min(W-14,Math.max(14,M.s([0,0])[0]-12)),p[1],y<0?'−'+Math.abs(y):y,'var(--mut)',{fs:11,fw:500,sw:3,a:'end'});}}
+ return o;}
+function svs(id){const s=$(id),W=s.clientWidth||600,Hh=s.clientHeight||420;s.setAttribute('viewBox',`0 0 ${W} ${Hh}`);return{s,W,Hh};}
+
+/* ---------- homotecia ---------- */
+const HV={v:null};
+function renderH(){const{s,W,Hh}=svs('hsv'),Wd=world(),{f,orig,img,ko,ki}=Wd,k=H.k,O=H.O,hid=H.hide&&!H.rev;
+ const pts=[O,...orig.flat()];if(!hid)pts.push(...img.flat());else pts.push(...ki);if(H.guess)pts.push(H.guess);
+ H.anim=H.drag?false:fitView(HV,pts,W,Hh,70,false);if(!HV.v)fitView(HV,pts,W,Hh,70,true);const M=mk(HV,W,Hh),S=M.s;
+ let o=grid(M,W,Hh,false);
+ if(H.cam&&k<0&&!hid){const ys=[...orig.flat(),...img.flat()].map(p=>p[1]),top=Math.max(...ys)+0.8,bot=Math.min(...ys)-0.8,xs=(Math.min(...img.flat().map(p=>p[0]))+Math.max(...img.flat().map(p=>p[0])))/2;
+  const xsS=Math.max(...img.flat().map(p=>p[0]))+0.3,g=.18;
+  o+=`<rect x="${F1(S([O[0],top])[0])}" y="${F1(S([O[0],top])[1])}" width="${F1(Math.max(0,S([xsS,0])[0]-S([O[0],0])[0]))}" height="${F1(S([0,bot])[1]-S([0,top])[1])}" fill="var(--ink)" fill-opacity=".05" stroke="none"/>`;
+  o+=Ln(S([O[0],top]),S([O[0],O[1]+g]),'var(--ink)',5)+Ln(S([O[0],O[1]-g]),S([O[0],bot]),'var(--ink)',5)+Ln(S([O[0],top]),S([xsS,top]),'var(--ink)',2.5)+Ln(S([O[0],bot]),S([xsS,bot]),'var(--ink)',2.5)+Ln(S([xsS,top]),S([xsS,bot]),'var(--ink)',4);
+  o+=T(S([O[0],top])[0],S([O[0],top])[1]-14,'pared con orificio','var(--mut)',{fs:13,fw:500})+T(S([xsS,top])[0],S([xsS,top])[1]-14,'pantalla','var(--mut)',{fs:13,fw:500});}
+ if(H.rays){ko.forEach((P,i)=>{const Q=ki[i],dP=dist(O,P);if(dP<1e-6)return;const u=[(P[0]-O[0])/dP,(P[1]-O[1])/dP];
+  if(hid){const far=Math.max(dP,3*dP)+1;o+=Ln(S([O[0]-u[0]*far,O[1]-u[1]*far]),S([O[0]+u[0]*far,O[1]+u[1]*far]),'var(--mut)',1.2,{dash:'5 6',op:.55});}
+  else{const ext=0.7,at=d=>[O[0]+u[0]*d,O[1]+u[1]*d],st=k>=0?O:at(k*dP-ext),en=at(Math.max(dP,k>0?k*dP:0)+ext);
+   o+=Ln(S(st),S(en),'var(--mut)',1.2,{dash:'5 6',op:.65});}});}
+ const sty=(c,im)=>`fill="${C[c]}" fill-opacity="${im?.5:.18}" stroke="${C[c]}" stroke-width="${im?2.4:1.6}" stroke-linejoin="round"`;
+ orig.forEach((p,i)=>o+=`<polygon points="${PS(p.map(S))}" ${sty(f.parts[i].col,false)} ${i===0||!f.geo?'data-h="fig" style="cursor:move"':''}/>`);
+ if(!hid){img.forEach((p,i)=>o+=`<polygon points="${PS(p.map(S))}" ${sty(f.parts[i].col,true)} pointer-events="none"/>`);
+  if(ko.length){const A=ko[0],A2=ki[0];o+=Ln(S(O),S(A),C.teal,3.2,{op:.8})+Ln(S(O),S(A2),C.coral,3.2,{op:.45});}}
+ const cen=p=>p.reduce((s,q)=>[s[0]+q[0]/p.length,s[1]+q[1]/p.length],[0,0]),co=cen(ko),ci=cen(ki);
+ const lab=(P,c0,name,col)=>{const sp=S(P),sc=S(c0),dx=sp[0]-sc[0],dy=sp[1]-sc[1],L=Math.hypot(dx,dy)||1;return T(sp[0]+dx/L*16,sp[1]+dy/L*16,name,col,{fs:15});};
+ ko.forEach((P,i)=>{o+=`<circle cx="${F1(S(P)[0])}" cy="${F1(S(P)[1])}" r="3.5" fill="${C.teal}" pointer-events="none"/>`+lab(P,co,NAMES[i],C.teal);});
+ if(!hid)ki.forEach((P,i)=>{o+=`<circle cx="${F1(S(P)[0])}" cy="${F1(S(P)[1])}" r="3.5" fill="${C.coral}" pointer-events="none"/>`+lab(P,ci,NAMES[i]+'′',C.coral);});
+ if(f.geo)H.geo[H.fig].forEach((q,i)=>{const p=S([q[0]+H.pos[0],q[1]+H.pos[1]]);o+=`<circle cx="${F1(p[0])}" cy="${F1(p[1])}" r="11" fill="${C.teal}" fill-opacity=".18" stroke="${C.teal}" stroke-width="1.5" data-h="v${i}" style="cursor:grab"/>`;});
+ const so=S(O);o+=`<circle cx="${F1(so[0])}" cy="${F1(so[1])}" r="13" fill="var(--ink)" fill-opacity=".08" stroke="none" data-h="O" style="cursor:grab"/><circle cx="${F1(so[0])}" cy="${F1(so[1])}" r="5.5" fill="var(--ink)" pointer-events="none"/>`+T(so[0]-14,so[1]-14,'O','var(--ink)',{fs:17});
+ if(H.guess){const g=S(H.guess);o+=`<circle cx="${F1(g[0])}" cy="${F1(g[1])}" r="7" fill="none" stroke="${C.vio}" stroke-width="2.5" pointer-events="none"/>`+Ln([g[0]-10,g[1]],[g[0]+10,g[1]],C.vio,2)+Ln([g[0],g[1]-10],[g[0],g[1]+10],C.vio,2)+T(g[0]+14,g[1]-12,'A′ ?',C.vio,{a:'start'});
+  if(!hid)o+=Ln(g,S(ki[0]),C.vio,1.6,{dash:'3 4'});}
+ s.innerHTML=o;H.M=M;}
+function typeOf(k){if(k===0)return['Caso degenerado','Toda la figura se reduce al punto O.'];if(k===1)return['Identidad','La imagen coincide con la figura original.'];if(k===-1)return['Inversa · simetría central','Misma medida, al otro lado de O y girada en 180°.'];
+ const d=k>0?'Directa':'Inversa',t=Math.abs(k)>1?'ampliación':'reducción';return[`${d} · ${t}`,k>0?`La imagen queda al mismo lado de O y es una ${t}.`:`La imagen queda al lado opuesto de O, girada en 180°, y es una ${t}.`];}
+function updH(){const{f,orig,img,ko,ki}=world(),k=H.k,O=H.O,hid=H.hide&&!H.rev,q='<b>?</b>';
+ document.querySelectorAll('#hFigR button,#hFigG button').forEach(b=>b.classList.toggle('on',b.dataset.f===H.fig));
+ $('hk').value=k;$('hkO').textContent=kS(k);document.querySelectorAll('#hkPre button').forEach(b=>b.classList.toggle('on',+b.dataset.k===k));
+ $('hShow').hidden=!hid;const[ty,td]=typeOf(k);
+ const A=ko[0],A2=ki[0],B=ko[1],B2=ki[1],m=f.main,p0=per(orig[m]),p1=per(img[m]),a0=area(orig[m]),a1=area(img[m]);
+ $('hTxt').innerHTML=hid?(H.guess?`Marcaste tu predicción. Presiona <b>Mostrar la imagen</b> para comprobar.`:`Con k = ${kS(k)}, ¿dónde quedará A′? <b>Toca la cuadrícula</b> para marcar tu predicción.`):
+  (H.guess?`Tu predicción quedó a <b>${nf(dist(H.guess,A2),1)} cm</b> de A′. `:'')+`<b>${ty}.</b> ${td}${H.cam&&k<0?' Igual que en una cámara oscura: los rayos que salen de la vela cruzan el orificio O y forman en la pantalla una imagen invertida.':''}${H.cam&&k>=0?' <span style="color:var(--mut)">(La cámara oscura necesita k negativo: el orificio queda entre el objeto y su imagen.)</span>':''}`;
+ $('hMets').innerHTML=[['Razón k',`${kS(k)} <span class="kbig">${hid?'':ty.toLowerCase()}</span>`],['OA′ : OA',hid?q:`${nf(dist(O,A2))} : ${nf(dist(O,A))} = ${nf(Math.abs(k))}`],['Perímetro',hid?q:`× ${nf(Math.abs(k))}`],['Área',hid?q:`× ${nf(k*k)}`]].map(([l,v])=>`<div class="met"><p class="l">${l}</p><p class="v">${v}</p></div>`).join('');
+ const L=[`<b>Distancias desde O:</b> OA = ${nf(dist(O,A))} cm y OA′ = ${hid?q:nf(dist(O,A2))+' cm'}. Entonces OA′ = |k| · OA = ${nf(Math.abs(k))} · ${nf(dist(O,A))}${hid?'':' = '+nf(Math.abs(k)*dist(O,A))+' cm'}.`];
+ if(!hid&&k!==0){L.push(`<b>Lados:</b> AB = ${nf(dist(A,B))} cm y A′B′ = ${nf(dist(A2,B2))} cm. Todos los lados se multiplican por |k| = ${nf(Math.abs(k))}, y cada lado de la imagen es <b>paralelo</b> a su lado original.`);
+  L.push(`<b>Perímetro</b> ${deN(f.mainN)}: ${nf(p0)} cm → ${nf(p1)} cm. Cociente ${nf(p1)} : ${nf(p0)} = ${nf(Math.abs(k))} = |k|.`);
+  L.push(`<b>Área</b> ${deN(f.mainN)}: ${nf(a0)} cm² → ${nf(a1)} cm². Cociente ${nf(a1)} : ${nf(a0)} = ${nf(k*k)} = k². <span style="color:var(--mut)">El área no se multiplica por k, sino por k², porque se amplían el largo y el ancho.</span>`);
+  if(ko.length>=3){const g0=ang(A,B,ko[2]),g1=ang(A2,B2,ki[2]);L.push(`<b>Ángulos:</b> el ángulo en A mide ${nf(g0,1)}° y el ángulo en A′ mide ${nf(g1,1)}°. La homotecia conserva los ángulos: la imagen es <b>semejante</b> a la original.`);}
+  if(k<0)L.push(`<b>k negativo:</b> A y A′ quedan a distintos lados de O. Una homotecia de razón k negativa equivale a una de razón |k| = ${nf(-k)} seguida de un giro de 180° en torno a O.`);}
+ if(k===0)L.push('Con k = 0 todos los puntos van a O: no hay figura imagen. Por eso en la práctica se pide k ≠ 0.');
+ L.push(`<b>Para calcular k a partir de una figura y su imagen:</b> k = OA′ / OA, con signo positivo si A y A′ están al mismo lado de O, y negativo si O queda entre ellos.`);
+ $('hFm').innerHTML=L.map(x=>`<div>${x}</div>`).join('');
+ renderH();}
+/* arrastre */
+function dragSetup(id,state,onDown,onMove,onUp){const s=$(id);s.addEventListener('pointerdown',e=>{const h=e.target.getAttribute&&e.target.getAttribute('data-h');const r=s.getBoundingClientRect(),p=[e.clientX-r.left,e.clientY-r.top];
+  state.drag=onDown(h,p);state.moved=0;s.setPointerCapture(e.pointerId);});
+ s.addEventListener('pointermove',e=>{if(!state.drag)return;const r=s.getBoundingClientRect();state.moved++;onMove([e.clientX-r.left,e.clientY-r.top]);});
+ const up=()=>{if(!state.drag)return;onUp&&onUp();state.drag=null;upd();};s.addEventListener('pointerup',up);s.addEventListener('pointercancel',up);}
+const snap=v=>Math.round(v*2)/2;
+dragSetup('hsv',H,(h,p)=>{const w=H.M.w(p);if(h==='O')return{t:'O'};if(h&&h[0]==='v')return{t:'v',i:+h.slice(1)};if(h==='fig')return{t:'fig',off:[w[0]-H.pos[0],w[1]-H.pos[1]]};
+  if(H.hide&&!H.rev){H.guess=w;upd();}return null;},
+ p=>{const w=H.M.w(p),d=H.drag;if(d.t==='O')H.O=[snap(w[0]),snap(w[1])];else if(d.t==='v')H.geo[H.fig][d.i]=[snap(w[0])-H.pos[0],snap(w[1])-H.pos[1]];else H.pos=[snap(w[0]-d.off[0]),snap(w[1]-d.off[1])];H.rev=H.rev&&!(H.hide);if(H.hide){H.guess=null;}upd();});
+
+/* ---------- vectorial ---------- */
+const V={O:[0,0],A:[1,1],B:[4,1],C:[2,3],k:2,k2:-0.5,two:false,ab:true,drag:null};
+const VV={v:null};
+$('vk').oninput=e=>{V.k=+e.target.value;upd();};$('vk2').oninput=e=>{V.k2=+e.target.value;upd();};
+$('vAB').onchange=e=>{V.ab=e.target.checked;upd();};$('vTwo').onchange=e=>{V.two=e.target.checked;upd();};
+$('vReset').onclick=()=>{Object.assign(V,{O:[0,0],A:[1,1],B:[4,1],C:[2,3]});upd();};
+const hom=(P,k)=>[V.O[0]+k*(P[0]-V.O[0]),V.O[1]+k*(P[1]-V.O[1])];
+function renderV(){const{s,W,Hh}=svs('vsv'),k=V.k,ks=['A','B','C'],P=ks.map(n=>V[n]),P1=P.map(p=>hom(p,k)),Q2=P1.map(p=>hom(p,V.k2));
+ const pts=[V.O,...P,...P1,[0,0]];if(V.two)pts.push(...Q2);V.anim=V.drag?false:fitView(VV,pts,W,Hh,64,false);if(!VV.v)fitView(VV,pts,W,Hh,64,true);const M=mk(VV,W,Hh),S=M.s;
+ let o=grid(M,W,Hh,true);
+ o+=`<polygon points="${PS(P.map(S))}" fill="${C.teal}" fill-opacity=".16" stroke="${C.teal}" stroke-width="1.6"/>`;
+ o+=`<polygon points="${PS(P1.map(S))}" fill="${C.coral}" fill-opacity=".2" stroke="${C.coral}" stroke-width="2.2"/>`;
+ if(V.two)o+=`<polygon points="${PS(Q2.map(S))}" fill="${C.vio}" fill-opacity=".2" stroke="${C.vio}" stroke-width="2.2"/>`;
+ P1.forEach(p=>o+=Arr(S(V.O),S(p),C.coral,3.2,{op:.85}));P.forEach(p=>o+=Arr(S(V.O),S(p),C.teal,1.8));
+ if(V.two)Q2.forEach(p=>o+=Arr(S(V.O),S(p),C.vio,1.8,{dash:'5 5'}));
+ if(V.ab){o+=Arr(S(P[0]),S(P[1]),C.teal,3.4)+Arr(S(P1[0]),S(P1[1]),C.coral,3.8);}
+ const cen=a=>[(a[0][0]+a[1][0]+a[2][0])/3,(a[0][1]+a[1][1]+a[2][1])/3];
+ const lab=(p,c0,t,col)=>{const sp=S(p),sc=S(c0),dx=sp[0]-sc[0],dy=sp[1]-sc[1],L=Math.hypot(dx,dy)||1;return T(sp[0]+dx/L*18,sp[1]+dy/L*18,t,col,{fs:13});};
+ P.forEach((p,i)=>{const sp=S(p);o+=`<circle cx="${F1(sp[0])}" cy="${F1(sp[1])}" r="12" fill="${C.teal}" fill-opacity=".18" stroke="${C.teal}" stroke-width="1.5" data-h="${ks[i]}" style="cursor:grab"/>`+lab(p,cen(P),ks[i]+P2s(p),C.teal);});
+ P1.forEach((p,i)=>o+=`<circle cx="${F1(S(p)[0])}" cy="${F1(S(p)[1])}" r="4" fill="${C.coral}" pointer-events="none"/>`+lab(p,cen(P1),ks[i]+'′'+P2s(p),C.coral));
+ if(V.two)Q2.forEach((p,i)=>o+=`<circle cx="${F1(S(p)[0])}" cy="${F1(S(p)[1])}" r="4" fill="${C.vio}" pointer-events="none"/>`+lab(p,cen(Q2),ks[i]+'″',C.vio));
+ const so=S(V.O);o+=`<circle cx="${F1(so[0])}" cy="${F1(so[1])}" r="13" fill="var(--ink)" fill-opacity=".1" data-h="O" style="cursor:grab"/><circle cx="${F1(so[0])}" cy="${F1(so[1])}" r="5.5" fill="var(--ink)" pointer-events="none"/>`+T(so[0]-12,so[1]+16,'O'+P2s(V.O),'var(--ink)',{fs:13,a:'end'});
+ s.innerHTML=o;V.M=M;}
+const P2s=p=>P2(p);
+const vec=(a,b)=>[b[0]-a[0],b[1]-a[1]];
+const VS=v=>{const a=nf(v[0]),b=nf(v[1]);return (Number.isInteger(v[0])&&Number.isInteger(v[1]))?`(${a}, ${b})`:`(${a}; ${b})`;};
+function updV(){const k=V.k,ks=['A','B','C'],P=ks.map(n=>V[n]),P1=P.map(p=>hom(p,k)),Q2=P1.map(p=>hom(p,V.k2));
+ $('vk').value=k;$('vkO').textContent=kS(k);$('vk2').value=V.k2;$('vk2O').textContent=kS(V.k2);$('vk2Row').hidden=!V.two;
+ $('vLeg').innerHTML=[['teal','Original y vectores OP'],['coral','Imagen y vectores OP′ = k₁ · OP'],...(V.two?[['vio','Segunda imagen']]:[])].map(([c,s])=>`<span><i style="background:var(--${c})"></i>${s}</span>`).join('');
+ const hd=`<tr><th>Punto</th><th>Vector OP</th><th>k₁ · OP</th><th>Imagen P′</th>${V.two?'<th>P″</th>':''}</tr>`;
+ $('vTbl').innerHTML=hd+P.map((p,i)=>{const v=vec(V.O,p),w=[k*v[0],k*v[1]];return `<tr><td class="t">${ks[i]}${P2(p)}</td><td>${VS(v)}</td><td class="c">${VS(w)}</td><td class="c">${ks[i]}′${P2(P1[i])}</td>${V.two?`<td class="v">${P2(Q2[i])}</td>`:''}</tr>`;}).join('');
+ const[ty]=typeOf(k);
+ $('vMets').innerHTML=[['Razón k₁',`${kS(k)} <span class="kbig">${ty.toLowerCase()}</span>`],['Centro O',P2(V.O)],['Los lados se multiplican por',`|k₁| = ${nf(Math.abs(k))}`],['El área se multiplica por',`k₁² = ${nf(k*k)}`]].map(([l,v])=>`<div class="met"><p class="l">${l}</p><p class="v">${v}</p></div>`).join('');
+ const A=P[0],A1=P1[0],vA=vec(V.O,A),AB=vec(P[0],P[1]),A1B1=vec(P1[0],P1[1]);
+ const L=[`<b>Vector desde el centro:</b> OA = A − O = ${P2(A)} − ${P2(V.O)} = ${VS(vA)}.`,
+  `<b>Producto por un escalar:</b> OA′ = k₁ · OA = ${kP(k)} · ${VS(vA)} = ${VS([k*vA[0],k*vA[1]])}.`,
+  `<b>Coordenadas de la imagen:</b> A′ = O + OA′ = ${P2(V.O)} + ${VS([k*vA[0],k*vA[1]])} = <b>${P2(A1)}</b>.`,
+  `<b>Cualquier vector de la figura:</b> AB = ${VS(AB)} y A′B′ = ${VS(A1B1)} = ${kP(k)} · ${VS(AB)}. Por eso A′B′ es paralelo a AB y mide |k₁| veces su largo.`];
+ if(V.two){const kk=k*V.k2;L.push(`<b>Dos homotecias seguidas:</b> A″ = O + k₂ · (A′ − O) = O + k₂ · k₁ · (A − O). Es una sola homotecia de razón k₁ · k₂ = ${kP(k)} · ${kP(V.k2)} = <b>${kS(kk)}</b>: A″ = ${P2(Q2[0])}.`);}
+ if(V.O[0]===0&&V.O[1]===0)L.push(`<b>Centro en el origen:</b> basta multiplicar las coordenadas por k₁: A′ = ${kP(k)} · ${P2(A)} = ${P2(A1)}.`);
+ $('vFm').innerHTML=L.map(x=>`<div>${x}</div>`).join('');
+ $('vTxt').innerHTML=`<b>${ty}.</b> Cada vector OP se multiplica por k₁ = ${kS(k)}: ${k<0?'cambia de sentido y ':''}${Math.abs(k)>1?'se alarga':Math.abs(k)<1?'se acorta':'mantiene su largo'}${k===0?' hasta anularse':''}.`;
+ renderV();}
+dragSetup('vsv',V,h=>h?{t:h}:null,p=>{const w=V.M.w(p);V[V.drag.t]=[Math.round(w[0]),Math.round(w[1])];upd();});
+
+/* ---------- rutas ---------- */
+let view='homotecia';
+function upd(){if(view==='homotecia')updH();else updV();}
+function route(){const h=(location.hash||'').slice(1);view=h==='vectorial'?'vectorial':'homotecia';
+ document.querySelectorAll('#tabs a').forEach(a=>a.classList.toggle('on',a.dataset.r===view));$('vH').hidden=view!=='homotecia';$('vV').hidden=view==='homotecia';upd();}
+window.addEventListener('hashchange',route);
+new ResizeObserver(()=>upd()).observe(document.body);
+route();
+(function loop(){if(view==='homotecia'&&H.anim)renderH();if(view==='vectorial'&&V.anim)renderV();requestAnimationFrame(loop);})();
+}
+</script>
+</body>
+</html>
