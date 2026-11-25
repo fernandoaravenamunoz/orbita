@@ -224,7 +224,6 @@ const SITIO = {
   simulaciones: [
     {
       nombre: "Operando con fracciones",
-      cursos: "7° básico · Números · OA 2 · OA 3",
       descripcion: "Multiplica fracciones cruzando columnas y filas en el modelo de área, y divide fracciones de dos maneras: contando cuántas veces cabe el divisor o repartiendo en partes iguales. Paso a paso y con modo predecir.",
       temas: ["Multiplicación", "Modelo de área", "División: cubrir", "División: repartir", "Decimales"],
       url: "simulaciones/fracciones.html",
@@ -233,7 +232,6 @@ const SITIO = {
     },
     {
       nombre: "La recta de los enteros",
-      cursos: "7° básico · OA 1 — 8° básico · OA 1",
       descripcion: "Suma y resta enteros como flechas sobre la recta y distingue el signo del número del signo de la operación. Multiplica y divide con el giro de 180° y descubre la regla de los signos con una secuencia de productos.",
       temas: ["Adición", "Sustracción", "Sumar el opuesto", "Multiplicación", "División", "Regla de los signos"],
       url: "simulaciones/enteros.html",
@@ -242,7 +240,6 @@ const SITIO = {
     },
     {
       nombre: "Cuerpos geométricos 3D",
-      cursos: "I° medio · Geometría · OA 7",
       descripcion: "Gira prismas, pirámides, cilindros y conos, desármalos en su red y calcula áreas y volumen paso a paso. Incluye cuerpos de revolución: la figura plana que gira y su generatriz.",
       temas: ["Prismas", "Pirámides", "Cilindros", "Conos", "Cuerpos de revolución"],
       url: "simulaciones/cuerpos-geometricos.html",
@@ -251,7 +248,6 @@ const SITIO = {
     },
     {
       nombre: "Homotecias",
-      cursos: "I° medio · Geometría · OA 8 · OA 11",
       descripcion: "Aplica homotecias a una estrella, una vela, un árbol, una casa o a polígonos que tú mueves. Cambia k entre −3 y 3, mira la cámara oscura y comprueba que el área cambia en k². Incluye la homotecia vectorial en el plano cartesiano.",
       temas: ["Razón k", "Directa e inversa", "Cámara oscura", "Perímetro y área", "Vectores", "Coordenadas"],
       url: "simulaciones/homotecias.html",
@@ -260,7 +256,6 @@ const SITIO = {
     },
     {
       nombre: "Teorema de Tales",
-      cursos: "I° medio · Geometría · OA 9",
       descripcion: "Rectas paralelas cortadas por secantes, triángulos con una paralela, secantes que se cruzan y un problema de sombras. Mueve las rectas, toca dos vértices para medir un segmento, compara razones y calcula x con el producto cruzado.",
       temas: ["Paralelas y secantes", "Triángulo", "Secantes cruzadas", "Proporciones", "Calcular x", "Sombras"],
       url: "simulaciones/tales.html",
@@ -269,11 +264,26 @@ const SITIO = {
     },
     {
       nombre: "Teorema de Euclides",
-      cursos: "I° medio · Geometría · Semejanza",
       descripcion: "Triángulo rectángulo con la altura desde el vértice recto. Cambia cualquier medida con la barra o escribiéndola: el triángulo sigue siendo rectángulo y todas las relaciones de Euclides se muestran con los números para comprobar la igualdad.",
       temas: ["h² = p · q", "a² = p · c", "b² = q · c", "h = a · b / c", "Pitágoras", "Áreas"],
       url: "simulaciones/euclides.html",
       dibujo: "euclides",
+      fecha: "2026-11-25"
+    },
+    {
+      nombre: "El número π",
+      descripcion: "Desenrolla una circunferencia y cuenta cuántas veces cabe su diámetro en el borde, o acuesta el diámetro sobre la circunferencia. Con una regla y una lupa mides el trozo que sobra y descubres que siempre es 3,14… veces el diámetro.",
+      temas: ["Diámetro", "Perímetro", "Desenrollar", "Acostar el diámetro", "C : d = π"],
+      url: "simulaciones/pi.html",
+      dibujo: "pi",
+      fecha: "2026-11-25"
+    },
+    {
+      nombre: "Ángulos de los polígonos",
+      descripcion: "Recorta las esquinas de un triángulo, cuadrilátero, pentágono, hexágono u octágono y júntalas en la mesa de armado: forman un ángulo extendido, un ángulo completo o varias vueltas. Con los ángulos exteriores, siempre una vuelta: 360°.",
+      temas: ["Ángulos interiores", "Ángulos exteriores", "Ángulo extendido", "(n − 2) · 180°", "360°", "Triangulación"],
+      url: "simulaciones/angulos.html",
+      dibujo: "angulos",
       fecha: "2026-11-25"
     }
     // Para agregar otra simulación: sube su archivo .html a la carpeta "simulaciones"

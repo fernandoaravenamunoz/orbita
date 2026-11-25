@@ -13,8 +13,7 @@
    PICTURE: the live 3D body on grid paper, large, first thing on screen
    COLOUR and TYPE: white paper, deep ink-blue band, coral/teal/violet/amber pens; Lexend
    LAYOUT: band with tabs; stage left, control panel right; stacks under 900px */
-:root{color-scheme:light dark;--bg:light-dark(#ffffff,#10151b);--ink:light-dark(#16202b,#e6ecf2);--mut:light-dark(#5b6675,#9aa7b5);--line:light-dark(#dde4ec,#28323d);--grid:light-dark(#edf1f6,#19212a);--band:light-dark(#163a5f,#0b2035);--card:light-dark(#f4f7fa,#17202a);--sel:#378ADD;--coral:#D85A30;--teal:#1D9E75;--vio:#7F77DD;--amb:#BA7517;--pink:#D4537E}
-:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+:root{color-scheme:light;--bg:#ffffff;--ink:#16202b;--mut:#5b6675;--line:#dde4ec;--grid:#edf1f6;--band:#163a5f;--card:#f2f6fb;--sel:#378ADD;--coral:#D85A30;--teal:#1D9E75;--vio:#7F77DD;--amb:#BA7517;--pink:#D4537E}
 *{box-sizing:border-box;min-width:0}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Lexend,system-ui,sans-serif;overflow-x:clip}
 h1,h2,h3{font-weight:600;line-height:1.1;margin:0;text-wrap:balance}
@@ -23,17 +22,15 @@ button{min-height:40px;padding:6px 14px;border-radius:10px;border:1px solid var(
 button:hover{border-color:var(--mut)}button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
 button.on{border-color:var(--sel);color:var(--sel);background:color-mix(in srgb,var(--sel) 10%,transparent)}
 button.pri{background:var(--band);color:#fff;border-color:var(--band)}
-:root[data-theme=dark] button.pri{background:#2b5f93;border-color:#2b5f93}
-@media(prefers-color-scheme:dark){:root:not([data-theme=light]) button.pri{background:#2b5f93;border-color:#2b5f93}}
 select{min-height:40px;border-radius:10px;border:1px solid var(--line);background:var(--bg);padding:4px 10px;font-size:15px}
 input[type=range]{accent-color:var(--sel);width:100%;height:28px}
 input[type=checkbox]{accent-color:var(--sel);width:18px;height:18px}
-.top{background:var(--band);color:#fff;padding:14px max(4vw,16px);display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;justify-content:space-between}
+.top{background:#EAF2FB;color:#163a5f;border-bottom:3px solid #378ADD;padding:14px max(4vw,16px);display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;justify-content:space-between}
 .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:18px}
 .tabs{display:flex;flex-wrap:wrap;gap:6px}
-.tabs a{color:#fff;text-decoration:none;padding:8px 12px;border-radius:999px;font-size:15px;opacity:.82}
-.tabs a:hover{opacity:1;background:rgba(255,255,255,.1)}.tabs a.on{opacity:1;background:#fff;color:#163a5f}
-.volver{color:#fff;text-decoration:none;font-size:14px;font-weight:500;opacity:.82;padding:6px 10px;border:1px solid rgba(255,255,255,.35);border-radius:999px}.volver:hover{opacity:1;background:rgba(255,255,255,.1)}
+.tabs a{color:#163a5f;text-decoration:none;padding:8px 12px;border-radius:999px;font-size:15px;opacity:.82}
+.tabs a:hover{opacity:1;background:rgba(22,58,95,.08)}.tabs a.on{opacity:1;background:#163a5f;color:#fff}
+.volver{color:#163a5f;text-decoration:none;font-size:14px;font-weight:500;padding:6px 10px;border:1px solid rgba(22,58,95,.35);border-radius:999px;background:#fff}.volver:hover{border-color:#163a5f}
 .band{padding:clamp(20px,3vw,44px) max(4vw,16px)}
 .home h1{font-size:clamp(30px,4vw,46px);max-width:18ch}
 .lead{color:var(--mut);max-width:62ch;margin:12px 0 26px}
@@ -77,7 +74,7 @@ details summary{cursor:pointer;font-weight:600;font-size:17px;min-height:32px}
 </head>
 <body>
 <header class="top">
-<div class="brand"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round" aria-hidden="true"><path d="M32 6 L8 46 L34 58 L56 42 Z M32 6 L34 58"/></svg><span>Cuerpos geométricos 3D</span><a class="volver" href="../index.html#simulaciones" target="_top">← Órbita Matemática</a></div>
+<div class="brand"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" stroke="#163a5f" stroke-width="3" stroke-linejoin="round" aria-hidden="true"><path d="M32 6 L8 46 L34 58 L56 42 Z M32 6 L34 58"/></svg><span>Cuerpos geométricos 3D</span><a class="volver" href="../index.html#simulaciones" target="_top">← Órbita Matemática</a></div>
 <nav class="tabs" id="tabs">
 <a href="#inicio" data-r="inicio">Inicio</a><a href="#prismas" data-r="prismas">Prismas</a><a href="#piramides" data-r="piramides">Pirámides</a><a href="#cilindros" data-r="cilindros">Cilindros</a><a href="#conos" data-r="conos">Conos</a><a href="#revolucion" data-r="revolucion">Cuerpos de revolución</a>
 </nav>

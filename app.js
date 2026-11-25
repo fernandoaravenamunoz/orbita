@@ -450,6 +450,25 @@
       <path d="M126.4 140 H136.4 V150" fill="none" stroke="#2C395C" stroke-width="1.3"/>
       <path d="M40 162 H124 M129 162 H280" stroke-width="3" stroke="#2C395C" opacity=".35"/>
     </svg>`,
+    pi: `<svg viewBox="0 0 320 180" aria-hidden="true">
+      <circle cx="173.4" cy="62.0" r="26" fill="none" stroke="#2C395C" stroke-width="2"/>
+      <path d="M147.4 62.0 H199.4" stroke="#E2571E" stroke-width="3"/>
+      <path d="M24 136 H187.4" stroke="#2C395C" stroke-width="3"/>
+      <rect x="24" y="144" width="50" height="12" fill="#E2571E" fill-opacity=".85"/><rect x="76" y="144" width="50" height="12" fill="#B9A727" fill-opacity=".9"/><rect x="128" y="144" width="50" height="12" fill="#E2571E" fill-opacity=".85"/>
+      <rect x="180" y="144" width="7.4" height="12" fill="#2C395C" fill-opacity=".35"/>
+      <text x="105.7" y="122" text-anchor="middle" font-family="Space Mono, monospace" font-size="13" fill="#2C395C">C = 3,14… · d</text>
+    </svg>`,
+    angulos: `<svg viewBox="0 0 320 180" aria-hidden="true">
+      <polygon points="40,146 150,146 104,40" fill="#ECE8DC" stroke="#2C395C" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M40 146 L68 146 A28 28 0 0 0 51.1 120.3 Z" fill="#E2571E" fill-opacity=".75"/>
+      <path d="M150 146 L139.6 122 A26 26 0 0 0 124 146 Z" fill="#B9A727" fill-opacity=".85"/>
+      <path d="M104 40 L93 65.2 A27.5 27.5 0 0 0 118.6 63.3 Z" fill="#2C395C" fill-opacity=".55"/>
+      <path d="M190 128 H300" stroke="#2C395C" stroke-width="2"/>
+      <path d="M245 128 L273 128 A28 28 0 0 0 262.5 106.2 Z" fill="#E2571E" fill-opacity=".75"/>
+      <path d="M245 128 L262.5 106.2 A28 28 0 0 0 236.6 101.3 Z" fill="#2C395C" fill-opacity=".55"/>
+      <path d="M245 128 L236.6 101.3 A28 28 0 0 0 217 128 Z" fill="#B9A727" fill-opacity=".85"/>
+      <text x="245" y="152" text-anchor="middle" font-family="Space Mono, monospace" font-size="13" fill="#2C395C">180°</text>
+    </svg>`,
     generico: `<svg viewBox="0 0 320 180" aria-hidden="true"><g fill="none" stroke="#2C395C" stroke-width="1.6"><circle cx="160" cy="90" r="46" stroke-dasharray="2 5"/><ellipse cx="160" cy="90" rx="96" ry="26" transform="rotate(-18 160 90)"/></g><circle cx="160" cy="90" r="16" fill="#E2571E"/><circle cx="248" cy="62" r="5" fill="#B9A727"/></svg>`
   };
 

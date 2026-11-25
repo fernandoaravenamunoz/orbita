@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>El número π · Órbita Matemática</title>
+<meta name="description" content="Simulación interactiva para descubrir π: se desenrolla una circunferencia y se mide cuántas veces cabe su diámetro en el borde, o se acuesta el diámetro sobre la circunferencia.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+:root{color-scheme:light;--bg:#ffffff;--ink:#16202b;--mut:#5b6675;--line:#dde4ec;--grid:#edf1f6;--band:#163a5f;--card:#f2f6fb;--sel:#378ADD;--coral:#D85A30;--teal:#1D9E75;--vio:#7F77DD;--amb:#BA7517;--pink:#D4537E}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Lexend,system-ui,sans-serif;overflow-x:clip}
+h1,h2{font-weight:600;line-height:1.1;margin:0;text-wrap:balance}
+button,input{font:inherit;color:inherit}
+button{min-height:40px;padding:6px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);cursor:pointer}
+button:hover{border-color:var(--mut)}button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
+button.on{border-color:var(--sel);color:var(--sel);background:color-mix(in srgb,var(--sel) 10%,transparent)}
+button.pri{background:var(--band);color:#fff;border-color:var(--band)}
+
+input[type=checkbox]{accent-color:var(--sel);width:18px;height:18px}
+.top{background:#EAF2FB;color:#163a5f;border-bottom:3px solid #378ADD;padding:14px max(4vw,16px);display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:18px;flex-wrap:wrap}
+.volver{color:#163a5f;text-decoration:none;font-size:14px;font-weight:500;padding:6px 10px;border:1px solid rgba(22,58,95,.35);border-radius:999px;background:#fff}.volver:hover{border-color:#163a5f}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs a{color:#163a5f;text-decoration:none;padding:8px 12px;border-radius:999px;font-size:15px;opacity:.82}
+.tabs a:hover{opacity:1;background:rgba(22,58,95,.08)}.tabs a.on{opacity:1;background:#163a5f;color:#fff}
+.band{padding:clamp(20px,3vw,44px) max(4vw,16px)}
+.work{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:24px;max-width:1400px;margin:0 auto}
+.stagehead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 18px;margin-bottom:8px}
+.stagehead h1{font-size:clamp(26px,3vw,36px)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--mut)}
+.legend i{display:inline-block;width:16px;height:10px;border-radius:3px;vertical-align:middle;margin-right:6px}
+.fig{position:relative;height:clamp(340px,58vh,600px);border-radius:16px;border:1px solid var(--line);background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;overflow:hidden}
+.fig svg{position:absolute;inset:0;width:100%;height:100%}
+.hint{position:absolute;left:12px;bottom:8px;margin:0;font-size:13px;color:var(--mut);pointer-events:none}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.stepTxt{font-size:15px;color:var(--ink);flex:1 1 100%;background:var(--card);border-radius:12px;padding:10px 14px;margin:0}
+.panel{display:flex;flex-direction:column;gap:16px}
+.box{background:var(--card);border-radius:14px;padding:14px 16px}
+.box h2{font-size:17px;margin-bottom:10px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}.seg button{min-height:36px;padding:4px 12px;font-size:14px}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--mut);margin-top:10px}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px}.row button{min-height:34px;padding:3px 10px;font-size:14px}
+.mets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.met{background:var(--card);border-radius:12px;padding:10px 14px}.met p{margin:0}.met .l{font-size:13px;color:var(--mut)}.met .v{font-size:clamp(19px,2vw,23px);font-weight:600}.met .s{font-size:13px;color:var(--mut)}
+.fm div{font-size:15px;line-height:1.7;padding:4px 0;border-bottom:1px dashed var(--line)}.fm div:last-child{border:0}.fm b{font-weight:600}
+details summary{cursor:pointer;font-weight:600;font-size:17px;min-height:32px}
+.concept{border-left:4px solid var(--vio);background:color-mix(in srgb,var(--vio) 9%,transparent);padding:10px 14px;font-size:15px;margin:0}
+.concept b{color:var(--coral);font-weight:600}
+.note{font-size:13px;color:var(--mut);margin:0}
+.warn{border-left:4px solid var(--amb);background:color-mix(in srgb,var(--amb) 10%,transparent);padding:8px 12px;font-size:14px;margin:0}
+[hidden]{display:none!important}
+.fx{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.08;margin:0 .1em;font-size:.92em}
+.fx>span{padding:0 .2em}.fx>span:first-child{border-bottom:1.6px solid currentColor}
+.frin{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.fr{display:inline-flex;flex-direction:column;align-items:center;gap:4px;padding:6px 8px;border-radius:12px;background:var(--bg)}
+.fr .bar{width:100%;border-top:3px solid currentColor}
+.fr.t{color:var(--teal)}.fr.c{color:var(--coral)}
+.stp{display:inline-flex;align-items:center;gap:4px}
+.stp button{min-height:34px;width:34px;padding:0;font-size:18px;line-height:1;color:var(--ink)}
+.stp output{min-width:2.4ch;text-align:center;font-weight:600;font-size:22px}
+.op{font-size:30px;font-weight:600;color:var(--mut)}
+.lbl{font-size:13px;color:var(--mut);display:block;margin-bottom:6px}
+@media(max-width:900px){.work{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.fig{height:360px}.tabs a{padding:6px 9px;font-size:14px}}
+
+.fig.plain{background-image:none}
+input[type=range]{accent-color:var(--sel);width:100%;height:28px}
+.pr{display:grid;grid-template-columns:5.5em minmax(0,1fr) 5.6em;align-items:center;gap:10px}
+.pr label{font-size:14px;color:var(--mut)}.pr label b{font-size:18px;color:var(--ink);margin-right:4px}
+.pr input[type=text]{width:100%;min-height:36px;border-radius:10px;border:1px solid var(--line);background:var(--bg);padding:4px 8px;font:inherit;font-weight:600;text-align:right}
+.tbl{width:100%;border-collapse:collapse;font-size:15px}.tbl th{font-weight:500;color:var(--mut);text-align:right;font-size:13px;padding:4px 6px;border-bottom:1px solid var(--line)}.tbl td{padding:6px;border-bottom:1px dashed var(--line);text-align:right}
+.tbl td:last-child,.tbl th:last-child{color:var(--vio);font-weight:600}
+@media(max-width:600px){.fig{height:500px}.fig .hint{display:none}}
+.big{font-size:clamp(22px,2.6vw,28px);font-weight:600;margin:4px 0}
+</style>
+</head>
+<body>
+<header class="top">
+<div class="brand"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" stroke="#163a5f" stroke-width="3" aria-hidden="true"><circle cx="32" cy="28" r="20"/><path d="M12 28 H52" stroke-width="2.4"/><path d="M8 58 H56" stroke-width="3"/></svg><span>El número π</span><a class="volver" href="../index.html#simulaciones" target="_top">← Órbita Matemática</a></div>
+<nav class="tabs" id="tabs"><a href="#desenrollar" data-r="desenrollar">Desenrollar la circunferencia</a><a href="#acostar" data-r="acostar">Acostar el diámetro</a></nav>
+</header>
+<main>
+<section class="band">
+<div class="work">
+<div>
+<div class="stagehead"><h1 id="pTitle">¿Cuántas veces cabe el diámetro en el borde?</h1><div class="legend"><span><i style="background:var(--sel)"></i>Circunferencia (borde)</span><span><i style="background:var(--coral)"></i>Diámetro y sus copias</span><span><i style="background:var(--teal)"></i>Lo que sobra</span></div></div>
+<div class="fig plain"><svg id="psv" role="img" aria-label="Circunferencia y su diámetro"></svg><p class="hint" id="pHint"></p></div>
+<div class="tools"><button id="pPrev">◀ Paso anterior</button><button id="pNext" class="pri">Paso siguiente ▶</button><button id="pAll">Ver todo</button><button id="pAgain">↺ Repetir animación</button><p class="stepTxt" id="pTxt"></p></div>
+</div>
+<aside class="panel">
+<p class="concept">El <b>perímetro</b> de cualquier circunferencia contiene a su <b>diámetro</b> 3 veces y un poco más. Ese número, siempre el mismo sin importar el tamaño, se llama <b>π</b> (pi): <b>C : d = π ≈ 3,14159…</b></p>
+<div class="box"><h2>Tamaño de la circunferencia</h2>
+<div class="pr"><label for="pR"><b>r</b>radio</label><input type="range" id="pR" min="1" max="10" step="0.1"><input type="text" inputmode="decimal" id="pRt" aria-label="Escribir el radio en cm"></div>
+<p class="note" style="margin-top:8px">Cambia el radio y repite: el borde cambia, el diámetro cambia… pero la razón entre ellos no.</p>
+</div>
+<div class="mets" id="pMets"></div>
+<div class="box"><h2>Tabla de mediciones</h2>
+<table class="tbl" id="pTbl"></table>
+<div class="row"><button id="pAdd" class="pri">Anotar esta medición</button><button id="pClr">Borrar la tabla</button></div>
+<p class="note" id="pTblNote" style="margin-top:8px">Llega al último paso y anota la medición. Luego cambia el radio y vuelve a anotar.</p>
+</div>
+<div class="box"><details open><summary>Desarrollo</summary><div class="fm" id="pFm"></div></details></div>
+</aside>
+</div>
+</section>
+</main>
+<script>
+{
+const $=id=>document.getElementById(id);
+const C={teal:'#1D9E75',coral:'#D85A30',vio:'#7F77DD',amb:'#BA7517',sel:'#378ADD'};
+const PI=Math.PI,COP=[C.coral,C.amb,C.coral,C.amb];
+const nf=(x,d=2)=>{const r=Math.round(x*10**d)/10**d;return(Object.is(r,-0)?0:r).toLocaleString('es-CL',{maximumFractionDigits:d});};
+const F1=x=>x.toFixed(1);
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const now=()=>performance.now(),cl01=x=>Math.max(0,Math.min(1,x)),ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+function T(x,y,s,c,o={}){return `<text x="${F1(x)}" y="${F1(y)}" fill="${c}" font-size="${o.fs||15}" font-weight="${o.fw||600}" text-anchor="${o.a||'middle'}" dominant-baseline="middle" style="paint-order:stroke;stroke:${o.bg||'var(--bg)'};stroke-width:${o.sw??5}px;stroke-linejoin:round">${s}</text>`;}
+function Ln(a,b,c,w,o={}){return `<line x1="${F1(a[0])}" y1="${F1(a[1])}" x2="${F1(b[0])}" y2="${F1(b[1])}" stroke="${c}" stroke-width="${w}" opacity="${o.op??1}" ${o.dash?`stroke-dasharray="${o.dash}"`:''} stroke-linecap="${o.cap||'round'}"/>`;}
+const PL=(pts,c,w,o={})=>`<polyline points="${pts.map(p=>F1(p[0])+','+F1(p[1])).join(' ')}" fill="none" stroke="${c}" stroke-width="${w}" opacity="${o.op??1}" ${o.dash?`stroke-dasharray="${o.dash}"`:''} stroke-linecap="round" stroke-linejoin="round"/>`;
+
+const P={r:3,step:0,A:-1e9,mode:'desenrollar',rec:[],anim:false};
+const MAX=3;
+$('pR').oninput=e=>{P.r=+e.target.value;P.A=-1e9;upd();};
+$('pRt').onchange=e=>{const v=parseFloat(String(e.target.value).replace(',','.'));if(v>=0.5&&v<=50){P.r=v;P.A=-1e9;}upd();};
+$('pRt').onkeydown=e=>{if(e.key==='Enter')e.target.blur();};
+function setStep(s){const o=P.step;P.step=Math.max(0,Math.min(MAX,s));P.A=P.step>o?now():-1e9;upd();}
+$('pPrev').onclick=()=>setStep(P.step-1);$('pNext').onclick=()=>setStep(P.step+1);
+$('pAll').onclick=()=>{P.step=MAX;P.A=-1e9;upd();};
+$('pAgain').onclick=()=>{if(P.step===0){setStep(1);return;}P.A=now();upd();};
+$('pAdd').onclick=()=>{if(P.step<MAX)return;const r=P.r;if(!P.rec.some(x=>Math.abs(x-r)<1e-9))P.rec.push(r);upd();};
+$('pClr').onclick=()=>{P.rec=[];upd();};
+const prog=(dur,delay=0)=>reduce?1:cl01((now()-P.A-delay)/dur);
+
+/* regla graduada en cm (con mm) desde x0 (cero) */
+function ruler(S,x0,x1,y,pxcm,h,label){let o=`<rect x="${F1(S([x0,0])[0]-6)}" y="${F1(y)}" width="${F1((x1-x0)*pxcm+12)}" height="${h}" rx="3" fill="#F6E7B8" stroke="${C.amb}" stroke-width="1.2"/>`;
+ const mm=pxcm/10,step=mm>=3?0.1:pxcm/2>=3?0.5:1;
+ for(let v=0;v<=x1-x0+1e-9;v+=step){const vv=Math.round(v*10)/10,X=S([x0+vv,0])[0],cm=Math.abs(vv-Math.round(vv))<1e-6,half=Math.abs(vv*2-Math.round(vv*2))<1e-6;
+  o+=Ln([X,y],[X,y+(cm?h*.62:half?h*.42:h*.26)],'#6b4d0c',cm?1.3:.8,{cap:'butt'});if(cm&&pxcm>=22)o+=T(X,y+h-8,Math.round(vv),'#6b4d0c',{fs:11,fw:500,bg:'#F6E7B8',sw:0});}
+ if(label)o+=T(S([x0,0])[0]-10,y+h/2,label,'#6b4d0c',{fs:11,fw:500,a:'end'});return o;}
+
+function render(){const s=$('psv'),W=s.clientWidth||600,H=s.clientHeight||420;s.setAttribute('viewBox',`0 0 ${W} ${H}`);
+ const r=P.r,d=2*r,Cc=2*PI*r,st=P.step;let o='',anim=false;const iw0=Math.min(320,W*0.5);
+ if(P.mode==='desenrollar'){
+  const narD=W<560,sc=Math.min((W-70)/(Cc+2*r+.4),(H-200)/(2*r+.2)),ox=30+r*sc,oy=(narD?118:34)+2*r*sc+18;const S=p=>[ox+p[0]*sc,oy-p[1]*sc];
+  const yF=S([0,0])[1];
+  // suelo
+  o+=Ln([10,yF],[W-10,yF],'var(--line)',2);
+  let u=0;if(st===1){u=ease(prog(3200));anim=anim||u<1;}else if(st>=2)u=1;
+  const cx=u*Cc,th=u*2*PI;
+  // borde desenrollado
+  if(u>0)o+=Ln(S([0,0]),S([cx,0]),C.sel,5);
+  // circunferencia: parte que queda + contorno tenue
+  const ctr=[cx,r];o+=`<circle cx="${F1(S(ctr)[0])}" cy="${F1(S(ctr)[1])}" r="${F1(r*sc)}" fill="none" stroke="var(--mut)" stroke-width="1.2" stroke-dasharray="4 6" opacity="${u>=1?.6:.5}"/>`;
+  if(u<1){const pts=[];const n=120;for(let i=0;i<=n;i++){const b=(2*PI-th)*i/n;pts.push(S([cx+r*Math.sin(b),r-r*Math.cos(b)]));}o+=PL(pts,C.sel,5);
+   const sp=S([cx-r*Math.sin(th),r-r*Math.cos(th)]);o+=`<circle cx="${F1(sp[0])}" cy="${F1(sp[1])}" r="5" fill="${C.sel}"/>`;}
+  o+=`<circle cx="${F1(S(ctr)[0])}" cy="${F1(S(ctr)[1])}" r="3.5" fill="var(--ink)"/>`;
+  // diámetro en la circunferencia (pasos 0 y 2+)
+  if(st===0||st>=2){o+=Ln(S([cx-r,r]),S([cx+r,r]),C.coral,5)+T(S(ctr)[0],S(ctr)[1]-16,`d = ${nf(d)} cm`,C.coral,{fs:15});}
+  if(u>=1)o+=T(S([Cc/2,0])[0],yF-16,`borde desenrollado: C`,C.sel,{fs:14});
+  else if(u>0)o+=T(S([cx/2,0])[0],yF-16,'borde',C.sel,{fs:13});
+  // copias del diámetro
+  const yb=yF+12,hb=16;
+  if(st>=2){const iv=900;for(let k=0;k<4;k++){const pr=st>=3?1:ease(prog(iv,k*iv*0.85));if(pr<=0)continue;if(st===2&&pr<1)anim=true;
+    const x0=(cx-r)+(k*d-(cx-r))*pr,y0=r+(-0.0-r)*pr,a=S([x0,y0]),b=S([x0+d,y0]);const yy=a[1]+(yb+hb/2-a[1])*pr;
+    if(k<3){o+=`<rect x="${F1(a[0]+1)}" y="${F1(yy-hb/2)}" width="${F1(b[0]-a[0]-2)}" height="${hb}" rx="3" fill="${COP[k]}" fill-opacity=".85"/>`;if(pr>=1)o+=T((a[0]+b[0])/2,yy,`${k+1}`,'#fff',{fs:12,sw:0});}
+    else{const xe=S([Cc,0])[0],y4=yy+(22)*pr;o+=`<rect x="${F1(a[0]+1)}" y="${F1(y4-hb/2)}" width="${F1(b[0]-a[0]-2)}" height="${hb}" rx="3" fill="none" stroke="${C.coral}" stroke-width="1.6" stroke-dasharray="5 4"/>`;
+     if(pr>=1){o+=`<rect x="${F1(a[0]+1)}" y="${F1(y4-hb/2)}" width="${F1(Math.max(0,xe-a[0]-1))}" height="${hb}" rx="3" fill="${C.teal}" fill-opacity=".75"/>`+T(a[0]-8,y4,'una 4.ª copia ya no cabe →',C.coral,{fs:12,a:'end'});}}}}
+  if(st>=3){const yr=yb+hb+30;
+   o+=ruler(S,3*d,Math.max(Cc-3*d+.6,1.2)+3*d,yr,sc,26,'regla (cm)');
+   // lupa
+   const rem=Cc-3*d,iw=narD?W-28:Math.min(320,W*0.5),ih=118,ix=W-iw-14,iy=H-ih-(narD?14:38),z=Math.min(iw*0.55/rem,400),c0=3*d+rem/2;
+   const S2=p=>[ix+iw/2+(p[0]-c0)*z,iy+56-p[1]*z];
+   o+=`<defs><clipPath id="lupa"><rect x="${ix}" y="${iy}" width="${iw}" height="${ih}" rx="10"/></clipPath></defs><rect x="${ix}" y="${iy}" width="${iw}" height="${ih}" rx="10" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>`;
+   o+=`<g clip-path="url(#lupa)">`+Ln(S2([3*d-2*rem,0]),S2([3*d,0]),C.amb,12,{cap:'butt'})+Ln(S2([3*d,0]),S2([Cc,0]),C.teal,12,{cap:'butt'})+Ln(S2([3*d-3*rem,0]),S2([Cc,0]),C.sel,3);
+   const mmz=z/10;for(let v=-3;v<=Math.ceil((rem+0.3)*10)+3;v++){const X=S2([3*d+v/10,0])[0],big=v%10===0,half=v%5===0;o+=Ln([X,iy+70],[X,iy+70+(big?20:half?14:8)],'#6b4d0c',big?1.4:.8,{cap:'butt'});if(big)o+=T(X,iy+100,v/10,'#6b4d0c',{fs:11,fw:500});else if(half&&mmz>=6)o+=T(X,iy+100,nf(v/10,1),'#6b4d0c',{fs:10,fw:500});}
+   o+=Ln(S2([Cc,0]),[S2([Cc,0])[0],iy+92],C.teal,1.6,{dash:'3 3'})+`</g>`;
+   o+=T(ix+10,iy+16,`Lupa · sobra ${nf(rem)} cm`,C.teal,{fs:13,a:'start'})+T(ix+iw-10,iy+16,`= ${nf(rem/d,3)} d`,C.teal,{fs:13,a:'end'});}
+  // caja de datos
+  o+=infoBox(14,14,r,d,Cc,st>=3);
+  if(st>=3)o+=T(Math.min(S([Cc/2,0])[0],W-iw0-30),yb+hb+76,`C = 3 · d + ${nf(Cc/d-3,3)} · d ≈ ${nf(Cc/d,4)} · d`,'var(--ink)',{fs:16});
+ }else{
+  const nar=W<560,sc=nar?Math.min((W-60)/(2*r*1.35),(H-260)/(2*r*1.3)):Math.min((W-80)/(2*r*1.9),(H-80)/(2*r*1.45)),cxs=nar?W/2:Math.max(30+r*sc*1.3,W*0.3),cys=nar?96+r*sc*1.1:H/2+10;const S=p=>[cxs+p[0]*sc,cys-p[1]*sc];
+  o+=`<circle cx="${F1(cxs)}" cy="${F1(cys)}" r="${F1(r*sc)}" fill="none" stroke="${C.sel}" stroke-width="4"/><circle cx="${F1(cxs)}" cy="${F1(cys)}" r="3.5" fill="var(--ink)"/>`;
+  const nC=st===0?0:st===1?1:3,iv=1400,arcPts=(k,t)=>{const n=60,pts=[];for(let i=0;i<=n;i++){const sv=d*i/n,ln=[-r+sv,0],ph=PI+2*k+sv/r,ar=[r*Math.cos(ph),r*Math.sin(ph)];pts.push(S([ln[0]+(ar[0]-ln[0])*t,ln[1]+(ar[1]-ln[1])*t]));}return pts;};
+  let dShown=true;
+  for(let k=0;k<nC;k++){let t=1;if(st===1||(st===2&&k>=1)){t=ease(prog(iv,(st===2?(k-1):0)*iv*0.9));if(t<1)anim=true;}
+   if(st>=3)t=1;if(t<=0)continue;o+=PL(arcPts(k,t),COP[k],7,{op:.9});if(t>=1){const ph=PI+2*k+1,m=S([(r+0.001)*Math.cos(ph)*1.0,r*Math.sin(ph)]),mo=S([r*1.14*Math.cos(ph),r*1.14*Math.sin(ph)]);o+=T(mo[0],mo[1],k+1,COP[k],{fs:15});}}
+  if(dShown)o+=Ln(S([-r,0]),S([r,0]),C.coral,4,{op:st>=1?.55:1})+T(cxs,cys-16,`d = ${nf(d)} cm`,C.coral,{fs:15});
+  if(st>=3){const g0=PI+6,g1=3*PI,pts=[];for(let i=0;i<=30;i++){const ph=g0+(g1-g0)*i/30;pts.push(S([r*Math.cos(ph),r*Math.sin(ph)]));}o+=PL(pts,C.teal,9);
+   // huincha curva
+   const R1=r*1.07,R2=r*1.22,a0=g0-0.06,a1=g1+0.06,band=[];for(let i=0;i<=40;i++){const ph=a0+(a1-a0)*i/40;band.push(S([R1*Math.cos(ph),R1*Math.sin(ph)]));}for(let i=40;i>=0;i--){const ph=a0+(a1-a0)*i/40;band.push(S([R2*Math.cos(ph),R2*Math.sin(ph)]));}
+   o+=`<polygon points="${band.map(p=>F1(p[0])+','+F1(p[1])).join(' ')}" fill="#F6E7B8" stroke="${C.amb}" stroke-width="1"/>`;
+   for(let j=0;j*0.01*d/r<=g1-g0+0.04;j++){const ph=g0+j*0.01*d/r,big=j%5===0,a=S([R1*Math.cos(ph),R1*Math.sin(ph)]),b=S([(R1+(big?.1:.05)*r)*Math.cos(ph),(R1+(big?.1:.05)*r)*Math.sin(ph)]);o+=Ln(a,b,'#6b4d0c',big?1.2:.7,{cap:'butt'});}
+   // lupa (trozo estirado)
+   const rem=(2*PI-6)*r,free=W-(cxs+r*sc)-28,iw=nar?W-28:Math.max(200,Math.min(320,free)),ih=nar?122:150,ix=W-iw-14,iy=nar?H-ih-40:Math.max(14,(H-ih)/2+10),z=Math.min(iw*0.5/rem,300),fc=(g0+g1)/2;
+   const S2=(rho,ph)=>[ix+iw/2+(ph-fc)*r*z,iy+62-(rho-r)*z];
+   o+=`<defs><clipPath id="lupa2"><rect x="${ix}" y="${iy}" width="${iw}" height="${ih}" rx="10"/></clipPath></defs><rect x="${ix}" y="${iy}" width="${iw}" height="${ih}" rx="10" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/><g clip-path="url(#lupa2)">`;
+   o+=Ln(S2(r,g0-1),S2(r,g0),COP[2],12,{cap:'butt'})+Ln(S2(r,g1),S2(r,g1+1),COP[0],12,{cap:'butt'})+Ln(S2(r,g0),S2(r,g1),C.teal,12,{cap:'butt'});
+   o+=T(S2(r,g0)[0]-8,S2(r,g0)[1]-18,'copia 3',COP[2],{fs:11,a:'end'})+T(S2(r,g1)[0]+8,S2(r,g1)[1]-18,'copia 1',COP[0],{fs:11,a:'start'});
+   const ty=iy+78;o+=`<rect x="${ix+6}" y="${ty}" width="${iw-12}" height="34" fill="#F6E7B8" stroke="${C.amb}" stroke-width="1"/>`;
+   for(let j=-20;j<=40;j++){const X=S2(r,g0+j*0.01*d/r)[0],big=j%5===0;if(X<ix||X>ix+iw)continue;o+=Ln([X,ty],[X,ty+(big?16:9)],'#6b4d0c',big?1.3:.8,{cap:'butt'});if(big&&j>=0&&j%5===0)o+=T(X,ty+26,j===0?'0':nf(j/100,2)+' d','#6b4d0c',{fs:10,fw:500,bg:'#F6E7B8',sw:0});}
+   o+=Ln(S2(r,g1),[S2(r,g1)[0],ty+16],C.teal,1.6,{dash:'3 3'})+`</g>`+T(ix+10,iy+16,`Lupa · sin cubrir: ${nf(rem)} cm`,C.teal,{fs:13,a:'start'})+T(ix+iw-10,iy+16,`≈ ${nf(PI-3,3)} d`,C.teal,{fs:13,a:'end'});}
+  o+=infoBox(14,14,r,d,Cc,st>=3&&!nar);}
+ P.anim=anim;s.innerHTML=o;}
+function infoBox(x,y,r,d,Cc,showC){return `<rect x="${x}" y="${y}" width="168" height="${showC?84:62}" rx="10" fill="var(--bg)" stroke="var(--line)" stroke-width="1.5"/>`+T(x+12,y+20,`r = ${nf(r)} cm`,'var(--ink)',{fs:14,fw:500,a:'start'})+T(x+12,y+42,`d = 2r = ${nf(d)} cm`,C.coral,{fs:15,a:'start'})+(showC?T(x+12,y+64,`C ≈ ${nf(Cc)} cm`,C.sel,{fs:14,a:'start'}):'');}
+
+function upd(){const r=P.r,d=2*r,Cc=2*PI*r,st=P.step,des=P.mode==='desenrollar';
+ document.querySelectorAll('#tabs a').forEach(a=>a.classList.toggle('on',a.dataset.r===P.mode));
+ $('pR').max=Math.max(10,Math.ceil(r));$('pR').value=r;if(document.activeElement!==$('pRt'))$('pRt').value=nf(r);
+ $('pHint').textContent=des?'La circunferencia rueda por el suelo y deja marcado su borde':'El diámetro se separa y se curva sobre la circunferencia';
+ $('pTitle').textContent=des?'¿Cuántas veces cabe el diámetro en el borde?':'Acostar el diámetro sobre la circunferencia';
+ const txt=des?[`Una circunferencia de radio ${nf(r)} cm. Su <b>diámetro</b> mide d = 2r = <b>${nf(d)} cm</b>. ¿Cuántas veces cabrá el diámetro en el borde de la circunferencia?`,
+  `La circunferencia <b>rueda</b> por el suelo sin resbalar y va dejando marcado su borde: al dar una vuelta completa, el borde queda <b>estirado como un segmento</b>.`,
+  `Ahora copiamos el diámetro sobre ese segmento, una copia tras otra: caben <b>3 copias completas</b>, pero la cuarta ya no cabe.`,
+  `Medimos con la regla el trozo que sobra: <b>${nf(Cc-3*d)} cm</b>, que es <b>${nf(Cc/d-3,3)}</b> del diámetro. Entonces C = 3,14… · d. Ese número es <b>π</b>.`]
+ :[`Una circunferencia de radio ${nf(r)} cm y su <b>diámetro</b> de <b>${nf(d)} cm</b>. Vamos a «acostar» el diámetro sobre la circunferencia, como si fuera un hilo.`,
+  `El diámetro se separa y se curva sobre la circunferencia: cubre un arco que mide lo mismo que el diámetro (1).`,
+  `Acostamos dos copias más (2 y 3). Ya cubrimos 3 diámetros de borde… y todavía queda un trocito sin cubrir.`,
+  `Con una huincha medimos el trozo sin cubrir: <b>${nf(Cc-3*d)} cm</b>, que es <b>${nf(Cc/d-3,3)}</b> del diámetro. El borde mide 3,14… diámetros: <b>π</b> diámetros.`];
+ $('pTxt').innerHTML=`<span style="color:var(--mut)">Paso ${st+1} de 4 · </span>`+txt[st];
+ const q='<b>?</b>',show=st>=3;
+ $('pMets').innerHTML=[['Radio r',`${nf(r)} cm`],['Diámetro d = 2r',`${nf(d)} cm`],['Borde (perímetro) C',show?`≈ ${nf(Cc)} cm`:q],['C : d',show?`≈ ${nf(Cc/d,5)}`:q]].map(([l,v])=>`<div class="met"><p class="l">${l}</p><p class="v">${v}</p></div>`).join('');
+ $('pAdd').disabled=!show;
+ $('pTbl').innerHTML=P.rec.length?`<tr><th>r (cm)</th><th>d (cm)</th><th>C (cm)</th><th>C : d</th></tr>`+P.rec.map(x=>`<tr><td>${nf(x)}</td><td>${nf(2*x)}</td><td>${nf(2*PI*x)}</td><td>${nf(PI,5)}</td></tr>`).join(''):'';
+ $('pTblNote').innerHTML=P.rec.length>=2?'Aunque la circunferencia cambia de tamaño, <b>C : d</b> siempre da el mismo número: <b>π ≈ 3,14159</b>.':'Llega al último paso y anota la medición. Luego cambia el radio y vuelve a anotar.';
+ const L=[`<b>Diámetro:</b> d = 2 · r = 2 · ${nf(r)} = ${nf(d)} cm.`,
+  `<b>Tres diámetros:</b> 3 · d = 3 · ${nf(d)} = ${nf(3*d)} cm. No alcanzan a cubrir el borde.`,
+  show?`<b>Lo que sobra:</b> ≈ ${nf(Cc-3*d)} cm, que es ${nf(Cc-3*d)} : ${nf(d)} ≈ ${nf(Cc/d-3,3)} del diámetro.`:`<b>Lo que sobra:</b> se mide en el último paso.`,
+  show?`<b>Perímetro:</b> C = π · d = 2 · π · r = 2 · π · ${nf(r)} ≈ ${nf(Cc)} cm.`:`<b>Perímetro:</b> C = π · d = 2 · π · r.`,
+  `<b>π no es exactamente 3,14:</b> sus decimales siguen sin fin y sin repetirse (π = 3,14159265…). Por eso es un número <b>irracional</b>; en los cálculos usamos aproximaciones como 3,14.`];
+ $('pFm').innerHTML=L.map(x=>`<div>${x}</div>`).join('');
+ render();}
+function route(){const h=(location.hash||'').slice(1);const m=h==='acostar'?'acostar':'desenrollar';if(m!==P.mode){P.mode=m;P.step=0;P.A=-1e9;}upd();}
+window.addEventListener('hashchange',route);
+new ResizeObserver(()=>upd()).observe(document.body);
+P.mode='';route();
+(function loop(){if(P.anim)render();requestAnimationFrame(loop);})();
+}
+</script>
+</body>
+</html>

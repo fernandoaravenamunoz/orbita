@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 
-:root{color-scheme:light dark;--bg:light-dark(#ffffff,#10151b);--ink:light-dark(#16202b,#e6ecf2);--mut:light-dark(#5b6675,#9aa7b5);--line:light-dark(#dde4ec,#28323d);--grid:light-dark(#edf1f6,#19212a);--band:light-dark(#163a5f,#0b2035);--card:light-dark(#f4f7fa,#17202a);--sel:#378ADD;--coral:#D85A30;--teal:#1D9E75;--vio:#7F77DD;--amb:#BA7517;--pink:#D4537E}
+:root{color-scheme:light;--bg:#ffffff;--ink:#16202b;--mut:#5b6675;--line:#dde4ec;--grid:#edf1f6;--band:#163a5f;--card:#f2f6fb;--sel:#378ADD;--coral:#D85A30;--teal:#1D9E75;--vio:#7F77DD;--amb:#BA7517;--pink:#D4537E}
 *{box-sizing:border-box;min-width:0}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Lexend,system-ui,sans-serif;overflow-x:clip}
 h1,h2{font-weight:600;line-height:1.1;margin:0;text-wrap:balance}
@@ -18,14 +18,14 @@ button{min-height:40px;padding:6px 14px;border-radius:10px;border:1px solid var(
 button:hover{border-color:var(--mut)}button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
 button.on{border-color:var(--sel);color:var(--sel);background:color-mix(in srgb,var(--sel) 10%,transparent)}
 button.pri{background:var(--band);color:#fff;border-color:var(--band)}
-@media(prefers-color-scheme:dark){button.pri{background:#2b5f93;border-color:#2b5f93}}
+
 input[type=checkbox]{accent-color:var(--sel);width:18px;height:18px}
-.top{background:var(--band);color:#fff;padding:14px max(4vw,16px);display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;justify-content:space-between}
+.top{background:#EAF2FB;color:#163a5f;border-bottom:3px solid #378ADD;padding:14px max(4vw,16px);display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;justify-content:space-between}
 .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:18px;flex-wrap:wrap}
-.volver{color:#fff;text-decoration:none;font-size:14px;font-weight:500;opacity:.82;padding:6px 10px;border:1px solid rgba(255,255,255,.35);border-radius:999px}.volver:hover{opacity:1;background:rgba(255,255,255,.1)}
+.volver{color:#163a5f;text-decoration:none;font-size:14px;font-weight:500;padding:6px 10px;border:1px solid rgba(22,58,95,.35);border-radius:999px;background:#fff}.volver:hover{border-color:#163a5f}
 .tabs{display:flex;flex-wrap:wrap;gap:6px}
-.tabs a{color:#fff;text-decoration:none;padding:8px 12px;border-radius:999px;font-size:15px;opacity:.82}
-.tabs a:hover{opacity:1;background:rgba(255,255,255,.1)}.tabs a.on{opacity:1;background:#fff;color:#163a5f}
+.tabs a{color:#163a5f;text-decoration:none;padding:8px 12px;border-radius:999px;font-size:15px;opacity:.82}
+.tabs a:hover{opacity:1;background:rgba(22,58,95,.08)}.tabs a.on{opacity:1;background:#163a5f;color:#fff}
 .band{padding:clamp(20px,3vw,44px) max(4vw,16px)}
 .work{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:24px;max-width:1400px;margin:0 auto}
 .stagehead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 18px;margin-bottom:8px}
@@ -90,7 +90,7 @@ input[type=range]{accent-color:var(--sel);width:100%;height:28px}
 </head>
 <body>
 <header class="top">
-<div class="brand"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round" aria-hidden="true"><path d="M4 52 H60 L22 18 Z"/><path d="M22 18 V52" stroke-dasharray="4 4" stroke-width="2.4"/></svg><span>Teorema de Euclides</span><a class="volver" href="../index.html#simulaciones" target="_top">← Órbita Matemática</a></div>
+<div class="brand"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" stroke="#163a5f" stroke-width="3" stroke-linejoin="round" aria-hidden="true"><path d="M4 52 H60 L22 18 Z"/><path d="M22 18 V52" stroke-dasharray="4 4" stroke-width="2.4"/></svg><span>Teorema de Euclides</span><a class="volver" href="../index.html#simulaciones" target="_top">← Órbita Matemática</a></div>
 </header>
 <main>
 <section class="band">

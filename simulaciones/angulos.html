@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ángulos de los polígonos · Órbita Matemática</title>
+<meta name="description" content="Simulación interactiva: recorta las esquinas de un polígono y júntalas para descubrir la suma de sus ángulos interiores y exteriores. Triángulos, cuadriláteros, pentágonos, hexágonos y octágonos.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+:root{color-scheme:light;--bg:#ffffff;--ink:#16202b;--mut:#5b6675;--line:#dde4ec;--grid:#edf1f6;--band:#163a5f;--card:#f2f6fb;--sel:#378ADD;--coral:#D85A30;--teal:#1D9E75;--vio:#7F77DD;--amb:#BA7517;--pink:#D4537E}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Lexend,system-ui,sans-serif;overflow-x:clip}
+h1,h2{font-weight:600;line-height:1.1;margin:0;text-wrap:balance}
+button,input{font:inherit;color:inherit}
+button{min-height:40px;padding:6px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);cursor:pointer}
+button:hover{border-color:var(--mut)}button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
+button.on{border-color:var(--sel);color:var(--sel);background:color-mix(in srgb,var(--sel) 10%,transparent)}
+button.pri{background:var(--band);color:#fff;border-color:var(--band)}
+
+input[type=checkbox]{accent-color:var(--sel);width:18px;height:18px}
+.top{background:#EAF2FB;color:#163a5f;border-bottom:3px solid #378ADD;padding:14px max(4vw,16px);display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:18px;flex-wrap:wrap}
+.volver{color:#163a5f;text-decoration:none;font-size:14px;font-weight:500;padding:6px 10px;border:1px solid rgba(22,58,95,.35);border-radius:999px;background:#fff}.volver:hover{border-color:#163a5f}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs a{color:#163a5f;text-decoration:none;padding:8px 12px;border-radius:999px;font-size:15px;opacity:.82}
+.tabs a:hover{opacity:1;background:rgba(22,58,95,.08)}.tabs a.on{opacity:1;background:#163a5f;color:#fff}
+.band{padding:clamp(20px,3vw,44px) max(4vw,16px)}
+.work{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:24px;max-width:1400px;margin:0 auto}
+.stagehead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 18px;margin-bottom:8px}
+.stagehead h1{font-size:clamp(26px,3vw,36px)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--mut)}
+.legend i{display:inline-block;width:16px;height:10px;border-radius:3px;vertical-align:middle;margin-right:6px}
+.fig{position:relative;height:clamp(340px,58vh,600px);border-radius:16px;border:1px solid var(--line);background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;overflow:hidden}
+.fig svg{position:absolute;inset:0;width:100%;height:100%}
+.hint{position:absolute;left:12px;bottom:8px;margin:0;font-size:13px;color:var(--mut);pointer-events:none}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.stepTxt{font-size:15px;color:var(--ink);flex:1 1 100%;background:var(--card);border-radius:12px;padding:10px 14px;margin:0}
+.panel{display:flex;flex-direction:column;gap:16px}
+.box{background:var(--card);border-radius:14px;padding:14px 16px}
+.box h2{font-size:17px;margin-bottom:10px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}.seg button{min-height:36px;padding:4px 12px;font-size:14px}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--mut);margin-top:10px}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px}.row button{min-height:34px;padding:3px 10px;font-size:14px}
+.mets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.met{background:var(--card);border-radius:12px;padding:10px 14px}.met p{margin:0}.met .l{font-size:13px;color:var(--mut)}.met .v{font-size:clamp(19px,2vw,23px);font-weight:600}.met .s{font-size:13px;color:var(--mut)}
+.fm div{font-size:15px;line-height:1.7;padding:4px 0;border-bottom:1px dashed var(--line)}.fm div:last-child{border:0}.fm b{font-weight:600}
+details summary{cursor:pointer;font-weight:600;font-size:17px;min-height:32px}
+.concept{border-left:4px solid var(--vio);background:color-mix(in srgb,var(--vio) 9%,transparent);padding:10px 14px;font-size:15px;margin:0}
+.concept b{color:var(--coral);font-weight:600}
+.note{font-size:13px;color:var(--mut);margin:0}
+.warn{border-left:4px solid var(--amb);background:color-mix(in srgb,var(--amb) 10%,transparent);padding:8px 12px;font-size:14px;margin:0}
+[hidden]{display:none!important}
+.fx{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.08;margin:0 .1em;font-size:.92em}
+.fx>span{padding:0 .2em}.fx>span:first-child{border-bottom:1.6px solid currentColor}
+.frin{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.fr{display:inline-flex;flex-direction:column;align-items:center;gap:4px;padding:6px 8px;border-radius:12px;background:var(--bg)}
+.fr .bar{width:100%;border-top:3px solid currentColor}
+.fr.t{color:var(--teal)}.fr.c{color:var(--coral)}
+.stp{display:inline-flex;align-items:center;gap:4px}
+.stp button{min-height:34px;width:34px;padding:0;font-size:18px;line-height:1;color:var(--ink)}
+.stp output{min-width:2.4ch;text-align:center;font-weight:600;font-size:22px}
+.op{font-size:30px;font-weight:600;color:var(--mut)}
+.lbl{font-size:13px;color:var(--mut);display:block;margin-bottom:6px}
+@media(max-width:900px){.work{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.fig{height:360px}.tabs a{padding:6px 9px;font-size:14px}}
+
+.fig.plain{background-image:none;height:clamp(420px,64vh,640px)}
+.fig svg{touch-action:none}
+@media(max-width:640px){.fig.plain{height:640px}.fig .hint{display:none}.tbl{font-size:12.5px}.tbl th{font-size:11px}}
+.tblw{overflow-x:auto}
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:16px;font-weight:600}
+.chip{padding:3px 10px;border-radius:999px;color:#fff}
+.chip.off{background:var(--bg)!important;border:2px dashed currentColor}
+.sum{font-size:clamp(20px,2.2vw,24px);font-weight:600;margin-top:10px}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}.tbl th{font-weight:500;color:var(--mut);text-align:right;font-size:12.5px;padding:4px 6px;border-bottom:1px solid var(--line)}.tbl td{padding:6px;border-bottom:1px dashed var(--line);text-align:right}
+.tbl td:first-child,.tbl th:first-child{text-align:left}
+.tbl tr.on td{background:color-mix(in srgb,var(--sel) 12%,transparent);font-weight:600}
+.done{color:var(--teal);font-weight:600}
+</style>
+</head>
+<body>
+<header class="top">
+<div class="brand"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" stroke="#163a5f" stroke-width="3" stroke-linejoin="round" aria-hidden="true"><path d="M8 52 L56 52 L26 10 Z"/><path d="M14 52 A6 6 0 0 0 12 46.5" /><path d="M48 52 A8 8 0 0 0 51.5 45.5"/></svg><span>Ángulos de los polígonos</span><a class="volver" href="../index.html#simulaciones" target="_top">← Órbita Matemática</a></div>
+<nav class="tabs" id="tabs"><a href="#interiores" data-r="interiores">Ángulos interiores</a><a href="#exteriores" data-r="exteriores">Ángulos exteriores</a></nav>
+</header>
+<main>
+<section class="band">
+<div class="work">
+<div>
+<div class="stagehead"><h1 id="aTitle">Ángulos interiores</h1><div class="legend" id="aLeg"></div></div>
+<div class="fig plain"><svg id="asv" role="img" aria-label="Polígono con sus ángulos y mesa de armado"></svg><p class="hint" id="aHint">Arrastra cada esquina de color hasta la mesa de armado, o tócala · arrastra los vértices para cambiar la forma</p></div>
+<div class="tools"><button id="aBuild" class="pri">Armar todo</button><button id="aUndo">Devolver todo</button><button id="aNew">Otra forma</button><button id="aReg">Polígono regular</button></div>
+</div>
+<aside class="panel">
+<p class="concept" id="aConcept"></p>
+<div class="box"><h2>Polígono</h2><div class="seg" id="aN"></div>
+<label class="chk" id="aTriRow"><input type="checkbox" id="aTri"> Dividir en triángulos desde un vértice</label>
+<label class="chk" id="aIntRow"><input type="checkbox" id="aInt"> Mostrar también los ángulos interiores</label>
+</div>
+<div class="box"><h2>Suma de los ángulos</h2><div class="chips" id="aChips"></div><div class="sum" id="aSum"></div><p class="note" id="aNote" style="margin-top:6px"></p></div>
+<div class="box"><h2>Todos los polígonos</h2><div class="tblw"><table class="tbl" id="aTbl"></table></div></div>
+<div class="box"><details open><summary>¿Por qué?</summary><div class="fm" id="aFm"></div></details></div>
+</aside>
+</div>
+</section>
+</main>
+<script>
+{
+const $=id=>document.getElementById(id);
+const COLS=['#D85A30','#1D9E75','#7F77DD','#BA7517','#D4537E','#378ADD','#4E9A3A','#8A5A3B'];
+const NAMES={3:'Triángulo',4:'Cuadrilátero',5:'Pentágono',6:'Hexágono',8:'Octágono'};
+const LET='ABCDEFGH',DEG=180/Math.PI,RAD=Math.PI/180;
+const nf=(x,d=1)=>{const r=Math.round(x*10**d)/10**d;return(Object.is(r,-0)?0:r).toLocaleString('es-CL',{maximumFractionDigits:d});};
+const F1=x=>x.toFixed(1);
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function T(x,y,s,c,o={}){return `<text x="${F1(x)}" y="${F1(y)}" fill="${c}" font-size="${o.fs||14}" font-weight="${o.fw||600}" text-anchor="${o.a||'middle'}" dominant-baseline="middle" style="paint-order:stroke;stroke:${o.bg||'var(--bg)'};stroke-width:${o.sw??4}px;stroke-linejoin:round" pointer-events="none">${s}</text>`;}
+function Ln(a,b,c,w,o={}){return `<line x1="${F1(a[0])}" y1="${F1(a[1])}" x2="${F1(b[0])}" y2="${F1(b[1])}" stroke="${c}" stroke-width="${w}" opacity="${o.op??1}" ${o.dash?`stroke-dasharray="${o.dash}"`:''} stroke-linecap="round" pointer-events="none"/>`;}
+const PRE={3:[50,60,70],4:[80,100,95,85],5:[100,110,105,120,105],6:[110,130,115,125,120,120],8:[130,140,135,135,140,130,135,135]};
+
+/* ---------- construcción de polígonos con ángulos dados ---------- */
+function build(ints){const n=ints.length,ext=ints.map(a=>180-a),th=[0];for(let i=1;i<n;i++)th.push(th[i-1]+ext[i]);
+ const u=th.map(t=>[Math.cos(t*RAD),Math.sin(t*RAD)]);
+ for(let tries=0;tries<60;tries++){const L=Array(n).fill(1).map((v,i)=>i<n-2?(tries?0.6+Math.random()*0.9:1):0);
+  let sx=0,sy=0;for(let i=0;i<n-2;i++){sx+=L[i]*u[i][0];sy+=L[i]*u[i][1];}
+  const a=u[n-2],b=u[n-1],det=a[0]*b[1]-a[1]*b[0];if(Math.abs(det)<1e-9)continue;
+  const p=(-sx*b[1]+sy*b[0])/det,q=(-a[0]*sy+a[1]*sx)/det;L[n-2]=p;L[n-1]=q;
+  if(p>0.25&&q>0.25&&Math.max(...L)/Math.min(...L)<3.2){const V=[[0,0]];for(let i=0;i<n-1;i++)V.push([V[i][0]+L[i]*u[i][0],V[i][1]+L[i]*u[i][1]]);return norm(V);}}
+ return norm(Array.from({length:n},(_,i)=>[Math.cos(2*Math.PI*i/n),Math.sin(2*Math.PI*i/n)]));}
+function norm(V){const cx=V.reduce((s,p)=>s+p[0],0)/V.length,cy=V.reduce((s,p)=>s+p[1],0)/V.length;const m=Math.max(...V.map(p=>Math.hypot(p[0]-cx,p[1]-cy)));
+ // rotar para que el lado AB quede abajo y horizontal
+ return V.map(p=>[(p[0]-cx)/m,(p[1]-cy)/m]);}
+function randomInts(n){const S=(n-2)*180;for(let t=0;t<500;t++){const e=Array.from({length:n},()=>20+Math.random()*100);const k=360/e.reduce((a,b)=>a+b,0);const ext=e.map(x=>Math.round(x*k));const diff=360-ext.reduce((a,b)=>a+b,0);ext[0]+=diff;
+  if(ext.every(x=>x>=18&&x<=150))return ext.map(x=>180-x);}return Array(n).fill(S/n);}
+
+/* ---------- estado ---------- */
+let timers=[];
+const A={mode:'interiores',n:3,V:[],W:[],order:[],drag:null,tri:false,intToo:false,anim:false};
+function setPoly(V){A.V=V;A.W=V.map((_,i)=>({state:'home',cur:null,slot:-1}));A.order=[];}
+function load(n,ints){timers.forEach(clearTimeout);timers=[];A.n=n;setPoly(build(ints||PRE[n]));draw();}
+$('aN').innerHTML=[3,4,5,6,8].map(n=>`<button data-n="${n}">${NAMES[n]}</button>`).join('');
+$('aN').onclick=e=>{const b=e.target.closest('button');if(b)load(+b.dataset.n);};
+$('aNew').onclick=()=>load(A.n,randomInts(A.n));
+$('aReg').onclick=()=>load(A.n,Array(A.n).fill((A.n-2)*180/A.n));
+$('aTri').onchange=e=>{A.tri=e.target.checked;draw();};
+$('aInt').onchange=e=>{A.intToo=e.target.checked;draw();};
+$('aUndo').onclick=()=>{timers.forEach(clearTimeout);timers=[];A.W.forEach(w=>{w.state=w.state==='home'?'home':'return';w.slot=-1;});A.order=[];draw();};
+$('aBuild').onclick=()=>{timers.forEach(clearTimeout);timers=[];let k=0;A.W.forEach((w,i)=>{if(w.state==='placed')return;timers.push(setTimeout(()=>{place(i);draw();},reduce?0:(k++)*420));});};
+function place(i){const w=A.W[i];if(!w)return;if(w.state==='placed'&&A.order.includes(i))return;A.order=A.order.filter(x=>x!==i);A.order.push(i);w.state='placed';}
+function unplace(i){const w=A.W[i];A.order=A.order.filter(x=>x!==i);w.state='return';}
+
+/* ---------- geometría ---------- */
+const ang=v=>Math.atan2(-v[1],v[0]);// vectores en pantalla → ángulo matemático
+const nrm=a=>{a%=2*Math.PI;return a<0?a+2*Math.PI:a;};
+function wedges(L){const V=L.P,n=V.length,ext=A.mode==='exteriores',res=[];
+ for(let i=0;i<n;i++){const P=V[i],nx=V[(i+1)%n],pv=V[(i+n-1)%n];
+  const dOut=ang([nx[0]-P[0],nx[1]-P[1]]),dIn=ang([P[0]-pv[0],P[1]-pv[1]]),dPrev=ang([pv[0]-P[0],pv[1]-P[1]]);
+  const intA=nrm(dPrev-dOut);// interior: desde dOut, sentido antihorario, hasta dPrev
+  if(!ext)res.push({apex:P,phi:dOut,a:intA});else res.push({apex:P,phi:dIn,a:nrm(dOut-dIn),intA,intPhi:dOut});}
+ return res;}
+function convex(V){const n=V.length;for(let i=0;i<n;i++){const a=V[i],b=V[(i+1)%n],c=V[(i+2)%n];const cr=(b[0]-a[0])*(c[1]-b[1])-(b[1]-a[1])*(c[0]-b[0]);if(cr<=0)return false;
+  const u=[a[0]-b[0],a[1]-b[1]],v=[c[0]-b[0],c[1]-b[1]],t=Math.acos((u[0]*v[0]+u[1]*v[1])/(Math.hypot(...u)*Math.hypot(...v)))*DEG;if(t<12||t>172)return false;if(Math.hypot(...u)<0.18)return false;}return true;}
+/* redondeo que conserva la suma (método del resto mayor) */
+function roundKeep(vals,total,d=1){const f=10**d,fl=vals.map(v=>Math.floor(v*f)),rem=vals.map((v,i)=>v*f-fl[i]);let need=Math.round(total*f)-fl.reduce((a,b)=>a+b,0);
+ const idx=rem.map((r,i)=>[r,i]).sort((a,b)=>b[0]-a[0]);for(let k=0;k<idx.length&&need>0;k++,need--)fl[idx[k][1]]++;return fl.map(v=>v/f);}
+
+/* ---------- dibujo ---------- */
+function sector(ap,phi,a,rho,col,op,extra=''){const p1=[ap[0]+rho*Math.cos(phi),ap[1]-rho*Math.sin(phi)],p2=[ap[0]+rho*Math.cos(phi+a),ap[1]-rho*Math.sin(phi+a)];
+ if(a>=2*Math.PI-1e-4)return `<circle cx="${F1(ap[0])}" cy="${F1(ap[1])}" r="${F1(rho)}" fill="${col}" fill-opacity="${op}" stroke="${col}" stroke-width="2" ${extra}/>`;
+ return `<path d="M${F1(ap[0])} ${F1(ap[1])} L${F1(p1[0])} ${F1(p1[1])} A${F1(rho)} ${F1(rho)} 0 ${a>Math.PI?1:0} 0 ${F1(p2[0])} ${F1(p2[1])} Z" fill="${col}" fill-opacity="${op}" stroke="${col}" stroke-width="2" stroke-linejoin="round" ${extra}/>`;}
+const lerp=(a,b,t)=>a+(b-a)*t;
+function angLerp(a,b,t){let d=nrm(b-a);if(d>Math.PI)d-=2*Math.PI;return a+d*t;}
+let LAY=null;
+function layout(W,H){const wide=W>=640,pr=wide?{x:16,y:16,w:W*0.54-16,h:H-60}:{x:10,y:10,w:W-20,h:H*0.47},ar=wide?{x:W*0.54,y:16,w:W*0.46-16,h:H-60}:{x:10,y:H*0.47+6,w:W-20,h:H*0.53-50};
+ const sc=Math.min(pr.w,pr.h)/2*(A.mode==='exteriores'?0.62:0.74),cx=pr.x+pr.w/2,cy=pr.y+pr.h/2;const P=A.V.map(p=>[cx+p[0]*sc,cy-p[1]*sc]);
+ let minSide=1e9;P.forEach((p,i)=>{const q=P[(i+1)%P.length];minSide=Math.min(minSide,Math.hypot(q[0]-p[0],q[1]-p[1]));});
+ const ext=A.mode==='exteriores',laps=ext?1:Math.max(1,Math.ceil((A.n-2)/2-1e-9)),tri=!ext&&A.n===3;
+ const lim=tri?Math.min(ar.w/2-30,ar.h*0.5):wide?Math.min(ar.h/laps/2-26,ar.w/2-24):Math.min(ar.w/laps/2-10,ar.h/2-30);
+ const rho=Math.max(18,Math.min(64,minSide*0.42,lim));
+ const C0=[];for(let k=0;k<laps;k++)C0.push(tri?[ar.x+ar.w/2,ar.y+ar.h*0.62]:laps===1?[ar.x+ar.w/2,ar.y+ar.h/2+6]:wide?[ar.x+ar.w/2,ar.y+20+(k+0.5)*(ar.h-34)/laps]:[ar.x+(k+0.5)*ar.w/laps,ar.y+ar.h/2+4]);
+ return{wide,pr,ar,sc,cx,cy,P,rho,laps,C0};}
+function targets(L,WG){let acc=0;const T={},TP=2*Math.PI;A.order.forEach(i=>{const w=WG[i],k=Math.min(L.laps-1,Math.floor((acc+1e-6)/TP)),c=L.C0[k],ph=acc-k*TP;
+  const t={x:c[0],y:c[1],phi:ph,rho:L.rho};if(ph+w.a>TP+1e-6&&k+1<L.laps){t.split=[TP-ph,w.a-(TP-ph),L.C0[k+1]];}T[i]=t;acc+=w.a;});return{T,base:L.C0[0],acc};}
+function draw(){const s=$('asv'),W=s.clientWidth||700,H=s.clientHeight||520;s.setAttribute('viewBox',`0 0 ${W} ${H}`);
+ const L=LAY=layout(W,H),WG=wedges(L),ext=A.mode==='exteriores',n=A.n,{T:TG}=targets(L,WG);let o='',anim=false;
+ // mesa de armado
+ o+=`<rect x="${F1(L.ar.x)}" y="${F1(L.ar.y)}" width="${F1(L.ar.w)}" height="${F1(L.ar.h)}" rx="14" fill="#F2F6FB" stroke="var(--line)" stroke-width="1.5"/>`+T(L.ar.x+14,L.ar.y+16,'Mesa de armado','var(--mut)',{fs:13,fw:500,a:'start',bg:'#F2F6FB'});
+ if(!ext&&n===3){const b0=L.C0[0],R=L.rho;o+=Ln([b0[0]-R*1.5,b0[1]],[b0[0]+R*1.5,b0[1]],'var(--ink)',2.2)+`<path d="M${F1(b0[0]+R+4)} ${F1(b0[1])} A${F1(R+4)} ${F1(R+4)} 0 0 0 ${F1(b0[0]-R-4)} ${F1(b0[1])}" fill="none" stroke="var(--mut)" stroke-width="1.4" stroke-dasharray="4 5"/>`+T(b0[0],b0[1]+22,'ángulo extendido = 180°','var(--mut)',{fs:13,fw:500,bg:'#F2F6FB'});o+=`<circle cx="${F1(b0[0])}" cy="${F1(b0[1])}" r="4" fill="var(--ink)"/>`;}
+ else{const totDeg=ext?360:(n-2)*180;L.C0.forEach((c,k)=>{const last=k===L.laps-1,part=Math.min(360,totDeg-360*k),half=part<360;
+   if(half)o+=Ln([c[0]-L.rho-6,c[1]],[c[0]+L.rho+6,c[1]],'var(--mut)',1.4,{dash:'4 5'})+`<path d="M${F1(c[0]+L.rho+4)} ${F1(c[1])} A${F1(L.rho+4)} ${F1(L.rho+4)} 0 0 0 ${F1(c[0]-L.rho-4)} ${F1(c[1])}" fill="none" stroke="var(--mut)" stroke-width="1.4" stroke-dasharray="4 5"/>`;
+   else o+=`<circle cx="${F1(c[0])}" cy="${F1(c[1])}" r="${F1(L.rho+4)}" fill="none" stroke="var(--mut)" stroke-width="1.4" stroke-dasharray="4 5"/>`+Ln(c,[c[0]+L.rho+10,c[1]],'var(--mut)',1.2,{dash:'3 4'});
+   o+=`<circle cx="${F1(c[0])}" cy="${F1(c[1])}" r="4" fill="var(--ink)"/>`;
+   const lab=L.laps===1?(ext||n===4?'ángulo completo = 360°':''):(half?'media vuelta = 180°':`${k+1}.ª vuelta = 360°`);
+   o+=T(c[0],c[1]+L.rho+18,lab,'var(--mut)',{fs:12,fw:500,bg:'#F2F6FB'});});
+  if(L.laps>1)o+=T(L.ar.x+L.ar.w/2,L.ar.y+L.ar.h-12,`${n-2} · 180° = ${(n-2)*180}°`,'var(--ink)',{fs:13,bg:'#F2F6FB'});}
+ // polígono
+ if(A.tri&&!ext){for(let i=1;i<n-1;i++)o+=`<polygon points="${[L.P[0],L.P[i],L.P[i+1]].map(p=>F1(p[0])+','+F1(p[1])).join(' ')}" fill="${COLS[(i-1)%8]}" fill-opacity=".07" stroke="none"/>`;for(let i=2;i<n-1;i++)o+=Ln(L.P[0],L.P[i],'var(--mut)',1.6,{dash:'6 5'});}
+ o+=`<polygon points="${L.P.map(p=>F1(p[0])+','+F1(p[1])).join(' ')}" fill="var(--bg)" fill-opacity=".6" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round"/>`;
+ if(ext)L.P.forEach((p,i)=>{const pv=L.P[(i+n-1)%n],u=[p[0]-pv[0],p[1]-pv[1]],l=Math.hypot(...u);o+=Ln(p,[p[0]+u[0]/l*L.rho*2.1,p[1]+u[1]/l*L.rho*2.1],'var(--ink)',1.6,{dash:'5 5'});});
+ // huecos (dónde estaba cada esquina) y ángulos interiores en modo exterior
+ WG.forEach((w,i)=>{if(A.W[i].state!=='home')o+=sector(w.apex,w.phi,w.a,L.rho,COLS[i%8],.06,'stroke-dasharray="4 4" pointer-events="none"');
+  if(ext&&A.intToo){o+=sector(w.apex,w.intPhi,w.intA,L.rho*.62,'#9aa7b5',.25,'pointer-events="none"');const m=w.intPhi+w.intA/2;o+=T(w.apex[0]+L.rho*.42*Math.cos(m),w.apex[1]-L.rho*.42*Math.sin(m),nf(w.intA*DEG,0)+'°','var(--mut)',{fs:11,fw:500});}});
+ // vértices
+ L.P.forEach((p,i)=>{const c=L.P.reduce((s,q)=>[s[0]+q[0]/n,s[1]+q[1]/n],[0,0]),dx=p[0]-c[0],dy=p[1]-c[1],l=Math.hypot(dx,dy)||1;
+  o+=T(p[0]+dx/l*(ext?16:20),p[1]+dy/l*(ext?16:20)+(ext?-10:0),LET[i],'var(--ink)',{fs:16});});
+ // esquinas
+ const rv=roundKeep(WG.map(w=>w.a*DEG),ext?360:(n-2)*180);
+ const drawW=[];
+ WG.forEach((w,i)=>{const st=A.W[i];let cur;
+  if(st.state==='home'){cur={x:w.apex[0],y:w.apex[1],phi:w.phi,rho:L.rho};}
+  else if(st.state==='drag'){cur={...st.cur,rho:L.rho,phi:st.cur.phi};}
+  else{const tg=st.state==='placed'?TG[i]:{x:w.apex[0],y:w.apex[1],phi:w.phi,rho:L.rho};const c0=st.cur||{x:w.apex[0],y:w.apex[1],phi:w.phi,rho:L.rho},k=reduce?1:.16;
+   cur={x:lerp(c0.x,tg.x,k),y:lerp(c0.y,tg.y,k),phi:angLerp(c0.phi,tg.phi,k),rho:lerp(c0.rho,tg.rho,k)};
+   if(Math.hypot(cur.x-tg.x,cur.y-tg.y)<.6&&Math.abs(angLerp(cur.phi,tg.phi,1)-cur.phi)<.002&&Math.abs(cur.rho-tg.rho)<.3){cur={...tg};if(st.state==='return')st.state='home';}else anim=true;}
+  st.cur=cur;drawW.push([i,cur]);});
+ drawW.sort((a,b)=>(A.W[a[0]].state==='drag')-(A.W[b[0]].state==='drag'));
+ drawW.forEach(([i,c])=>{const w=WG[i],tg=TG[i],st=A.W[i],H=`data-h="w:${i}" style="cursor:grab"`;
+  if(st.state==='placed'&&tg&&tg.split&&Math.hypot(c.x-tg.x,c.y-tg.y)<1){const[a1,a2,c2]=tg.split;o+=sector([c.x,c.y],c.phi,a1,c.rho,COLS[i%8],.5,H)+sector(c2,0,a2,c.rho,COLS[i%8],.5,H);
+   const big=a1>=a2,ap=big?[c.x,c.y]:c2,ph=big?c.phi:0,aa=big?a1:a2,m=ph+aa/2,rr=c.rho*(aa<0.6?1.25:.62);o+=T(ap[0]+rr*Math.cos(m),ap[1]-rr*Math.sin(m),nf(rv[i],1)+'°',COLS[i%8],{fs:12});return;}
+  o+=sector([c.x,c.y],c.phi,w.a,c.rho,COLS[i%8],.5,H);
+  const m=c.phi+w.a/2,rr=c.rho*(w.a<0.6?1.25:.62);o+=T(c.x+rr*Math.cos(m),c.y-rr*Math.sin(m),nf(rv[i],1)+'°',COLS[i%8],{fs:12});});
+ // vértices arrastrables (encima)
+ L.P.forEach((p,i)=>o+=`<circle cx="${F1(p[0])}" cy="${F1(p[1])}" r="7" fill="var(--ink)" stroke="var(--bg)" stroke-width="2" data-h="v:${i}" style="cursor:move"/>`);
+ // progreso
+ if(A.order.length){const sum=A.order.reduce((s,i)=>s+rv[i],0);o+=T(L.ar.x+L.ar.w-14,L.ar.y+16,`llevas ${nf(sum,1)}°`,'var(--ink)',{fs:14,a:'end',bg:'#F2F6FB'});}
+ A.anim=anim;s.innerHTML=o;panel(WG,rv);}
+
+/* ---------- panel ---------- */
+function panel(WG,rv){const ext=A.mode==='exteriores',n=A.n,S=ext?360:(n-2)*180,all=A.order.length===n;
+ document.querySelectorAll('#tabs a').forEach(a=>a.classList.toggle('on',a.dataset.r===A.mode));
+ document.querySelectorAll('#aN button').forEach(b=>b.classList.toggle('on',+b.dataset.n===n));
+ $('aTitle').textContent=ext?`Ángulos exteriores · ${NAMES[n].toLowerCase()}`:`Ángulos interiores · ${NAMES[n].toLowerCase()}`;
+ $('aTriRow').hidden=ext;$('aIntRow').hidden=!ext;
+ $('aLeg').innerHTML=ext?'<span>Línea punteada: prolongación de cada lado</span>':'<span>Cada color es una esquina del polígono</span>';
+ $('aConcept').innerHTML=ext?'Un <b>ángulo exterior</b> se forma al <b>prolongar</b> un lado: es el giro que haces en cada vértice al recorrer el polígono. Si juntas todos los ángulos exteriores, siempre completas <b>una vuelta: 360°</b>.':'Recorta las <b>esquinas</b> del polígono y júntalas una al lado de la otra. En el triángulo forman un <b>ángulo extendido (180°)</b>; en el cuadrilátero, un <b>ángulo completo (360°)</b>. ¿Y en los demás?';
+ $('aChips').innerHTML=WG.map((w,i)=>`<span class="chip ${A.W[i].state==='placed'?'':'off'}" style="background:${COLS[i%8]};color:${A.W[i].state==='placed'?'#fff':COLS[i%8]}">${LET[i]}: ${nf(rv[i],1)}°</span>`).join('');
+ const placed=A.order.map(i=>nf(rv[i],1)+'°');
+ $('aSum').innerHTML=all?`${placed.join(' + ')} = <span class="done">${S}°</span>`:(placed.length?`${placed.join(' + ')} = ${nf(A.order.reduce((s,i)=>s+rv[i],0),1)}°`:'<span style="color:var(--mut);font-size:16px;font-weight:500">Aún no hay esquinas en la mesa.</span>');
+ $('aNote').innerHTML=all?(ext?`<span class="done">¡Una vuelta completa!</span> Los ángulos exteriores de cualquier polígono convexo suman 360°.`:n===3?`<span class="done">¡Un ángulo extendido!</span> Los ángulos interiores de todo triángulo suman 180°.`:n===4?`<span class="done">¡Un ángulo completo!</span> Los ángulos interiores de todo cuadrilátero suman 360°.`:`<span class="done">${nf((n-2)/2,1)} vueltas = ${n-2} ángulos extendidos.</span> Los ángulos interiores de todo ${NAMES[n].toLowerCase()} suman (${n} − 2) · 180° = ${S}°.`)
+  :`${n-A.order.length>1?'Faltan':'Falta'} ${n-A.order.length} esquina${n-A.order.length>1?'s':''}. Las medidas están redondeadas a un decimal de modo que la suma se conserve.`;
+ $('aTbl').innerHTML=`<tr><th>Polígono</th><th>Suma interiores</th><th>Cada interior (regular)</th><th>Suma exteriores</th><th>Cada exterior (regular)</th></tr>`+[3,4,5,6,8].map(k=>`<tr class="${k===n?'on':''}"><td>${NAMES[k]}<br><span style="color:var(--mut);font-size:12px">n = ${k}</span></td><td>${(k-2)*180}°</td><td>${nf((k-2)*180/k,1)}°</td><td>360°</td><td>${nf(360/k,1)}°</td></tr>`).join('');
+ const L=ext?[`<b>En cada vértice</b>, el ángulo interior y el exterior están sobre una misma recta: son <b>suplementarios</b>, α + β = 180°.`,
+  `<b>Con ${n} vértices:</b> todos los interiores más todos los exteriores suman ${n} · 180° = ${n*180}°.`,
+  `Los interiores suman (${n} − 2) · 180° = ${(n-2)*180}°, así que los exteriores suman ${n*180}° − ${(n-2)*180}° = <b>360°</b>.`,
+  `<b>Otra forma de verlo:</b> si caminas por el borde del polígono, en cada vértice giras un ángulo exterior. Al volver al punto de partida diste exactamente <b>una vuelta completa</b>.`,
+  `En un ${NAMES[n].toLowerCase()} <b>regular</b>, cada ángulo exterior mide 360° : ${n} = ${nf(360/n,1)}°.`]
+ :[`<b>Triangulación:</b> desde un vértice se pueden trazar diagonales que dividen el ${NAMES[n].toLowerCase()} en <b>${n-2} triángulo${n>3?'s':''}</b>. Activa «Dividir en triángulos» para verlo.`,
+  `Cada triángulo aporta 180°, y entre todos forman exactamente los ángulos del polígono: <b>S = (n − 2) · 180°</b>.`,
+  `<b>Para este polígono:</b> (${n} − 2) · 180° = ${n-2} · 180° = <b>${(n-2)*180}°</b>.`,
+  `En un ${NAMES[n].toLowerCase()} <b>regular</b>, todos los ángulos son iguales: cada uno mide ${(n-2)*180}° : ${n} = ${nf((n-2)*180/n,1)}°.`,
+  `<b>Cambia la forma</b> arrastrando los vértices: cada ángulo cambia, pero la suma no.`];
+ $('aFm').innerHTML=L.map(x=>`<div>${x}</div>`).join('');}
+
+/* ---------- interacción ---------- */
+const s=$('asv');let down=null;
+s.addEventListener('pointerdown',e=>{const h=e.target.getAttribute&&e.target.getAttribute('data-h');if(!h)return;const r=s.getBoundingClientRect(),p=[e.clientX-r.left,e.clientY-r.top];
+ down={h,p0:p,moved:false};if(h.startsWith('w:')){const i=+h.slice(2),c=A.W[i].cur;down.off=[p[0]-c.x,p[1]-c.y];}s.setPointerCapture(e.pointerId);});
+s.addEventListener('pointermove',e=>{if(!down)return;const r=s.getBoundingClientRect(),p=[e.clientX-r.left,e.clientY-r.top];if(!down.moved&&Math.hypot(p[0]-down.p0[0],p[1]-down.p0[1])<5)return;down.moved=true;
+ if(down.h.startsWith('w:')){const i=+down.h.slice(2),w=A.W[i];if(w.state==='placed'){A.order=A.order.filter(x=>x!==i);}w.state='drag';w.cur={...w.cur,x:p[0]-down.off[0],y:p[1]-down.off[1]};draw();}
+ else if(down.h.startsWith('v:')){const i=+down.h.slice(2),L=LAY,old=A.V[i];A.V[i]=[(p[0]-L.cx)/L.sc,-(p[1]-L.cy)/L.sc];if(!convex(A.V))A.V[i]=old;draw();}});
+const up=e=>{if(!down)return;const d=down;down=null;if(d.h.startsWith('w:')){const i=+d.h.slice(2),w=A.W[i];
+  if(!d.moved){if(w.state==='placed')unplace(i);else place(i);}
+  else{const L=LAY,c=w.cur,inA=c.x>L.ar.x&&c.x<L.ar.x+L.ar.w&&c.y>L.ar.y&&c.y<L.ar.y+L.ar.h;if(inA)place(i);else{w.state='return';}}}
+ draw();};
+s.addEventListener('pointerup',up);s.addEventListener('pointercancel',up);
+function route(){const h=(location.hash||'').slice(1);const m=h==='exteriores'?'exteriores':'interiores';if(m!==A.mode){timers.forEach(clearTimeout);timers=[];A.mode=m;A.W.forEach(w=>{w.state='home';w.cur=null;});A.order=[];}draw();}
+window.addEventListener('hashchange',route);
+new ResizeObserver(()=>draw()).observe(document.body);
+A.n=3;setPoly(build(PRE[3]));route();
+(function loop(){if(A.anim)draw();requestAnimationFrame(loop);})();
+}
+</script>
+</body>
+</html>

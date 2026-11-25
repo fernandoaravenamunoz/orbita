@@ -9,7 +9,7 @@ Sitio de material para estudiantes: guías, videos, solucionarios, simulaciones,
 | `datos.js` | Cursos, unidades y todo el material | **Sí, aquí se agrega todo** |
 | `materiales/` | Carpeta para tus PDF (guías y pautas) | Sí, subes archivos aquí |
 | `juegos/` | Páginas de los juegos (Kakoomas, Cálculo mental) | Solo para agregar juegos nuevos |
-| `simulaciones/` | Simulaciones propias en HTML (fracciones, enteros, cuerpos 3D, homotecias, Tales, Euclides); se muestran en la sección **Simulaciones** del menú | Solo para agregar simulaciones nuevas |
+| `simulaciones/` | Simulaciones propias en HTML (fracciones, enteros, cuerpos 3D, homotecias, Tales, Euclides, π, ángulos de polígonos); se muestran en la sección **Simulaciones** del menú | Solo para agregar simulaciones nuevas |
 | `index.html`, `estilos.css`, `app.js` | Estructura, diseño y funcionamiento | No hace falta |
 
 ## Publicar en GitHub Pages (una sola vez)
@@ -35,7 +35,7 @@ Sitio de material para estudiantes: guías, videos, solucionarios, simulaciones,
 
 - **Video:** sube el video a YouTube como *no listado* y pega su enlace en `url` con `tipo: "video"`.
 - **Simulación PhET:** abre la simulación en español, copia la dirección y usa `tipo: "simulacion"`.
-- **Simulación propia (HTML), sección Simulaciones:** sube el `.html` a la carpeta `simulaciones/` y copia un bloque de la lista `simulaciones` en `datos.js` (`nombre`, `cursos`, `descripcion`, `temas`, `url`).
+- **Simulación propia (HTML), sección Simulaciones:** sube el `.html` a la carpeta `simulaciones/` y copia un bloque de la lista `simulaciones` en `datos.js` (`nombre`, `descripcion`, `temas`, `url`, `dibujo`).
 - Si además quieres que aparezca dentro de un curso, agrega una línea en sus `recursos` con `tipo: "simulacion"` y la misma `url`.
 - **GeoGebra:** usa el enlace `https://www.geogebra.org/m/XXXXX` del recurso; el sitio lo inserta automáticamente.
 - La `fecha` (año-mes-día) ordena la sección «Lo más reciente» del inicio.

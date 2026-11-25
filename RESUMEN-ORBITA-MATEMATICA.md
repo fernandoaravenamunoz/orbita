@@ -34,7 +34,7 @@ sitemap.xml                   para Google (lista páginas y PDF)
 googleef0239d5e0f1f3b2.html   archivo de verificación de Google Search Console
 imagen-compartir.jpg          imagen de vista previa al compartir el link (1200×630)
 juegos/                       10 juegos, cada uno es un .html independiente
-simulaciones/                 6 simulaciones propias en HTML (fracciones, enteros, cuerpos-geometricos, homotecias, tales, euclides)
+simulaciones/                 8 simulaciones propias en HTML (fracciones, enteros, cuerpos-geometricos, homotecias, tales, euclides, pi, angulos)
 materiales/1medio/            15 PDF
 materiales/2medio/            10 PDF
 materiales/7basico/           4 PDF
@@ -47,7 +47,7 @@ materiales/curiosa/           oc01–oc10.svg (ilustraciones de Órbita Curiosa)
 | Ruta | Sección | Contenido |
 |---|---|---|
 | `#inicio` | Inicio | Portada y seis accesos: Cursos, Simulaciones, Juegos, Observatorio, Órbita Curiosa y Entregar tarea |
-| `#simulaciones` | Simulaciones | Herramientas interactivas propias (`datos.js → simulaciones`), en tarjetas con lámina, curso/OA, temas y botón «Abrir simulación». Hoy: Operando con fracciones, La recta de los enteros, Cuerpos geométricos 3D, Homotecias, Teorema de Tales y Teorema de Euclides |
+| `#simulaciones` | Simulaciones | Herramientas interactivas propias (`datos.js → simulaciones`), en tarjetas con lámina, temas y botón «Abrir simulación» (por decisión del profesor, sin curso ni OA). Hoy: Operando con fracciones, La recta de los enteros, Cuerpos geométricos 3D, Homotecias, Teorema de Tales, Teorema de Euclides, El número π y Ángulos de los polígonos |
 | `#cursos` / `#curso-ID` | Cursos | Por curso: **Guías por unidad** y una sección aparte de **Simulaciones y videos** |
 | `#juegos` / `#juego-ID` | Juegos | Estilo arcade (cartuchos J01–J10); es la única sección con estética de videojuego |
 | `#difusion` | Observatorio | Divulgación científica: 25 videos de YouTube con miniatura local y créditos, más 2 artículos, agrupados por categoría |
@@ -67,13 +67,16 @@ materiales/curiosa/           oc01–oc10.svg (ilustraciones de Órbita Curiosa)
 
 ### Simulaciones (`datos.js → simulaciones`)
 
-- Cada simulación es un `.html` independiente en `simulaciones/`, con campos `nombre`, `cursos`, `descripcion`, `temas`, `url`, `dibujo` y `fecha`.
+- Cada simulación es un `.html` independiente en `simulaciones/`, con campos `nombre`, `descripcion`, `temas`, `url`, `dibujo` y `fecha` (sin curso ni OA).
+- **Estilo de las simulaciones:** tema claro fijo (fondo blanco, paleta de azules, franja superior celeste #EAF2FB con borde #378ADD), aunque el dispositivo esté en modo oscuro.
 - **Cuerpos geométricos 3D:** prismas, pirámides, cilindros y conos (girar, desarmar en red, cara seleccionada, áreas y volumen con desarrollo) y cuerpos de revolución (rectángulo, triángulo rectángulo, trapecio rectángulo, semicírculo). Tiene un botón «← Órbita Matemática» que vuelve a `#simulaciones`.
-- **Operando con fracciones** (`fracciones.html`, 7° básico, OA 2 · OA 3): pestaña Multiplicación (modelo de área: primer factor en columnas, segundo en filas, producto = zona común; admite impropias y decimales con denominador 10) y pestaña División (modo «cubrir»: cuántas veces cabe el divisor, con el resto medido en divisores; modo «repartir»: dividir por un natural).
+- **Operando con fracciones** (`fracciones.html`, 7° básico, OA 2 · OA 3): pestaña Multiplicación (paso 1: las dos fracciones por separado, columnas con achurado «/» y filas con achurado «\»; paso 2: animación que las junta una sobre otra; paso 3: el producto es el achurado cruzado; admite impropias y decimales con denominador 10) y pestaña División (modo «cubrir»: las copias del divisor se deslizan sobre el dividendo y el resto se mide en divisores; modo «repartir»: el dividendo se separa en partes iguales).
 - **La recta de los enteros** (`enteros.html`): pestaña Adición y sustracción (7° OA 1: flechas, restar = sumar el opuesto, contexto de dinero o temperatura) y pestaña Multiplicación y división (8° OA 1: repetir la flecha y girar 180° si el factor es negativo, secuencia de productos para descubrir la regla, tabla de signos).
 - **Homotecias** (`homotecias.html`, I° medio, OA 8 · OA 11): figuras estrella, vela, árbol, casa, triángulo, cuadrilátero y pentágono (estas tres con vértices móviles); k de −3 a 3; centro O arrastrable; cámara oscura; medidas de OA′/OA, perímetro (× |k|), área (× k²) y ángulos. Pestaña vectorial: plano cartesiano, tabla OP → k · OP → P′, vector AB → A′B′ y composición de dos homotecias (k₁ · k₂).
 - **Teorema de Tales** (`tales.html`, I° medio, OA 9): casos «Paralelas y secantes» (r, s, t), «Triángulo con una paralela», «Triángulo rectángulo», «Secantes que se cruzan» y «Aplicación: sombras» (árbol de 5 m, sombra de 6 m, edificio a 30 m → 25 m). Se arrastran las paralelas y los puntos azules; se tocan dos vértices de una misma recta para elegir un segmento (hasta 4) y comparar razones; el panel lista las proporciones valorizadas con producto cruzado, y «Calcular x» oculta un segmento y lo despeja.
 - **Teorema de Euclides** (`euclides.html`, I° medio, semejanza): triángulo con ángulo recto en C, altura CD, proyecciones p (de a) y q (de b). Los seis datos (a, b, c, h, p, q) se cambian con barra o escribiéndolos; se mantiene fijo el último dato cambiado (o el que se elija) y se recalcula el resto para que siga siendo rectángulo, con aviso si el valor es imposible. Muestra h² = p·q, a² = p·c, b² = q·c, h = a·b/c, c = p + q y Pitágoras: fórmula, valores y resultados. Opción «Ver áreas» con cuadrados y rectángulos equivalentes.
+- **El número π** (`pi.html`): radio ajustable (barra o texto) con r, d = 2r y C en una caja en la esquina. Pestaña «Desenrollar»: la circunferencia rueda y deja su borde como segmento; se copian 3 diámetros encima, una 4.ª copia no cabe, y una regla y una lupa miden lo que sobra (≈ 0,142 d). Pestaña «Acostar el diámetro»: el diámetro se curva sobre la circunferencia 3 veces y una huincha curva más una lupa (vista estirada) miden el trozo sin cubrir. Tabla de mediciones para comparar varios radios (C : d constante).
+- **Ángulos de los polígonos** (`angulos.html`): triángulo, cuadrilátero, pentágono, hexágono y octágono (presets con ángulos enteros, «Otra forma» al azar, «Polígono regular», vértices arrastrables manteniendo convexidad). Cada esquina es una pieza de color que se arrastra o se toca para llevarla a la «mesa de armado», donde se acomoda junto a la anterior. Interiores: el triángulo forma un ángulo extendido (180°), el cuadrilátero un ángulo completo, y desde el pentágono cada vuelta va en su propio círculo (1.ª vuelta, 2.ª vuelta, media vuelta; la pieza que completa una vuelta se parte). Exteriores: prolongación punteada de cada lado; las piezas siempre completan 360°; opción de ver el interior junto al exterior (suplementarios). Panel con la suma valorizada (redondeo a 1 decimal que conserva la suma), tabla de los 5 polígonos y explicación con triangulación.
 - Criterios comunes: avance paso a paso, modo **predecir** (oculta el resultado hasta revelarlo), sin modo desafío por decisión del profesor, y sin guardar datos de estudiantes.
 - La lámina de la tarjeta es un SVG en `app.js` (`DIBUJOS_SIM`); si `dibujo` no existe, usa uno genérico.
 
