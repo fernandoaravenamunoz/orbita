@@ -297,7 +297,7 @@ h3 { font-size: 1.22rem; font-weight: 600; }
 @media (max-width: 560px) { .novedad { grid-template-columns: auto 1fr; } .novedad .boton { grid-column: 1 / -1; justify-content: center; } }
 
 /* ---------- Accesos (índice editorial numerado) ---------- */
-.accesos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 0 2rem; }
+.accesos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 0 2rem; }
 .acceso {
   display: flex; flex-direction: column; gap: .35rem;
   padding: 1.1rem 0 1.4rem; border-top: 2px solid var(--marino);
@@ -525,3 +525,15 @@ h3 { font-size: 1.22rem; font-weight: 600; }
   .oc-ficha { transition: transform .18s, box-shadow .18s; }
   .oc-ficha:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--marino); }
 }
+
+/* ---------- Simulaciones ---------- */
+.sims { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 460px), 1fr)); gap: 2rem; }
+.sim { display: grid; grid-template-rows: auto 1fr; border: 1px solid var(--marino); border-radius: var(--radio); overflow: hidden; background: var(--crema-clara); }
+.sim__lamina { position: relative; display: block; border-bottom: 1px solid var(--marino); background-color: #ECE8DC; background-image: linear-gradient(rgba(44,57,92,.09) 1px, transparent 1px), linear-gradient(90deg, rgba(44,57,92,.09) 1px, transparent 1px); background-size: 16px 16px; }
+.sim__lamina svg { display: block; width: 100%; height: auto; max-height: 230px; transition: transform .25s; }
+.sim__lamina:hover svg { transform: scale(1.03); }
+.sim__codigo { position: absolute; right: 10px; bottom: 8px; font-family: var(--mono); font-size: .7rem; color: var(--tinta-suave); }
+.sim__cuerpo { display: flex; flex-direction: column; gap: .35rem; padding: 1.1rem 1.3rem 1.3rem; border-left: 3px solid var(--naranja); }
+.sim__titulo { font-size: 1.45rem; margin: 0; }
+.sim__temas { list-style: none; display: flex; flex-wrap: wrap; gap: .35rem; margin: .4rem 0 0; padding: 0; }
+.sim .item__acciones { margin-top: auto; padding-top: .8rem; }

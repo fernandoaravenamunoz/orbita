@@ -217,6 +217,25 @@ const SITIO = {
   ],
 
   /* ---------------------------------------------------------------
+     SIMULACIONES — herramientas interactivas propias (sección aparte del menú).
+     url: archivo dentro de la carpeta "simulaciones" o un enlace externo (https://...).
+     dibujo: "cuerpos" (o déjalo fuera y se usa uno genérico).
+     --------------------------------------------------------------- */
+  simulaciones: [
+    {
+      nombre: "Cuerpos geométricos 3D",
+      cursos: "I° medio · Geometría · OA 7",
+      descripcion: "Gira prismas, pirámides, cilindros y conos, desármalos en su red y calcula áreas y volumen paso a paso. Incluye cuerpos de revolución: la figura plana que gira y su generatriz.",
+      temas: ["Prismas", "Pirámides", "Cilindros", "Conos", "Cuerpos de revolución"],
+      url: "simulaciones/cuerpos-geometricos.html",
+      dibujo: "cuerpos",
+      fecha: "2026-11-25"
+    }
+    // Para agregar otra simulación: sube su archivo .html a la carpeta "simulaciones"
+    // y copia el bloque de arriba (con su coma).
+  ],
+
+  /* ---------------------------------------------------------------
      ÓRBITA CURIOSA — investigaciones reales y excéntricas.
      area: "Física" o "Matemáticas" (sirve para el filtro).
      premio: texto del sello; déjalo "" si el artículo no ganó un Ig Nobel.

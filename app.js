@@ -238,13 +238,14 @@
 
       <section class="seccion">
         <div class="contenedor">
-          ${cabeceraSeccion("§ 01", "Explorar", "Cinco rutas por el sitio")}
+          ${cabeceraSeccion("§ 01", "Explorar", "Seis rutas por el sitio")}
           <div class="accesos">
             <a class="acceso" href="#cursos"><span class="acceso__icono">01</span><h3>Material por curso</h3><p>Guías, videos, pautas y simulaciones ordenados por unidad.</p></a>
-            <a class="acceso" href="#juegos"><span class="acceso__icono">02</span><h3>Juegos</h3><p>Desafíos de cálculo mental, como los Kakoomas matemáticos.</p></a>
-            <a class="acceso" href="#difusion"><span class="acceso__icono">03</span><h3>Observatorio</h3><p>Artículos y videos sobre matemáticas y ciencias.</p></a>
-            <a class="acceso" href="#curiosa"><span class="acceso__icono">04</span><h3>Órbita Curiosa</h3><p>Investigaciones reales y excéntricas, varias con Premio Ig Nobel.</p></a>
-            <a class="acceso" href="#tareas"><span class="acceso__icono">05</span><h3>Entregar tarea</h3><p>Sube tu trabajo y llega directo al profesor.</p></a>
+            <a class="acceso" href="#simulaciones"><span class="acceso__icono">02</span><h3>Simulaciones</h3><p>Herramientas interactivas para girar, desarmar y medir.</p></a>
+            <a class="acceso" href="#juegos"><span class="acceso__icono">03</span><h3>Juegos</h3><p>Desafíos de cálculo mental, como los Kakoomas matemáticos.</p></a>
+            <a class="acceso" href="#difusion"><span class="acceso__icono">04</span><h3>Observatorio</h3><p>Artículos y videos sobre matemáticas y ciencias.</p></a>
+            <a class="acceso" href="#curiosa"><span class="acceso__icono">05</span><h3>Órbita Curiosa</h3><p>Investigaciones reales y excéntricas, varias con Premio Ig Nobel.</p></a>
+            <a class="acceso" href="#tareas"><span class="acceso__icono">06</span><h3>Entregar tarea</h3><p>Sube tu trabajo y llega directo al profesor.</p></a>
           </div>
         </div>
       </section>
@@ -391,6 +392,50 @@
       ${cabecera("§ 03", "Lecturas y videos", "Observatorio", "Matemáticas y ciencias más allá de la sala de clases.")}
       <div class="franja-modular" aria-hidden="true"></div>
       <section class="seccion"><div class="contenedor">${cuerpo}</div></section>`;
+  }
+
+  /* ---------- Simulaciones ---------- */
+  const DIBUJOS_SIM = {
+    cuerpos: `<svg viewBox="0 0 320 180" aria-hidden="true">
+      <g fill="none" stroke="#2C395C" stroke-width="1.6" stroke-linejoin="round">
+        <path d="M34 62 L74 46 L114 62 L114 132 L74 148 L34 132 Z M34 62 L74 78 L114 62 M74 78 V148"/>
+        <path d="M160 34 L132 136 L168 150 L196 128 Z M160 34 L168 150" />
+        <path d="M160 34 L196 128" stroke-dasharray="4 4" opacity=".55"/>
+        <ellipse cx="262" cy="134" rx="36" ry="11"/>
+        <path d="M226 134 L262 40 L298 134"/>
+      </g>
+      <path d="M262 40 V134" stroke="#B9A727" stroke-width="1.6" stroke-dasharray="4 4"/>
+      <path d="M262 134 H298" stroke="#E2571E" stroke-width="2"/>
+      <path d="M160 34 L150 143" stroke="#E2571E" stroke-width="2"/>
+      <circle cx="262" cy="134" r="2.6" fill="#2C395C"/><circle cx="160" cy="34" r="2.6" fill="#2C395C"/>
+    </svg>`,
+    generico: `<svg viewBox="0 0 320 180" aria-hidden="true"><g fill="none" stroke="#2C395C" stroke-width="1.6"><circle cx="160" cy="90" r="46" stroke-dasharray="2 5"/><ellipse cx="160" cy="90" rx="96" ry="26" transform="rotate(-18 160 90)"/></g><circle cx="160" cy="90" r="16" fill="#E2571E"/><circle cx="248" cy="62" r="5" fill="#B9A727"/></svg>`
+  };
+
+  function vistaSimulaciones() {
+    const sims = SITIO.simulaciones || [];
+    const lista = sims.length ? `<div class="sims">${sims.map((x, i) => {
+      const externo = /^https?:/.test(x.url || "") ? ` target="_blank" rel="noopener"` : "";
+      const n = String(i + 1).padStart(2, "0");
+      return `
+      <article class="sim">
+        <a class="sim__lamina" href="${esc(x.url)}"${externo} aria-hidden="true" tabindex="-1">
+          ${DIBUJOS_SIM[x.dibujo] || DIBUJOS_SIM.generico}
+          <span class="sim__codigo">Fig. S${n}</span>
+        </a>
+        <div class="sim__cuerpo">
+          ${x.cursos ? `<span class="item__meta">${esc(x.cursos)}</span>` : ""}
+          <h2 class="sim__titulo">${esc(x.nombre)}</h2>
+          ${x.descripcion ? `<p class="item__desc">${esc(x.descripcion)}</p>` : ""}
+          ${(x.temas || []).length ? `<ul class="sim__temas">${x.temas.map((t) => `<li class="insignia insignia--vacia">${esc(t)}</li>`).join("")}</ul>` : ""}
+          <div class="item__acciones"><a class="boton" href="${esc(x.url)}"${externo}>Abrir simulación <span aria-hidden="true">→</span></a></div>
+        </div>
+      </article>`;
+    }).join("")}</div>` : `<div class="vacio">${planetaVacio}<p>Pronto habrá simulaciones.</p></div>`;
+    return `
+      ${cabecera("§ 02", "Laboratorio", "Simulaciones", "Herramientas interactivas para manipular, desarmar y medir. Funcionan en el computador y en el celular.")}
+      <div class="franja-modular" aria-hidden="true"></div>
+      <section class="seccion"><div class="contenedor">${lista}</div></section>`;
   }
 
   /* ---------- Órbita Curiosa ---------- */
@@ -776,6 +821,7 @@
       html = vistaCurso(id); activa = "cursos";
       if (c) titulo = `${c.asignatura} ${c.nombre} · ${SITIO.titulo}`;
     }
+    else if (vista === "simulaciones") { html = vistaSimulaciones(); activa = "simulaciones"; titulo = "Simulaciones · " + SITIO.titulo; }
     else if (vista === "juegos") { html = vistaJuegos(); activa = "juegos"; titulo = "Juegos · " + SITIO.titulo; }
     else if (vista === "juego") {
       const j = (SITIO.juegos || []).find((x) => x.id === ruta.slice(6));

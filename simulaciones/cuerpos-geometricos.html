@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cuerpos geométricos 3D · Órbita Matemática</title>
+<meta name="description" content="Simulación interactiva: prismas, pirámides, cilindros, conos y cuerpos de revolución en 3D, con su red, áreas y volumen.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: calm, precise classroom tool for a math teacher and students
+   IDEA: a geometry notebook on grid paper, drawn with a teacher's coloured pens
+   PICTURE: the live 3D body on grid paper, large, first thing on screen
+   COLOUR and TYPE: white paper, deep ink-blue band, coral/teal/violet/amber pens; Lexend
+   LAYOUT: band with tabs; stage left, control panel right; stacks under 900px */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#10151b);--ink:light-dark(#16202b,#e6ecf2);--mut:light-dark(#5b6675,#9aa7b5);--line:light-dark(#dde4ec,#28323d);--grid:light-dark(#edf1f6,#19212a);--band:light-dark(#163a5f,#0b2035);--card:light-dark(#f4f7fa,#17202a);--sel:#378ADD;--coral:#D85A30;--teal:#1D9E75;--vio:#7F77DD;--amb:#BA7517;--pink:#D4537E}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Lexend,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-weight:600;line-height:1.1;margin:0;text-wrap:balance}
+button,select,input{font:inherit;color:inherit}
+button{min-height:40px;padding:6px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);cursor:pointer}
+button:hover{border-color:var(--mut)}button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
+button.on{border-color:var(--sel);color:var(--sel);background:color-mix(in srgb,var(--sel) 10%,transparent)}
+button.pri{background:var(--band);color:#fff;border-color:var(--band)}
+:root[data-theme=dark] button.pri{background:#2b5f93;border-color:#2b5f93}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) button.pri{background:#2b5f93;border-color:#2b5f93}}
+select{min-height:40px;border-radius:10px;border:1px solid var(--line);background:var(--bg);padding:4px 10px;font-size:15px}
+input[type=range]{accent-color:var(--sel);width:100%;height:28px}
+input[type=checkbox]{accent-color:var(--sel);width:18px;height:18px}
+.top{background:var(--band);color:#fff;padding:14px max(4vw,16px);display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:18px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs a{color:#fff;text-decoration:none;padding:8px 12px;border-radius:999px;font-size:15px;opacity:.82}
+.tabs a:hover{opacity:1;background:rgba(255,255,255,.1)}.tabs a.on{opacity:1;background:#fff;color:#163a5f}
+.volver{color:#fff;text-decoration:none;font-size:14px;font-weight:500;opacity:.82;padding:6px 10px;border:1px solid rgba(255,255,255,.35);border-radius:999px}.volver:hover{opacity:1;background:rgba(255,255,255,.1)}
+.band{padding:clamp(20px,3vw,44px) max(4vw,16px)}
+.home h1{font-size:clamp(30px,4vw,46px);max-width:18ch}
+.lead{color:var(--mut);max-width:62ch;margin:12px 0 26px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;max-width:1240px}
+.card{display:flex;flex-direction:column;gap:8px;padding:20px;border-radius:16px;background:var(--card);text-decoration:none;color:inherit;border:1px solid transparent;min-height:210px}
+.card:hover{border-color:var(--sel)}.card svg{width:72px;height:72px;fill:none;stroke-width:2.2;stroke-linejoin:round}
+.card h2{font-size:21px}.card p{margin:0;color:var(--mut);font-size:15px}
+.card.rev{background:color-mix(in srgb,var(--vio) 14%,var(--card))}
+.work{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:24px;max-width:1400px;margin:0 auto}
+.stagehead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 18px;margin-bottom:8px}
+.stagehead h1{font-size:clamp(26px,3vw,36px)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--mut)}
+.legend i{display:inline-block;width:16px;border-top:3px solid;vertical-align:middle;margin-right:6px}
+.fig{position:relative;height:clamp(340px,58vh,600px);border-radius:16px;border:1px solid var(--line);background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;overflow:hidden}
+.fig svg{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab}
+.hint{position:absolute;left:12px;bottom:8px;margin:0;font-size:13px;color:var(--mut);pointer-events:none}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.netl{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--mut);flex:1 1 180px}
+.panel{display:flex;flex-direction:column;gap:16px}
+.box{background:var(--card);border-radius:14px;padding:14px 16px}
+.box h2{font-size:17px;margin-bottom:8px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}.seg button{min-height:36px;padding:4px 12px;font-size:14px}
+.sl{display:grid;grid-template-columns:7.5em minmax(0,1fr) 6em;align-items:center;gap:10px;margin:4px 0}
+.sl label{font-size:14px;color:var(--mut)}.sl output{font-weight:500;text-align:right;white-space:nowrap;font-size:15px}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--mut)}
+.row{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin-top:8px}
+.fh{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:8px}.fh h2{margin:0}
+.finfo p{margin:4px 0;font-size:15px}.finfo dl{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:6px 0;font-size:15px}.finfo dt{color:var(--mut)}.finfo dd{margin:0;font-weight:500}
+.finfo .fx{border-top:1px solid var(--line);padding-top:6px;margin-top:6px}
+.mets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.met{background:var(--card);border-radius:12px;padding:10px 14px}.met p{margin:0}.met .l{font-size:13px;color:var(--mut)}.met .v{font-size:clamp(19px,2vw,23px);font-weight:600;white-space:nowrap}.met .s{font-size:13px;color:var(--mut)}
+.fm div{font-size:15px;line-height:1.95}.fm b{font-weight:600}
+details summary{cursor:pointer;font-weight:600;font-size:17px;min-height:32px}
+.note{font-size:13px;color:var(--mut);margin:0}
+.concept{border-left:4px solid var(--vio);border-radius:0;background:color-mix(in srgb,var(--vio) 9%,transparent);padding:10px 14px;font-size:15px;margin:0}
+.concept b{color:var(--coral);font-weight:600}
+[hidden]{display:none!important}
+@media(max-width:900px){.work{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.fig{height:360px}.sl{grid-template-columns:6.2em minmax(0,1fr) 5.2em}.tabs a{padding:6px 9px;font-size:14px}}
+</style>
+</head>
+<body>
+<header class="top">
+<div class="brand"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round" aria-hidden="true"><path d="M32 6 L8 46 L34 58 L56 42 Z M32 6 L34 58"/></svg><span>Cuerpos geométricos 3D</span><a class="volver" href="../index.html#simulaciones" target="_top">← Órbita Matemática</a></div>
+<nav class="tabs" id="tabs">
+<a href="#inicio" data-r="inicio">Inicio</a><a href="#prismas" data-r="prismas">Prismas</a><a href="#piramides" data-r="piramides">Pirámides</a><a href="#cilindros" data-r="cilindros">Cilindros</a><a href="#conos" data-r="conos">Conos</a><a href="#revolucion" data-r="revolucion">Cuerpos de revolución</a>
+</nav>
+</header>
+<main>
+<section id="vHome" class="band">
+<div style="max-width:1240px">
+<h1 class="home" style="font-size:clamp(30px,4vw,46px);max-width:18ch">¿Con qué cuerpo geométrico vamos a trabajar?</h1>
+<p class="lead">Elige un tipo de cuerpo para girarlo en 3D, desarmarlo en su red de construcción, seleccionar sus caras y calcular áreas y volumen.</p>
+<div class="cards">
+<a class="card" href="#prismas"><svg viewBox="0 0 64 64" stroke="var(--teal)"><path d="M12 20 L32 12 L52 20 L52 46 L32 54 L12 46 Z M12 20 L32 28 L52 20 M32 28 V54"/></svg><h2>Prismas</h2><p>Dos bases poligonales iguales y paralelas unidas por caras rectangulares.</p></a>
+<a class="card" href="#piramides"><svg viewBox="0 0 64 64" stroke="var(--coral)"><path d="M30 6 L8 46 L34 56 L56 42 Z M30 6 L34 56"/></svg><h2>Pirámides</h2><p>Una base poligonal y caras triangulares que se juntan en un vértice.</p></a>
+<a class="card" href="#cilindros"><svg viewBox="0 0 64 64" stroke="var(--sel)"><ellipse cx="32" cy="16" rx="18" ry="6"/><path d="M14 16 V48 A18 6 0 0 0 50 48 V16"/></svg><h2>Cilindros</h2><p>Dos bases circulares y una superficie lateral curva.</p></a>
+<a class="card" href="#conos"><svg viewBox="0 0 64 64" stroke="var(--amb)"><path d="M32 8 L14 48 A18 6 0 0 0 50 48 Z"/></svg><h2>Conos</h2><p>Una base circular y una superficie lateral que termina en el vértice.</p></a>
+<a class="card rev" href="#revolucion"><svg viewBox="0 0 64 64" stroke="var(--vio)"><path d="M32 4 V60" stroke-dasharray="4 4"/><path d="M32 18 H46 V46 H32"/><path d="M50 52 A20 6 0 1 1 52 44" /><path d="M48 40 L52 44 L47 47"/></svg><h2>Cuerpos de revolución</h2><p>Figuras planas que giran en torno a un eje: la generatriz y el paso a cilindros, conos y esferas.</p></a>
+</div>
+</div>
+</section>
+
+<section id="vBody" class="band" hidden>
+<div class="work">
+<div>
+<div class="stagehead"><h1 id="bTitle">Prismas</h1><div class="legend" id="legend"></div></div>
+<div class="fig"><svg id="sv" role="img" aria-label="Cuerpo geométrico en 3D"></svg><p class="hint">Arrastra para girar · toca una cara para seleccionarla</p></div>
+<div class="tools">
+<button id="netBtn" class="pri">Desarmar: ver red</button>
+<label class="netl">Apertura <input type="range" id="net" min="0" max="100" step="1" value="0"></label>
+</div>
+<div class="tools">
+<button data-v="0">Vista inicial</button><button data-v="1">Base de frente</button><button data-v="2">De perfil</button><button data-v="3">Desde arriba</button><button id="spin">Iniciar giro</button>
+</div>
+</div>
+<aside class="panel">
+<div class="box">
+<div id="nRow" style="margin-bottom:10px"><h2>Polígono de la base</h2><div class="seg" id="nSeg"></div></div>
+<h2>Medidas del cuerpo</h2>
+<div id="sliders"></div>
+<div class="row"><button id="pre">Valores con trío pitagórico</button>
+<label class="chk" id="regRow"><input type="checkbox" id="reg"> Tetraedro regular</label>
+<label class="chk" id="vomRow"><input type="checkbox" id="vom" checked> Triángulo rectángulo interior</label></div>
+</div>
+<div class="box">
+<div class="fh"><h2>Cara seleccionada</h2><select id="fsel" aria-label="Cara seleccionada"></select></div>
+<div class="finfo" id="fInfo"></div>
+</div>
+<div class="mets" id="mets"></div>
+<div class="box"><details open><summary>Desarrollo de los cálculos</summary><div class="fm" id="fm"></div></details></div>
+<p class="note" id="note"></p>
+</aside>
+</div>
+</section>
+
+<section id="vRev" class="band" hidden>
+<div class="work">
+<div>
+<div class="stagehead"><h1 id="rTitle">Cuerpos de revolución</h1><div class="legend" id="rLegend"></div></div>
+<div class="fig"><svg id="rsv" role="img" aria-label="Figura plana girando en torno a un eje"></svg><p class="hint">Arrastra para cambiar el punto de vista</p></div>
+<div class="tools">
+<button id="back">◀ Retroceder</button><button id="pause">❚❚ Pausar</button><button id="play" class="pri">Girar ▶</button>
+<label class="netl">Ángulo de giro <input type="range" id="ang" min="0" max="360" step="1" value="120"><output id="angO" style="font-weight:500;min-width:3.5em;text-align:right">120°</output></label>
+</div>
+<div class="tools"><button data-rv="0">Vista inicial</button><button data-rv="1">De frente</button><button data-rv="2">Desde arriba</button></div>
+</div>
+<aside class="panel">
+<p class="concept">Un <strong>cuerpo de revolución</strong> se obtiene al hacer girar una figura plana 360° en torno a una recta fija, el <strong>eje de giro</strong>. La <b>generatriz</b> es el segmento (o la curva) que, al girar, genera la superficie lateral del cuerpo.</p>
+<div class="box">
+<h2>Figura que gira</h2>
+<div class="seg" id="rSeg"></div>
+<p id="rText" style="font-size:15px;margin:10px 0 0"></p>
+</div>
+<div class="box">
+<h2>Parámetros</h2>
+<div id="rSliders"></div>
+<div class="row"><label class="chk"><input type="checkbox" id="only"> Girar solo la generatriz</label><button id="rPre">Valores con trío pitagórico</button></div>
+</div>
+<div class="mets" id="rMets"></div>
+<div class="box"><details open><summary>Desarrollo de los cálculos</summary><div class="fm" id="rFm"></div></details></div>
+<p class="note">Los cálculos usan valores sin redondear; solo el resultado se aproxima a 2 decimales.</p>
+</aside>
+</div>
+</section>
+</main>
+<script>
+{
+const $=id=>document.getElementById(id);
+const PI=Math.PI,S2=Math.SQRT2,S3=Math.sqrt(3);
+const sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],add=(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]],mulS=(a,k)=>[a[0]*k,a[1]*k,a[2]*k];
+const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+const mid=(a,b)=>[(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2],len=a=>Math.hypot(a[0],a[1],a[2]),unit=a=>mulS(a,1/len(a));
+const avg=ps=>{const s=[0,0,0];ps.forEach(p=>{s[0]+=p[0];s[1]+=p[1];s[2]+=p[2]});return mulS(s,1/ps.length)};
+function rotAx(p,A,u,g){const v=sub(p,A),c=Math.cos(g),s=Math.sin(g),w=cross(u,v),d=dot(u,v)*(1-c);return[A[0]+v[0]*c+w[0]*s+u[0]*d,A[1]+v[1]*c+w[1]*s+u[1]*d,A[2]+v[2]*c+w[2]*s+u[2]*d];}
+const sgn=(A,u,g,pt,score)=>score(rotAx(pt,A,u,g))>=score(rotAx(pt,A,u,-g))?1:-1;
+const radial=p=>Math.hypot(p[0],p[2]);
+function newell(ps){const n=[0,0,0];for(let i=0;i<ps.length;i++){const a=ps[i],b=ps[(i+1)%ps.length];n[0]+=(a[1]-b[1])*(a[2]+b[2]);n[1]+=(a[2]-b[2])*(a[0]+b[0]);n[2]+=(a[0]-b[0])*(a[1]+b[1]);}return n;}
+const mul=(A,B)=>A.map(r=>[0,1,2].map(j=>r[0]*B[0][j]+r[1]*B[1][j]+r[2]*B[2][j]));
+const Rx=t=>[[1,0,0],[0,Math.cos(t),-Math.sin(t)],[0,Math.sin(t),Math.cos(t)]];
+const Ry=t=>[[Math.cos(t),0,Math.sin(t)],[0,1,0],[-Math.sin(t),0,Math.cos(t)]];
+function ortho(M){const a=M[0],b=M[1];const x=unit(a);const d=dot(x,b);const y=unit(sub(b,mulS(x,d)));return[x,y,cross(x,y)];}
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+
+function fmt(x,ap=true){const ex=Math.abs(x*100-Math.round(x*100))<1e-6;const s=(Math.round(x*100)/100).toLocaleString('es-CL',{maximumFractionDigits:2});return(ex||!ap?'':'≈ ')+s;}
+const num=x=>fmt(x,false);
+const isEx=x=>Math.abs(x*100-Math.round(x*100))<1e-6;
+function fpi(k){return isEx(k)?`${Math.abs(k-1)<1e-9?'':num(k)}π ≈ ${num(k*PI)}`:`≈ ${num(k*PI)}`;}
+const sb=t=>`<sub>${t}</sub>`;
+const clean=s=>s.replace(/= (<b>)?≈/g,'$1≈');
+const COL={coral:'#D85A30',teal:'#1D9E75',vio:'#7F77DD',amb:'#BA7517',pink:'#D4537E',sel:'#378ADD',ink:'var(--ink)',mut:'var(--mut)'};
+
+/* ---------- scenes ---------- */
+const VIEWS=[()=>mul(Rx(0.34),Ry(0.45)),()=>mul(Rx(-PI/2),Ry(0.3)),()=>Ry(0),()=>mul(Rx(PI/2),Ry(0.3))];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function makeScene(svg,onPick){
+const sc={svg,MR:VIEWS[0](),auto:false,drag:false,anim:null,W:600,H:420,S:1,ctr:[0,0,0],dirty:true,moved:0,cand:null,lx:0,ly:0};
+const ro=new ResizeObserver(()=>{sc.W=svg.clientWidth||600;sc.H=svg.clientHeight||420;svg.setAttribute('viewBox',`0 0 ${sc.W} ${sc.H}`);sc.dirty=true;});ro.observe(svg);sc.ro=ro;
+sc.rot=q=>[0,1,2].map(i=>sc.MR[i][0]*q[0]+sc.MR[i][1]*q[1]+sc.MR[i][2]*q[2]);
+sc.pr=p=>{const r=sc.rot(sub(p,sc.ctr));return[sc.W/2+r[0]*sc.S,sc.H/2-r[1]*sc.S,r[2]];};
+sc.goto=T=>{const A=sc.MR;let t=0;sc.anim=()=>{t=Math.min(1,t+(reduce?1:0.06));const e=ease(t);sc.MR=ortho(A.map((r,i)=>r.map((v,j)=>v+(T[i][j]-v)*e)));if(t>=1){sc.MR=T;sc.anim=null;}};};
+svg.addEventListener('pointerdown',e=>{sc.drag=true;sc.anim=null;sc.moved=0;const f=e.target.getAttribute&&e.target.getAttribute('data-f');sc.cand=f;sc.lx=e.clientX;sc.ly=e.clientY;svg.setPointerCapture(e.pointerId);svg.style.cursor='grabbing';});
+svg.addEventListener('pointermove',e=>{if(!sc.drag)return;const dx=e.clientX-sc.lx,dy=e.clientY-sc.ly;sc.moved+=Math.abs(dx)+Math.abs(dy);sc.MR=ortho(mul(Rx(dy*0.01),mul(Ry(dx*0.01),sc.MR)));sc.lx=e.clientX;sc.ly=e.clientY;sc.dirty=true;});
+const up=()=>{if(!sc.drag)return;sc.drag=false;svg.style.cursor='grab';if(sc.moved<6&&sc.cand&&onPick)onPick(sc.cand);};
+svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',up);
+return sc;}
+
+/* svg helpers */
+const F1=x=>x.toFixed(1);
+const PS=pts=>pts.map(p=>F1(p[0])+','+F1(p[1])).join(' ');
+function L(sc,a,b,c,w,dash,op){const p=sc.pr(a),q=sc.pr(b);return `<line x1="${F1(p[0])}" y1="${F1(p[1])}" x2="${F1(q[0])}" y2="${F1(q[1])}" stroke="${c}" stroke-width="${w}" ${dash?'stroke-dasharray="6 5"':''} opacity="${op??1}" stroke-linecap="round" pointer-events="none"/>`;}
+function T(x,y,s,c,anchor){s=clean(s);return `<text x="${F1(x)}" y="${F1(y)}" fill="${c}" font-size="15" font-weight="600" text-anchor="${anchor||'middle'}" dominant-baseline="middle" style="paint-order:stroke;stroke:var(--bg);stroke-width:5px;stroke-linejoin:round" pointer-events="none">${s}</text>`;}
+function segLab(sc,a,b,s,c,away,off){const p=sc.pr(a),q=sc.pr(b),m=[(p[0]+q[0])/2,(p[1]+q[1])/2];let nx=-(q[1]-p[1]),ny=q[0]-p[0];const nl=Math.hypot(nx,ny);if(nl<1e-6){nx=1;ny=0}else{nx/=nl;ny/=nl}
+if(away){const w=sc.pr(away);if(nx*(m[0]-w[0])+ny*(m[1]-w[1])<0){nx=-nx;ny=-ny}}
+const o=off||18;const w=s.replace(/<[^>]+>/g,'').length*4.4;return T(m[0]+nx*(o+Math.abs(nx)*w),m[1]+ny*o,s,c);}
+function rtMark(sc,P,A,B){const s=12/sc.S;const ua=mulS(unit(sub(A,P)),s),ub=mulS(unit(sub(B,P)),s);return `<polyline points="${PS([add(P,ua),add(add(P,ua),ub),add(P,ub)].map(sc.pr))}" fill="none" stroke="var(--ink)" stroke-width="1.3" opacity=".75" pointer-events="none"/>`;}
+function dotP(sc,p,c){const q=sc.pr(p);return `<circle cx="${F1(q[0])}" cy="${F1(q[1])}" r="3.4" fill="${c||'var(--ink)'}" pointer-events="none"/>`;}
+function plv(sc,pts,c,w,op){return `<polyline points="${PS(pts.map(sc.pr))}" fill="none" stroke="${c}" stroke-width="${w}" opacity="${op??1}" stroke-linecap="round" stroke-linejoin="round" pointer-events="none"/>`;}
+function fillP(sc,pts,c,op){return `<polygon points="${PS(pts.map(sc.pr))}" fill="${c}" fill-opacity="${op}" pointer-events="none"/>`;}
+
+/* ---------- bodies ---------- */
+const NB={3:'triangular',4:'cuadrada',5:'pentagonal',6:'hexagonal',8:'octagonal'};
+const NP={3:'Triángulo equilátero',4:'Cuadrado',5:'Pentágono regular',6:'Hexágono regular',8:'Octágono regular'};
+function ngon(n,R,y){const o=PI/2-PI/n;return Array.from({length:n},(_,i)=>{const t=o+i*2*PI/n;return[R*Math.cos(t),y,R*Math.sin(t)];});}
+function polyDer(p){const ab=p.a/(2*Math.tan(PI/p.n)),R=p.a/(2*Math.sin(PI/p.n));return{ab,R,P:p.n*p.a,AB:p.n*p.a*ab/2};}
+const abLine=(p,d)=>p.n===4?`a${sb('b')} = a / 2 = ${num(p.a)} / 2 = <b>${fmt(d.ab)} cm</b>`:`a${sb('b')} = a / (2 · tan ${(180/p.n).toLocaleString('es-CL')}°) = <b>${fmt(d.ab)} cm</b>`;
+function baseFace(p,d,name){return{name,shape:NP[p.n],rows:[['Arista basal',`a = ${fmt(p.a)} cm`],['Apotema basal',`a${sb('b')} = ${fmt(d.ab)} cm`]],P:`P = ${p.n} · a = ${p.n} · ${num(p.a)} = <b>${fmt(d.P)} cm</b>`,A:`A = P · a${sb('b')} / 2 = ${num(d.P)} · ${num(d.ab)} / 2 = <b>${fmt(d.AB)} cm²</b>`};}
+function circFace(r,name){return{name,shape:'Círculo',rows:[['Radio',`r = ${fmt(r)} cm`],['Diámetro',`d = ${fmt(2*r)} cm`]],P:`P = 2π · r = 2π · ${num(r)} = <b>${fpi(2*r)} cm</b>`,A:`A = π · r² = π · ${num(r)}² = <b>${fpi(r*r)} cm²</b>`};}
+const N=48;
+function disc(r,y,M=64){return Array.from({length:M},(_,k)=>{const t=k*2*PI/M;return[r*Math.cos(t),y,r*Math.sin(t)];});}
+function baseOv(sc,q){const c=avg(q),M=mid(q[0],q[1]);return L(sc,q[0],q[1],COL.amb,3.2)+L(sc,c,M,COL.teal,3)+rtMark(sc,M,q[1],c)+dotP(sc,c)+segLab(sc,q[0],q[1],'a',COL.amb,c)+segLab(sc,c,M,`a${'<tspan baseline-shift="sub" font-size="11">b</tspan>'}`,COL.teal,q[0],14);}
+const tsub=t=>`<tspan baseline-shift="sub" font-size="11">${t}</tspan>`;
+function discOv(sc,q){const c=avg(q),e=q[Math.round(q.length*0.1)];return L(sc,c,e,COL.teal,3)+dotP(sc,c)+plv(sc,q.concat([q[0]]),COL.amb,2.6,.9)+segLab(sc,c,e,'r = '+fmt(st.p.r),COL.teal,q[Math.round(q.length*0.6)],14);}
+
+const BODIES={
+prisma:{title:'Prismas',ns:[3,4,5,6,8],sl:['a','h'],preLabel:'Restablecer valores',
+ preset:n=>({n,a:4,h:6}),
+ der(p){const d=polyDer(p);d.AL=d.P*p.h;d.AT=2*d.AB+d.AL;d.V=d.AB*p.h;return d;},
+ ic:p=>[0,p.h/2,0],
+ build(p,d,t){const n=p.n,B=ngon(n,d.R,0),Tp=ngon(n,d.R,p.h),polys=[];let R0;
+  for(let i=0;i<n;i++){const a=B[i],b=B[(i+1)%n],u=unit(sub(b,a));const g=sgn(a,u,PI/2,mid(Tp[i],Tp[(i+1)%n]),radial)*t*PI/2;
+   polys.push({fid:'l'+i,pts:[a,b,Tp[(i+1)%n],Tp[i]].map(q=>rotAx(q,a,u,g)),hard:[1,1,1,1]});if(i===0)R0={a,u,g};}
+  polys.push({fid:'b1',pts:B,hard:B.map(()=>1)});
+  const ta=Tp[0],tu=unit(sub(Tp[1],Tp[0])),g2=sgn(ta,tu,PI/2,[0,p.h,0],q=>q[1])*t*PI/2;
+  polys.push({fid:'b2',pts:Tp.map(q=>rotAx(rotAx(q,ta,tu,g2),R0.a,R0.u,R0.g)),hard:Tp.map(()=>1)});return polys;},
+ faces:p=>[...Array.from({length:p.n},(_,i)=>['l'+i,'Cara lateral '+(i+1)]),['b1','Base inferior'],['b2','Base superior']],
+ defSel:'l0',
+ face(p,d,f){if(f[0]==='l')return{name:'Cara lateral '+(+f.slice(1)+1),shape:p.n===4&&Math.abs(p.a-p.h)<1e-9?'Cuadrado':'Rectángulo',rows:[['Base (arista basal)',`a = ${fmt(p.a)} cm`],['Altura (arista lateral)',`h = ${fmt(p.h)} cm`]],P:`P = 2 · (a + h) = 2 · (${num(p.a)} + ${num(p.h)}) = <b>${fmt(2*(p.a+p.h))} cm</b>`,A:`A = a · h = ${num(p.a)} · ${num(p.h)} = <b>${fmt(p.a*p.h)} cm²</b>`};
+  return baseFace(p,d,f==='b1'?'Base inferior':'Base superior');},
+ overlay(sc,p,d,polys,sel,t){const po=polys.find(x=>x.fid===sel);if(!po)return'';const q=po.pts;
+  if(sel[0]==='l'){const c=avg(q);return L(sc,q[0],q[1],COL.amb,3.2)+L(sc,q[1],q[2],COL.vio,3.2)+rtMark(sc,q[1],q[0],q[2])+segLab(sc,q[0],q[1],'a = '+fmt(p.a),COL.amb,c)+segLab(sc,q[1],q[2],'h = '+fmt(p.h),COL.vio,c);}
+  return baseOv(sc,q);},
+ legend:[['amb','Arista basal a'],['vio','Altura h'],['teal','Apotema basal a<sub>b</sub>']],
+ metrics(p,d){return{cards:[['Área basal (una base)',d.AB,'cm²'],['Área lateral',d.AL,'cm²'],['Área total',d.AT,'cm²'],['Volumen',d.V,'cm³']],
+  lines:[`<b>Base:</b> ${NP[p.n].toLowerCase()} de ${p.n} lados · <b>Caras:</b> ${p.n+2} · <b>Aristas:</b> ${3*p.n} · <b>Vértices:</b> ${2*p.n}`,abLine(p,d),`P = ${p.n} · ${num(p.a)} = <b>${fmt(d.P)} cm</b>`,
+  `A${sb('B')} = P · a${sb('b')} / 2 = ${num(d.P)} · ${num(d.ab)} / 2 = <b>${fmt(d.AB)} cm²</b>`,`A${sb('L')} = P · h = ${num(d.P)} · ${num(p.h)} = <b>${fmt(d.AL)} cm²</b>`,
+  `A${sb('T')} = 2 · A${sb('B')} + A${sb('L')} = 2 · ${num(d.AB)} + ${num(d.AL)} = <b>${fmt(d.AT)} cm²</b>`,`V = A${sb('B')} · h = ${num(d.AB)} · ${num(p.h)} = <b>${fmt(d.V)} cm³</b>`]};},
+ note:()=>''},
+
+piramide:{title:'Pirámides',ns:[3,4,5,6,8],sl:['a','h'],preLabel:'Valores con trío pitagórico',vom:true,
+ PRE:{3:{a:6*S3,h:6*S2,reg:true},4:{a:6,h:4,tr:'3‑4‑5'},5:{a:10*Math.tan(PI/5),h:12,tr:'5‑12‑13'},6:{a:4*S3,h:8,tr:'6‑8‑10'},8:{a:18*(S2-1),h:12,tr:'9‑12‑15'}},
+ preset(n){const q=this.PRE[n];return{n,a:q.a,h:q.h,reg:!!q.reg};},
+ der(p){if(p.n===3&&p.reg)p.h=p.a*Math.sqrt(2/3);const d=polyDer(p);d.aL=Math.hypot(p.h,d.ab);d.l=Math.hypot(p.h,d.R);d.AL=d.P*d.aL/2;d.AT=d.AB+d.AL;d.V=d.AB*p.h/3;return d;},
+ ic:p=>[0,p.h/4,0],
+ build(p,d,t){const n=p.n,B=ngon(n,d.R,0),V=[0,p.h,0],full=PI-Math.atan2(p.h,d.ab),polys=[];
+  for(let i=0;i<n;i++){const a=B[i],b=B[(i+1)%n],u=unit(sub(b,a));const g=sgn(a,u,full,V,radial)*t*full;polys.push({fid:'l'+i,pts:[a,b,V].map(q=>rotAx(q,a,u,g)),hard:[1,1,1]});}
+  polys.push({fid:'b1',pts:B,hard:B.map(()=>1)});return polys;},
+ faces:p=>[...Array.from({length:p.n},(_,i)=>['l'+i,'Cara lateral '+(i+1)]),['b1','Base']],
+ defSel:'l0',
+ face(p,d,f){if(f[0]==='l'){const eq=Math.abs(d.l-p.a)<1e-9;return{name:'Cara lateral '+(+f.slice(1)+1),shape:eq?'Triángulo equilátero':'Triángulo isósceles',rows:[['Base (arista basal)',`a = ${fmt(p.a)} cm`],['Lados (aristas laterales)',`l = ${fmt(d.l)} cm`],['Altura (apotema lateral)',`a${sb('L')} = ${fmt(d.aL)} cm`]],
+  P:`l = √(a${sb('L')}² + (a/2)²) = √(${num(d.aL)}² + ${num(p.a/2)}²) = ${fmt(d.l)} cm<br>P = a + 2 · l = ${num(p.a)} + 2 · ${num(d.l)} = <b>${fmt(p.a+2*d.l)} cm</b>`,A:`A = a · a${sb('L')} / 2 = ${num(p.a)} · ${num(d.aL)} / 2 = <b>${fmt(p.a*d.aL/2)} cm²</b>`};}
+  return baseFace(p,d,'Base');},
+ overlay(sc,p,d,polys,sel,t){const po=polys.find(x=>x.fid===sel);if(!po)return'';const q=po.pts;
+  if(sel[0]!=='l')return baseOv(sc,q);
+  const c=avg(q),M=mid(q[0],q[1]);let s='';
+  if(t<0.005&&$('vom').checked){const O=[0,0,0],V=[0,p.h,0];s+=fillP(sc,[O,M,V],COL.vio,.15)+L(sc,O,V,COL.vio,2.6,true)+L(sc,O,M,COL.teal,3)+rtMark(sc,O,M,V)+dotP(sc,O)+segLab(sc,O,V,'h = '+fmt(p.h),COL.vio,M)+segLab(sc,O,M,'a'+tsub('b')+' = '+fmt(d.ab),COL.teal,V,14);const o=sc.pr(O);s+=T(o[0]-14,o[1]-10,'O','var(--mut)');}
+  s+=L(sc,q[0],q[1],COL.amb,3.2)+L(sc,q[1],q[2],COL.pink,3)+L(sc,q[2],M,COL.coral,3.2)+rtMark(sc,M,q[1],q[2])+dotP(sc,M)+dotP(sc,q[2]);
+  s+=segLab(sc,q[0],q[1],'a = '+fmt(p.a),COL.amb,c)+segLab(sc,q[1],q[2],'l = '+fmt(d.l),COL.pink,c)+segLab(sc,q[2],M,'a'+tsub('L')+' = '+fmt(d.aL),COL.coral,q[0]);
+  const v=sc.pr(q[2]);s+=T(v[0],v[1]-14,'V','var(--ink)');return s;},
+ legend:[['coral','Apotema lateral a<sub>L</sub>'],['teal','Apotema basal a<sub>b</sub>'],['vio','Altura h'],['amb','Arista basal a'],['pink','Arista lateral l']],
+ metrics(p,d){return{cards:[['Área basal',d.AB,'cm²'],['Área lateral',d.AL,'cm²'],['Área total',d.AT,'cm²'],['Volumen',d.V,'cm³']],
+  lines:[`<b>Base:</b> ${NP[p.n].toLowerCase()} de ${p.n} lados · <b>Caras:</b> ${p.n+1} · <b>Aristas:</b> ${2*p.n} · <b>Vértices:</b> ${p.n+1}`,abLine(p,d),`a${sb('L')} = √(h² + a${sb('b')}²) = √(${num(p.h)}² + ${num(d.ab)}²) = <b>${fmt(d.aL)} cm</b>`,`P = ${p.n} · ${num(p.a)} = <b>${fmt(d.P)} cm</b>`,
+  `A${sb('B')} = P · a${sb('b')} / 2 = ${num(d.P)} · ${num(d.ab)} / 2 = <b>${fmt(d.AB)} cm²</b>`,`A${sb('L')} = P · a${sb('L')} / 2 = ${num(d.P)} · ${num(d.aL)} / 2 = <b>${fmt(d.AL)} cm²</b>`,
+  `A${sb('T')} = A${sb('B')} + A${sb('L')} = ${num(d.AB)} + ${num(d.AL)} = <b>${fmt(d.AT)} cm²</b>`,`V = A${sb('B')} · h / 3 = ${num(d.AB)} · ${num(p.h)} / 3 = <b>${fmt(d.V)} cm³</b>`]};},
+ note(p){const q=this.PRE[p.n];if(p.n===3&&p.reg)return'En el tetraedro regular no existe trío pitagórico: a<sub>L</sub> = 3 · a<sub>b</sub> y h = 2√2 · a<sub>b</sub>. ';
+  return Math.abs(p.a-q.a)<1e-9&&Math.abs(p.h-q.h)<1e-9&&q.tr?`Trío pitagórico a<sub>b</sub> – h – a<sub>L</sub>: ${q.tr}. `:'';}},
+
+cilindro:{title:'Cilindros',sl:['r','h'],preLabel:'Restablecer valores',
+ preset:()=>({r:3,h:8}),
+ der(p){const AB=PI*p.r*p.r,AL=2*PI*p.r*p.h;return{AB,AL,AT:2*AB+AL,V:AB*p.h};},
+ ic:p=>[0,p.h/2,0],
+ build(p,d,t){const r=p.r,h=p.h,u1=Math.min(1,t*2),u2=Math.max(0,t*2-1),xs=[];
+  for(let j=0;j<=N;j++){const s=-PI*r+j*2*PI*r/N;if(1-u1<1e-4)xs.push([s,r]);else{const rho=r/(1-u1),f=s/rho;xs.push([rho*Math.sin(f),r-rho+rho*Math.cos(f)]);}}
+  const A2=[0,0,r],ux=[1,0,0],a2=sgn(A2,ux,PI/2,[0,h,r],q=>q[2])*u2*PI/2,R2=q=>rotAx(q,A2,ux,a2),polys=[];
+  for(let j=0;j<N;j++){const x0=xs[j],x1=xs[j+1];polys.push({fid:'lat',strip:1,sil:1,pts:[[x0[0],0,x0[1]],[x1[0],0,x1[1]],[x1[0],h,x1[1]],[x0[0],h,x0[1]]].map(R2),hard:[1,t>0&&j===N-1?1:0,1,t>0&&j===0?1:0]});}
+  const B=disc(r,0);polys.push({fid:'b1',pts:B,hard:B.map(()=>1)});
+  const At=[0,h,r],b=sgn(At,ux,PI/2,[0,h,0],q=>q[1])*u2*PI/2,Tp=disc(r,h);polys.push({fid:'b2',pts:Tp.map(q=>R2(rotAx(q,At,ux,b))),hard:Tp.map(()=>1)});return polys;},
+ faces:()=>[['lat','Superficie lateral'],['b1','Base inferior'],['b2','Base superior']],defSel:'lat',
+ face(p,d,f){if(f==='lat')return{name:'Superficie lateral',shape:'Rectángulo (al desarrollarla)',rows:[['Largo (perímetro de la base)',`2πr = ${fpi(2*p.r)} cm`],['Alto (altura del cilindro)',`h = ${fmt(p.h)} cm`]],P:`P = 2 · (2πr + h) = 2 · (${num(2*PI*p.r)} + ${num(p.h)}) = <b>${fmt(2*(2*PI*p.r+p.h))} cm</b>`,A:`A = 2πr · h = 2π · ${num(p.r)} · ${num(p.h)} = <b>${fpi(2*p.r*p.h)} cm²</b>`};
+  return circFace(p.r,f==='b1'?'Base inferior':'Base superior');},
+ overlay(sc,p,d,polys,sel,t){const po=polys.find(x=>x.fid===sel);if(!po)return'';
+  if(sel!=='lat')return discOv(sc,po.pts);
+  const S=polys.filter(x=>x.fid==='lat'),k=N/2,b=S[k].pts[0],tp=S[k].pts[3],rim=S.map(x=>x.pts[0]).concat([S[N-1].pts[1]]),c=avg([S[N/4].pts[0],S[3*N/4].pts[2]]);
+  let s=plv(sc,rim,COL.amb,3)+L(sc,b,tp,COL.vio,3.2)+segLab(sc,b,tp,'h = '+fmt(p.h),COL.vio,S[k-6].pts[0]);
+  const q1=S[N/4].pts[0],q2=S[N/4].pts[1];s+=segLab(sc,q1,q2,'2πr '+fmt(2*PI*p.r),COL.amb,tp,16);
+  if(t<0.005){const O=[0,0,0];s+=L(sc,O,b,COL.teal,3)+dotP(sc,O)+segLab(sc,O,b,'r = '+fmt(p.r),COL.teal,S[N/4].pts[0],14)+L(sc,O,[0,p.h,0],COL.vio,1.6,true,.7);}
+  return s;},
+ legend:[['amb','Perímetro basal 2πr'],['vio','Altura h'],['teal','Radio r']],
+ metrics(p,d){const r=p.r,h=p.h;return{cards:[['Área basal (una base)',d.AB,'cm²',r*r],['Área lateral',d.AL,'cm²',2*r*h],['Área total',d.AT,'cm²',2*r*r+2*r*h],['Volumen',d.V,'cm³',r*r*h]],
+  lines:[`A${sb('B')} = π · r² = π · ${num(r)}² = <b>${fpi(r*r)} cm²</b>`,`A${sb('L')} = 2π · r · h = 2π · ${num(r)} · ${num(h)} = <b>${fpi(2*r*h)} cm²</b>`,`A${sb('T')} = 2 · A${sb('B')} + A${sb('L')} = <b>${fpi(2*r*r+2*r*h)} cm²</b>`,`V = A${sb('B')} · h = π · ${num(r)}² · ${num(h)} = <b>${fpi(r*r*h)} cm³</b>`]};},
+ note:()=>'Usamos π con todos sus decimales. '},
+
+cono:{title:'Conos',sl:['r','h'],preLabel:'Otro trío pitagórico',vom:true,
+ TR:[[3,4],[6,8],[5,12],[8,15],[9,12]],ti:0,
+ preset(){const q=this.TR[this.ti];return{r:q[0],h:q[1]};},
+ der(p){const g=Math.hypot(p.r,p.h),AB=PI*p.r*p.r,AL=PI*p.r*g;return{g,AB,AL,AT:AB+AL,V:AB*p.h/3,ang:360*p.r/g};},
+ ic:p=>[0,p.h/4,0],
+ build(p,d,t){const r=p.r,h=p.h,g=d.g,u1=Math.min(1,t*2),u2=Math.max(0,t*2-1),V=[0,h,0],C=[0,0,r],w=unit(sub(C,V)),nn=[0,-r/g,-h/g],e2=cross(w,nn);
+  const a0=Math.asin(r/g),al=a0+ease(u1)*(PI/2-a0),sa=Math.sin(al),ca=Math.cos(al),dd=add(mulS(w,ca),mulS(nn,sa)),e1=sub(mulS(w,sa),mulS(nn,ca));
+  const ux=[1,0,0],G=PI-Math.atan2(h,r),gg=sgn(C,ux,G,V,q=>q[2])*u2*G,R2=q=>rotAx(q,C,ux,gg),P=[];
+  for(let j=0;j<=N;j++){const s=-PI*r+j*2*PI*r/N,psi=(s/g)/sa;P.push(R2(add(V,mulS(add(mulS(dd,ca),mulS(add(mulS(e1,Math.cos(psi)),mulS(e2,Math.sin(psi))),sa)),g))));}
+  const Vp=R2(V),polys=[];for(let j=0;j<N;j++)polys.push({fid:'lat',strip:1,sil:2,pts:[Vp,P[j],P[j+1]],hard:[t>0&&j===0?1:0,1,t>0&&j===N-1?1:0]});
+  const B=disc(r,0);polys.push({fid:'b1',pts:B,hard:B.map(()=>1)});return polys;},
+ faces:()=>[['lat','Superficie lateral'],['b1','Base']],defSel:'lat',
+ face(p,d,f){if(f==='lat')return{name:'Superficie lateral',shape:'Sector circular (al desarrollarla)',rows:[['Radio del sector (generatriz)',`g = ${fmt(d.g)} cm`],['Arco (perímetro de la base)',`2πr = ${fpi(2*p.r)} cm`],['Ángulo del sector',`360° · r / g = ${fmt(d.ang)}°`]],P:`P = 2 · g + 2πr = 2 · ${num(d.g)} + ${num(2*PI*p.r)} = <b>${fmt(2*d.g+2*PI*p.r)} cm</b>`,A:`A = π · r · g = π · ${num(p.r)} · ${num(d.g)} = <b>${fpi(p.r*d.g)} cm²</b>`};
+  return circFace(p.r,'Base');},
+ overlay(sc,p,d,polys,sel,t){const po=polys.find(x=>x.fid===sel);if(!po)return'';
+  if(sel!=='lat')return discOv(sc,po.pts);
+  const S=polys.filter(x=>x.fid==='lat'),k=N/2,V=S[k].pts[0],C=S[k].pts[1],rim=S.map(x=>x.pts[1]).concat([S[N-1].pts[2]]);let s='';
+  if(t<0.005&&$('vom').checked){const O=[0,0,0];s+=fillP(sc,[O,C,V],COL.vio,.15)+L(sc,O,V,COL.vio,2.6,true)+L(sc,O,C,COL.teal,3)+rtMark(sc,O,C,V)+dotP(sc,O)+segLab(sc,O,V,'h = '+fmt(p.h),COL.vio,C)+segLab(sc,O,C,'r = '+fmt(p.r),COL.teal,V,14);}
+  s+=plv(sc,rim,COL.amb,3)+L(sc,V,C,COL.coral,3.4)+dotP(sc,V)+segLab(sc,V,C,'g = '+fmt(d.g),COL.coral,S[k+8].pts[1]);
+  s+=segLab(sc,S[N/4].pts[1],S[N/4].pts[2],'2πr '+fmt(2*PI*p.r),COL.amb,V,16);const v=sc.pr(V);s+=T(v[0],v[1]-14,'V','var(--ink)');return s;},
+ legend:[['coral','Generatriz g'],['teal','Radio r'],['vio','Altura h'],['amb','Perímetro basal 2πr']],
+ metrics(p,d){const r=p.r,h=p.h;return{cards:[['Área basal',d.AB,'cm²',r*r],['Área lateral',d.AL,'cm²',r*d.g],['Área total',d.AT,'cm²',r*r+r*d.g],['Volumen',d.V,'cm³',r*r*h/3]],
+  lines:[`g = √(r² + h²) = √(${num(r)}² + ${num(h)}²) = <b>${fmt(d.g)} cm</b>`,`A${sb('B')} = π · r² = π · ${num(r)}² = <b>${fpi(r*r)} cm²</b>`,`A${sb('L')} = π · r · g = π · ${num(r)} · ${num(d.g)} = <b>${fpi(r*d.g)} cm²</b>`,`A${sb('T')} = A${sb('B')} + A${sb('L')} = <b>${fpi(r*r+r*d.g)} cm²</b>`,`V = π · r² · h / 3 = π · ${num(r)}² · ${num(h)} / 3 = <b>${fpi(r*r*h/3)} cm³</b>`,`Ángulo del sector en la red = 360° · r / g = <b>${fmt(d.ang)}°</b>`]};},
+ note(p,d){return isEx(d.g)&&Math.abs(d.g-Math.round(d.g))<1e-9&&Number.isInteger(p.r)&&Number.isInteger(p.h)?`Trío pitagórico r – h – g: ${p.r}‑${p.h}‑${Math.round(d.g)}. `:'';}}
+};
+const SLD={a:['Arista basal a',1,20,.1],h:['Altura h',1,25,.1],r:['Radio r',1,12,.1]};
+
+/* ---------- body state ---------- */
+const st={key:'prisma',p:null,d:null,sel:'l0',t:0,tT:0,orient:[],rad0:1};
+let SB=null,SR=null,view='home';
+const ROUTES={prismas:'prisma',piramides:'piramide',cilindros:'cilindro',conos:'cono'};
+function bbox(polys){const mn=[1e9,1e9,1e9],mx=[-1e9,-1e9,-1e9];polys.forEach(po=>po.pts.forEach(q=>{for(let k=0;k<3;k++){if(q[k]<mn[k])mn[k]=q[k];if(q[k]>mx[k])mx[k]=q[k];}}));const c=mid(mn,mx);let r=0;polys.forEach(po=>po.pts.forEach(q=>{r=Math.max(r,len(sub(q,c)))}));return{c,r};}
+function setBody(key){st.key=key;const b=BODIES[key];$('bTitle').textContent=b.title;
+ $('nRow').hidden=!b.ns;if(b.ns)$('nSeg').innerHTML=b.ns.map(n=>`<button data-n="${n}">${NB[n][0].toUpperCase()+NB[n].slice(1)}</button>`).join('');
+ $('sliders').innerHTML=b.sl.map(k=>`<div class="sl"><label for="s_${k}">${SLD[k][0]}</label><input type="range" id="s_${k}" min="${SLD[k][1]}" max="${SLD[k][2]}" step="${SLD[k][3]}"><output id="o_${k}"></output></div>`).join('');
+ b.sl.forEach(k=>{$('s_'+k).oninput=e=>{st.p[k]=+e.target.value;if(k==='h'&&st.p.reg){st.p.reg=false;$('reg').checked=false;}update();};});
+ $('pre').textContent=b.preLabel;$('vomRow').hidden=!b.vom;
+ $('legend').innerHTML=b.legend.map(([c,s])=>`<span><i style="border-color:${COL[c]}"></i>${s}</span>`).join('');
+ st.t=st.tT=0;$('net').value=0;netLabel();loadPreset(b.ns?(key==='prisma'?4:4):null);SB.MR=VIEWS[0]();SB.auto=false;$('spin').textContent='Iniciar giro';}
+function loadPreset(n){const b=BODIES[st.key];st.p=b.preset(n);st.sel=b.defSel;
+ if(b.ns)document.querySelectorAll('#nSeg button').forEach(x=>x.classList.toggle('on',+x.dataset.n===st.p.n));
+ $('regRow').hidden=!(st.key==='piramide'&&st.p.n===3);$('reg').checked=!!st.p.reg;
+ st.d=b.der(st.p);const fs=b.faces(st.p);$('fsel').innerHTML=fs.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
+ st.rad0=bbox(b.build(st.p,st.d,0)).r;update();}
+function update(){const b=BODIES[st.key],p=st.p;st.d=b.der(p);const d=st.d;
+ b.sl.forEach(k=>{$('s_'+k).value=p[k];$('o_'+k).textContent=fmt(p[k])+' cm';});
+ st.orient=b.build(p,d,0).map(po=>{const n=newell(po.pts);return dot(n,sub(avg(po.pts),b.ic(p)))>=0?1:-1;});
+ $('fsel').value=st.sel;const f=b.face(p,d,st.sel);
+ $('fInfo').innerHTML=clean(`<p><b>${f.name}</b> · ${f.shape}</p><dl>${f.rows.map(([a,v])=>`<dt>${a}</dt><dd>${v}</dd>`).join('')}</dl><div class="fx"><p><span style="color:var(--mut)">Perímetro:</span> ${f.P}</p><p><span style="color:var(--mut)">Área:</span> ${f.A}</p></div>`);
+ const m=b.metrics(p,d);
+ $('mets').innerHTML=m.cards.map(([l,v,u,k])=>`<div class="met"><p class="l">${l}</p><p class="v">${fmt(v)} ${u}</p>${k!==undefined&&isEx(k)?`<p class="s">= ${Math.abs(k-1)<1e-9?'':num(k)}π ${u}</p>`:''}</div>`).join('');
+ $('fm').innerHTML=clean(m.lines.map(x=>`<div>${x}</div>`).join(''));
+ $('note').innerHTML=b.note(p,d)+'Los cálculos usan valores sin redondear; solo el resultado se aproxima a 2 decimales.';
+ SB.dirty=true;}
+function netLabel(){$('netBtn').textContent=st.tT>0.5?'Armar el cuerpo':'Desarmar: ver red';}
+
+function renderBody(){const sc=SB,b=BODIES[st.key],p=st.p,d=st.d,t=ease(st.t);if(!p)return;
+ const polys=b.build(p,d,t),bb=bbox(polys);sc.ctr=bb.c;sc.S=0.42*Math.min(sc.W,sc.H)/Math.max(bb.r,st.rad0);
+ const info=polys.map((po,i)=>{const pp=po.pts.map(sc.pr);const n=mulS(newell(po.pts),st.orient[i]||1);return{po,i,pp,z:pp.reduce((s,q)=>s+q[2],0)/pp.length,front:sc.rot(n)[2]>1e-9};});
+ const flat=st.t>0.001;let out='';
+ [...info].sort((a,b)=>a.z-b.z).forEach(o=>{const isSel=o.po.fid===st.sel,base=o.po.fid[0]==='b';const c=isSel?COL.sel:(base?COL.teal:COL.coral);const op=isSel?(o.front||flat?.3:.16):(flat?.12:(o.front?.1:.04));
+  out+=`<polygon data-f="${o.po.fid}" points="${PS(o.pp)}" fill="${c}" fill-opacity="${op}" ${o.po.strip?`stroke="${c}" stroke-opacity="${op*.6}" stroke-width=".6"`:'stroke="none"'} style="cursor:pointer"/>`;});
+ let hid='',vis='';
+ info.forEach(o=>{const pts=o.po.pts,n=pts.length;for(let k=0;k<n;k++){const a=pts[k],bq=pts[(k+1)%n];
+  if(o.po.hard[k]){if(!flat&&!o.front)hid+=L(sc,a,bq,'var(--ink)',1,true,.4);else vis+=L(sc,a,bq,'var(--ink)',1.5,false,.85);}
+  else if(o.po.strip&&k===o.po.sil&&!flat){const nx=info[o.i+1];if(nx&&nx.po.fid===o.po.fid&&nx.front!==o.front)vis+=L(sc,a,bq,'var(--ink)',1.5,false,.85);}}});
+ out+=hid+vis+b.overlay(sc,p,d,polys,st.sel,st.t);
+ sc.svg.innerHTML=out;}
+
+function pickFace(f){st.sel=f;update();}
+
+/* ---------- revolution ---------- */
+const RF={
+ rect:{n:'Rectángulo',body:'Cilindro',sl:['r','h'],pre:{r:3,h:6},
+  txt:'Al girar un rectángulo en torno a uno de sus lados se genera un <b>cilindro</b>. La generatriz es el lado paralelo al eje: al girar, describe la superficie lateral, y su largo es la altura (g = h).',
+  prof:v=>({pts:[[0,0],[v.r,0],[v.r,v.h],[0,v.h]],segs:[[0,1,'base'],[1,2,'gen'],[2,3,'base'],[3,0,'axis']]})},
+ tri:{n:'Triángulo rectángulo',body:'Cono',sl:['r','h'],pre:{r:3,h:4},
+  txt:'Al girar un triángulo rectángulo en torno a uno de sus catetos se genera un <b>cono</b>. La generatriz es la hipotenusa: sus extremos son el vértice del cono y un punto de la circunferencia basal.',
+  prof:v=>({pts:[[0,0],[v.r,0],[0,v.h]],segs:[[0,1,'base'],[1,2,'gen'],[2,0,'axis']]})},
+ trap:{n:'Trapecio rectángulo',body:'Cono truncado',sl:['R','r','h'],pre:{R:5,r:2,h:4},
+  txt:'Al girar un trapecio rectángulo en torno a su lado perpendicular a las bases se genera un <b>cono truncado</b>. La generatriz es el lado oblicuo del trapecio.',
+  prof:v=>({pts:[[0,0],[v.R,0],[v.r,v.h],[0,v.h]],segs:[[0,1,'base'],[1,2,'gen'],[2,3,'base'],[3,0,'axis']]})},
+ semi:{n:'Semicírculo',body:'Esfera',sl:['r'],pre:{r:4},
+  txt:'Al girar un semicírculo en torno a su diámetro se genera una <b>esfera</b>. Aquí lo que genera la superficie no es un segmento sino una curva: la semicircunferencia.',
+  prof:v=>{const M=16,pts=[];for(let k=0;k<=M;k++){const a=-PI/2+k*PI/M;pts.push([v.r*Math.cos(a),v.r+v.r*Math.sin(a)]);}const segs=[];for(let k=0;k<M;k++)segs.push([k,k+1,'gen']);segs.push([M,0,'axis']);return{pts,segs};}}
+};
+const RSL={r:['Radio r',.5,10,.1],R:['Radio mayor R',.5,10,.1],h:['Altura h',.5,15,.1]};
+const rv={f:'rect',v:{},a0:0,a1:120,dir:0,only:false};Object.keys(RF).forEach(k=>rv.v[k]={...RF[k].pre});
+const RVIEWS=[()=>mul(Rx(0.38),Ry(-rv.a1*PI/180)),()=>Ry(-rv.a1*PI/180),()=>mul(Rx(PI/2),Ry(-rv.a1*PI/180))];
+function setRev(f){rv.f=f;const F=RF[f];document.querySelectorAll('#rSeg button').forEach(x=>x.classList.toggle('on',x.dataset.f===f));
+ $('rSliders').innerHTML=F.sl.map(k=>`<div class="sl"><label for="r_${k}">${f==='trap'&&k==='r'?'Radio menor r':RSL[k][0]}</label><input type="range" id="r_${k}" min="${RSL[k][1]}" max="${RSL[k][2]}" step="${RSL[k][3]}"><output id="ro_${k}"></output></div>`).join('');
+ F.sl.forEach(k=>{$('r_'+k).oninput=e=>{rv.v[f][k]=+e.target.value;updRev();};});
+ $('rPre').hidden=f==='semi';$('rText').innerHTML=F.txt;$('rTitle').textContent=F.n+' → '+F.body.toLowerCase();updRev();}
+function revData(){const f=rv.f,v=rv.v[f];
+ if(f==='rect'){const AB=PI*v.r*v.r;return{g:v.h,cards:[['Generatriz g',v.h,'cm'],['Área lateral',2*PI*v.r*v.h,'cm²',2*v.r*v.h],['Área total',2*AB+2*PI*v.r*v.h,'cm²',2*v.r*v.r+2*v.r*v.h],['Volumen',AB*v.h,'cm³',v.r*v.r*v.h]],
+  lines:[`g = h = <b>${fmt(v.h)} cm</b> (la generatriz es paralela al eje)`,`A${sb('B')} = π · r² = π · ${num(v.r)}² = <b>${fpi(v.r*v.r)} cm²</b> (cada base)`,`A${sb('L')} = 2π · r · g = 2π · ${num(v.r)} · ${num(v.h)} = <b>${fpi(2*v.r*v.h)} cm²</b>`,`A${sb('T')} = 2 · A${sb('B')} + A${sb('L')} = <b>${fpi(2*v.r*v.r+2*v.r*v.h)} cm²</b>`,`V = π · r² · h = <b>${fpi(v.r*v.r*v.h)} cm³</b>`]};}
+ if(f==='tri'){const g=Math.hypot(v.r,v.h);return{g,cards:[['Generatriz g',g,'cm'],['Área lateral',PI*v.r*g,'cm²',v.r*g],['Área total',PI*v.r*v.r+PI*v.r*g,'cm²',v.r*v.r+v.r*g],['Volumen',PI*v.r*v.r*v.h/3,'cm³',v.r*v.r*v.h/3]],
+  lines:[`g = √(r² + h²) = √(${num(v.r)}² + ${num(v.h)}²) = <b>${fmt(g)} cm</b>`,`A${sb('B')} = π · r² = <b>${fpi(v.r*v.r)} cm²</b>`,`A${sb('L')} = π · r · g = π · ${num(v.r)} · ${num(g)} = <b>${fpi(v.r*g)} cm²</b>`,`A${sb('T')} = A${sb('B')} + A${sb('L')} = <b>${fpi(v.r*v.r+v.r*g)} cm²</b>`,`V = π · r² · h / 3 = <b>${fpi(v.r*v.r*v.h/3)} cm³</b>`]};}
+ if(f==='trap'){const g=Math.hypot(v.h,v.R-v.r),AL=v.R*g+v.r*g,AB=v.R*v.R+v.r*v.r,Vk=v.h*(v.R*v.R+v.R*v.r+v.r*v.r)/3;return{g,cards:[['Generatriz g',g,'cm'],['Área lateral',PI*AL,'cm²',AL],['Área total',PI*(AL+AB),'cm²',AL+AB],['Volumen',PI*Vk,'cm³',Vk]],
+  lines:[`g = √(h² + (R − r)²) = √(${num(v.h)}² + ${num(Math.abs(v.R-v.r))}²) = <b>${fmt(g)} cm</b>`,`A${sb('B')} = π · R² + π · r² = <b>${fpi(AB)} cm²</b> (las dos bases)`,`A${sb('L')} = π · (R + r) · g = π · (${num(v.R)} + ${num(v.r)}) · ${num(g)} = <b>${fpi(AL)} cm²</b>`,`A${sb('T')} = A${sb('B')} + A${sb('L')} = <b>${fpi(AL+AB)} cm²</b>`,`V = π · h · (R² + R · r + r²) / 3 = <b>${fpi(Vk)} cm³</b>`]};}
+ return{g:null,cards:[['Semicircunferencia',PI*v.r,'cm',v.r],['Superficie esférica',4*PI*v.r*v.r,'cm²',4*v.r*v.r],['Diámetro',2*v.r,'cm'],['Volumen',4*PI*v.r**3/3,'cm³',4*v.r**3/3]],
+  lines:[`Longitud de la semicircunferencia = π · r = <b>${fpi(v.r)} cm</b>`,`A = 4π · r² = 4π · ${num(v.r)}² = <b>${fpi(4*v.r*v.r)} cm²</b>`,`V = 4π · r³ / 3 = 4π · ${num(v.r)}³ / 3 = <b>${fpi(4*v.r**3/3)} cm³</b>`]};}
+function updRev(){const F=RF[rv.f],v=rv.v[rv.f];F.sl.forEach(k=>{$('r_'+k).value=v[k];$('ro_'+k).textContent=fmt(v[k])+' cm';});
+ const span=rv.a1-rv.a0;$('ang').value=span;$('angO').textContent=Math.round(span)+'°';$('play').classList.toggle('on',rv.dir>0);$('back').classList.toggle('on',rv.dir<0);$('pause').classList.toggle('on',rv.dir===0);
+ const D=revData();$('rMets').innerHTML=D.cards.map(([l,val,u,k])=>`<div class="met"><p class="l">${l}</p><p class="v">${fmt(val)} ${u}</p>${k!==undefined&&isEx(k)?`<p class="s">= ${Math.abs(k-1)<1e-9?'':num(k)}π ${u}</p>`:''}</div>`).join('');
+ $('rFm').innerHTML=clean(D.lines.map(x=>`<div>${x}</div>`).join(''));
+ $('rLegend').innerHTML=[['coral',rv.f==='semi'?'Generatriz (semicircunferencia)':'Generatriz g'],['teal','Radio'],['vio','Altura h'],['sel','Figura que gira']].map(([c,s])=>`<span><i style="border-color:${COL[c]}"></i>${s}</span>`).join('');
+ if(SR)SR.dirty=true;}
+function renderRev(){const sc=SR,F=RF[rv.f],v=rv.v[rv.f],pr=F.prof(v),b0=rv.a0*PI/180,phi=(rv.a1-rv.a0)*PI/180;
+ const P3=(q,ps)=>[q[0]*Math.cos(ps+b0),q[1],-q[0]*Math.sin(ps+b0)];
+ const xm=Math.max(...pr.pts.map(q=>q[0])),ys=pr.pts.map(q=>q[1]),y0=Math.min(...ys),y1=Math.max(...ys),Hh=y1-y0,ext=0.14*Hh+0.4;
+ sc.ctr=[0,(y0+y1)/2,0];sc.S=0.42*Math.min(sc.W,sc.H)/Math.hypot(xm,Hh/2+ext);
+ const step=PI/24,ns=Math.ceil(phi/step-1e-9),polys=[];
+ pr.segs.forEach(([i,j,k])=>{if(k==='axis'||(rv.only&&k!=='gen'))return;const a=pr.pts[i],b=pr.pts[j];for(let m=0;m<ns;m++){const p1=m*step,p2=Math.min(phi,(m+1)*step);const pts=[P3(a,p1),P3(b,p1),P3(b,p2),P3(a,p2)].map(sc.pr);polys.push({k,pts,z:pts.reduce((s,q)=>s+q[2],0)/4});}});
+ let out=L(sc,[0,y0-ext,0],[0,y1+ext,0],'var(--ink)',1.6,true,.8);
+ polys.sort((a,b)=>a.z-b.z).forEach(o=>{const c=o.k==='gen'?COL.coral:COL.teal;out+=`<polygon points="${PS(o.pts)}" fill="${c}" fill-opacity=".17" stroke="${c}" stroke-opacity=".22" stroke-width=".6"/>`;});
+ const at=ps=>pr.pts.map(q=>P3(q,ps));
+ if(phi>0.02)out+=`<polygon points="${PS(at(0).map(sc.pr))}" fill="none" stroke="var(--mut)" stroke-width="1.2" stroke-dasharray="4 4"/>`;
+ pr.pts.forEach((q,i)=>{if(q[0]<1e-9||phi<0.01)return;const gen=pr.segs.some(s=>s[2]==='gen'&&(s[0]===i||s[1]===i));if(rv.only&&!gen)return;const arc=[];for(let a=0;a<=phi+1e-9;a+=PI/90)arc.push(P3(q,a));arc.push(P3(q,phi));out+=plv(sc,arc,gen?COL.coral:'var(--mut)',gen?1.6:1,gen?.9:.6);});
+ const cur=at(phi);
+ if(!rv.only)out+=`<polygon points="${PS(cur.map(sc.pr))}" fill="${COL.sel}" fill-opacity=".22" stroke="${COL.sel}" stroke-width="2"/>`;
+ else out+=`<polygon points="${PS(cur.map(sc.pr))}" fill="none" stroke="var(--mut)" stroke-width="1" stroke-dasharray="3 4" opacity=".7"/>`;
+ pr.segs.forEach(([i,j,k])=>{if(k==='gen')out+=L(sc,cur[i],cur[j],COL.coral,4.2);});
+ const c=avg(cur),D=revData(),f=rv.f;
+ if(f==='rect'){out+=segLab(sc,cur[0],cur[1],'r = '+fmt(v.r),COL.teal,c,14)+segLab(sc,cur[1],cur[2],'g = h = '+fmt(v.h),COL.coral,c);}
+ if(f==='tri'){out+=L(sc,cur[2],cur[0],COL.vio,3)+segLab(sc,cur[0],cur[1],'r = '+fmt(v.r),COL.teal,c,14)+segLab(sc,cur[2],cur[0],'h = '+fmt(v.h),COL.vio,c)+segLab(sc,cur[1],cur[2],'g = '+fmt(D.g),COL.coral,c);}
+ if(f==='trap'){out+=L(sc,cur[3],cur[0],COL.vio,3)+segLab(sc,cur[0],cur[1],'R = '+fmt(v.R),COL.teal,c,14)+segLab(sc,cur[2],cur[3],'r = '+fmt(v.r),COL.teal,c,14)+segLab(sc,cur[3],cur[0],'h = '+fmt(v.h),COL.vio,c)+segLab(sc,cur[1],cur[2],'g = '+fmt(D.g),COL.coral,c);}
+ if(f==='semi'){const O=[0,v.r,0],E=P3([v.r,v.r],phi);out+=L(sc,O,E,COL.teal,3)+dotP(sc,O)+segLab(sc,O,E,'r = '+fmt(v.r),COL.teal,cur[2],14);const g=sc.pr(cur[12]);out+=T(g[0]+12,g[1]-12,'generatriz','#D85A30','start');}
+ const top=sc.pr([0,y1+ext,0]);out+=T(top[0]+10,top[1]+4,'eje de giro','var(--mut)','start');
+ sc.svg.innerHTML=out;}
+
+/* ---------- wiring ---------- */
+SB=makeScene($('sv'),pickFace);SR=makeScene($('rsv'),null);SR.MR=RVIEWS[0]();
+$('rSeg').innerHTML=Object.keys(RF).map(k=>`<button data-f="${k}">${RF[k].n}</button>`).join('');
+document.querySelectorAll('#rSeg button').forEach(x=>x.onclick=()=>setRev(x.dataset.f));
+$('nSeg').addEventListener('click',e=>{const x=e.target.closest('button');if(x)loadPreset(+x.dataset.n);});
+$('fsel').onchange=e=>pickFace(e.target.value);
+$('pre').onclick=()=>{const b=BODIES[st.key];if(st.key==='cono')b.ti=(b.ti+1)%b.TR.length;loadPreset(st.p.n);};
+$('reg').onchange=e=>{st.p.reg=e.target.checked;update();};
+$('vom').onchange=()=>{SB.dirty=true;};
+$('netBtn').onclick=()=>{st.tT=st.tT>0.5?0:1;netLabel();SB.auto=false;$('spin').textContent='Iniciar giro';SB.goto(st.tT?VIEWS[3]():VIEWS[0]());};
+$('net').oninput=e=>{st.t=st.tT=+e.target.value/100;netLabel();SB.dirty=true;};
+document.querySelectorAll('[data-v]').forEach(x=>x.onclick=()=>{SB.auto=false;$('spin').textContent='Iniciar giro';SB.goto(VIEWS[+x.dataset.v]());});
+$('spin').onclick=()=>{SB.auto=!SB.auto;$('spin').textContent=SB.auto?'Pausar giro':'Iniciar giro';};
+document.querySelectorAll('[data-rv]').forEach(x=>x.onclick=()=>SR.goto(RVIEWS[+x.dataset.rv]()));
+$('ang').oninput=e=>{rv.a1=rv.a0+(+e.target.value);rv.dir=0;updRev();};
+$('play').onclick=()=>{rv.dir=1;updRev();};$('pause').onclick=()=>{rv.dir=0;updRev();};$('back').onclick=()=>{if(rv.a1>rv.a0)rv.dir=-1;updRev();};
+$('only').onchange=e=>{rv.only=e.target.checked;SR.dirty=true;};
+$('rPre').onclick=()=>{rv.v[rv.f]={...RF[rv.f].pre};updRev();};
+function route(){const h=(location.hash||'#inicio').slice(1);const r=ROUTES[h]?h:(h==='revolucion'?'revolucion':'inicio');
+ document.querySelectorAll('#tabs a').forEach(a=>a.classList.toggle('on',a.dataset.r===r));
+ $('vHome').hidden=r!=='inicio';$('vBody').hidden=!ROUTES[r];$('vRev').hidden=r!=='revolucion';
+ if(ROUTES[r]){view='body';if(st.key!==ROUTES[r]||!st.p)setBody(ROUTES[r]);SB.dirty=true;}
+ else if(r==='revolucion'){view='rev';SR.dirty=true;}else view='home';}
+window.addEventListener('hashchange',route);
+setRev('rect');st.key='';route();
+function frame(){const sc=view==='rev'?SR:(view==='body'?SB:null);
+ if(sc){if(sc.anim){sc.anim();sc.dirty=true;}else if(sc.auto&&!sc.drag){sc.MR=ortho(mul(sc.MR,Ry(0.005)));sc.dirty=true;}}
+ if(view==='body'&&st.t!==st.tT){const dt=reduce?1:0.011;st.t=st.t<st.tT?Math.min(st.tT,st.t+dt):Math.max(st.tT,st.t-dt);$('net').value=Math.round(st.t*100);SB.dirty=true;}
+ if(view==='rev'&&rv.dir){const d=reduce?10:1.6;if(rv.dir>0){rv.a1+=d;if(rv.a1-rv.a0>360)rv.a0=rv.a1-360;if(rv.a0>=360){rv.a0-=360;rv.a1-=360;}}else{rv.a1-=d;if(rv.a1<=rv.a0){rv.a1=rv.a0;rv.dir=0;}}updRev();}
+ if(sc&&sc.dirty){sc.dirty=false;if(view==='rev')renderRev();else renderBody();}
+ requestAnimationFrame(frame);}
+requestAnimationFrame(frame);
+}
+</script>
+</body>
+</html>
