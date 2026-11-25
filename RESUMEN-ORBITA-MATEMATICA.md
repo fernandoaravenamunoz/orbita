@@ -34,7 +34,7 @@ sitemap.xml                   para Google (lista páginas y PDF)
 googleef0239d5e0f1f3b2.html   archivo de verificación de Google Search Console
 imagen-compartir.jpg          imagen de vista previa al compartir el link (1200×630)
 juegos/                       10 juegos, cada uno es un .html independiente
-simulaciones/                 4 simulaciones propias en HTML (fracciones, enteros, cuerpos-geometricos, homotecias)
+simulaciones/                 6 simulaciones propias en HTML (fracciones, enteros, cuerpos-geometricos, homotecias, tales, euclides)
 materiales/1medio/            15 PDF
 materiales/2medio/            10 PDF
 materiales/7basico/           4 PDF
@@ -47,7 +47,7 @@ materiales/curiosa/           oc01–oc10.svg (ilustraciones de Órbita Curiosa)
 | Ruta | Sección | Contenido |
 |---|---|---|
 | `#inicio` | Inicio | Portada y seis accesos: Cursos, Simulaciones, Juegos, Observatorio, Órbita Curiosa y Entregar tarea |
-| `#simulaciones` | Simulaciones | Herramientas interactivas propias (`datos.js → simulaciones`), en tarjetas con lámina, curso/OA, temas y botón «Abrir simulación». Hoy: Operando con fracciones, La recta de los enteros, Cuerpos geométricos 3D y Homotecias |
+| `#simulaciones` | Simulaciones | Herramientas interactivas propias (`datos.js → simulaciones`), en tarjetas con lámina, curso/OA, temas y botón «Abrir simulación». Hoy: Operando con fracciones, La recta de los enteros, Cuerpos geométricos 3D, Homotecias, Teorema de Tales y Teorema de Euclides |
 | `#cursos` / `#curso-ID` | Cursos | Por curso: **Guías por unidad** y una sección aparte de **Simulaciones y videos** |
 | `#juegos` / `#juego-ID` | Juegos | Estilo arcade (cartuchos J01–J10); es la única sección con estética de videojuego |
 | `#difusion` | Observatorio | Divulgación científica: 25 videos de YouTube con miniatura local y créditos, más 2 artículos, agrupados por categoría |
@@ -72,6 +72,8 @@ materiales/curiosa/           oc01–oc10.svg (ilustraciones de Órbita Curiosa)
 - **Operando con fracciones** (`fracciones.html`, 7° básico, OA 2 · OA 3): pestaña Multiplicación (modelo de área: primer factor en columnas, segundo en filas, producto = zona común; admite impropias y decimales con denominador 10) y pestaña División (modo «cubrir»: cuántas veces cabe el divisor, con el resto medido en divisores; modo «repartir»: dividir por un natural).
 - **La recta de los enteros** (`enteros.html`): pestaña Adición y sustracción (7° OA 1: flechas, restar = sumar el opuesto, contexto de dinero o temperatura) y pestaña Multiplicación y división (8° OA 1: repetir la flecha y girar 180° si el factor es negativo, secuencia de productos para descubrir la regla, tabla de signos).
 - **Homotecias** (`homotecias.html`, I° medio, OA 8 · OA 11): figuras estrella, vela, árbol, casa, triángulo, cuadrilátero y pentágono (estas tres con vértices móviles); k de −3 a 3; centro O arrastrable; cámara oscura; medidas de OA′/OA, perímetro (× |k|), área (× k²) y ángulos. Pestaña vectorial: plano cartesiano, tabla OP → k · OP → P′, vector AB → A′B′ y composición de dos homotecias (k₁ · k₂).
+- **Teorema de Tales** (`tales.html`, I° medio, OA 9): casos «Paralelas y secantes» (r, s, t), «Triángulo con una paralela», «Triángulo rectángulo», «Secantes que se cruzan» y «Aplicación: sombras» (árbol de 5 m, sombra de 6 m, edificio a 30 m → 25 m). Se arrastran las paralelas y los puntos azules; se tocan dos vértices de una misma recta para elegir un segmento (hasta 4) y comparar razones; el panel lista las proporciones valorizadas con producto cruzado, y «Calcular x» oculta un segmento y lo despeja.
+- **Teorema de Euclides** (`euclides.html`, I° medio, semejanza): triángulo con ángulo recto en C, altura CD, proyecciones p (de a) y q (de b). Los seis datos (a, b, c, h, p, q) se cambian con barra o escribiéndolos; se mantiene fijo el último dato cambiado (o el que se elija) y se recalcula el resto para que siga siendo rectángulo, con aviso si el valor es imposible. Muestra h² = p·q, a² = p·c, b² = q·c, h = a·b/c, c = p + q y Pitágoras: fórmula, valores y resultados. Opción «Ver áreas» con cuadrados y rectángulos equivalentes.
 - Criterios comunes: avance paso a paso, modo **predecir** (oculta el resultado hasta revelarlo), sin modo desafío por decisión del profesor, y sin guardar datos de estudiantes.
 - La lámina de la tarjeta es un SVG en `app.js` (`DIBUJOS_SIM`); si `dibujo` no existe, usa uno genérico.
 

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Teorema de Tales · Órbita Matemática</title>
+<meta name="description" content="Simulación interactiva del teorema de Tales: rectas paralelas cortadas por secantes, triángulos con una paralela, secantes que se cruzan y aplicación con sombras. Mide segmentos y comprueba proporciones.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#10151b);--ink:light-dark(#16202b,#e6ecf2);--mut:light-dark(#5b6675,#9aa7b5);--line:light-dark(#dde4ec,#28323d);--grid:light-dark(#edf1f6,#19212a);--band:light-dark(#163a5f,#0b2035);--card:light-dark(#f4f7fa,#17202a);--sel:#378ADD;--coral:#D85A30;--teal:#1D9E75;--vio:#7F77DD;--amb:#BA7517;--pink:#D4537E}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Lexend,system-ui,sans-serif;overflow-x:clip}
+h1,h2{font-weight:600;line-height:1.1;margin:0;text-wrap:balance}
+button,input{font:inherit;color:inherit}
+button{min-height:40px;padding:6px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);cursor:pointer}
+button:hover{border-color:var(--mut)}button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
+button.on{border-color:var(--sel);color:var(--sel);background:color-mix(in srgb,var(--sel) 10%,transparent)}
+button.pri{background:var(--band);color:#fff;border-color:var(--band)}
+@media(prefers-color-scheme:dark){button.pri{background:#2b5f93;border-color:#2b5f93}}
+input[type=checkbox]{accent-color:var(--sel);width:18px;height:18px}
+.top{background:var(--band);color:#fff;padding:14px max(4vw,16px);display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:18px;flex-wrap:wrap}
+.volver{color:#fff;text-decoration:none;font-size:14px;font-weight:500;opacity:.82;padding:6px 10px;border:1px solid rgba(255,255,255,.35);border-radius:999px}.volver:hover{opacity:1;background:rgba(255,255,255,.1)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs a{color:#fff;text-decoration:none;padding:8px 12px;border-radius:999px;font-size:15px;opacity:.82}
+.tabs a:hover{opacity:1;background:rgba(255,255,255,.1)}.tabs a.on{opacity:1;background:#fff;color:#163a5f}
+.band{padding:clamp(20px,3vw,44px) max(4vw,16px)}
+.work{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:24px;max-width:1400px;margin:0 auto}
+.stagehead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 18px;margin-bottom:8px}
+.stagehead h1{font-size:clamp(26px,3vw,36px)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--mut)}
+.legend i{display:inline-block;width:16px;height:10px;border-radius:3px;vertical-align:middle;margin-right:6px}
+.fig{position:relative;height:clamp(340px,58vh,600px);border-radius:16px;border:1px solid var(--line);background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;overflow:hidden}
+.fig svg{position:absolute;inset:0;width:100%;height:100%}
+.hint{position:absolute;left:12px;bottom:8px;margin:0;font-size:13px;color:var(--mut);pointer-events:none}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.stepTxt{font-size:15px;color:var(--ink);flex:1 1 100%;background:var(--card);border-radius:12px;padding:10px 14px;margin:0}
+.panel{display:flex;flex-direction:column;gap:16px}
+.box{background:var(--card);border-radius:14px;padding:14px 16px}
+.box h2{font-size:17px;margin-bottom:10px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}.seg button{min-height:36px;padding:4px 12px;font-size:14px}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--mut);margin-top:10px}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px}.row button{min-height:34px;padding:3px 10px;font-size:14px}
+.mets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.met{background:var(--card);border-radius:12px;padding:10px 14px}.met p{margin:0}.met .l{font-size:13px;color:var(--mut)}.met .v{font-size:clamp(19px,2vw,23px);font-weight:600}.met .s{font-size:13px;color:var(--mut)}
+.fm div{font-size:15px;line-height:1.7;padding:4px 0;border-bottom:1px dashed var(--line)}.fm div:last-child{border:0}.fm b{font-weight:600}
+details summary{cursor:pointer;font-weight:600;font-size:17px;min-height:32px}
+.concept{border-left:4px solid var(--vio);background:color-mix(in srgb,var(--vio) 9%,transparent);padding:10px 14px;font-size:15px;margin:0}
+.concept b{color:var(--coral);font-weight:600}
+.note{font-size:13px;color:var(--mut);margin:0}
+.warn{border-left:4px solid var(--amb);background:color-mix(in srgb,var(--amb) 10%,transparent);padding:8px 12px;font-size:14px;margin:0}
+[hidden]{display:none!important}
+.fx{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.08;margin:0 .1em;font-size:.92em}
+.fx>span{padding:0 .2em}.fx>span:first-child{border-bottom:1.6px solid currentColor}
+.frin{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.fr{display:inline-flex;flex-direction:column;align-items:center;gap:4px;padding:6px 8px;border-radius:12px;background:var(--bg)}
+.fr .bar{width:100%;border-top:3px solid currentColor}
+.fr.t{color:var(--teal)}.fr.c{color:var(--coral)}
+.stp{display:inline-flex;align-items:center;gap:4px}
+.stp button{min-height:34px;width:34px;padding:0;font-size:18px;line-height:1;color:var(--ink)}
+.stp output{min-width:2.4ch;text-align:center;font-weight:600;font-size:22px}
+.op{font-size:30px;font-weight:600;color:var(--mut)}
+.lbl{font-size:13px;color:var(--mut);display:block;margin-bottom:6px}
+@media(max-width:900px){.work{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.fig{height:360px}.tabs a{padding:6px 9px;font-size:14px}}
+
+.fig.plain{background-image:none}
+.fig svg{touch-action:none}
+select{min-height:36px;border-radius:10px;border:1px solid var(--line);background:var(--bg);padding:4px 10px;font:inherit;font-size:14px;color:inherit}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--bg);font-weight:600;font-size:15px;border:2px solid}
+.prop{padding:8px 0;border-bottom:1px dashed var(--line);font-size:15px}.prop:last-child{border:0}
+.prop .l1{font-size:17px;font-weight:600;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.prop .l2,.prop .l3{color:var(--mut);display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px}
+.prop .l3 b{color:var(--ink)}
+.ok{color:var(--teal);font-weight:600}.no{color:var(--coral);font-weight:600}
+.sol{background:color-mix(in srgb,var(--sel) 10%,transparent);border-left:4px solid var(--sel);padding:8px 12px;font-size:15px;margin-top:8px}
+</style>
+</head>
+<body>
+<header class="top">
+<div class="brand"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M4 16 H60 M4 32 H60 M4 52 H60" stroke-width="2.4"/><path d="M14 6 L28 60 M40 6 L58 60"/></svg><span>Teorema de Tales</span><a class="volver" href="../index.html#simulaciones" target="_top">← Órbita Matemática</a></div>
+</header>
+<main>
+<section class="band">
+<div class="work">
+<div>
+<div class="stagehead"><h1 id="tTitle">Teorema de Tales</h1><div class="legend"><span><i style="background:var(--ink)"></i>Rectas paralelas</span><span><i style="background:var(--sel)"></i>Secantes</span><span><i style="background:var(--coral)"></i>Segmentos elegidos</span></div></div>
+<div class="fig plain"><svg id="tsv" role="img" aria-label="Rectas paralelas cortadas por secantes"></svg><p class="hint" id="tHint">Toca dos vértices de una misma recta para elegir un segmento · arrastra los puntos grandes o las paralelas</p></div>
+<div class="tools"><p class="stepTxt" id="tTxt"></p></div>
+</div>
+<aside class="panel">
+<p class="concept"><b>Teorema de Tales:</b> si tres o más rectas <b>paralelas</b> cortan a dos secantes, los segmentos que determinan en una secante son <b>proporcionales</b> a los segmentos correspondientes en la otra.</p>
+<div class="box"><h2>Caso</h2><div class="seg" id="tCfg"></div>
+<label class="chk"><input type="checkbox" id="tAll" checked> Mostrar las medidas de todos los segmentos</label>
+<div class="row"><label class="chk" style="margin:0">Calcular x: <select id="tX"></select></label><button id="tReset">Restablecer el caso</button></div>
+</div>
+<div class="box"><h2>Segmentos elegidos</h2><p class="note" id="tSelHelp">Toca dos vértices de una misma recta para elegir un segmento. Puedes elegir hasta 4 y comparar sus razones.</p><div class="chips" id="tChips"></div><div id="tRat"></div><div class="row"><button id="tClear">Borrar la selección</button></div></div>
+<div class="box"><details open><summary>Proporciones de Tales</summary><div id="tProps"></div></details></div>
+<p class="note">Las medidas se muestran redondeadas a 2 decimales; las razones se calculan con los valores exactos.</p>
+</aside>
+</div>
+</section>
+</main>
+<script>
+{
+const $=id=>document.getElementById(id);
+const C={teal:'#1D9E75',coral:'#D85A30',vio:'#7F77DD',amb:'#BA7517',pink:'#D4537E',sel:'#378ADD'};
+const SELC=[C.coral,C.teal,C.vio,C.amb];
+const nf=(x,d=2)=>{const r=Math.round(x*10**d)/10**d;return(Object.is(r,-0)?0:r).toLocaleString('es-CL',{maximumFractionDigits:d});};
+const F1=x=>x.toFixed(1);
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const Fr=(a,b)=>`<span class="fx"><span>${a}</span><span>${b}</span></span>`;
+function T(x,y,s,c,o={}){return `<text x="${F1(x)}" y="${F1(y)}" fill="${c}" font-size="${o.fs||15}" font-weight="${o.fw||600}" text-anchor="${o.a||'middle'}" dominant-baseline="middle" style="paint-order:stroke;stroke:var(--bg);stroke-width:${o.sw??5}px;stroke-linejoin:round" pointer-events="none">${s}</text>`;}
+function Ln(a,b,c,w,o={}){return `<line x1="${F1(a[0])}" y1="${F1(a[1])}" x2="${F1(b[0])}" y2="${F1(b[1])}" stroke="${c}" stroke-width="${w}" opacity="${o.op??1}" ${o.dash?`stroke-dasharray="${o.dash}"`:''} stroke-linecap="round" ${o.h?`data-h="${o.h}" style="cursor:${o.cur||'grab'}"`:'pointer-events="none"'}/>`;}
+const dist=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
+
+/* ---------- casos ---------- */
+const R2=Math.sqrt(1.875**2-1);
+const CFG={
+ par:{n:'Paralelas y secantes',phi:0,unit:'cm',lines:[{d:4.8,n:'r'},{d:1.6,n:'s'},{d:-4.8,n:'t'}],
+  sec:[{anc:[[0,-7],[2,0.2]],names:['A','B','C']},{anc:[[0,-1],[2,-1+9.6*R2]],names:['D','E','F']}],snap:.5,
+  txt:'Tres paralelas r, s y t cortan a dos secantes. Los segmentos AB y BC de una secante son proporcionales a DE y EF de la otra.'},
+ tri:{n:'Triángulo con una paralela',phi:0,unit:'cm',apex:{d:8,s:0,n:'A'},lines:[{d:4},{d:0}],
+  sec:[{anc:['V',[1,-6]],names:['B′','B']},{anc:['V',[1,3]],names:['C′','C']}],snap:.5,
+  txt:'En el triángulo ABC, el segmento B′C′ es paralelo a BC. Las paralelas B′C′ y BC cortan a los lados AB y AC en segmentos proporcionales, y además B′C′ : BC es la misma razón.'},
+ rect:{n:'Triángulo rectángulo',phi:Math.PI/2,unit:'cm',apex:{d:-9,s:0,n:'C'},lines:[{d:-3},{d:0}],
+  sec:[{anc:['V',[1,0]],names:['B′','B']},{anc:['V',[1,12]],names:['A′','A']}],snap:.5,hide:'A|B',
+  txt:'Los segmentos A′B′ y AB son paralelos (ambos verticales). Los triángulos A′B′C y ABC tienen sus lados proporcionales. Prueba calcular el valor de x.'},
+ cruz:{n:'Secantes que se cruzan',phi:0,unit:'cm',apex:{d:0,s:0,n:'A'},lines:[{d:3},{d:-6}],
+  sec:[{anc:['V',[1,4.5]],names:['E','C']},{anc:['V',[1,-8]],names:['D','B']}],snap:.5,
+  txt:'Las secantes se cruzan en A, entre las dos paralelas ED y BC. Se forma una figura de «reloj de arena»: los triángulos AED y ACB tienen sus lados proporcionales.'},
+ sombra:{n:'Aplicación: sombras',phi:Math.PI/2,unit:'m',apex:{d:-30,s:0,n:'P'},lines:[{d:-24},{d:0}],
+  sec:[{anc:['V',[1,0]],names:['Q','R']},{anc:['V',[1,25]],names:['T','E']}],snap:.5,hide:'E|R',ctx:true,
+  txt:'Un árbol QT de 5 m proyecta una sombra PQ de 6 m. A la misma hora, la sombra del edificio llega al mismo punto P, a 30 m de su base R. Los rayos de sol son paralelos a sí mismos y el árbol y el edificio son paralelos entre sí: ¿cuánto mide el edificio RE?'}
+};
+const TL={key:'par',c:null,sel:[],first:null,all:true,hide:'',drag:null,V:{v:null},anim:false};
+const clone=o=>JSON.parse(JSON.stringify(o));
+$('tCfg').innerHTML=Object.keys(CFG).map(k=>`<button data-k="${k}">${CFG[k].n}</button>`).join('');
+$('tCfg').onclick=e=>{const b=e.target.closest('button');if(b)load(b.dataset.k);};
+$('tAll').onchange=e=>{TL.all=e.target.checked;draw();};
+$('tReset').onclick=()=>load(TL.key);
+$('tClear').onclick=()=>{TL.sel=[];TL.first=null;draw();};
+$('tX').onchange=e=>{TL.hide=e.target.value;draw();};
+function load(k){TL.key=k;TL.c=clone(CFG[k]);TL.sel=[];TL.first=null;TL.hide=CFG[k].hide||'';TL.V.v=null;TL.pat=pattern(TL.c);draw(true);}
+
+/* ---------- geometría ---------- */
+function frame(c){const u=[Math.cos(c.phi),Math.sin(c.phi)],n=[-Math.sin(c.phi),Math.cos(c.phi)];return{u,n,X:(d,s)=>[s*u[0]+d*n[0],s*u[1]+d*n[1]]};}
+function geom(){const c=TL.c,{X}=frame(c),P={},secs=[];
+ if(c.apex)P[c.apex.n]={d:c.apex.d,s:c.apex.s,on:['s0','s1'],drag:{t:'V'}};
+ c.sec.forEach((sc,j)=>{const an=sc.anc.map(a=>a==='V'?[c.apex.d,c.apex.s]:[c.lines[a[0]].d,a[1]]),[d1,s1]=an[0],[d2,s2]=an[1],list=[];
+  if(c.apex)list.push(c.apex.n);
+  c.lines.forEach((L,i)=>{const s=s1+(s2-s1)*(L.d-d1)/(d2-d1),nm=sc.names[i];const ai=sc.anc.findIndex(a=>a!=='V'&&a[0]===i);
+   P[nm]={d:L.d,s,on:['s'+j,'p'+i],drag:ai>=0?{t:'a',j,k:ai}:null};list.push(nm);});
+  list.sort((a,b)=>P[b].d-P[a].d);secs.push(list);});
+ Object.values(P).forEach(p=>p.X=X(p.d,p.s));
+ return{P,secs,X};}
+function seg(G,a,b){const A=G.P[a],B=G.P[b];return{k:[a,b].sort().join('|'),a,b,len:dist(A.X,B.X)};}
+const share=(G,a,b)=>a!==b&&G.P[a].on.some(x=>G.P[b].on.includes(x));
+function props(G){const c=TL.c,[s0,s1]=c.sec.map(s=>s.names),S=(a,b)=>seg(G,a,b);
+ if(!c.apex){const[A,B,Cc]=s0,[D,E,Fp]=s1;return[[S(A,B),S(B,Cc),S(D,E),S(E,Fp)],[S(A,B),S(A,Cc),S(D,E),S(D,Fp)],[S(B,Cc),S(A,Cc),S(E,Fp),S(D,Fp)],[S(A,B),S(D,E),S(B,Cc),S(E,Fp)]];}
+ const V=c.apex.n,dv=c.apex.d,ord=[0,1].sort((i,j)=>Math.abs(c.lines[i].d-dv)-Math.abs(c.lines[j].d-dv)),[i1,i2]=ord,between=Math.sign(c.lines[0].d-dv)!==Math.sign(c.lines[1].d-dv);
+ const P1=s0[i1],P2=s0[i2],Q1=s1[i1],Q2=s1[i2],L=[];
+ if(!between)L.push([S(V,P1),S(P1,P2),S(V,Q1),S(Q1,Q2)]);
+ L.push([S(V,P1),S(V,P2),S(V,Q1),S(V,Q2)],[S(V,P1),S(V,P2),S(P1,Q1),S(P2,Q2)],[S(V,Q1),S(V,Q2),S(P1,Q1),S(P2,Q2)]);return L;}
+function pattern(c){const ds=c.lines.map(l=>l.d).concat(c.apex?[c.apex.d]:[]),p=[];for(let i=0;i<ds.length;i++)for(let j=i+1;j<ds.length;j++)p.push(Math.sign(ds[i]-ds[j]));return p;}
+function okPattern(c){const ds=c.lines.map(l=>l.d).concat(c.apex?[c.apex.d]:[]),gap=c.unit==='m'?2:.5;let q=0;for(let i=0;i<ds.length;i++)for(let j=i+1;j<ds.length;j++){if(Math.sign(ds[i]-ds[j])!==TL.pat[q++]||Math.abs(ds[i]-ds[j])<gap)return false;}return true;}
+
+/* ---------- vista ---------- */
+function fitView(V,pts,W,Hh,instant){let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;pts.forEach(p=>{x0=Math.min(x0,p[0]);x1=Math.max(x1,p[0]);y0=Math.min(y0,p[1]);y1=Math.max(y1,p[1]);});
+ const mx=(x1-x0)*.08+.8,my=(y1-y0)*.08+.8,cx=(x0+x1)/2,cy=(y0+y1)/2,sc=Math.min((W-70)/(x1-x0+2*mx),(Hh-80)/(y1-y0+2*my));
+ if(!V.v||instant||reduce){V.v={cx,cy,sc};return false;}const v=V.v,a=.2;v.cx+=(cx-v.cx)*a;v.cy+=(cy-v.cy)*a;v.sc+=(sc-v.sc)*a;
+ return Math.abs(cx-v.cx)*v.sc>.5||Math.abs(cy-v.cy)*v.sc>.5||Math.abs(sc-v.sc)/sc>.003;}
+let M=null;
+function draw(instant){const s=$('tsv'),W=s.clientWidth||600,Hh=s.clientHeight||420;s.setAttribute('viewBox',`0 0 ${W} ${Hh}`);
+ const c=TL.c,G=geom(),{u,n}=frame(c),pts=Object.values(G.P).map(p=>p.X);
+ TL.anim=TL.drag?false:fitView(TL.V,pts,W,Hh,instant);if(!TL.V.v)fitView(TL.V,pts,W,Hh,true);
+ const{cx,cy,sc}=TL.V.v,S=p=>[W/2+(p[0]-cx)*sc,Hh/2+8-(p[1]-cy)*sc];M={sc,w:q=>[(q[0]-W/2)/sc+cx,-(q[1]-Hh/2-8)/sc+cy]};
+ const sv=Object.values(G.P).map(p=>p.s),sMin=Math.min(...sv),sMax=Math.max(...sv),ext=(sMax-sMin)*.18+1.5;
+ let o='';
+ // paralelas
+ if(c.ctx){const[Q,T2,R,E]=[G.P.Q,G.P.T,G.P.R,G.P.E];const bw=Math.max(18,(E.s-R.s)*.22);
+  o+=`<rect x="${F1(S(E.X)[0]-bw*sc)}" y="${F1(S(E.X)[1])}" width="${F1(bw*sc)}" height="${F1(S(R.X)[1]-S(E.X)[1])}" fill="${C.amb}" fill-opacity=".18" stroke="${C.amb}" stroke-width="1.5"/>`;
+  for(let k=1;k<6;k++){const y=S(R.X)[1]-(S(R.X)[1]-S(E.X)[1])*k/6;o+=`<rect x="${F1(S(E.X)[0]-bw*sc*.75)}" y="${F1(y-8)}" width="${F1(bw*sc*.22)}" height="10" fill="${C.sel}" fill-opacity=".35"/><rect x="${F1(S(E.X)[0]-bw*sc*.4)}" y="${F1(y-8)}" width="${F1(bw*sc*.22)}" height="10" fill="${C.sel}" fill-opacity=".35"/>`;}
+  const tp=S(T2.X),hh=S(Q.X)[1]-tp[1];o+=`<circle cx="${F1(tp[0])}" cy="${F1(tp[1]+hh*.25)}" r="${F1(Math.max(7,hh*.32))}" fill="${C.teal}" fill-opacity=".35" stroke="${C.teal}" stroke-width="1.5"/>`;
+  const sun=S([E.X[0]-(G.P.P.X[0]-E.X[0])*.12,E.X[1]+(E.X[1]-G.P.P.X[1])*.12]);o+=`<circle cx="${F1(sun[0])}" cy="${F1(Math.max(26,sun[1]))}" r="16" fill="#E8B53A" fill-opacity=".8"/>`;
+  [R,Q].forEach((p,i)=>{const a=S(p.X),b=S((i?T2:E).X);o+=Ln(a,b,'var(--ink)',3);});}
+ else c.lines.forEach((L,i)=>{const a=S(G.X(L.d,sMin-ext)),b=S(G.X(L.d,sMax+ext));o+=Ln(a,b,'transparent',18,{h:'ln:'+i,cur:'move'})+Ln(a,b,'var(--ink)',2.2);if(L.n)o+=T(b[0]+(c.phi?0:10),b[1]+(c.phi?-10:0),L.n,'var(--ink)',{fs:16,a:c.phi?'middle':'start'});});
+ // secantes
+ G.secs.forEach(list=>{const A=G.P[list[0]].X,B=G.P[list[list.length-1]].X,L=dist(A,B)||1,v=[(B[0]-A[0])/L,(B[1]-A[1])/L],e=c.ctx?0:Math.max(1,L*.14);
+  let a=[A[0]-v[0]*e,A[1]-v[1]*e],b=[B[0]+v[0]*e,B[1]+v[1]*e];if(c.apex&&!isBetween()){if(list[0]===c.apex.n)a=A;if(list[list.length-1]===c.apex.n)b=B;}
+  o+=Ln(S(a),S(b),c.ctx?'var(--ink)':C.sel,2.4);});
+ if(c.ctx){const P=G.P.P.X,E=G.P.E.X;o+=Ln(S(P),S(E),'#E8A33A',3);o+=T(S(P)[0]*.3+S(E)[0]*.7+16,S(P)[1]*.3+S(E)[1]*.7-12,'rayos del sol','#B5791B',{fs:13,fw:500});}
+ // segmentos con medida
+ const allSeg=[];G.secs.forEach(l=>{for(let i=0;i+1<l.length;i++)allSeg.push(seg(G,l[i],l[i+1]));});
+ if(c.apex)[0,1].forEach(i=>allSeg.push(seg(G,c.sec[0].names[i],c.sec[1].names[i])));
+ const cen=pts.reduce((s,p)=>[s[0]+p[0]/pts.length,s[1]+p[1]/pts.length],[0,0]);
+ const selK=TL.sel.map(x=>x.k),hk=TL.hide;
+ const lab=(sg,col,big)=>{const A=S(G.P[sg.a].X),B=S(G.P[sg.b].X),m=[(A[0]+B[0])/2,(A[1]+B[1])/2];let nx=-(B[1]-A[1]),ny=B[0]-A[0];const nl=Math.hypot(nx,ny)||1;nx/=nl;ny/=nl;const cc=S(cen);if(nx*(m[0]-cc[0])+ny*(m[1]-cc[1])<0){nx=-nx;ny=-ny;}
+  const txt=sg.k===hk?'x':nf(sg.len);return T(m[0]+nx*(big?20:16)+Math.abs(nx)*txt.length*3,m[1]+ny*(big?20:16),txt,col,{fs:big?17:14,fw:big?700:600});};
+ TL.sel.forEach((sg,i)=>{const A=S(G.P[sg.a].X),B=S(G.P[sg.b].X);o+=Ln(A,B,SELC[i],7,{op:.85});});
+ allSeg.forEach(sg=>{const i=selK.indexOf(sg.k);if(i<0&&(TL.all||sg.k===hk))o+=lab(sg,sg.k===hk?C.sel:'var(--mut)',false);});
+ TL.sel.forEach((sg,i)=>o+=lab(sg,SELC[i],true));
+ // puntos
+ Object.entries(G.P).forEach(([nm,p])=>{const q=S(p.X),f=TL.first===nm;o+=`<circle cx="${F1(q[0])}" cy="${F1(q[1])}" r="${p.drag?9:6}" fill="${p.drag?C.sel:'var(--ink)'}" fill-opacity="${p.drag?.9:1}" stroke="${f?C.coral:'var(--bg)'}" stroke-width="${f?4:2}" pointer-events="none"/>`;
+  o+=`<circle cx="${F1(q[0])}" cy="${F1(q[1])}" r="16" fill="transparent" data-h="pt:${nm}" style="cursor:${p.drag?'grab':'pointer'}"/>`;
+  const dx=q[0]-S(cen)[0],dy=q[1]-S(cen)[1],L=Math.hypot(dx,dy)||1;o+=T(q[0]+dx/L*20+(c.phi?0:-12),q[1]+dy/L*20-(c.phi?0:10),nm,'var(--ink)',{fs:17});});
+ s.innerHTML=o;TL.G=G;panel(G,allSeg);}
+function isBetween(){const c=TL.c;return c.apex&&Math.sign(c.lines[0].d-c.apex.d)!==Math.sign(c.lines[1].d-c.apex.d);}
+
+/* ---------- panel ---------- */
+const nm=sg=>[sg.a,sg.b].sort((x,y)=>x.localeCompare(y,'es')).join('');
+function val(sg){return sg.k===TL.hide?'x':nf(sg.len);}
+function panel(G,allSeg){const c=TL.c,u=c.unit;
+ document.querySelectorAll('#tCfg button').forEach(b=>b.classList.toggle('on',b.dataset.k===TL.key));
+ $('tTitle').textContent=c.n;$('tTxt').innerHTML=c.txt;
+ const P=props(G),opts=[];P.forEach(p=>p.forEach(sg=>{if(!opts.find(o=>o.k===sg.k))opts.push(sg);}));
+ $('tX').innerHTML=`<option value="">Ninguna</option>`+opts.map(sg=>`<option value="${sg.k}" ${sg.k===TL.hide?'selected':''}>${nm(sg)}</option>`).join('');
+ // seleccionados
+ $('tChips').innerHTML=TL.sel.map((sg,i)=>{const s2=seg(G,sg.a,sg.b);TL.sel[i]=s2;return `<span class="chip" style="border-color:${SELC[i]};color:${SELC[i]}">${nm(s2)} = ${val(s2)}${s2.k===TL.hide?'':' '+u}</span>`;}).join('')||(TL.first?`<span class="note">Elegiste el vértice <b>${TL.first}</b>. Ahora toca otro vértice de la misma recta.</span>`:'');
+ let r='';const S2=TL.sel;
+ if(S2.length>=2){const q1=S2[0].len/S2[1].len;r+=`<div class="prop"><div class="l1">${Fr(nm(S2[0]),nm(S2[1]))} = ${Fr(val(S2[0]),val(S2[1]))} ${S2[0].k===TL.hide||S2[1].k===TL.hide?'':'≈ '+nf(q1,3)}</div></div>`;}
+ if(S2.length===4){const q1=S2[0].len/S2[1].len,q2=S2[2].len/S2[3].len,eq=Math.abs(q1-q2)<1e-6;
+  r+=`<div class="prop"><div class="l1">${Fr(nm(S2[2]),nm(S2[3]))} = ${Fr(val(S2[2]),val(S2[3]))} ≈ ${nf(q2,3)}</div><div class="l2">${eq?`<span class="ok">Las dos razones son iguales: ${Fr(nm(S2[0]),nm(S2[1]))} = ${Fr(nm(S2[2]),nm(S2[3]))} es una proporción.</span>`:`<span class="no">Las razones son distintas: esos cuatro segmentos no forman una proporción.</span>`}</div></div>`;}
+ else if(S2.length===3)r+=`<p class="note">Elige un cuarto segmento para comparar dos razones.</p>`;
+ $('tRat').innerHTML=r;
+ // proporciones
+ let h='';let solved=false;
+ P.forEach(p=>{const[a,b,cc,d]=p,xs=p.findIndex(sg=>sg.k===TL.hide);
+  h+=`<div class="prop"><div class="l1">${Fr(nm(a),nm(b))} = ${Fr(nm(cc),nm(d))}</div><div class="l2">${Fr(val(a),val(b))} = ${Fr(val(cc),val(d))}</div>`;
+  if(xs<0){h+=`<div class="l3">${nf(a.len/b.len,3)} = ${nf(cc.len/d.len,3)} <span class="ok">✓</span> · producto cruzado: ${nf(a.len)} · ${nf(d.len)} = ${nf(b.len)} · ${nf(cc.len)} → <b>${nf(a.len*d.len)} = ${nf(b.len*cc.len)}</b></div>`;}
+  else if(!solved){solved=true;const v=p.map(sg=>nf(sg.len)),X=p[xs].len;
+   const f=[`${v[1]} · ${v[2]} / ${v[3]}`,`${v[0]} · ${v[3]} / ${v[2]}`,`${v[0]} · ${v[3]} / ${v[1]}`,`${v[1]} · ${v[2]} / ${v[0]}`][xs];
+   const cross=[`x · ${v[3]} = ${v[1]} · ${v[2]}`,`${v[0]} · ${v[3]} = x · ${v[2]}`,`${v[0]} · ${v[3]} = ${v[1]} · x`,`${v[0]} · x = ${v[1]} · ${v[2]}`][xs];
+   h+=`<div class="sol">Producto cruzado: ${cross}<br>x = ${f} = <b>${nf(X)} ${u}</b><br>Entonces ${nm(p[xs])} = ${nf(X)} ${u}.</div>`;}
+  h+=`</div>`;});
+ $('tProps').innerHTML=h;}
+
+/* ---------- interacción ---------- */
+const s=$('tsv');let down=null;
+s.addEventListener('pointerdown',e=>{const h=e.target.getAttribute&&e.target.getAttribute('data-h');if(!h)return;const r=s.getBoundingClientRect();down={h,x:e.clientX,y:e.clientY,moved:false};s.setPointerCapture(e.pointerId);});
+s.addEventListener('pointermove',e=>{if(!down)return;if(!down.moved&&Math.hypot(e.clientX-down.x,e.clientY-down.y)<6)return;down.moved=true;
+ const c=TL.c,G=TL.G,{u,n}=frame(c),r=s.getBoundingClientRect(),w=M.w([e.clientX-r.left,e.clientY-r.top]),sn=c.snap,snp=v=>Math.round(v/sn)*sn;
+ const ws=w[0]*u[0]+w[1]*u[1],wd=w[0]*n[0]+w[1]*n[1];TL.drag=true;
+ if(down.h.startsWith('ln:')){const i=+down.h.slice(3),old=c.lines[i].d;c.lines[i].d=snp(wd);if(!okPattern(c))c.lines[i].d=old;}
+ else{const p=G.P[down.h.slice(3)];if(!p||!p.drag)return;if(p.drag.t==='V'){const od=c.apex.d,os=c.apex.s;c.apex.d=snp(wd);c.apex.s=snp(ws);if(!okPattern(c)){c.apex.d=od;c.apex.s=os;}}
+  else{const a=c.sec[p.drag.j].anc[p.drag.k];a[1]=snp(ws);}}
+ draw();});
+const up=()=>{if(!down)return;const d=down;down=null;TL.drag=false;
+ if(!d.moved&&d.h.startsWith('pt:')){const nmv=d.h.slice(3),G=TL.G;
+  if(!TL.first)TL.first=nmv;else if(TL.first===nmv)TL.first=null;else if(share(G,TL.first,nmv)){const sg=seg(G,TL.first,nmv),ix=TL.sel.findIndex(x=>x.k===sg.k);
+   if(ix>=0)TL.sel.splice(ix,1);else{TL.sel.push(sg);if(TL.sel.length>4)TL.sel.shift();}TL.first=null;}else TL.first=nmv;}
+ draw();};
+s.addEventListener('pointerup',up);s.addEventListener('pointercancel',up);
+new ResizeObserver(()=>draw()).observe(document.body);
+load('par');
+(function loop(){if(TL.anim)draw();requestAnimationFrame(loop);})();
+}
+</script>
+</body>
+</html>

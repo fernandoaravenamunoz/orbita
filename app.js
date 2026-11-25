@@ -436,6 +436,20 @@
       <circle cx="36" cy="150" r="5" fill="#2C395C"/>
     </svg>`,
 
+    tales: `<svg viewBox="0 0 320 180" aria-hidden="true">
+      <g stroke="#2C395C" stroke-width="1.8"><path d="M20 40 H300 M20 82 H300 M20 150 H300"/></g>
+      <path d="M86 20 L132 170" stroke="#E2571E" stroke-width="2.4"/><path d="M150 20 L264 170" stroke="#B9A727" stroke-width="2.4"/>
+      <path d="M92.2 40 L105 82" stroke="#E2571E" stroke-width="6" opacity=".45"/><path d="M165.2 40 L197 82" stroke="#B9A727" stroke-width="6" opacity=".55"/>
+      <g fill="#2C395C"><circle cx="92.2" cy="40" r="4"/><circle cx="105" cy="82" r="4"/><circle cx="126" cy="150" r="4"/><circle cx="165.2" cy="40" r="4"/><circle cx="197" cy="82" r="4"/><circle cx="248.8" cy="150" r="4"/></g>
+    </svg>`,
+    euclides: `<svg viewBox="0 0 320 180" aria-hidden="true">
+      <polygon points="40,150 280,150 126.4,34.8" fill="#ECE8DC" stroke="none"/>
+      <polygon points="40,150 126.4,150 126.4,34.8" fill="#B9A727" fill-opacity=".3"/><polygon points="126.4,150 280,150 126.4,34.8" fill="#E2571E" fill-opacity=".25"/>
+      <path d="M40 150 H280" stroke="#2C395C" stroke-width="2"/><path d="M40 150 L126.4 34.8" stroke="#B9A727" stroke-width="3"/><path d="M280 150 L126.4 34.8" stroke="#E2571E" stroke-width="3"/>
+      <path d="M126.4 34.8 V150" stroke="#2C395C" stroke-width="1.8" stroke-dasharray="5 5"/>
+      <path d="M126.4 140 H136.4 V150" fill="none" stroke="#2C395C" stroke-width="1.3"/>
+      <path d="M40 162 H124 M129 162 H280" stroke-width="3" stroke="#2C395C" opacity=".35"/>
+    </svg>`,
     generico: `<svg viewBox="0 0 320 180" aria-hidden="true"><g fill="none" stroke="#2C395C" stroke-width="1.6"><circle cx="160" cy="90" r="46" stroke-dasharray="2 5"/><ellipse cx="160" cy="90" rx="96" ry="26" transform="rotate(-18 160 90)"/></g><circle cx="160" cy="90" r="16" fill="#E2571E"/><circle cx="248" cy="62" r="5" fill="#B9A727"/></svg>`
   };
 

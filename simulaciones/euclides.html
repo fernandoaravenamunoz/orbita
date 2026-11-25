@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Teorema de Euclides · Órbita Matemática</title>
+<meta name="description" content="Simulación interactiva del teorema de Euclides: triángulo rectángulo con la altura desde el vértice recto, medidas editables y todas las relaciones valorizadas para comprobar la igualdad.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#10151b);--ink:light-dark(#16202b,#e6ecf2);--mut:light-dark(#5b6675,#9aa7b5);--line:light-dark(#dde4ec,#28323d);--grid:light-dark(#edf1f6,#19212a);--band:light-dark(#163a5f,#0b2035);--card:light-dark(#f4f7fa,#17202a);--sel:#378ADD;--coral:#D85A30;--teal:#1D9E75;--vio:#7F77DD;--amb:#BA7517;--pink:#D4537E}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Lexend,system-ui,sans-serif;overflow-x:clip}
+h1,h2{font-weight:600;line-height:1.1;margin:0;text-wrap:balance}
+button,input{font:inherit;color:inherit}
+button{min-height:40px;padding:6px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);cursor:pointer}
+button:hover{border-color:var(--mut)}button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
+button.on{border-color:var(--sel);color:var(--sel);background:color-mix(in srgb,var(--sel) 10%,transparent)}
+button.pri{background:var(--band);color:#fff;border-color:var(--band)}
+@media(prefers-color-scheme:dark){button.pri{background:#2b5f93;border-color:#2b5f93}}
+input[type=checkbox]{accent-color:var(--sel);width:18px;height:18px}
+.top{background:var(--band);color:#fff;padding:14px max(4vw,16px);display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:18px;flex-wrap:wrap}
+.volver{color:#fff;text-decoration:none;font-size:14px;font-weight:500;opacity:.82;padding:6px 10px;border:1px solid rgba(255,255,255,.35);border-radius:999px}.volver:hover{opacity:1;background:rgba(255,255,255,.1)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs a{color:#fff;text-decoration:none;padding:8px 12px;border-radius:999px;font-size:15px;opacity:.82}
+.tabs a:hover{opacity:1;background:rgba(255,255,255,.1)}.tabs a.on{opacity:1;background:#fff;color:#163a5f}
+.band{padding:clamp(20px,3vw,44px) max(4vw,16px)}
+.work{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:24px;max-width:1400px;margin:0 auto}
+.stagehead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 18px;margin-bottom:8px}
+.stagehead h1{font-size:clamp(26px,3vw,36px)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--mut)}
+.legend i{display:inline-block;width:16px;height:10px;border-radius:3px;vertical-align:middle;margin-right:6px}
+.fig{position:relative;height:clamp(340px,58vh,600px);border-radius:16px;border:1px solid var(--line);background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;overflow:hidden}
+.fig svg{position:absolute;inset:0;width:100%;height:100%}
+.hint{position:absolute;left:12px;bottom:8px;margin:0;font-size:13px;color:var(--mut);pointer-events:none}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.stepTxt{font-size:15px;color:var(--ink);flex:1 1 100%;background:var(--card);border-radius:12px;padding:10px 14px;margin:0}
+.panel{display:flex;flex-direction:column;gap:16px}
+.box{background:var(--card);border-radius:14px;padding:14px 16px}
+.box h2{font-size:17px;margin-bottom:10px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}.seg button{min-height:36px;padding:4px 12px;font-size:14px}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--mut);margin-top:10px}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px}.row button{min-height:34px;padding:3px 10px;font-size:14px}
+.mets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.met{background:var(--card);border-radius:12px;padding:10px 14px}.met p{margin:0}.met .l{font-size:13px;color:var(--mut)}.met .v{font-size:clamp(19px,2vw,23px);font-weight:600}.met .s{font-size:13px;color:var(--mut)}
+.fm div{font-size:15px;line-height:1.7;padding:4px 0;border-bottom:1px dashed var(--line)}.fm div:last-child{border:0}.fm b{font-weight:600}
+details summary{cursor:pointer;font-weight:600;font-size:17px;min-height:32px}
+.concept{border-left:4px solid var(--vio);background:color-mix(in srgb,var(--vio) 9%,transparent);padding:10px 14px;font-size:15px;margin:0}
+.concept b{color:var(--coral);font-weight:600}
+.note{font-size:13px;color:var(--mut);margin:0}
+.warn{border-left:4px solid var(--amb);background:color-mix(in srgb,var(--amb) 10%,transparent);padding:8px 12px;font-size:14px;margin:0}
+[hidden]{display:none!important}
+.fx{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.08;margin:0 .1em;font-size:.92em}
+.fx>span{padding:0 .2em}.fx>span:first-child{border-bottom:1.6px solid currentColor}
+.frin{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.fr{display:inline-flex;flex-direction:column;align-items:center;gap:4px;padding:6px 8px;border-radius:12px;background:var(--bg)}
+.fr .bar{width:100%;border-top:3px solid currentColor}
+.fr.t{color:var(--teal)}.fr.c{color:var(--coral)}
+.stp{display:inline-flex;align-items:center;gap:4px}
+.stp button{min-height:34px;width:34px;padding:0;font-size:18px;line-height:1;color:var(--ink)}
+.stp output{min-width:2.4ch;text-align:center;font-weight:600;font-size:22px}
+.op{font-size:30px;font-weight:600;color:var(--mut)}
+.lbl{font-size:13px;color:var(--mut);display:block;margin-bottom:6px}
+@media(max-width:900px){.work{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.fig{height:360px}.tabs a{padding:6px 9px;font-size:14px}}
+
+.fig.plain{background-image:none}
+select{min-height:36px;border-radius:10px;border:1px solid var(--line);background:var(--bg);padding:4px 10px;font:inherit;font-size:14px;color:inherit}
+input[type=range]{accent-color:var(--sel);width:100%;height:28px}
+.prs{display:grid;gap:6px}
+.pr{display:grid;grid-template-columns:8.6em minmax(0,1fr) 5.6em;align-items:center;gap:10px}
+.pr label{font-size:14px;color:var(--mut);line-height:1.2}.pr label b{font-size:18px;margin-right:4px}
+.pr input[type=text]{width:100%;min-height:36px;border-radius:10px;border:1px solid var(--line);background:var(--bg);padding:4px 8px;font:inherit;font-weight:600;text-align:right}
+.pr.edit input[type=text]{border-color:var(--sel);box-shadow:0 0 0 2px color-mix(in srgb,var(--sel) 25%,transparent)}
+.pr.fix label::after{content:" · fijo";color:var(--amb);font-weight:600}
+.rel{background:var(--card);border-radius:14px;padding:12px 16px}
+.rel h3{font-size:14px;font-weight:500;color:var(--mut);margin:0 0 6px}
+.rel .f{font-size:clamp(20px,2.2vw,24px);font-weight:600}
+.rel .v{font-size:16px;margin-top:6px;color:var(--ink)}
+.rel .r{font-size:16px;margin-top:2px}
+.rel .r b{font-weight:700}
+.ok{color:var(--teal);font-weight:600}
+.ca{color:var(--coral)}.cb{color:var(--teal)}.cc{color:var(--ink)}.ch{color:var(--vio)}.cp{color:var(--coral)}.cq{color:var(--teal)}
+.fx2{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.1;margin:0 .1em}.fx2>span:first-child{border-bottom:1.6px solid currentColor;padding:0 .2em}.fx2>span{padding:0 .2em}
+.msg{font-size:14px;margin:10px 0 0;padding:8px 12px;border-radius:10px;background:var(--bg)}
+.msg.err{border-left:4px solid var(--coral)}
+</style>
+</head>
+<body>
+<header class="top">
+<div class="brand"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round" aria-hidden="true"><path d="M4 52 H60 L22 18 Z"/><path d="M22 18 V52" stroke-dasharray="4 4" stroke-width="2.4"/></svg><span>Teorema de Euclides</span><a class="volver" href="../index.html#simulaciones" target="_top">← Órbita Matemática</a></div>
+</header>
+<main>
+<section class="band">
+<div class="work">
+<div>
+<div class="stagehead"><h1>Triángulo rectángulo y su altura</h1><div class="legend"><span><i style="background:var(--coral)"></i>a y su proyección p</span><span><i style="background:var(--teal)"></i>b y su proyección q</span><span><i style="background:var(--vio)"></i>altura h</span></div></div>
+<div class="fig plain"><svg id="esv" role="img" aria-label="Triángulo rectángulo con la altura desde el vértice recto"></svg><p class="hint">Ángulo recto en C · CD es la altura sobre la hipotenusa</p></div>
+<div class="box" style="margin-top:12px"><h2>Medidas del triángulo</h2>
+<p class="warn" style="margin:0 0 10px"><b>Importante:</b> para que el triángulo siga siendo rectángulo, al cambiar un dato los demás cambian automáticamente. Se mantiene fijo el dato marcado como «fijo» y se recalcula el resto.</p>
+<div class="prs" id="prs"></div>
+<div class="row"><label class="chk" style="margin:0">Al cambiar un dato, mantener fijo: <select id="eFix"><option value="auto">el último que cambié</option><option value="a">a</option><option value="b">b</option><option value="c">c</option><option value="h">h</option><option value="p">p</option><option value="q">q</option></select></label></div>
+<p class="msg" id="eMsg"></p>
+<span class="lbl" style="margin-top:12px">Ejemplos con valores exactos</span><div class="row" id="ePre" style="margin-top:0"></div>
+<div class="row"><label class="chk" style="margin:0">Ver áreas: <select id="eArea"><option value="">No</option><option value="catetos">a² = p · c y b² = q · c</option><option value="altura">h² = p · q</option></select></label></div>
+</div>
+</div>
+<aside class="panel">
+<p class="concept">En un triángulo rectángulo, la <b>altura h</b> trazada desde el vértice del ángulo recto divide a la hipotenusa c en dos <b>proyecciones</b>: p (de a) y q (de b). Se forman tres triángulos <b>semejantes</b>, y de esa semejanza salen las relaciones de Euclides.</p>
+<div id="rels" class="panel" style="gap:12px"></div>
+<p class="note">Los valores se muestran redondeados a 2 decimales. Si un dato no es exacto, al operar con el número redondeado puede aparecer una pequeña diferencia en el último decimal.</p>
+</aside>
+</div>
+</section>
+</main>
+<script>
+{
+const $=id=>document.getElementById(id);
+const C={teal:'#1D9E75',coral:'#D85A30',vio:'#7F77DD',amb:'#BA7517'};
+const nf=(x,d=2)=>{const r=Math.round(x*10**d)/10**d;return(Object.is(r,-0)?0:r).toLocaleString('es-CL',{maximumFractionDigits:d});};
+const isEx=x=>Math.abs(x*100-Math.round(x*100))<1e-7;
+const F1=x=>x.toFixed(1);
+function T(x,y,s,c,o={}){return `<text x="${F1(x)}" y="${F1(y)}" fill="${c}" font-size="${o.fs||15}" font-weight="${o.fw||600}" text-anchor="${o.a||'middle'}" dominant-baseline="middle" style="paint-order:stroke;stroke:var(--bg);stroke-width:${o.sw??5}px;stroke-linejoin:round">${s}</text>`;}
+function Ln(a,b,c,w,o={}){return `<line x1="${F1(a[0])}" y1="${F1(a[1])}" x2="${F1(b[0])}" y2="${F1(b[1])}" stroke="${c}" stroke-width="${w}" opacity="${o.op??1}" ${o.dash?`stroke-dasharray="${o.dash}"`:''} stroke-linecap="round"/>`;}
+const PS=p=>p.map(q=>F1(q[0])+','+F1(q[1])).join(' ');
+
+const PAR={a:['a','cateto',.5,20],b:['b','cateto',.5,20],c:['c','hipotenusa',1,30],h:['h','altura',.2,12],p:['p','proyección de a',.2,25],q:['q','proyección de b',.2,25]};
+const KEYS=['a','b','c','h','p','q'],COLK={a:'ca',b:'cb',c:'cc',h:'ch',p:'cp',q:'cq'};
+const E={p:1.8,q:3.2,last:null,prev:'c',fix:'auto',area:'',edit:null,msg:'',err:false};
+function der(){const p=E.p,q=E.q,c=p+q;return{p,q,c,h:Math.sqrt(p*q),a:Math.sqrt(p*c),b:Math.sqrt(q*c)};}
+
+$('prs').innerHTML=KEYS.map(k=>`<div class="pr" id="pr_${k}"><label for="t_${k}"><b class="${COLK[k]}">${PAR[k][0]}</b>${PAR[k][1]}</label><input type="range" id="r_${k}" min="${PAR[k][2]}" max="${PAR[k][3]}" step="0.1" aria-label="${PAR[k][0]} (${PAR[k][1]})"><input type="text" inputmode="decimal" id="t_${k}" aria-label="Escribir ${PAR[k][0]}"></div>`).join('');
+KEYS.forEach(k=>{$('r_'+k).oninput=e=>setVal(k,+e.target.value);$('t_'+k).onchange=e=>{const v=parseFloat(String(e.target.value).replace(/\s/g,'').replace(',','.'));setVal(k,v);};
+ $('t_'+k).onkeydown=e=>{if(e.key==='Enter')e.target.blur();};});
+$('eFix').onchange=e=>{E.fix=e.target.value;upd();};
+$('eArea').onchange=e=>{E.area=e.target.value;upd();};
+const PRE=[['Trío 3 – 4 – 5',1.8,3.2],['Trío 6 – 8 – 10',3.6,6.4],['Trío 5 – 12 – 13',25/13,144/13],['Trío 9 – 12 – 15',5.4,9.6],['p = 9, q = 16',9,16],['p = 4, q = 9',4,9],['p = 1, q = 4',1,4],['Isósceles (p = q = 3)',3,3]];
+$('ePre').innerHTML=PRE.map((p,i)=>`<button data-i="${i}">${p[0]}</button>`).join('');
+$('ePre').onclick=e=>{const b=e.target.closest('button');if(!b)return;[,E.p,E.q]=PRE[+b.dataset.i];E.msg='';E.err=false;E.edit=null;upd();};
+
+function solve(X,x,Y,y){const k=[X,Y].sort().join(''),g={[X]:x,[Y]:y},{a,b,c,h,p,q}=g;let P,Q;
+ switch(k){
+  case 'pq':P=p;Q=q;break;
+  case 'cp':if(!(c>p))return 'p debe ser menor que la hipotenusa c.';P=p;Q=c-p;break;
+  case 'cq':if(!(c>q))return 'q debe ser menor que la hipotenusa c.';Q=q;P=c-q;break;
+  case 'ac':if(!(c>a))return 'Un cateto siempre es menor que la hipotenusa: a debe ser menor que c.';P=a*a/c;Q=c-P;break;
+  case 'bc':if(!(c>b))return 'Un cateto siempre es menor que la hipotenusa: b debe ser menor que c.';Q=b*b/c;P=c-Q;break;
+  case 'ab':{const cc=Math.hypot(a,b);P=a*a/cc;Q=cc-P;break;}
+  case 'ch':if(!(c>2*h))return 'La altura no puede medir la mitad de c o más (debe cumplirse c > 2h).';{const r=Math.sqrt(c*c-4*h*h),bg=(c+r)/2,sm=(c-r)/2;if(E.p>=E.q){P=bg;Q=sm;}else{P=sm;Q=bg;}}break;
+  case 'ap':if(!(a>p))return 'La proyección p debe ser menor que el cateto a.';P=p;Q=a*a/p-p;break;
+  case 'bq':if(!(b>q))return 'La proyección q debe ser menor que el cateto b.';Q=q;P=b*b/q-q;break;
+  case 'aq':Q=q;P=(-q+Math.sqrt(q*q+4*a*a))/2;break;
+  case 'bp':P=p;Q=(-p+Math.sqrt(p*p+4*b*b))/2;break;
+  case 'hp':P=p;Q=h*h/p;break;
+  case 'hq':Q=q;P=h*h/q;break;
+  case 'ah':if(!(a>h))return 'La altura h debe ser menor que el cateto a.';P=Math.sqrt(a*a-h*h);Q=h*h/P;break;
+  case 'bh':if(!(b>h))return 'La altura h debe ser menor que el cateto b.';Q=Math.sqrt(b*b-h*h);P=h*h/Q;break;}
+ if(!(P>1e-6&&Q>1e-6)||!isFinite(P+Q))return 'Con esos valores no se forma un triángulo rectángulo.';
+ if(P+Q>80)return 'El triángulo resulta demasiado grande para esta simulación (c sería mayor que 80).';
+ return[P,Q];}
+function partner(K){if(E.fix!=='auto')return E.fix!==K?E.fix:(K==='c'?'a':'c');return E.prev!==K?E.prev:(K==='c'?'a':'c');}
+function setVal(K,v){const d=der();if(!(v>0)||!isFinite(v)){E.msg='Escribe un número positivo (puedes usar coma decimal).';E.err=true;upd();return;}
+ if(K!==E.last){if(E.last)E.prev=E.last;E.last=K;}
+ const F=partner(K),res=solve(K,v,F,d[F]);E.edit=K;
+ if(typeof res==='string'){E.msg=`No se puede. ${res} (Se mantuvo fijo ${F} = ${nf(d[F])}.)`;E.err=true;upd();return;}
+ [E.p,E.q]=res;const rest=KEYS.filter(x=>x!==K&&x!==F);
+ E.msg=`Cambiaste <b>${K}</b> y se mantuvo fijo <b>${F}</b>. Se recalcularon ${rest.slice(0,-1).join(', ')} y ${rest[rest.length-1]}.`;E.err=false;E.fixUsed=F;upd();}
+
+let VV=null;
+function render(d){const s=$('esv'),W=s.clientWidth||600,Hh=s.clientHeight||420;s.setAttribute('viewBox',`0 0 ${W} ${Hh}`);
+ const{a,b,c,h,p,q}=d,A=[0,0],B=[c,0],D=[q,0],Cc=[q,h];
+ const box=[A,B,Cc];let sqA,sqB,rq,rp,sh,rpq;
+ if(E.area==='catetos'){sqB=[A,Cc,[Cc[0]-h,Cc[1]+q],[-h,q]];sqA=[B,Cc,[Cc[0]+h,Cc[1]+p],[c+h,p]];rq=[[0,0],[q,0],[q,-c],[0,-c]];rp=[[q,0],[c,0],[c,-c],[q,-c]];box.push(...sqA,...sqB,...rq,...rp);}
+ if(E.area==='altura'){sh=[[q-h,0],[q,0],[q,-h],[q-h,-h]];rpq=[[q,0],[c,0],[c,-q],[q,-q]];box.push(...sh,...rpq);}
+ let x0=Math.min(...box.map(p=>p[0])),x1=Math.max(...box.map(p=>p[0])),y0=Math.min(...box.map(p=>p[1])),y1=Math.max(...box.map(p=>p[1]));
+ const padB=E.area?40:70,sc=Math.min((W-90)/(x1-x0),(Hh-50-padB)/(y1-y0)),ox=(W-(x1-x0)*sc)/2-x0*sc,oy=26+y1*sc;
+ const S=p=>[ox+p[0]*sc,oy-p[1]*sc];let o='';
+ const poly=(pts,col,op,lab,sub)=>{let r=`<polygon points="${PS(pts.map(S))}" fill="${col}" fill-opacity="${op}" stroke="${col}" stroke-width="1.6"/>`;if(lab){const m=pts.reduce((s,q)=>[s[0]+q[0]/pts.length,s[1]+q[1]/pts.length],[0,0]),sm=S(m);r+=T(sm[0],sm[1]-(sub?9:0),lab,col,{fs:15})+(sub?T(sm[0],sm[1]+11,sub,col,{fs:13,fw:500}):'');}return r;};
+ if(sqA){o+=poly(sqB,C.teal,.16,'b²',nf(b*b))+poly(sqA,C.coral,.16,'a²',nf(a*a))+poly(rq,C.teal,.22,'q · c',nf(q*c))+poly(rp,C.coral,.22,'p · c',nf(p*c));
+  o+=T(S([c,-c/2])[0]+12,S([c,-c/2])[1],`c = ${nf(c)}`,'var(--ink)',{fs:14,a:'start'});}
+ if(sh){o+=poly(sh,C.vio,.22,'h²',nf(h*h))+poly(rpq,C.amb,.2,'p · q',nf(p*q));o+=T(S([c,-q/2])[0]+10,S([c,-q/2])[1],`q = ${nf(q)}`,C.teal,{fs:14,a:'start'});}
+ o+=`<polygon points="${PS([A,B,Cc].map(S))}" fill="var(--bg)" fill-opacity=".9"/>`;
+ o+=`<polygon points="${PS([A,D,Cc].map(S))}" fill="${C.teal}" fill-opacity=".1"/><polygon points="${PS([D,B,Cc].map(S))}" fill="${C.coral}" fill-opacity=".1"/>`;
+ o+=Ln(S(A),S(B),'var(--ink)',3)+Ln(S(B),S(Cc),C.coral,4)+Ln(S(A),S(Cc),C.teal,4)+Ln(S(Cc),S(D),C.vio,3,{dash:'7 6'});
+ const mk=(P,u,v)=>{const L=13/sc,U=[(u[0]-P[0]),(u[1]-P[1])],V=[(v[0]-P[0]),(v[1]-P[1])],nu=Math.hypot(...U),nv=Math.hypot(...V),p1=[P[0]+U[0]/nu*L,P[1]+U[1]/nu*L],p3=[P[0]+V[0]/nv*L,P[1]+V[1]/nv*L],p2=[p1[0]+V[0]/nv*L,p1[1]+V[1]/nv*L];return `<polyline points="${PS([p1,p2,p3].map(S))}" fill="none" stroke="var(--ink)" stroke-width="1.4"/>`;};
+ o+=mk(Cc,A,B)+mk(D,B,Cc);
+ const off=(P,Q,away,txt,col,dd=18)=>{const a1=S(P),b1=S(Q),m=[(a1[0]+b1[0])/2,(a1[1]+b1[1])/2];let nx=-(b1[1]-a1[1]),ny=b1[0]-a1[0];const nl=Math.hypot(nx,ny)||1;nx/=nl;ny/=nl;const w=S(away);if(nx*(m[0]-w[0])+ny*(m[1]-w[1])<0){nx=-nx;ny=-ny;}return T(m[0]+nx*(dd+Math.abs(nx)*txt.length*3.2),m[1]+ny*dd,txt,col,{fs:16});};
+ o+=off(B,Cc,sqA?sqA[2]:A,`a = ${nf(a)}`,C.coral)+off(A,Cc,sqB?sqB[2]:B,`b = ${nf(b)}`,C.teal)+off(D,Cc,B,`h = ${nf(h)}`,C.vio,16);
+ if(!E.area){const yb=S(A)[1];o+=Ln([S(A)[0],yb+12],[S(D)[0]-2,yb+12],C.teal,4)+Ln([S(D)[0]+2,yb+12],[S(B)[0],yb+12],C.coral,4);
+  o+=T((S(A)[0]+S(D)[0])/2,yb+30,`q = ${nf(q)}`,C.teal,{fs:15})+T((S(D)[0]+S(B)[0])/2,yb+30,`p = ${nf(p)}`,C.coral,{fs:15});
+  o+=Ln([S(A)[0],yb+48],[S(B)[0],yb+48],'var(--ink)',1.4)+Ln([S(A)[0],yb+42],[S(A)[0],yb+54],'var(--ink)',1.4)+Ln([S(B)[0],yb+42],[S(B)[0],yb+54],'var(--ink)',1.4)+T((S(A)[0]+S(B)[0])/2,yb+64,`c = ${nf(c)}`,'var(--ink)',{fs:15});}
+ else if(E.area==='altura'){const yb=S(A)[1];o+=T((S(D)[0]+S(B)[0])/2,yb-12,`p = ${nf(p)}`,C.coral,{fs:14});}
+ [['A',A,[-14,8]],['B',B,[14,8]],['C',Cc,[0,-16]],['D',D,[0,16]]].forEach(([n,P,dv])=>{const q2=S(P);o+=`<circle cx="${F1(q2[0])}" cy="${F1(q2[1])}" r="4" fill="var(--ink)"/>`+T(q2[0]+dv[0],q2[1]+dv[1]+(n==='D'&&!E.area?0:0),n,'var(--ink)',{fs:17});});
+ s.innerHTML=o;}
+
+const sq=x=>`${nf(x)}²`;
+const Fx=(a,b)=>`<span class="fx2"><span>${a}</span><span>${b}</span></span>`;
+function rel(title,f,v,r){return `<div class="rel"><h3>${title}</h3><div class="f">${f}</div><div class="v">${v}</div><div class="r">${r} <span class="ok">✓</span></div></div>`;}
+function upd(){const d=der(),{a,b,c,h,p,q}=d;const fixNow=E.fixUsed&&E.edit?E.fixUsed:(E.fix!=='auto'?E.fix:null);
+ KEYS.forEach(k=>{const r=$('r_'+k),v=d[k];r.max=Math.max(PAR[k][3],Math.ceil(v));r.value=v;if(document.activeElement!==$('t_'+k))$('t_'+k).value=nf(v);
+  $('pr_'+k).classList.toggle('edit',E.edit===k);$('pr_'+k).classList.toggle('fix',fixNow===k);});
+ $('eFix').value=E.fix;$('eArea').value=E.area;
+ $('eMsg').innerHTML=E.msg||'Mueve una barra o escribe un valor y presiona Enter.';$('eMsg').classList.toggle('err',E.err);
+ const A=x=>`<span class="ca">${x}</span>`,B=x=>`<span class="cb">${x}</span>`,H=x=>`<span class="ch">${x}</span>`,P=x=>`<span class="cp">${x}</span>`,Q=x=>`<span class="cq">${x}</span>`;
+ $('rels').innerHTML=
+  rel('Teorema de Euclides · altura',`${H('h')}² = ${P('p')} · ${Q('q')}`,`${H(sq(h))} = ${P(nf(p))} · ${Q(nf(q))}`,`<b>${nf(h*h)}</b> = <b>${nf(p*q)}</b>`)+
+  rel('Teorema de Euclides · cateto a',`${A('a')}² = ${P('p')} · c`,`${A(sq(a))} = ${P(nf(p))} · ${nf(c)}`,`<b>${nf(a*a)}</b> = <b>${nf(p*c)}</b>`)+
+  rel('Teorema de Euclides · cateto b',`${B('b')}² = ${Q('q')} · c`,`${B(sq(b))} = ${Q(nf(q))} · ${nf(c)}`,`<b>${nf(b*b)}</b> = <b>${nf(q*c)}</b>`)+
+  rel('Altura a partir de los catetos',`${H('h')} = ${Fx(`${A('a')} · ${B('b')}`,'c')}`,`${H(nf(h))} = ${Fx(`${A(nf(a))} · ${B(nf(b))}`,nf(c))}`,`<b>${nf(h)}</b> = ${Fx(nf(a*b),nf(c))} = <b>${nf(a*b/c)}</b>`)+
+  rel('La hipotenusa es la suma de las proyecciones',`c = ${P('p')} + ${Q('q')}`,`${nf(c)} = ${P(nf(p))} + ${Q(nf(q))}`,`<b>${nf(c)}</b> = <b>${nf(p+q)}</b>`)+
+  rel('Teorema de Pitágoras',`${A('a')}² + ${B('b')}² = c²`,`${A(sq(a))} + ${B(sq(b))} = ${sq(c)}`,`${nf(a*a)} + ${nf(b*b)} = ${nf(c*c)} → <b>${nf(a*a+b*b)}</b> = <b>${nf(c*c)}</b>`);
+ render(d);}
+new ResizeObserver(()=>upd()).observe(document.body);
+upd();
+}
+</script>
+</body>
+</html>

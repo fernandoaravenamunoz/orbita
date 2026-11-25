@@ -257,6 +257,24 @@ const SITIO = {
       url: "simulaciones/homotecias.html",
       dibujo: "homotecia",
       fecha: "2026-11-25"
+    },
+    {
+      nombre: "Teorema de Tales",
+      cursos: "I° medio · Geometría · OA 9",
+      descripcion: "Rectas paralelas cortadas por secantes, triángulos con una paralela, secantes que se cruzan y un problema de sombras. Mueve las rectas, toca dos vértices para medir un segmento, compara razones y calcula x con el producto cruzado.",
+      temas: ["Paralelas y secantes", "Triángulo", "Secantes cruzadas", "Proporciones", "Calcular x", "Sombras"],
+      url: "simulaciones/tales.html",
+      dibujo: "tales",
+      fecha: "2026-11-25"
+    },
+    {
+      nombre: "Teorema de Euclides",
+      cursos: "I° medio · Geometría · Semejanza",
+      descripcion: "Triángulo rectángulo con la altura desde el vértice recto. Cambia cualquier medida con la barra o escribiéndola: el triángulo sigue siendo rectángulo y todas las relaciones de Euclides se muestran con los números para comprobar la igualdad.",
+      temas: ["h² = p · q", "a² = p · c", "b² = q · c", "h = a · b / c", "Pitágoras", "Áreas"],
+      url: "simulaciones/euclides.html",
+      dibujo: "euclides",
+      fecha: "2026-11-25"
     }
     // Para agregar otra simulación: sube su archivo .html a la carpeta "simulaciones"
     // y copia el bloque de arriba (con su coma).
