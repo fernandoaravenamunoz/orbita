@@ -351,6 +351,22 @@ const SITIO = {
       url: "simulaciones/semejanza.html",
       dibujo: "semejanza",
       fecha: "2026-11-26"
+    },
+    {
+      nombre: "Trigonometría en el triángulo rectángulo",
+      descripcion: "Un triángulo rectángulo con lados enteros: elige un ángulo y mira su seno, coseno y tangente con el cateto opuesto, el cateto adyacente y la hipotenusa. Arrastra los vértices sin perder el ángulo recto y compara las razones en triángulos semejantes.",
+      temas: ["Seno, coseno y tangente", "Cateto opuesto y adyacente", "Razones recíprocas", "Semejanza"],
+      url: "simulaciones/trigonometria.html",
+      dibujo: "trigonometria",
+      fecha: "2026-11-26"
+    },
+    {
+      nombre: "Relaciones métricas en la circunferencia",
+      descripcion: "Ángulos y segmentos en la circunferencia: arrastra los puntos sobre la figura y comprueba cada teorema (inscrito y del centro, semiinscrito, interior, exterior, cuerdas, secantes y tangentes). Incluye problemas para encontrar x.",
+      temas: ["Ángulo inscrito y del centro", "Cuerdas y secantes", "Tangentes", "Encontrar x"],
+      url: "simulaciones/circunferencia.html",
+      dibujo: "circunferencia",
+      fecha: "2026-11-26"
     }
     // Para agregar otra simulación: sube su archivo .html a la carpeta "simulaciones"
     // y copia el bloque de arriba (con su coma).

@@ -507,6 +507,19 @@
       <path d="M150 160 L290 160 L182 64 Z" fill="#E2571E" fill-opacity=".22" stroke="#E2571E" stroke-width="3.5" stroke-linejoin="round"/>
       <g font-family="Space Mono, monospace" font-weight="700"><text x="66" y="160" font-size="13" fill="#1D9E75">3</text><text x="214" y="176" font-size="13" fill="#E2571E">6</text><text x="232" y="62" font-size="22" fill="#2C395C">k = 2</text></g>
     </svg>`,
+    trigonometria: `<svg viewBox="0 0 320 180" aria-hidden="true">
+      <path d="M50 150 H230" stroke="#1D9E75" stroke-width="6" stroke-linecap="round"/><path d="M230 150 V30" stroke="#E2571E" stroke-width="6" stroke-linecap="round"/><path d="M50 150 L230 30" stroke="#378ADD" stroke-width="6" stroke-linecap="round"/>
+      <path d="M216 150 V136 H230" fill="none" stroke="#2C395C" stroke-width="2"/><path d="M50 150 L94 150 A44 44 0 0 0 87 126 Z" fill="#7F77DD" fill-opacity=".3" stroke="#7F77DD" stroke-width="2"/>
+      <g font-family="Space Mono, monospace" font-weight="700"><text x="100" y="140" font-size="16" fill="#7F77DD">α</text><text x="240" y="96" font-size="14" fill="#E2571E">CO</text><text x="130" y="172" font-size="14" fill="#1D9E75">CA</text><text x="112" y="80" font-size="14" fill="#378ADD">H</text><text x="252" y="46" font-size="15" fill="#2C395C">sen α</text></g>
+    </svg>`,
+    circunferencia: `<svg viewBox="0 0 320 180" aria-hidden="true">
+      <circle cx="160" cy="92" r="72" fill="#378ADD" fill-opacity=".06" stroke="#2C395C" stroke-width="3"/>
+      <path d="M108 142 A72 72 0 0 0 212 142" fill="none" stroke="#B9A727" stroke-width="7" stroke-linecap="round"/>
+      <path d="M108 142 L160 20 L212 142" fill="none" stroke="#378ADD" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M108 142 L160 92 L212 142" fill="none" stroke="#7F77DD" stroke-width="3.5" stroke-linejoin="round"/>
+      <circle cx="160" cy="92" r="4" fill="#2C395C"/><circle cx="160" cy="20" r="5" fill="#fff" stroke="#378ADD" stroke-width="3"/>
+      <g font-family="Space Mono, monospace" font-weight="700"><text x="160" y="68" font-size="15" fill="#378ADD" text-anchor="middle">x</text><text x="244" y="40" font-size="15" fill="#2C395C">x = α : 2</text></g>
+    </svg>`,
     generico: `<svg viewBox="0 0 320 180" aria-hidden="true"><g fill="none" stroke="#2C395C" stroke-width="1.6"><circle cx="160" cy="90" r="46" stroke-dasharray="2 5"/><ellipse cx="160" cy="90" rx="96" ry="26" transform="rotate(-18 160 90)"/></g><circle cx="160" cy="90" r="16" fill="#E2571E"/><circle cx="248" cy="62" r="5" fill="#B9A727"/></svg>`
   };
 

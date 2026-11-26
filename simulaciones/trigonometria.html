@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trigonometría en el triángulo rectángulo · Órbita Matemática</title>
+<meta name="description" content="Simulación de razones trigonométricas: triángulo rectángulo con lados enteros, seno, coseno y tangente con cateto opuesto, cateto adyacente e hipotenusa, razones recíprocas, y triángulos semejantes con razones iguales.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+:root{color-scheme:light;--bg:#ffffff;--ink:#16202b;--mut:#5b6675;--line:#dde4ec;--grid:#edf1f6;--band:#163a5f;--card:#f2f6fb;--sel:#378ADD;--coral:#D85A30;--teal:#1D9E75;--vio:#7F77DD;--amb:#BA7517;--pink:#D4537E}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Lexend,system-ui,sans-serif;overflow-x:clip}
+h1,h2{font-weight:600;line-height:1.1;margin:0;text-wrap:balance}
+button,input{font:inherit;color:inherit}
+button{min-height:40px;padding:6px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);cursor:pointer}
+button:hover{border-color:var(--mut)}button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
+button.on{border-color:var(--sel);color:var(--sel);background:color-mix(in srgb,var(--sel) 10%,transparent)}
+button.pri{background:var(--band);color:#fff;border-color:var(--band)}
+
+input[type=checkbox]{accent-color:var(--sel);width:18px;height:18px}
+.top{background:#EAF2FB;color:#163a5f;border-bottom:3px solid #378ADD;padding:14px max(4vw,16px);display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:18px;flex-wrap:wrap}
+.volver{color:#163a5f;text-decoration:none;font-size:14px;font-weight:500;padding:6px 10px;border:1px solid rgba(22,58,95,.35);border-radius:999px;background:#fff}.volver:hover{border-color:#163a5f}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs a{color:#163a5f;text-decoration:none;padding:8px 12px;border-radius:999px;font-size:15px;opacity:.82}
+.tabs a:hover{opacity:1;background:rgba(22,58,95,.08)}.tabs a.on{opacity:1;background:#163a5f;color:#fff}
+.band{padding:clamp(20px,3vw,44px) max(4vw,16px)}
+.work{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:24px;max-width:1400px;margin:0 auto}
+.stagehead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 18px;margin-bottom:8px}
+.stagehead h1{font-size:clamp(26px,3vw,36px)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--mut)}
+.legend i{display:inline-block;width:16px;height:10px;border-radius:3px;vertical-align:middle;margin-right:6px}
+.fig{position:relative;height:clamp(340px,58vh,600px);border-radius:16px;border:1px solid var(--line);background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;overflow:hidden}
+.fig svg{position:absolute;inset:0;width:100%;height:100%}
+.hint{position:absolute;left:12px;bottom:8px;margin:0;font-size:13px;color:var(--mut);pointer-events:none}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.stepTxt{font-size:15px;color:var(--ink);flex:1 1 100%;background:var(--card);border-radius:12px;padding:10px 14px;margin:0}
+.panel{display:flex;flex-direction:column;gap:16px}
+.box{background:var(--card);border-radius:14px;padding:14px 16px}
+.box h2{font-size:17px;margin-bottom:10px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}.seg button{min-height:36px;padding:4px 12px;font-size:14px}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--mut);margin-top:10px}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px}.row button{min-height:34px;padding:3px 10px;font-size:14px}
+.mets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.met{background:var(--card);border-radius:12px;padding:10px 14px}.met p{margin:0}.met .l{font-size:13px;color:var(--mut)}.met .v{font-size:clamp(19px,2vw,23px);font-weight:600}.met .s{font-size:13px;color:var(--mut)}
+.fm div{font-size:15px;line-height:1.7;padding:4px 0;border-bottom:1px dashed var(--line)}.fm div:last-child{border:0}.fm b{font-weight:600}
+details summary{cursor:pointer;font-weight:600;font-size:17px;min-height:32px}
+.concept{border-left:4px solid var(--vio);background:color-mix(in srgb,var(--vio) 9%,transparent);padding:10px 14px;font-size:15px;margin:0}
+.concept b{color:var(--coral);font-weight:600}
+.note{font-size:13px;color:var(--mut);margin:0}
+.warn{border-left:4px solid var(--amb);background:color-mix(in srgb,var(--amb) 10%,transparent);padding:8px 12px;font-size:14px;margin:0}
+[hidden]{display:none!important}
+.fx{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.08;margin:0 .1em;font-size:.92em}
+.fx>span{padding:0 .2em}.fx>span:first-child{border-bottom:1.6px solid currentColor}
+.frin{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.fr{display:inline-flex;flex-direction:column;align-items:center;gap:4px;padding:6px 8px;border-radius:12px;background:var(--bg)}
+.fr .bar{width:100%;border-top:3px solid currentColor}
+.fr.t{color:var(--teal)}.fr.c{color:var(--coral)}
+.stp{display:inline-flex;align-items:center;gap:4px}
+.stp button{min-height:34px;width:34px;padding:0;font-size:18px;line-height:1;color:var(--ink)}
+.stp output{min-width:2.4ch;text-align:center;font-weight:600;font-size:22px}
+.op{font-size:30px;font-weight:600;color:var(--mut)}
+.lbl{font-size:13px;color:var(--mut);display:block;margin-bottom:6px}
+@media(max-width:900px){.work{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.fig{height:360px}.tabs a{padding:6px 9px;font-size:14px}}
+
+.fig.plain{background-image:none;height:clamp(460px,72vh,720px);background:#FBFCFE}
+.fig canvas{position:absolute;inset:0;width:100%;height:100%}
+@media(max-width:600px){.fig.plain{height:560px}}
+select{min-height:38px;border-radius:10px;border:1px solid var(--line);background:var(--bg);padding:4px 10px;font:inherit;font-size:15px;color:inherit}
+input[type=range]{accent-color:var(--sel);width:100%;height:28px}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}.tbl th{font-weight:500;color:var(--mut);text-align:right;font-size:12.5px;padding:4px 6px;border-bottom:1px solid var(--line)}.tbl td{padding:4px 6px;border-bottom:1px dashed var(--line);text-align:right}
+.tbl td:first-child,.tbl th:first-child{text-align:center}
+.big{font-size:clamp(22px,2.5vw,28px);font-weight:600;margin:8px 0 0}
+.tblw{overflow-x:auto;max-height:420px;overflow-y:auto}
+</style>
+<style>
+.razs .rz{font-size:clamp(18px,1.7vw,21px);padding:6px 0;border-bottom:1px dashed var(--line);display:flex;align-items:center;flex-wrap:wrap;gap:6px}.razs .rz:last-child{border:0}.razs .nm{font-weight:600;min-width:84px}
+.st td,.st th{font-size:13.5px;white-space:nowrap}.ok{color:#0F6E56;font-weight:600}
+.fig.plain{height:clamp(420px,64vh,700px);background:#fff}
+</style>
+</head>
+<body>
+<header class="top">
+<div class="brand"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" stroke-width="4" stroke-linejoin="round" aria-hidden="true"><path d="M8 54 H56" stroke="#1D9E75"/><path d="M56 54 V12" stroke="#D85A30"/><path d="M8 54 L56 12" stroke="#378ADD"/><path d="M22 54 A14 14 0 0 0 19 44" stroke="#163a5f" stroke-width="2.5"/></svg><span>Trigonometría</span><a class="volver" href="../index.html#simulaciones" target="_top">← Órbita Matemática</a></div>
+<nav class="tabs" id="tabs"><a href="#razones" data-r="razones">Razones trigonométricas</a><a href="#semejantes" data-r="semejantes">Triángulos semejantes</a></nav>
+</header>
+<main>
+<section id="vR" class="band" hidden>
+<div class="work">
+<div>
+<div class="stagehead"><h1>Razones trigonométricas</h1><div class="legend"><span><i style="background:#D85A30"></i>Cateto opuesto (CO)</span><span><i style="background:#1D9E75"></i>Cateto adyacente (CA)</span><span><i style="background:#378ADD"></i>Hipotenusa (H)</span></div></div>
+<div class="fig plain"><svg id="rsv" role="img" aria-label="Triángulo rectángulo con sus catetos e hipotenusa"></svg><p class="hint">Arrastra A (horizontal) o B (vertical): el ángulo en C sigue siendo recto · toca A o B para elegir el ángulo</p></div>
+<p class="stepTxt" id="roles" style="margin-top:10px"></p>
+</div>
+<aside class="panel">
+<p class="concept">En un triángulo rectángulo, las <b>razones trigonométricas</b> de un ángulo agudo comparan sus lados: el <b>cateto opuesto</b> (frente al ángulo), el <b>cateto adyacente</b> (junto al ángulo) y la <b>hipotenusa</b> (frente al ángulo recto).</p>
+<div class="box"><h2>Triángulo</h2><span class="lbl">Tríos de lados enteros (a, b, c)</span><div class="row" id="tri" style="margin-top:0"><button data-t="3,4">3, 4, 5</button><button data-t="4,3">4, 3, 5</button><button data-t="6,8">6, 8, 10</button><button data-t="5,12">5, 12, 13</button><button data-t="12,5">12, 5, 13</button><button data-t="8,15">8, 15, 17</button><button data-t="7,24">7, 24, 25</button><button data-t="20,21">20, 21, 29</button></div>
+<label class="chk"><input type="checkbox" id="snap"> Mover de a 0,5 (si no, de a 1)</label>
+<span class="lbl" style="margin-top:12px">Ángulo</span><div class="seg" id="angSel"><button data-g="A">α (en A)</button><button data-g="B">β (en B)</button></div></div>
+<div class="mets" id="mets"></div>
+<div class="box"><h2>Razones del ángulo</h2><div id="raz" class="razs"></div></div>
+<div class="box"><details><summary>Razones recíprocas (cosecante, secante y cotangente)</summary><div id="rec" class="razs" style="margin-top:8px"></div></details></div>
+<div class="box"><details open><summary>Relaciones</summary><div class="fm" id="fm"></div></details></div>
+</aside>
+</div>
+</section>
+<section id="vS" class="band" hidden>
+<div class="work">
+<div>
+<div class="stagehead"><h1>Triángulos semejantes</h1><div class="legend"><span><i style="background:#1D9E75"></i>△1 (k = 1)</span><span><i style="background:#378ADD"></i>△2</span><span><i style="background:#7F77DD"></i>△3</span></div></div>
+<div class="fig plain"><svg id="ssv" role="img" aria-label="Tres triángulos rectángulos semejantes con el mismo ángulo"></svg></div>
+<div class="tools"><div class="seg" id="sep"><button data-s="0">Superpuestos</button><button data-s="1">Separados</button></div></div>
+<div class="box" style="margin-top:12px"><h2>Comparación de razones</h2><div class="tblw"><table class="tbl st" id="stbl"></table></div><p id="sconc" style="margin:10px 0 0;font-size:15px"></p></div>
+</div>
+<aside class="panel">
+<p class="concept">Los tres triángulos tienen un ángulo recto y el mismo ángulo <b>α</b>: son <b>semejantes</b>. Sus lados son distintos, pero sus <b>razones trigonométricas son iguales</b>.</p>
+<div class="box"><h2>Razones de semejanza</h2><p class="note">△1 es el triángulo de la otra pestaña (catetos a y b).</p>
+<span class="lbl" style="margin-top:10px">△2: k = <b id="k2o"></b></span><input type="range" id="k2" min="0.5" max="4" step="0.5">
+<span class="lbl" style="margin-top:10px">△3: k = <b id="k3o"></b></span><input type="range" id="k3" min="0.5" max="4" step="0.5"></div>
+<div class="box"><h2>¿Por qué son iguales?</h2><p style="margin:0;font-size:15px;line-height:1.6">Si △2 es △1 ampliado k veces, sus lados son k · CO, k · CA y k · H. Entonces sen α = k · CO : k · H = CO : H. Lo mismo pasa con coseno y tangente. Por eso se puede calcular la altura de un árbol o de un edificio con un triángulo pequeño que tenga el mismo ángulo.</p></div>
+</aside>
+</div>
+</section>
+</main>
+<footer class="pie-sim" style="background:#EAF2FB;color:#163a5f;border-top:3px solid #378ADD;padding:18px max(4vw,16px);font:400 14px/1.55 Lexend,system-ui,sans-serif;margin-top:24px"><strong style="font-weight:600;font-size:15.5px">Fernando J. Aravena Muñoz</strong><br>Licenciado en ciencias exactas<br>Profesor de matemáticas y física<br><span style="color:#5b6675">Temuco, Chile</span></footer>
+<script>
+{
+const $=id=>document.getElementById(id);
+const nf=(x,d=4)=>{const r=Math.round(x*10**d)/10**d;return(Object.is(r,-0)?0:r).toLocaleString('es-CL',{maximumFractionDigits:d});};
+const F1=v=>(+v).toFixed(1);
+const C={ink:'#16202b',mut:'#5b6675',line:'#dde4ec',grid:'#edf1f6',CO:'#D85A30',CA:'#1D9E75',H:'#378ADD',vio:'#7F77DD',amb:'#BA7517'};
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+const TRIPLES=[[3,4],[4,3],[5,12],[8,15],[6,8],[7,24],[20,21],[9,12],[12,5]];
+const S={view:'razones',a:3,b:4,ang:'A',E:6,drag:null,moved:0,k2:2,k3:3,sep:false};
+const hyp=()=>Math.hypot(S.a,S.b),isInt=x=>Math.abs(x-Math.round(x))<1e-9;
+function role(){const A=S.ang==='A';return{CO:A?S.a:S.b,CA:A?S.b:S.a,coN:A?'BC':'AC',caN:A?'AC':'BC',g:A?'α':'β'};}
+function fr(n,d){if(isInt(n)&&isInt(d)){const g=gcd(Math.round(n),Math.round(d)),p=Math.round(n)/g,q=Math.round(d)/g;return q===1?`${p}`:`<span class="fx"><span>${p}</span><span>${q}</span></span>`;}return `<span class="fx"><span>${nf(n,2)}</span><span>${nf(d,2)}</span></span>`;}
+const cTxt=()=>{const c=hyp();return isInt(c)?nf(c):`√${S.a*S.a+S.b*S.b} ≈ ${nf(c,2)}`;};
+const deg=()=>{const al=Math.atan2(S.a,S.b)*180/Math.PI;return S.ang==='A'?al:90-al;};
+/* ---------- dibujo ---------- */
+const Ln=(a,b,c,w,o={})=>`<line x1="${F1(a[0])}" y1="${F1(a[1])}" x2="${F1(b[0])}" y2="${F1(b[1])}" stroke="${c}" stroke-width="${w}" stroke-linecap="round" ${o.dash?`stroke-dasharray="${o.dash}"`:''}/>`;
+const Tx=(p,t,c,o={})=>`<text x="${F1(p[0])}" y="${F1(p[1])}" font-size="${o.fs||15}" font-weight="${o.fw||600}" fill="${c}" text-anchor="${o.a||'middle'}" dominant-baseline="central" stroke="#fff" stroke-width="4" paint-order="stroke">${t}</text>`;
+function arc(P,r,a0,a1,c,lab){const n=20;let d='';for(let i=0;i<=n;i++){const a=a0+(a1-a0)*i/n;d+=(i?'L':'M')+F1(P[0]+r*Math.cos(a))+' '+F1(P[1]-r*Math.sin(a));}const am=(a0+a1)/2;return `<path d="M${F1(P[0])} ${F1(P[1])} ${d.replace('M','L')} Z" fill="${c}" fill-opacity=".18" stroke="${c}" stroke-width="2"/>`+(lab?Tx([P[0]+(r+10)*Math.cos(am)+(Math.cos(am)>0.3?6:0),P[1]-(r+10)*Math.sin(am)],lab,c,{fs:16,a:Math.cos(am)>0.3?'start':'middle'}):'');}
+let V=null;
+function renderR(){const sv=$('rsv'),W=sv.clientWidth||700,H=sv.clientHeight||500;sv.setAttribute('viewBox',`0 0 ${W} ${H}`);
+ const need=Math.max(S.a,S.b)+1;if(need>S.E||(!S.drag&&S.E>need+6))S.E=Math.max(6,need+1);
+ const nar=W<560,sc=nar?Math.min((W-80)/S.E,(H-120)/S.E):Math.min((W-240)/S.E,(H-110)/S.E),Cx=nar?W-56:Math.min(W-200,50+S.E*sc+(W-240-S.E*sc)/2),Cy=H-55,s=p=>[Cx+p[0]*sc,Cy-p[1]*sc];V={sc,Cx,Cy};
+ let o='';const xmn=-Math.floor((Cx-10)/sc),ymx=Math.floor((Cy-10)/sc);
+ for(let x=xmn;x<=Math.floor((W-Cx)/sc);x++)o+=Ln(s([x,-1]),s([x,ymx]),C.grid,1);for(let y=-1;y<=ymx;y++)o+=Ln(s([xmn,y]),s([(W-Cx)/sc,y]),C.grid,1);
+ const A=s([-S.b,0]),B=s([0,S.a]),Cc=s([0,0]),R=role(),c=hyp();
+ o+=`<polygon points="${[A,B,Cc].map(p=>F1(p[0])+','+F1(p[1])).join(' ')}" fill="#f2f6fb"/>`;
+ // lados con su rol
+ const sideBC=S.ang==='A'?'CO':'CA',sideAC=S.ang==='A'?'CA':'CO';
+ o+=Ln(B,Cc,C[sideBC],6)+Ln(A,Cc,C[sideAC],6)+Ln(A,B,C.H,6);
+ // ángulo recto
+ const q=14;o+=`<polyline points="${F1(Cc[0]-q)},${F1(Cc[1])} ${F1(Cc[0]-q)},${F1(Cc[1]-q)} ${F1(Cc[0])},${F1(Cc[1]-q)}" fill="none" stroke="${C.ink}" stroke-width="1.8"/>`;
+ // ángulo elegido
+ const al=Math.atan2(S.a,S.b);if(S.ang==='A')o+=arc(A,Math.min(46,S.b*sc*.35),0,al,C.vio,`α = ${nf(deg(),2)}°`);else o+=arc(B,Math.min(46,S.a*sc*.35),-Math.PI/2,-Math.PI/2-(Math.PI/2-al),C.vio,`β = ${nf(deg(),2)}°`);
+ // etiquetas de lados
+ const lab=(r,v)=>(nar?r:{CO:'cateto opuesto',CA:'cateto adyacente',H:'hipotenusa'}[r])+` = ${v}`;
+ o+=Tx([(B[0]+Cc[0])/2+(nar?-12:12),(B[1]+Cc[1])/2],lab(sideBC,nf(S.a)),C[sideBC],{a:nar?'end':'start'})+Tx([(A[0]+Cc[0])/2,Cc[1]+22],lab(sideAC,nf(S.b)),C[sideAC]);
+ const m=[(A[0]+B[0])/2,(A[1]+B[1])/2],dx=B[0]-A[0],dy=B[1]-A[1],L=Math.hypot(dx,dy);let n=[dy/L,-dx/L];if((m[0]-Cc[0])*n[0]+(m[1]-Cc[1])*n[1]<0)n=[-n[0],-n[1]];o+=Tx([m[0]+n[0]*22,m[1]+n[1]*22],lab('H',cTxt()),C.H,{a:'end'});
+ // vértices
+ [['A',A,true,[-16,12]],['B',B,true,[0,-20]],['C',Cc,false,[14,14]]].forEach(([n,p,dr,off])=>{const on=S.ang===n;o+=`<circle cx="${F1(p[0])}" cy="${F1(p[1])}" r="${dr?9:5}" fill="${dr?(on?C.vio:'#fff'):C.ink}" stroke="${C.vio}" stroke-width="${dr?2.5:0}"/>`+Tx([p[0]+off[0],p[1]+off[1]],n,C.ink,{fs:17});
+  if(dr)o+=`<circle cx="${F1(p[0])}" cy="${F1(p[1])}" r="20" fill="transparent" data-h="${n}" style="cursor:${n==='A'?'ew-resize':'ns-resize'}"/>`;});
+ if(isInt(c))o+=Tx([14,18],`✓ Los tres lados son enteros: ${S.a}, ${S.b} y ${nf(c)}`,C.CA,{a:'start',fs:14});
+ sv.innerHTML=o;}
+function renderS(){const sv=$('ssv'),W=sv.clientWidth||700,H=sv.clientHeight||500;sv.setAttribute('viewBox',`0 0 ${W} ${H}`);
+ const ks=[1,S.k2,S.k3],kmax=Math.max(...ks),cols=['#1D9E75','#378ADD','#7F77DD'];let o='';
+ if(!S.sep){const sc=Math.min((W-120)/(S.b*kmax),(H-90)/(S.a*kmax)),Ax=50,Ay=H-45,s=p=>[Ax+p[0]*sc,Ay-p[1]*sc];
+  [...ks.keys()].sort((i,j)=>ks[j]-ks[i]).forEach(i=>{const k=ks[i],A=s([0,0]),Cc=s([k*S.b,0]),B=s([k*S.b,k*S.a]);o+=`<polygon points="${[A,Cc,B].map(p=>F1(p[0])+','+F1(p[1])).join(' ')}" fill="${cols[i]}" fill-opacity=".1" stroke="${cols[i]}" stroke-width="3" stroke-linejoin="round"/>`;
+   o+=`<polyline points="${F1(Cc[0]-11)},${F1(Cc[1])} ${F1(Cc[0]-11)},${F1(Cc[1]-11)} ${F1(Cc[0])},${F1(Cc[1]-11)}" fill="none" stroke="${cols[i]}" stroke-width="1.6"/>`;
+   o+=Tx([B[0]+10,(B[1]+Cc[1])/2],nf(k*S.a,2),cols[i],{a:'start',fs:14})+Tx([B[0],B[1]-14],`B${['₁','₂','₃'][i]}`,cols[i],{fs:14})+Tx([Cc[0],Cc[1]+18],`C${['₁','₂','₃'][i]}`,cols[i],{fs:13});});
+  o+=arc(s([0,0]),40,0,Math.atan2(S.a,S.b),C.amb,'α')+Tx([s([0,0])[0]-12,s([0,0])[1]+16],'A',C.ink,{fs:16});}
+ else{const tot=ks.reduce((t,k)=>t+k*S.b,0)+ (ks.length-1)*1.2,sc=Math.min((W-60)/tot,(H-90)/(S.a*kmax));let x=30;
+  ks.forEach((k,i)=>{const Ay=H-45,A=[x,Ay],Cc=[x+k*S.b*sc,Ay],B=[x+k*S.b*sc,Ay-k*S.a*sc];o+=`<polygon points="${[A,Cc,B].map(p=>F1(p[0])+','+F1(p[1])).join(' ')}" fill="${cols[i]}" fill-opacity=".14" stroke="${cols[i]}" stroke-width="3" stroke-linejoin="round"/>`+arc(A,Math.min(30,k*S.b*sc*.3),0,Math.atan2(S.a,S.b),C.amb,'')+Tx([(A[0]+Cc[0])/2,Ay+16],nf(k*S.b,2),cols[i],{fs:13})+Tx([B[0]+8,(B[1]+Cc[1])/2],nf(k*S.a,2),cols[i],{a:'start',fs:13})+Tx([A[0]+(k*S.b*sc)/2-12,(A[1]+B[1])/2-12],`△${i+1}`,cols[i],{fs:14});x+=k*S.b*sc+1.2*sc;});}
+ sv.innerHTML=o;}
+/* ---------- interacción ---------- */
+const rsv=$('rsv');
+rsv.addEventListener('pointerdown',e=>{const h=e.target.getAttribute&&e.target.getAttribute('data-h');if(!h)return;S.drag=h;S.moved=0;rsv.setPointerCapture(e.pointerId);});
+rsv.addEventListener('pointermove',e=>{if(!S.drag)return;const r=rsv.getBoundingClientRect(),x=(e.clientX-r.left-V.Cx)/V.sc,y=(V.Cy-(e.clientY-r.top))/V.sc,st=S.snap||1;S.moved++;
+ if(S.drag==='A')S.b=Math.max(st,Math.min(30,Math.round(-x/st)*st));else S.a=Math.max(st,Math.min(30,Math.round(y/st)*st));upd();});
+rsv.addEventListener('pointerup',()=>{if(S.drag&&S.moved<3){S.ang=S.drag;}S.drag=null;upd();});
+$('tri').onclick=e=>{const b=e.target.closest('button');if(!b)return;[S.a,S.b]=b.dataset.t.split(',').map(Number);S.E=0;upd();};
+$('angSel').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.ang=b.dataset.g;upd();};
+$('snap').onchange=e=>{S.snap=e.target.checked?0.5:1;};
+$('k2').oninput=e=>{S.k2=+e.target.value;upd();};$('k3').oninput=e=>{S.k3=+e.target.value;upd();};
+$('sep').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.sep=b.dataset.s==='1';upd();};
+/* ---------- panel ---------- */
+function upd(){const R=role(),c=hyp(),g=R.g,cH=isInt(c)?nf(c):nf(c,2);
+ document.querySelectorAll('#angSel button').forEach(b=>b.classList.toggle('on',b.dataset.g===S.ang));
+ document.querySelectorAll('#tri button').forEach(b=>b.classList.toggle('on',b.dataset.t===`${S.a},${S.b}`));
+ document.querySelectorAll('#sep button').forEach(b=>b.classList.toggle('on',(b.dataset.s==='1')===S.sep));
+ $('mets').innerHTML=[['Cateto BC = a',nf(S.a)],['Cateto AC = b',nf(S.b)],['Hipotenusa AB = c',cTxt()],[`Ángulo ${g} (en ${S.ang})`,`${nf(deg(),2)}°`]].map(([l,v])=>`<div class="met"><p class="l">${l}</p><p class="v">${v}</p></div>`).join('');
+ const co=`<b style="color:${C.CO}">CO</b>`,ca=`<b style="color:${C.CA}">CA</b>`,hh=`<b style="color:${C.H}">H</b>`;
+ $('roles').innerHTML=`Para el ángulo <b>${g}</b> (en el vértice ${S.ang}): cateto opuesto ${co} = ${R.coN} = ${nf(R.CO)}; cateto adyacente ${ca} = ${R.caN} = ${nf(R.CA)}; hipotenusa ${hh} = AB = ${cTxt()}.`;
+ const row=(nm,num,den,nN,dN)=>`<div class="rz"><span class="nm">${nm} ${g}</span> = <span class="fx"><span>${nN}</span><span>${dN}</span></span> = <span class="fx"><span>${nf(num,2)}</span><span>${isInt(den)?nf(den):nf(den,2)}</span></span>${isInt(num)&&isInt(den)&&gcd(Math.round(num),Math.round(den))>1?` = ${fr(num,den)}`:''} ≈ <b>${nf(num/den,4)}</b></div>`;
+ $('raz').innerHTML=row('sen',R.CO,c,co,hh)+row('cos',R.CA,c,ca,hh)+row('tan',R.CO,R.CA,co,ca);
+ $('rec').innerHTML=row('cosec',c,R.CO,hh,co)+row('sec',c,R.CA,hh,ca)+row('cotg',R.CA,R.CO,ca,co)+`<p class="note" style="margin-top:6px">Cada razón recíproca es la inversa de una razón básica: cosec ${g} = 1 : sen ${g}, sec ${g} = 1 : cos ${g}, cotg ${g} = 1 : tan ${g}. Por ejemplo, sen ${g} · cosec ${g} = ${nf(R.CO/c,4)} · ${nf(c/R.CO,4)} = 1.</p>`;
+ const s1=R.CO/c,c1=R.CA/c,o=S.ang==='A'?'β':'α';
+ $('fm').innerHTML=[`<b>Del valor al ángulo:</b> ${g} = tan⁻¹(${nf(R.CO)} : ${nf(R.CA)}) ≈ ${nf(deg(),2)}°. Con la calculadora se usan las teclas sin⁻¹, cos⁻¹ o tan⁻¹.`,
+  `<b>Identidad fundamental:</b> sen² ${g} + cos² ${g} = ${nf(s1,4)}² + ${nf(c1,4)}² = ${nf(s1*s1+c1*c1,4)}. Siempre da 1, porque CO² + CA² = H² (Pitágoras).`,
+  `<b>tan ${g} = sen ${g} : cos ${g}</b> = ${nf(s1,4)} : ${nf(c1,4)} = ${nf(s1/c1,4)}.`,
+  `<b>Ángulos complementarios:</b> ${g} + ${o} = 90°. El cateto opuesto a ${g} es el adyacente a ${o}: por eso sen ${g} = cos ${o} y cos ${g} = sen ${o}.`].map(x=>`<div>${x}</div>`).join('');
+ // semejantes
+ $('k2o').textContent=nf(S.k2,2);$('k3o').textContent=nf(S.k3,2);$('k2').value=S.k2;$('k3').value=S.k3;
+ const ks=[1,S.k2,S.k3],cols=['#1D9E75','#378ADD','#7F77DD'];
+ $('stbl').innerHTML=`<tr><th>Triángulo</th><th>CO</th><th>CA</th><th>H</th><th>sen α</th><th>cos α</th><th>tan α</th></tr>`+ks.map((k,i)=>{const a=k*S.a,b=k*S.b,h=k*c;return `<tr><td style="color:${cols[i]};font-weight:600">△${i+1} (k = ${nf(k,2)})</td><td>${nf(a,2)}</td><td>${nf(b,2)}</td><td>${nf(h,2)}</td><td>${nf(a,2)} : ${nf(h,2)} = <b>${nf(a/h,4)}</b></td><td>${nf(b,2)} : ${nf(h,2)} = <b>${nf(b/h,4)}</b></td><td>${nf(a,2)} : ${nf(b,2)} = <b>${nf(a/b,4)}</b></td></tr>`;}).join('');
+ $('sconc').innerHTML=`<span class="ok">✓ En los tres triángulos sen α = ${nf(S.a/c,4)}, cos α = ${nf(S.b/c,4)} y tan α = ${nf(S.a/S.b,4)}.</span> Al multiplicar todos los lados por k, cada razón queda <b>k · CO : k · H = CO : H</b>: el factor se simplifica. Las razones trigonométricas dependen <b>solo del ángulo</b>, no del tamaño del triángulo.`;
+ if(S.view==='razones')renderR();else renderS();}
+function route(){S.view=(location.hash||'').slice(1)==='semejantes'?'semejantes':'razones';document.querySelectorAll('#tabs a').forEach(a=>a.classList.toggle('on',a.dataset.r===S.view));$('vR').hidden=S.view!=='razones';$('vS').hidden=S.view==='razones';upd();}
+window.addEventListener('hashchange',route);
+new ResizeObserver(()=>{if(S.view==='razones')renderR();else renderS();}).observe(document.body);
+route();
+}
+
+</script>
+<style>
+.mclase{margin-left:4px;font:inherit;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--line,#cbd5e1);background:#fff;color:#163a5f;cursor:pointer;white-space:nowrap}
+.mclase[aria-pressed="true"]{background:#163a5f;color:#fff;border-color:#163a5f}
+@media(min-width:901px){
+body.clase .concept,body.clase .note,body.clase .hint,body.clase .panel details,body.clase .panel .box:has(> details:only-child){display:none!important}
+body.clase .work{grid-template-columns:minmax(0,2.2fr) minmax(280px,1fr)}
+body.clase .fig{height:clamp(420px,76vh,920px)}
+body.clase .stepTxt{font-size:19px}}
+@media(max-width:900px){.mclase{display:none}}
+</style>
+<script>
+(function(){var K='orbita-modo-clase',on=false;try{on=localStorage.getItem(K)==='1';}catch(e){}
+var b=document.createElement('button');b.type='button';b.className='mclase';b.textContent='Modo clase';b.title='Oculta las explicaciones y agranda la figura para proyectar';
+function set(v){on=v;document.body.classList.toggle('clase',on);b.setAttribute('aria-pressed',on?'true':'false');try{localStorage.setItem(K,on?'1':'0');}catch(e){}setTimeout(function(){window.dispatchEvent(new Event('resize'));},30);}
+b.onclick=function(){set(!on);};var h=document.querySelector('.brand')||document.querySelector('header');if(h)h.appendChild(b);set(on);})();
+</script>
+</body>
+</html>
