@@ -494,6 +494,19 @@
       <g font-size="15" fill="#2C395C"><text x="30" y="96">ROMA · MORA</text><text x="30" y="120">OMAR · RAMO…</text></g>
       <text x="246" y="66" text-anchor="middle" font-size="30" fill="#E2571E">4!</text><text x="246" y="104" text-anchor="middle" font-size="18" fill="#2C395C">C(n,k)</text><text x="246" y="138" text-anchor="middle" font-size="18" fill="#2C395C">nᵏ</text></g>
     </svg>`,
+    isometrias: `<svg viewBox="0 0 320 180" aria-hidden="true">
+      <path d="M160 14 V170" stroke="#7F77DD" stroke-width="3" stroke-dasharray="9 6"/>
+      <path d="M70 140 L130 140 L84 60 Z" fill="#1D9E75" fill-opacity=".25" stroke="#1D9E75" stroke-width="3.5" stroke-linejoin="round"/>
+      <path d="M250 140 L190 140 L236 60 Z" fill="#E2571E" fill-opacity=".25" stroke="#E2571E" stroke-width="3.5" stroke-linejoin="round"/>
+      <g stroke="#7F77DD" stroke-width="1.6" stroke-dasharray="4 4"><path d="M84 60 H236"/><path d="M130 140 H190"/></g>
+      <g font-family="Space Mono, monospace" font-weight="700" font-size="14"><text x="74" y="54" fill="#1D9E75">A</text><text x="228" y="54" fill="#E2571E">A′</text></g>
+    </svg>`,
+    teselaciones: `<svg viewBox="0 0 320 180" aria-hidden="true"><g stroke="#2C395C" stroke-width="1.6" stroke-linejoin="round">${(function(){let o="";const R=18,w=Math.sqrt(3)*R;for(let j=-1;j<9;j++)for(let i=-1;i<13;i++){const cx=10+i*w+(j%2?w/2:0),cy=10+j*1.5*R;let p="";for(let k=0;k<6;k++){const a=Math.PI/6+k*Math.PI/3;p+=(cx+R*Math.cos(a)).toFixed(1)+","+(cy+R*Math.sin(a)).toFixed(1)+" ";}o+=`<polygon points="${p}" fill="${(i+j)%3===0?"#8FD1B4":(i+j)%3===1?"#7FB3E6":"#F4C46A"}"/>`;}return o;})()}</g></svg>`,
+    semejanza: `<svg viewBox="0 0 320 180" aria-hidden="true">
+      <path d="M40 140 L110 140 L56 92 Z" fill="#1D9E75" fill-opacity=".22" stroke="#1D9E75" stroke-width="3.5" stroke-linejoin="round"/>
+      <path d="M150 160 L290 160 L182 64 Z" fill="#E2571E" fill-opacity=".22" stroke="#E2571E" stroke-width="3.5" stroke-linejoin="round"/>
+      <g font-family="Space Mono, monospace" font-weight="700"><text x="66" y="160" font-size="13" fill="#1D9E75">3</text><text x="214" y="176" font-size="13" fill="#E2571E">6</text><text x="232" y="62" font-size="22" fill="#2C395C">k = 2</text></g>
+    </svg>`,
     generico: `<svg viewBox="0 0 320 180" aria-hidden="true"><g fill="none" stroke="#2C395C" stroke-width="1.6"><circle cx="160" cy="90" r="46" stroke-dasharray="2 5"/><ellipse cx="160" cy="90" rx="96" ry="26" transform="rotate(-18 160 90)"/></g><circle cx="160" cy="90" r="16" fill="#E2571E"/><circle cx="248" cy="62" r="5" fill="#B9A727"/></svg>`
   };
 

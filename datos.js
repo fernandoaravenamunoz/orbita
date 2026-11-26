@@ -327,6 +327,30 @@ const SITIO = {
       url: "simulaciones/combinatoria.html",
       dibujo: "combinatoria",
       fecha: "2026-11-26"
+    },
+    {
+      nombre: "Transformaciones isométricas",
+      descripcion: "Traslada, refleja y rota un punto, un segmento, una figura y un velero en el plano cartesiano. Mueve con el mouse el vector, el eje de reflexión o el centro de rotación y observa las coordenadas, la regla y las propiedades que se conservan.",
+      temas: ["Traslación", "Reflexión", "Rotación", "Plano cartesiano"],
+      url: "simulaciones/isometrias.html",
+      dibujo: "isometrias",
+      fecha: "2026-11-26"
+    },
+    {
+      nombre: "Teselaciones",
+      descripcion: "Embaldosa un piso con triángulos, cuadrados, hexágonos, pentágonos, octógonos y otras baldosas. Descubre por qué los ángulos en cada vértice deben sumar 360° y prueba patrones con dos baldosas.",
+      temas: ["Teselaciones", "Ángulos interiores", "Polígonos regulares", "360°"],
+      url: "simulaciones/teselaciones.html",
+      dibujo: "teselaciones",
+      fecha: "2026-11-26"
+    },
+    {
+      nombre: "Figuras semejantes",
+      descripcion: "Triángulos, cuadriláteros y polígonos regulares e irregulares: decide si dos figuras son semejantes comparando lados y ángulos, o usa la razón de semejanza para encontrar el valor que falta.",
+      temas: ["Semejanza", "Razón de semejanza", "Proporciones", "Ángulos"],
+      url: "simulaciones/semejanza.html",
+      dibujo: "semejanza",
+      fecha: "2026-11-26"
     }
     // Para agregar otra simulación: sube su archivo .html a la carpeta "simulaciones"
     // y copia el bloque de arriba (con su coma).

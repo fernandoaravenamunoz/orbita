@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Teselaciones · Órbita Matemática</title>
+<meta name="description" content="Simulación de teselaciones: cubre un piso con triángulos, cuadrados, hexágonos, pentágonos, octógonos y otras baldosas; observa por qué los ángulos de cada vértice deben sumar 360°.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+:root{color-scheme:light;--bg:#ffffff;--ink:#16202b;--mut:#5b6675;--line:#dde4ec;--grid:#edf1f6;--band:#163a5f;--card:#f2f6fb;--sel:#378ADD;--coral:#D85A30;--teal:#1D9E75;--vio:#7F77DD;--amb:#BA7517;--pink:#D4537E}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Lexend,system-ui,sans-serif;overflow-x:clip}
+h1,h2{font-weight:600;line-height:1.1;margin:0;text-wrap:balance}
+button,input{font:inherit;color:inherit}
+button{min-height:40px;padding:6px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);cursor:pointer}
+button:hover{border-color:var(--mut)}button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
+button.on{border-color:var(--sel);color:var(--sel);background:color-mix(in srgb,var(--sel) 10%,transparent)}
+button.pri{background:var(--band);color:#fff;border-color:var(--band)}
+
+input[type=checkbox]{accent-color:var(--sel);width:18px;height:18px}
+.top{background:#EAF2FB;color:#163a5f;border-bottom:3px solid #378ADD;padding:14px max(4vw,16px);display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:18px;flex-wrap:wrap}
+.volver{color:#163a5f;text-decoration:none;font-size:14px;font-weight:500;padding:6px 10px;border:1px solid rgba(22,58,95,.35);border-radius:999px;background:#fff}.volver:hover{border-color:#163a5f}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs a{color:#163a5f;text-decoration:none;padding:8px 12px;border-radius:999px;font-size:15px;opacity:.82}
+.tabs a:hover{opacity:1;background:rgba(22,58,95,.08)}.tabs a.on{opacity:1;background:#163a5f;color:#fff}
+.band{padding:clamp(20px,3vw,44px) max(4vw,16px)}
+.work{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:24px;max-width:1400px;margin:0 auto}
+.stagehead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 18px;margin-bottom:8px}
+.stagehead h1{font-size:clamp(26px,3vw,36px)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--mut)}
+.legend i{display:inline-block;width:16px;height:10px;border-radius:3px;vertical-align:middle;margin-right:6px}
+.fig{position:relative;height:clamp(340px,58vh,600px);border-radius:16px;border:1px solid var(--line);background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;overflow:hidden}
+.fig svg{position:absolute;inset:0;width:100%;height:100%}
+.hint{position:absolute;left:12px;bottom:8px;margin:0;font-size:13px;color:var(--mut);pointer-events:none}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.stepTxt{font-size:15px;color:var(--ink);flex:1 1 100%;background:var(--card);border-radius:12px;padding:10px 14px;margin:0}
+.panel{display:flex;flex-direction:column;gap:16px}
+.box{background:var(--card);border-radius:14px;padding:14px 16px}
+.box h2{font-size:17px;margin-bottom:10px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}.seg button{min-height:36px;padding:4px 12px;font-size:14px}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--mut);margin-top:10px}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px}.row button{min-height:34px;padding:3px 10px;font-size:14px}
+.mets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.met{background:var(--card);border-radius:12px;padding:10px 14px}.met p{margin:0}.met .l{font-size:13px;color:var(--mut)}.met .v{font-size:clamp(19px,2vw,23px);font-weight:600}.met .s{font-size:13px;color:var(--mut)}
+.fm div{font-size:15px;line-height:1.7;padding:4px 0;border-bottom:1px dashed var(--line)}.fm div:last-child{border:0}.fm b{font-weight:600}
+details summary{cursor:pointer;font-weight:600;font-size:17px;min-height:32px}
+.concept{border-left:4px solid var(--vio);background:color-mix(in srgb,var(--vio) 9%,transparent);padding:10px 14px;font-size:15px;margin:0}
+.concept b{color:var(--coral);font-weight:600}
+.note{font-size:13px;color:var(--mut);margin:0}
+.warn{border-left:4px solid var(--amb);background:color-mix(in srgb,var(--amb) 10%,transparent);padding:8px 12px;font-size:14px;margin:0}
+[hidden]{display:none!important}
+.fx{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.08;margin:0 .1em;font-size:.92em}
+.fx>span{padding:0 .2em}.fx>span:first-child{border-bottom:1.6px solid currentColor}
+.frin{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.fr{display:inline-flex;flex-direction:column;align-items:center;gap:4px;padding:6px 8px;border-radius:12px;background:var(--bg)}
+.fr .bar{width:100%;border-top:3px solid currentColor}
+.fr.t{color:var(--teal)}.fr.c{color:var(--coral)}
+.stp{display:inline-flex;align-items:center;gap:4px}
+.stp button{min-height:34px;width:34px;padding:0;font-size:18px;line-height:1;color:var(--ink)}
+.stp output{min-width:2.4ch;text-align:center;font-weight:600;font-size:22px}
+.op{font-size:30px;font-weight:600;color:var(--mut)}
+.lbl{font-size:13px;color:var(--mut);display:block;margin-bottom:6px}
+@media(max-width:900px){.work{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.fig{height:360px}.tabs a{padding:6px 9px;font-size:14px}}
+
+.fig.plain{background-image:none;height:clamp(460px,72vh,720px);background:#FBFCFE}
+.fig canvas{position:absolute;inset:0;width:100%;height:100%}
+@media(max-width:600px){.fig.plain{height:560px}}
+select{min-height:38px;border-radius:10px;border:1px solid var(--line);background:var(--bg);padding:4px 10px;font:inherit;font-size:15px;color:inherit}
+input[type=range]{accent-color:var(--sel);width:100%;height:28px}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}.tbl th{font-weight:500;color:var(--mut);text-align:right;font-size:12.5px;padding:4px 6px;border-bottom:1px solid var(--line)}.tbl td{padding:4px 6px;border-bottom:1px dashed var(--line);text-align:right}
+.tbl td:first-child,.tbl th:first-child{text-align:center}
+.big{font-size:clamp(22px,2.5vw,28px);font-weight:600;margin:8px 0 0}
+.tblw{overflow-x:auto;max-height:420px;overflow-y:auto}
+</style>
+<style>
+.pal button{min-width:0}.ok{color:#0F6E56}.no{color:#B0401C}
+.fig.plain{height:clamp(440px,66vh,720px);background:#fff}
+</style>
+</head>
+<body>
+<header class="top">
+<div class="brand"><svg width="26" height="26" viewBox="0 0 64 64" stroke="#163a5f" stroke-width="2.5" stroke-linejoin="round" aria-hidden="true"><path d="M4 32 L18 8 L46 8 L60 32 L46 56 L18 56 Z" fill="#8FD1B4"/><path d="M18 8 L32 32 L18 56 M46 8 L32 32 L46 56 M4 32 H60" fill="none"/></svg><span>Teselaciones</span><a class="volver" href="../index.html#simulaciones" target="_top">← Órbita Matemática</a></div>
+
+</header>
+<main>
+<section class="band">
+<div class="work">
+<div>
+<div class="stagehead"><h1>Embaldosar el piso</h1><div class="legend"><span><i style="background:#1D9E75"></i>Vértice completo (360°)</span><span><i style="background:#BA7517"></i>Falta completar</span><span><i style="background:#D85A30"></i>Hueco imposible</span></div></div>
+<div class="fig plain"><svg id="tsv" role="img" aria-label="Piso rectangular para cubrir con baldosas"></svg></div>
+<div class="tools"><button id="bFill" class="pri">Rellenar el piso con esta baldosa</button><button id="bRot">↻ Girar baldosa (R)</button><button id="bUndo">Deshacer</button><button id="bClr">Vaciar el piso</button><label class="chk" style="margin:0"><input type="checkbox" id="ang" checked> Ángulos en los vértices</label></div>
+<p class="stepTxt" id="msg" style="margin-top:8px"></p>
+<p class="note" style="margin-top:6px">Acerca el mouse a un lado libre: aparece la baldosa pegada a ese lado (verde si cabe, roja si no). Haz clic para ponerla. Clic derecho o «Girar» cambia el lado que se pega.</p>
+</div>
+<aside class="panel">
+<p class="concept">Una <b>teselación</b> cubre el plano con figuras <b>sin dejar huecos y sin que se monten</b>. La clave está en los vértices: los ángulos que se juntan en cada vértice deben sumar exactamente <b>360°</b>.</p>
+<div class="box"><h2>Baldosa</h2><div class="seg pal" id="pal">
+<button data-s="tri">▲ Triángulo</button><button data-s="sq">■ Cuadrado</button><button data-s="hex">⬢ Hexágono</button><button data-s="pent">⬟ Pentágono</button><button data-s="oct">⯃ Octógono</button><button data-s="rect">▬ Rectángulo</button><button data-s="rombo">◆ Rombo</button><button data-s="triI">◺ Triángulo cualquiera</button><button data-s="cuaI">⏢ Cuadrilátero cualquiera</button></div>
+<span class="lbl" style="margin-top:12px">Tamaño del piso</span><div class="seg" id="fl"><button data-f="s">8 × 6</button><button data-f="m">12 × 8</button><button data-f="l">16 × 10</button></div></div>
+<div class="mets" id="mets"></div>
+<div class="box"><h2>¿Sirve esta baldosa?</h2><div id="why"></div></div>
+<div class="box"><h2>Patrones con dos baldosas</h2><div class="row" id="pat" style="margin-top:0"><button data-p="488">Octógonos y cuadrados</button><button data-p="3636">Hexágonos y triángulos</button><button data-p="33344">Cuadrados y triángulos</button><button data-p="ladrillo">Ladrillos</button></div>
+<p class="note" style="margin-top:8px">En los octógonos y cuadrados cada vértice junta 135° + 135° + 90°. En los hexágonos y triángulos, 120° + 60° + 120° + 60°. En los ladrillos, algunos vértices quedan en medio de un lado: ahí se suman 90° + 90° + 180°.</p></div>
+</aside>
+</div>
+</section>
+</main>
+<footer class="pie-sim" style="background:#EAF2FB;color:#163a5f;border-top:3px solid #378ADD;padding:18px max(4vw,16px);font:400 14px/1.55 Lexend,system-ui,sans-serif;margin-top:24px"><strong style="font-weight:600;font-size:15.5px">Fernando J. Aravena Muñoz</strong><br>Licenciado en ciencias exactas<br>Profesor de matemáticas y física<br><span style="color:#5b6675">Temuco, Chile</span></footer>
+<script>
+{
+const $=id=>document.getElementById(id);
+const nf=(x,d=1)=>{const r=Math.round(x*10**d)/10**d;return(Object.is(r,-0)?0:r).toLocaleString('es-CL',{maximumFractionDigits:d});};
+const F1=v=>(+v).toFixed(1);
+const C={ink:'#16202b',mut:'#5b6675',line:'#dde4ec',teal:'#1D9E75',coral:'#D85A30',vio:'#7F77DD',amb:'#BA7517',sel:'#378ADD'};
+const sub=(a,b)=>[a[0]-b[0],a[1]-b[1]],add=(a,b)=>[a[0]+b[0],a[1]+b[1]],mul=(a,k)=>[a[0]*k,a[1]*k],len=a=>Math.hypot(a[0],a[1]);
+function reg(n){const v=[[0,0]];for(let k=0;k<n-1;k++){const a=2*Math.PI*k/n,p=v[v.length-1];v.push([p[0]+Math.cos(a),p[1]+Math.sin(a)]);}return v;}
+const SH={
+ tri:{n:'Triángulo equilátero',v:reg(3),col:'#F4C46A'},sq:{n:'Cuadrado',v:reg(4),col:'#7FB3E6'},hex:{n:'Hexágono regular',v:reg(6),col:'#8FD1B4'},
+ pent:{n:'Pentágono regular',v:reg(5),col:'#E99A7F'},oct:{n:'Octógono regular',v:reg(8),col:'#B7A8F0'},
+ rect:{n:'Rectángulo',v:[[0,0],[2,0],[2,1],[0,1]],col:'#F2A7C3'},rombo:{n:'Rombo',v:[[0,0],[1,0],[1.5,Math.sqrt(3)/2],[0.5,Math.sqrt(3)/2]],col:'#9AD0E8'},
+ triI:{n:'Triángulo cualquiera',v:[[0,0],[1.6,0],[0.5,1.1]],col:'#F7D88F'},cuaI:{n:'Cuadrilátero cualquiera',v:[[0,0],[1.7,0],[1.5,1.2],[0.2,0.9]],col:'#C7E39A'}};
+const FLOORS={s:[8,6],m:[12,8],l:[16,10]};
+const S={shape:'sq',floor:'m',tiles:[],rot:0,ghost:null,showAng:true,hover:null};
+function angles(v){const n=v.length;return v.map((p,i)=>{const a=sub(v[(i+n-1)%n],p),b=sub(v[(i+1)%n],p);return Math.acos(Math.max(-1,Math.min(1,(a[0]*b[0]+a[1]*b[1])/(len(a)*len(b)))))*180/Math.PI;});}
+Object.values(SH).forEach(s=>{s.ang=angles(s.v);s.area=Math.abs(s.v.reduce((a,p,i)=>{const q=s.v[(i+1)%s.v.length];return a+p[0]*q[1]-q[0]*p[1];},0))/2;});
+/* ---------- geometría ---------- */
+function place(shape,j,P,Q){// edge j of shape (A_j→A_{j+1}) maps to Q→P
+ const v=SH[shape].v,n=v.length,A=v[j],B=v[(j+1)%n],ang=Math.atan2(P[1]-Q[1],P[0]-Q[0])-Math.atan2(B[1]-A[1],B[0]-A[0]),c=Math.cos(ang),s=Math.sin(ang);
+ return v.map(p=>{const d=sub(p,A);return add(Q,[d[0]*c-d[1]*s,d[0]*s+d[1]*c]);});}
+function placeFree(shape,at,rot){const v=SH[shape].v,a=rot*Math.PI/180,c=Math.cos(a),s=Math.sin(a);return v.map(p=>add(at,[p[0]*c-p[1]*s,p[0]*s+p[1]*c]));}
+function proj(P,ax){let mn=1e9,mx=-1e9;P.forEach(p=>{const d=p[0]*ax[0]+p[1]*ax[1];mn=Math.min(mn,d);mx=Math.max(mx,d);});return[mn,mx];}
+function overlap(A,B){const axes=[];[A,B].forEach(P=>P.forEach((p,i)=>{const q=P[(i+1)%P.length],e=sub(q,p),L=len(e);axes.push([-e[1]/L,e[0]/L]);}));
+ for(const ax of axes){const[a0,a1]=proj(A,ax),[b0,b1]=proj(B,ax);if(Math.min(a1,b1)-Math.max(a0,b0)<1e-3)return false;}return true;}
+const bbox=P=>{let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;P.forEach(p=>{x0=Math.min(x0,p[0]);y0=Math.min(y0,p[1]);x1=Math.max(x1,p[0]);y1=Math.max(y1,p[1]);});return[x0,y0,x1,y1];};
+function free(P){const b=bbox(P);for(const t of S.tiles){if(t.b[0]>b[2]||t.b[2]<b[0]||t.b[1]>b[3]||t.b[3]<b[1])continue;if(overlap(P,t.P))return false;}return true;}
+const cent=P=>mul(P.reduce((a,p)=>add(a,p),[0,0]),1/P.length);
+function inFloor(P){const[W,H]=FLOORS[S.floor],c=cent(P),m=0.95;return c[0]>-m&&c[1]>-m&&c[0]<W+m&&c[1]<H+m;}
+const key=p=>Math.round(p[0]*1000)+','+Math.round(p[1]*1000);
+function freeEdges(){const cnt=new Map();S.tiles.forEach(t=>t.P.forEach((p,i)=>{const q=t.P[(i+1)%t.P.length],k=key(mul(add(p,q),.5));cnt.set(k,(cnt.get(k)||0)+1);}));
+ const out=[];S.tiles.forEach((t,ti)=>t.P.forEach((p,i)=>{const q=t.P[(i+1)%t.P.length];if(cnt.get(key(mul(add(p,q),.5)))===1)out.push({P:p,Q:q,ti,i});}));return out;}
+function matchEdges(shape,L){const v=SH[shape].v;return v.map((p,i)=>[i,len(sub(v[(i+1)%v.length],p))]).filter(([,l])=>Math.abs(l-L)<1e-6).map(([i])=>i);}
+function addTile(shape,P){S.tiles.push({shape,P,b:bbox(P)});}
+/* ---------- relleno automático y patrones ---------- */
+function fillWith(shapes,cap=1500){let changed=true,guard=0;while(changed&&S.tiles.length<cap&&guard++<200){changed=false;const E=freeEdges();
+ for(const e of E){if(S.tiles.length>=cap)break;const L=len(sub(e.Q,e.P));for(const sh of shapes){let js=matchEdges(sh,L);if(S.tiles[e.ti].shape===sh&&js.includes(e.i))js=[e.i,...js.filter(x=>x!==e.i)];let ok=false;for(const j of js){const P=place(sh,j,e.P,e.Q);if(inFloor(P)&&free(P)){addTile(sh,P);ok=true;changed=true;break;}}if(ok)break;}}}}
+function pattern(k){S.tiles=[];const[W,H]=FLOORS[S.floor];
+ if(k==='488'){const s=1+Math.SQRT2;for(let i=-1;i<=W/s+1;i++)for(let j=-1;j<=H/s+1;j++){const P=placeFree('oct',[i*s,j*s-0.0],0);if(inFloor(P))addTile('oct',P);}fillWith(['sq']);}
+ if(k==='3636'){for(let i=-2;i<=W/2+2;i++)for(let j=-1;j<=H/Math.sqrt(3)+1;j++){const P=placeFree('hex',[i*2+(j%2?1:0)-0.5,j*Math.sqrt(3)-0.0],0);if(inFloor(P)&&free(P))addTile('hex',P);}fillWith(['tri']);}
+ if(k==='33344'){const h=Math.sqrt(3)/2;let y=0,r=0;while(y<H+1){for(let x=-2;x<W+2;x++){const P=placeFree('sq',[x+(r%2?0.5:0),y],0);if(inFloor(P)&&free(P))addTile('sq',P);}y+=1+h;r++;}fillWith(['tri']);}
+ if(k==='ladrillo'){for(let j=0;j<H+1;j++)for(let i=-2;i<W/2+2;i++){const P=placeFree('rect',[i*2+(j%2?1:0),j],0);if(inFloor(P)&&free(P))addTile('rect',P);}}
+ upd();}
+/* ---------- vértices ---------- */
+function vertexInfo(){const M=new Map();S.tiles.forEach(t=>{const a=SH[t.shape].ang;t.P.forEach((p,i)=>{const k=key(p);if(!M.has(k))M.set(k,{p,sum:0,n:0});const m=M.get(k);m.sum+=a[i];m.n++;});});
+ // vértices en el interior de un lado de otra baldosa (por ejemplo, ladrillos)
+ M.forEach(m=>{S.tiles.forEach(t=>t.P.forEach((p,i)=>{const q=t.P[(i+1)%t.P.length],d=sub(q,p),L=len(d),u=mul(d,1/L),w=sub(m.p,p),along=w[0]*u[0]+w[1]*u[1],perp=Math.abs(w[0]*u[1]-w[1]*u[0]);if(perp<1e-6&&along>1e-6&&along<L-1e-6)m.sum+=180;}));});
+ return[...M.values()];}
+function coverage(){const[W,H]=FLOORS[S.floor],nx=W*6,ny=H*6;let c=0;for(let i=0;i<nx;i++)for(let j=0;j<ny;j++){const p=[(i+.5)*W/nx,(j+.5)*H/ny];if(S.tiles.some(t=>p[0]>=t.b[0]&&p[0]<=t.b[2]&&p[1]>=t.b[1]&&p[1]<=t.b[3]&&inside(p,t.P)))c++;}return c/(nx*ny);}
+function inside(p,P){let s=0;for(let i=0;i<P.length;i++){const a=P[i],b=P[(i+1)%P.length],cr=(b[0]-a[0])*(p[1]-a[1])-(b[1]-a[1])*(p[0]-a[0]);if(cr<-1e-9)return false;}return true;}
+/* ---------- dibujo ---------- */
+let V={};
+function render(){const sv=$('tsv'),W=sv.clientWidth||700,H=sv.clientHeight||520;sv.setAttribute('viewBox',`0 0 ${W} ${H}`);const[FW,FH]=FLOORS[S.floor];
+ const sc=Math.min((W-60)/(FW+1.4),(H-60)/(FH+1.4)),ox=(W-FW*sc)/2,oy=(H+FH*sc)/2,s=p=>[ox+p[0]*sc,oy-p[1]*sc];V={sc,s,w:q=>[(q[0]-ox)/sc,(oy-q[1])/sc]};
+ const pts=P=>P.map(s).map(q=>F1(q[0])+','+F1(q[1])).join(' ');const f0=s([0,0]),f1=s([FW,FH]);let o='';
+ o+=`<defs><clipPath id="fl"><rect x="${F1(f0[0])}" y="${F1(f1[1])}" width="${F1(FW*sc)}" height="${F1(FH*sc)}"/></clipPath><pattern id="pk" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="#f6f1e7"/><path d="M0 10 L10 0" stroke="#e5dccb" stroke-width="1.2"/></pattern></defs>`;
+ o+=`<rect x="${F1(f0[0])}" y="${F1(f1[1])}" width="${F1(FW*sc)}" height="${F1(FH*sc)}" fill="url(#pk)" stroke="${C.ink}" stroke-width="3"/>`;
+ // baldosas: parte fuera del piso tenue, parte dentro clara
+ S.tiles.forEach(t=>{o+=`<polygon points="${pts(t.P)}" fill="${SH[t.shape].col}" fill-opacity=".25" stroke="${C.mut}" stroke-width=".8" stroke-dasharray="3 3"/>`;});
+ o+=`<g clip-path="url(#fl)">`+S.tiles.map(t=>`<polygon points="${pts(t.P)}" fill="${SH[t.shape].col}" stroke="#3b4652" stroke-width="1.3" stroke-linejoin="round"/>`).join('')+`</g>`;
+ o+=`<rect x="${F1(f0[0])}" y="${F1(f1[1])}" width="${F1(FW*sc)}" height="${F1(FH*sc)}" fill="none" stroke="${C.ink}" stroke-width="3"/>`;
+ // vértices
+ if(S.showAng&&S.tiles.length){const minA=Math.min(...SH[S.shape].ang);vertexInfo().forEach(m=>{const p=m.p;if(p[0]<1e-6||p[1]<1e-6||p[0]>FW-1e-6||p[1]>FH-1e-6)return;const q=s(p),full=Math.abs(m.sum-360)<0.5,gap=360-m.sum;
+  if(full)o+=`<circle cx="${F1(q[0])}" cy="${F1(q[1])}" r="3.2" fill="${C.teal}"/>`;
+  else if(gap>0.5&&m.n>=2){const bad=gap<minA-0.5;o+=`<circle cx="${F1(q[0])}" cy="${F1(q[1])}" r="5" fill="${bad?C.coral:C.amb}" stroke="#fff" stroke-width="1.5"/>`;if(bad)o+=`<text x="${F1(q[0]+7)}" y="${F1(q[1]-7)}" font-size="11" font-weight="600" fill="${bad?C.coral:C.amb}" stroke="#fff" stroke-width="3" paint-order="stroke">${nf(gap,0)}°</text>`;}});}
+ // fantasma
+ const g=S.ghost;if(g){o+=`<polygon points="${pts(g.P)}" fill="${g.ok?SH[S.shape].col:'#F7C1C1'}" fill-opacity=".75" stroke="${g.ok?C.teal:C.coral}" stroke-width="2.4" stroke-dasharray="${g.ok?'':'6 4'}" pointer-events="none"/>`;if(g.e)o+=`<line x1="${F1(s(g.e.P)[0])}" y1="${F1(s(g.e.P)[1])}" x2="${F1(s(g.e.Q)[0])}" y2="${F1(s(g.e.Q)[1])}" stroke="${g.ok?C.teal:C.coral}" stroke-width="5" stroke-linecap="round" pointer-events="none"/>`;}
+ o+=`<text x="${F1(f0[0])}" y="${F1(f0[1]+20)}" font-size="12" fill="${C.mut}" font-weight="500">Piso de ${FW} × ${FH} (lado de cada baldosa regular = 1)</text>`;
+ sv.innerHTML=o;}
+/* ---------- interacción ---------- */
+const sv=$('tsv');
+function ghostAt(w){if(!S.tiles.length){const at=[Math.round(w[0]*2)/2,Math.round(w[1]*2)/2],P=placeFree(S.shape,at,S.rot*15);return{P,ok:inFloor(P),first:true};}
+ const E=freeEdges();let best=null,bd=0.75;E.forEach(e=>{const m=mul(add(e.P,e.Q),.5),d=len(sub(m,w));if(d<bd){bd=d;best=e;}});if(!best)return null;
+ let js=matchEdges(S.shape,len(sub(best.Q,best.P)));if(S.tiles[best.ti].shape===S.shape&&js.includes(best.i))js=[best.i,...js.filter(x=>x!==best.i)];if(!js.length)return{P:placeFree(S.shape,best.P,0),ok:false,e:best,why:'len'};
+ const j=js[((S.rot%js.length)+js.length)%js.length],P=place(S.shape,j,best.P,best.Q);return{P,ok:inFloor(P)&&free(P),e:best};}
+sv.addEventListener('pointermove',e=>{const r=sv.getBoundingClientRect(),w=V.w([e.clientX-r.left,e.clientY-r.top]);S.hover=w;S.ghost=ghostAt(w);render();});
+sv.addEventListener('pointerleave',()=>{S.ghost=null;render();});
+sv.addEventListener('click',e=>{const r=sv.getBoundingClientRect(),w=V.w([e.clientX-r.left,e.clientY-r.top]);const g=ghostAt(w);if(g&&g.ok){addTile(S.shape,g.P);S.ghost=ghostAt(w);upd();}else if(g&&g.why==='len'){$('msg').innerHTML='<span class="no">Ese lado no tiene el mismo largo que los lados de esta baldosa.</span>';}else if(g){$('msg').innerHTML='<span class="no">No cabe: se montaría sobre otra baldosa.</span>';}});
+sv.addEventListener('contextmenu',e=>{e.preventDefault();S.rot++;S.ghost=S.hover?ghostAt(S.hover):null;render();});
+document.addEventListener('keydown',e=>{if(e.key==='r'||e.key==='R'){S.rot++;S.ghost=S.hover?ghostAt(S.hover):null;render();}});
+$('pal').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.shape=b.dataset.s;S.rot=0;upd();};
+$('fl').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.floor=b.dataset.f;S.tiles=[];upd();};
+$('bRot').onclick=()=>{S.rot++;render();};
+$('bUndo').onclick=()=>{S.tiles.pop();upd();};$('bClr').onclick=()=>{S.tiles=[];upd();};
+$('bFill').onclick=()=>{if(!S.tiles.length){const P=placeFree(S.shape,[0,0],0);addTile(S.shape,P);}fillWith([S.shape]);upd();};
+$('pat').onclick=e=>{const b=e.target.closest('button');if(!b)return;pattern(b.dataset.p);};
+$('ang').onchange=e=>{S.showAng=e.target.checked;render();};
+function upd(){document.querySelectorAll('#pal button').forEach(b=>b.classList.toggle('on',b.dataset.s===S.shape));document.querySelectorAll('#fl button').forEach(b=>b.classList.toggle('on',b.dataset.f===S.floor));
+ const sh=SH[S.shape],a=sh.ang,reg=['tri','sq','hex','pent','oct'].includes(S.shape);
+ $('msg').innerHTML=S.tiles.length?'':'Toca el piso para poner la primera baldosa (o usa «Rellenar el piso»).';
+ const cov=coverage(),vi=vertexInfo(),[FW,FH]=FLOORS[S.floor];const inner=vi.filter(m=>m.p[0]>1e-6&&m.p[1]>1e-6&&m.p[0]<FW-1e-6&&m.p[1]<FH-1e-6),minA=Math.min(...a),bad=inner.filter(m=>{const g=360-m.sum;return m.n>=2&&g>0.5&&g<minA-0.5;}).length;
+ $('mets').innerHTML=[['Baldosas',S.tiles.length],['Piso cubierto',`${nf(cov*100,0)} %`],['Vértices completos (360°)',inner.filter(m=>Math.abs(m.sum-360)<.5).length],['Huecos imposibles',bad]].map(([l,v])=>`<div class="met"><p class="l">${l}</p><p class="v">${v}</p></div>`).join('');
+ let h;if(reg){const n=sh.v.length,ai=(n-2)*180/n,q=360/ai,ok=Math.abs(q-Math.round(q))<1e-9;
+  h=`<div class="fm"><div><b>Ángulo interior</b> del ${sh.n.toLowerCase()}: (${n} − 2) · 180° : ${n} = <b>${nf(ai,1)}°</b></div><div>Alrededor de un vértice hay <b>360°</b>. ¿Cuántos caben? 360° : ${nf(ai,1)}° = <b>${nf(q,2)}</b></div>
+  <div>${ok?`<span class="ok">Es un número entero: ${Math.round(q)} baldosas se juntan en cada vértice (${Array(Math.round(q)).fill(nf(ai,0)+'°').join(' + ')} = 360°). Con ${sh.n.toLowerCase()}s solos <b>sí</b> se puede embaldosar.</span>`:`<span class="no">No es entero: con ${Math.floor(q)} baldosas suman ${nf(Math.floor(q)*ai,0)}° (falta${360-Math.floor(q)*ai>1?'n':''} ${nf(360-Math.floor(q)*ai,0)}°) y con ${Math.ceil(q)} se pasan (${nf(Math.ceil(q)*ai,0)}°). Con ${sh.n.toLowerCase()}s solos <b>no</b> se puede: quedan huecos.${S.shape==='oct'?' Pero los huecos son cuadrados: prueba el patrón «Octógonos y cuadrados» (135° + 135° + 90° = 360°).':''}</span>`}</div></div>`;}
+ else{const n=sh.v.length;h=`<div class="fm"><div><b>Ángulos interiores:</b> ${a.map(x=>nf(x,1)+'°').join(' + ')} = <b>${nf(a.reduce((s,x)=>s+x,0),0)}°</b></div>
+  <div>${n===3?'Dos copias de un triángulo (una girada en 180°) forman un paralelogramo, y los paralelogramos embaldosan el plano. En cada vértice se juntan los tres ángulos dos veces: 2 · 180° = 360°.':n===4?(S.shape==='cuaI'?'Si se pegan copias giradas en 180° por el punto medio de cada lado, en cada vértice se juntan los cuatro ángulos distintos del cuadrilátero, que suman 360°. Por eso <b>cualquier</b> cuadrilátero sirve.':'Sus ángulos se pueden juntar de a cuatro (o dos ángulos y un lado recto) para completar 360°.'):''}</div></div>`;}
+ $('why').innerHTML=h;
+ render();}
+new ResizeObserver(()=>render()).observe(document.body);
+upd();
+}
+
+</script>
+<style>
+.mclase{margin-left:4px;font:inherit;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--line,#cbd5e1);background:#fff;color:#163a5f;cursor:pointer;white-space:nowrap}
+.mclase[aria-pressed="true"]{background:#163a5f;color:#fff;border-color:#163a5f}
+@media(min-width:901px){
+body.clase .concept,body.clase .note,body.clase .hint,body.clase .panel details,body.clase .panel .box:has(> details:only-child){display:none!important}
+body.clase .work{grid-template-columns:minmax(0,2.2fr) minmax(280px,1fr)}
+body.clase .fig{height:clamp(420px,76vh,920px)}
+body.clase .stepTxt{font-size:19px}}
+@media(max-width:900px){.mclase{display:none}}
+</style>
+<script>
+(function(){var K='orbita-modo-clase',on=false;try{on=localStorage.getItem(K)==='1';}catch(e){}
+var b=document.createElement('button');b.type='button';b.className='mclase';b.textContent='Modo clase';b.title='Oculta las explicaciones y agranda la figura para proyectar';
+function set(v){on=v;document.body.classList.toggle('clase',on);b.setAttribute('aria-pressed',on?'true':'false');try{localStorage.setItem(K,on?'1':'0');}catch(e){}setTimeout(function(){window.dispatchEvent(new Event('resize'));},30);}
+b.onclick=function(){set(!on);};var h=document.querySelector('.brand')||document.querySelector('header');if(h)h.appendChild(b);set(on);})();
+</script>
+</body>
+</html>
