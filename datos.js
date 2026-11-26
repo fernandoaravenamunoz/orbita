@@ -367,6 +367,14 @@ const SITIO = {
       url: "simulaciones/circunferencia.html",
       dibujo: "circunferencia",
       fecha: "2026-11-26"
+    },
+    {
+      nombre: "Función cuadrática",
+      descripcion: "Escribe los valores de a, b y c y grafica la parábola: cortes con los ejes, concavidad, discriminante, vértice y eje de simetría. Si a = 0, se convierte en una función lineal. Después de graficar puedes mostrar la función inversa. El plano se arrastra y tiene zoom.",
+      temas: ["Ecuación cuadrática", "Vértice y eje de simetría", "Discriminante", "Función inversa"],
+      url: "simulaciones/cuadratica.html",
+      dibujo: "cuadratica",
+      fecha: "2026-11-26"
     }
     // Para agregar otra simulación: sube su archivo .html a la carpeta "simulaciones"
     // y copia el bloque de arriba (con su coma).

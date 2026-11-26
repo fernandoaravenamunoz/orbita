@@ -520,6 +520,14 @@
       <circle cx="160" cy="92" r="4" fill="#2C395C"/><circle cx="160" cy="20" r="5" fill="#fff" stroke="#378ADD" stroke-width="3"/>
       <g font-family="Space Mono, monospace" font-weight="700"><text x="160" y="68" font-size="15" fill="#378ADD" text-anchor="middle">x</text><text x="244" y="40" font-size="15" fill="#2C395C">x = α : 2</text></g>
     </svg>`,
+    cuadratica: `<svg viewBox="0 0 320 180" aria-hidden="true">
+      <path d="M30 150 H290 M110 12 V172" stroke="#2C395C" stroke-width="2" opacity=".55"/>
+      <path d="M176 12 V172" stroke="#B9A727" stroke-width="2.5" stroke-dasharray="6 6"/>
+      <path d="M100 14 Q176 290 252 14" fill="none" stroke="#378ADD" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="126" cy="122" r="0" fill="none"/>
+      <circle cx="176" cy="152" r="6" fill="#7F77DD"/><circle cx="110" cy="44" r="6" fill="#1D9E75"/>
+      <g font-family="Space Mono, monospace" font-weight="700"><text x="200" y="168" font-size="14" fill="#7F77DD">V</text><text x="222" y="40" font-size="15" fill="#2C395C">ax² + bx + c</text></g>
+    </svg>`,
     generico: `<svg viewBox="0 0 320 180" aria-hidden="true"><g fill="none" stroke="#2C395C" stroke-width="1.6"><circle cx="160" cy="90" r="46" stroke-dasharray="2 5"/><ellipse cx="160" cy="90" rx="96" ry="26" transform="rotate(-18 160 90)"/></g><circle cx="160" cy="90" r="16" fill="#E2571E"/><circle cx="248" cy="62" r="5" fill="#B9A727"/></svg>`
   };
 

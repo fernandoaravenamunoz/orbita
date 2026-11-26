@@ -78,7 +78,13 @@ input[type=range]{accent-color:var(--sel);width:100%;height:28px}
 </style>
 <style>
 .ctxs button{display:flex;align-items:center;gap:6px}
-.ctxTxt{font-size:16px;margin:0 0 10px;background:var(--card);border-radius:12px;padding:10px 14px}
+.ctxTxt{font-size:16px;margin:0 0 12px;background:var(--card);border-radius:14px;padding:12px 16px}
+.sitS{margin:0 0 10px;line-height:1.6}.sitQ{margin:10px 0 0;font-size:17px;font-weight:600;color:#163a5f}
+.els{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 12px}.els h3{margin:0 0 6px;font-size:14px;color:var(--mut);font-weight:600}
+.elr{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:4px 0}.eln{min-width:96px;font-weight:600;font-size:14.5px}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:3px 10px 3px 6px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:15px}.chip .em{font-size:21px;line-height:1}
+.chip .tile{display:inline-grid;place-items:center;min-width:24px;height:24px;border-radius:6px;background:#163a5f;color:#fff;font-size:14px}
+.why{margin-top:10px}.why summary{cursor:pointer;font-weight:600;color:#163a5f}.why p{margin:6px 0 0;line-height:1.6}
 .calc{font-size:clamp(24px,2.6vw,32px);font-weight:600;letter-spacing:.5px}.calc .x{color:var(--mut);font-weight:500}
 .list{display:flex;flex-wrap:wrap;gap:6px;max-height:340px;overflow:auto}
 .res{display:inline-flex;align-items:center;gap:4px;padding:4px 9px;border-radius:9px;background:#fff;border:1px solid var(--line);font-size:16px;cursor:pointer}
@@ -100,7 +106,7 @@ input[type=range]{accent-color:var(--sel);width:100%;height:28px}
 <div class="work">
 <div>
 <div class="stagehead"><h1 id="title"></h1></div>
-<p id="txt" class="ctxTxt"></p>
+<div id="txt" class="ctxTxt"></div>
 <div class="fig plain"><svg id="tsv" role="img" aria-label="Diagrama de árbol con todos los resultados posibles"></svg></div>
 <div class="tools"><button id="bBuild" class="pri">▶ Construir el árbol</button><button id="bRand">Elegir uno al azar</button><button id="bGrp" hidden></button></div>
 <p class="note" style="margin-top:6px">Cada columna del árbol es una etapa. Toca un resultado para ver su camino.</p>
@@ -144,6 +150,33 @@ const CTX={
  moneda:{n:'Moneda y dado',ic:'🎲',txt:'Lanzas una moneda y luego un dado. ¿Cuántos resultados distintos hay?',
   stages:[{name:'Moneda',opts:[o2('🪙','cara'),o2('⭕','sello')]},{name:'Dado',opts:['1','2','3','4','5','6'].map(d=>o2(d,d))}],digitsLast:true},
  propio:{n:'Arma tu situación',ic:'✏️',txt:'Elige cuántas etapas hay y cuántas opciones tiene cada una. El total se obtiene multiplicando.',custom:true}};
+
+const SIT={
+ menu:{s:'Es mediodía y llegas al casino del colegio. Hoy la bandeja se arma en tres pasos: primero eliges <b>una entrada</b>, después <b>un plato de fondo</b> y al final <b>un postre</b>. Cada bandeja lleva exactamente un plato de cada tipo.',q:'¿Cuántos menús distintos se pueden armar?',
+  w:'Porque cada elección es <b>independiente</b> de las otras: con la ensalada puedes llevar cualquiera de los fondos, y con la sopa también. Cada pareja entrada–fondo, a su vez, puede terminar con cualquiera de los postres. Basta que cambie un solo plato para que el menú sea distinto, por eso cada camino del árbol cuenta como un menú.'},
+ ropa:{s:'Te preparas para salir y abres el clóset. Para vestirte necesitas <b>una prenda de cada tipo</b>: una polera, un pantalón y un calzado.',q:'¿De cuántas formas distintas te puedes vestir?',
+  w:'Porque cualquier polera sirve con cualquier pantalón, y cualquier conjunto sirve con cualquier calzado: ninguna elección limita a la otra. Si cambias una sola prenda ya es otra tenida, así que cada combinación cuenta por separado.'},
+ foto:{s:'Ana, Beto, Caro y Dani terminan el paseo de curso y quieren una foto juntos. Se paran los cuatro en una fila, uno al lado del otro, y cada uno ocupa <b>un solo lugar</b>.',q:'¿De cuántas formas distintas se pueden ordenar en la fila?',slots:'4 lugares en la fila: 1.º, 2.º, 3.º y 4.º',
+  w:'Aquí se combinan <b>personas con lugares</b>. El orden importa: Ana–Beto–Caro–Dani y Beto–Ana–Caro–Dani son fotos distintas. Para el primer lugar hay 4 personas posibles; quien ya se ubicó no puede estar en otro lugar, así que para el segundo quedan 3, luego 2 y al final 1. Por eso las ramas del árbol se van achicando.'},
+ podio:{s:'Cinco corredores llegan a la final de los 100 metros planos. Al cruzar la meta se entregan tres medallas: oro al primero, plata al segundo y bronce al tercero.',q:'¿De cuántas formas distintas puede quedar el podio?',slots:'🥇 Oro · 🥈 Plata · 🥉 Bronce',d:['🏃‍♀️','🏃‍♂️','🏃‍♀️','🏃‍♂️','🏃‍♀️'],
+  w:'Se combinan <b>corredores con medallas</b>. El orden importa: no es lo mismo que Pía gane el oro y Raúl la plata que al revés. Nadie recibe dos medallas, así que después de entregar el oro quedan 4 candidatos para la plata y luego 3 para el bronce. Los otros dos corredores quedan fuera del podio.'},
+ letras:{s:'En un juego de palabras tienes cuatro fichas con las letras A, M, O y R. Debes ponerlas en fila usando <b>todas</b> las fichas, cada una <b>una sola vez</b>. Vale cualquier «palabra», tenga o no sentido: AMOR, ROMA, MORA, RAMO… y también MROA.',q:'¿Cuántas «palabras» distintas se pueden formar?',slots:'4 posiciones para las fichas',
+  w:'Se combinan <b>letras con posiciones</b>. Cambiar el orden cambia la palabra (ROMA no es AMOR), así que el orden importa. Como cada ficha se usa una sola vez, para la primera posición hay 4 letras, para la segunda quedan 3, y así hasta la última.'},
+ clave:{s:'Tu candado de bicicleta tiene tres ruedas, y cada rueda solo muestra los dígitos 1, 2 o 3. La clave se lee de izquierda a derecha y los dígitos <b>se pueden repetir</b>: 111 y 323 son claves válidas.',q:'¿Cuántas claves distintas existen?',slots:'3 ruedas del candado',d:['1️⃣','2️⃣','3️⃣'],
+  w:'Se combinan <b>dígitos con ruedas</b>. El orden importa (123 y 321 son claves distintas) y cada rueda es independiente: elegir un dígito en la primera no le quita opciones a la segunda. Por eso en todas las etapas del árbol hay siempre las mismas 3 ramas.'},
+ helado:{s:'En la heladería hay cuatro sabores y pides un cono con <b>dos bolas de sabores distintos</b>. Al heladero no le importa cuál pone arriba.',q:'¿Cuántos helados distintos puedes pedir?',slots:'2 bolas por cono',
+  w:'Se combinan <b>sabores entre sí</b>. El árbol cuenta «sabor 1 – sabor 2» como si el orden importara, pero chocolate-frutilla y frutilla-chocolate son <b>el mismo helado</b>: cada helado aparece dos veces en el árbol y por eso hay que dividir por 2. Usa el botón «Agrupar» para verlo.'},
+ moneda:{s:'En un juego de mesa, cada turno empieza lanzando una moneda y luego un dado de seis caras. El resultado del turno se anota como la pareja moneda–dado, por ejemplo «cara–4».',q:'¿Cuántos resultados distintos puede tener un turno?',
+  w:'Se combinan <b>los resultados de dos experimentos</b>. Lo que salga en la moneda no cambia lo que puede salir en el dado: tanto con cara como con sello, el dado puede mostrar cualquiera de sus caras. Por eso de cada resultado de la moneda nace el mismo número de ramas.'},
+ propio:{s:'Inventa tu propia situación: decide cuántas etapas tiene (por ejemplo, elegir un color, después un tamaño y después un diseño) y cuántas opciones hay en cada una.',q:'¿Cuántos resultados distintos hay?',
+  w:'Si las opciones de una etapa no dependen de lo que se eligió antes, cada opción se combina con <b>todas</b> las de la etapa siguiente, y el total es el producto de las opciones.'}};
+const POOLN={foto:'Personas',podio:'Corredores',letras:'Fichas',clave:'Dígitos',helado:'Sabores'};
+const chip=(e,l,d)=>{const big=d||e;const tile=!d&&/^[A-Z0-9]{1,2}$/.test(e);return `<span class="chip">${tile?`<b class="tile">${e}</b>`:`<span class="em">${big}</span>`}${l&&l!==e?`<span>${l}</span>`:''}</span>`;};
+function sitHTML(){const k=S.ctx,c=CTX[k],x=SIT[k];let el='';
+ if(c.custom){const st=stages();el=st.map((s,i)=>`<div class="elr"><span class="eln" style="color:${LV[i]}">${s.name}</span><span class="note">${s.opts.length} opciones (${s.opts.map(o=>o.e).join(', ')})</span></div>`).join('');}
+ else if(c.stages)el=c.stages.map((s,i)=>`<div class="elr"><span class="eln" style="color:${LV[i]}">${s.name}</span>${s.opts.map(o=>chip(o.e,o.l)).join('')}</div>`).join('');
+ else el=`<div class="elr"><span class="eln">${POOLN[k]}</span>${c.pool.map((o,i)=>chip(o.e,o.l,x.d&&x.d[i])).join('')}</div>`+(x.slots?`<div class="elr"><span class="eln">Se eligen para</span><span>${x.slots}</span></div>`:'')+`<div class="elr"><span class="eln">Reglas</span><span>${c.rep?'Se pueden repetir':'No se repiten'} · ${c.unordered?'no importa el orden':'sí importa el orden'}</span></div>`;
+ return `<p class="sitS">${x.s}</p><div class="els"><h3>Elementos que se combinan</h3>${el}</div><details class="why"${innerWidth>700?" open":""}><summary>¿Por qué se combinan?</summary><p>${x.w}</p></details><p class="sitQ">${x.q}</p>`;}
 const S={ctx:'menu',sel:null,focus:null,bl:99,bt0:0,anim:false,grp:false,cus:[3,2,2]};
 function stages(){const c=CTX[S.ctx];if(c.custom)return S.cus.map((m,i)=>({name:`Etapa ${i+1}`,opts:[...Array(m)].map((_,j)=>o2(String.fromCharCode(65+i)+(j+1),`${String.fromCharCode(65+i)}${j+1}`))}));
  if(c.stages)return c.stages;return[...Array(c.k)].map((_,i)=>({name:c.stageName(i),opts:c.pool}));}
@@ -207,7 +240,7 @@ $('tsv').addEventListener('click',e=>{const h=e.target.closest('[data-h]');if(!h
 /* ---------- panel ---------- */
 function upd(){const c=CTX[S.ctx],st=stages(),L=leaves(),tot=L.length,fs=factors();
  document.querySelectorAll('#ctx button').forEach(b=>b.classList.toggle('on',b.dataset.c===S.ctx));
- $('title').textContent=c.n;$('txt').innerHTML=c.txt;
+ $('title').textContent=c.n;$('txt').innerHTML=sitHTML();
  $('cusBox').hidden=!c.custom;
  if(c.custom)$('cus').innerHTML=S.cus.map((m,i)=>`<div class="row" style="margin-top:4px"><span style="min-width:72px;color:${LV[i]};font-weight:600">Etapa ${i+1}</span><span class="stp"><button data-a="m:${i}:-1" aria-label="Menos opciones">−</button><output>${m}</output><button data-a="m:${i}:1" aria-label="Más opciones">+</button></span><span style="color:var(--mut)">opciones</span></div>`).join('')+`<div class="row"><button data-a="addS" ${S.cus.length>=4?'disabled':''}>+ etapa</button><button data-a="remS" ${S.cus.length<=1?'disabled':''}>− etapa</button></div>`;
  $('bGrp').hidden=!c.unordered;$('bGrp').textContent=S.grp?'Ver todos los órdenes':'Agrupar: no importa el orden';

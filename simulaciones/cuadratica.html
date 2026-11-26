@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Función cuadrática · Órbita Matemática</title>
+<meta name="description" content="Simulación de la función cuadrática: elige a, b y c y grafica la parábola con sus cortes con los ejes, concavidad, vértice, eje de simetría y discriminante; caso lineal (a = 0) y función inversa con restricción de dominio. Plano con zoom y arrastre.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+:root{color-scheme:light;--bg:#ffffff;--ink:#16202b;--mut:#5b6675;--line:#dde4ec;--grid:#edf1f6;--band:#163a5f;--card:#f2f6fb;--sel:#378ADD;--coral:#D85A30;--teal:#1D9E75;--vio:#7F77DD;--amb:#BA7517;--pink:#D4537E}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Lexend,system-ui,sans-serif;overflow-x:clip}
+h1,h2{font-weight:600;line-height:1.1;margin:0;text-wrap:balance}
+button,input{font:inherit;color:inherit}
+button{min-height:40px;padding:6px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);cursor:pointer}
+button:hover{border-color:var(--mut)}button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
+button.on{border-color:var(--sel);color:var(--sel);background:color-mix(in srgb,var(--sel) 10%,transparent)}
+button.pri{background:var(--band);color:#fff;border-color:var(--band)}
+
+input[type=checkbox]{accent-color:var(--sel);width:18px;height:18px}
+.top{background:#EAF2FB;color:#163a5f;border-bottom:3px solid #378ADD;padding:14px max(4vw,16px);display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:18px;flex-wrap:wrap}
+.volver{color:#163a5f;text-decoration:none;font-size:14px;font-weight:500;padding:6px 10px;border:1px solid rgba(22,58,95,.35);border-radius:999px;background:#fff}.volver:hover{border-color:#163a5f}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs a{color:#163a5f;text-decoration:none;padding:8px 12px;border-radius:999px;font-size:15px;opacity:.82}
+.tabs a:hover{opacity:1;background:rgba(22,58,95,.08)}.tabs a.on{opacity:1;background:#163a5f;color:#fff}
+.band{padding:clamp(20px,3vw,44px) max(4vw,16px)}
+.work{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:24px;max-width:1400px;margin:0 auto}
+.stagehead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 18px;margin-bottom:8px}
+.stagehead h1{font-size:clamp(26px,3vw,36px)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--mut)}
+.legend i{display:inline-block;width:16px;height:10px;border-radius:3px;vertical-align:middle;margin-right:6px}
+.fig{position:relative;height:clamp(340px,58vh,600px);border-radius:16px;border:1px solid var(--line);background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;overflow:hidden}
+.fig svg{position:absolute;inset:0;width:100%;height:100%}
+.hint{position:absolute;left:12px;bottom:8px;margin:0;font-size:13px;color:var(--mut);pointer-events:none}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.stepTxt{font-size:15px;color:var(--ink);flex:1 1 100%;background:var(--card);border-radius:12px;padding:10px 14px;margin:0}
+.panel{display:flex;flex-direction:column;gap:16px}
+.box{background:var(--card);border-radius:14px;padding:14px 16px}
+.box h2{font-size:17px;margin-bottom:10px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}.seg button{min-height:36px;padding:4px 12px;font-size:14px}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--mut);margin-top:10px}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px}.row button{min-height:34px;padding:3px 10px;font-size:14px}
+.mets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.met{background:var(--card);border-radius:12px;padding:10px 14px}.met p{margin:0}.met .l{font-size:13px;color:var(--mut)}.met .v{font-size:clamp(19px,2vw,23px);font-weight:600}.met .s{font-size:13px;color:var(--mut)}
+.fm div{font-size:15px;line-height:1.7;padding:4px 0;border-bottom:1px dashed var(--line)}.fm div:last-child{border:0}.fm b{font-weight:600}
+details summary{cursor:pointer;font-weight:600;font-size:17px;min-height:32px}
+.concept{border-left:4px solid var(--vio);background:color-mix(in srgb,var(--vio) 9%,transparent);padding:10px 14px;font-size:15px;margin:0}
+.concept b{color:var(--coral);font-weight:600}
+.note{font-size:13px;color:var(--mut);margin:0}
+.warn{border-left:4px solid var(--amb);background:color-mix(in srgb,var(--amb) 10%,transparent);padding:8px 12px;font-size:14px;margin:0}
+[hidden]{display:none!important}
+.fx{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.08;margin:0 .1em;font-size:.92em}
+.fx>span{padding:0 .2em}.fx>span:first-child{border-bottom:1.6px solid currentColor}
+.frin{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.fr{display:inline-flex;flex-direction:column;align-items:center;gap:4px;padding:6px 8px;border-radius:12px;background:var(--bg)}
+.fr .bar{width:100%;border-top:3px solid currentColor}
+.fr.t{color:var(--teal)}.fr.c{color:var(--coral)}
+.stp{display:inline-flex;align-items:center;gap:4px}
+.stp button{min-height:34px;width:34px;padding:0;font-size:18px;line-height:1;color:var(--ink)}
+.stp output{min-width:2.4ch;text-align:center;font-weight:600;font-size:22px}
+.op{font-size:30px;font-weight:600;color:var(--mut)}
+.lbl{font-size:13px;color:var(--mut);display:block;margin-bottom:6px}
+@media(max-width:900px){.work{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.fig{height:360px}.tabs a{padding:6px 9px;font-size:14px}}
+
+.fig.plain{background-image:none;height:clamp(460px,72vh,720px);background:#FBFCFE}
+.fig canvas{position:absolute;inset:0;width:100%;height:100%}
+@media(max-width:600px){.fig.plain{height:560px}}
+select{min-height:38px;border-radius:10px;border:1px solid var(--line);background:var(--bg);padding:4px 10px;font:inherit;font-size:15px;color:inherit}
+input[type=range]{accent-color:var(--sel);width:100%;height:28px}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}.tbl th{font-weight:500;color:var(--mut);text-align:right;font-size:12.5px;padding:4px 6px;border-bottom:1px solid var(--line)}.tbl td{padding:4px 6px;border-bottom:1px dashed var(--line);text-align:right}
+.tbl td:first-child,.tbl th:first-child{text-align:center}
+.big{font-size:clamp(22px,2.5vw,28px);font-weight:600;margin:8px 0 0}
+.tblw{overflow-x:auto;max-height:420px;overflow-y:auto}
+</style>
+<style>
+.fig.plain{height:clamp(420px,62vh,680px);background:#fff;position:relative;touch-action:none}
+#gsv{cursor:grab;touch-action:none}#gsv.grab{cursor:grabbing}
+.coef{margin-bottom:12px}.eqline{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:clamp(19px,2vw,23px);font-weight:600}
+.eqline label{display:inline-flex;align-items:center;gap:6px}
+.eqline input{width:clamp(54px,14vw,76px);font:inherit;font-size:inherit;text-align:center;padding:4px 6px;border:2px solid var(--line);border-radius:10px;background:#fff;color:#163a5f}
+.eqline input:focus{outline:none;border-color:#378ADD}.eqline input.err{border-color:#A32D2D;background:#FCEBEB}
+.eqline .pri{font-size:16px;margin-left:4px}.pri.pend{box-shadow:0 0 0 4px rgba(55,138,221,.35)}
+.pendTxt{color:#185FA5;font-weight:600}.errTxt{color:#A32D2D;margin:4px 0 0;font-size:14px;min-height:0}
+.ztools{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:6px}.ztools button{width:40px;height:40px;padding:0;font-size:20px;background:#fff}
+.coord{position:absolute;right:12px;bottom:30px;font-size:12.5px;color:var(--mut);background:rgba(255,255,255,.85);padding:2px 6px;border-radius:6px}
+.el{display:flex;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line)}.el:last-child{border:0}
+.el .dt{flex:none;width:12px;height:12px;border-radius:50%;margin-top:5px}.el .t{margin:0;font-size:13px;color:var(--mut)}.el .v{font-size:15.5px;line-height:1.55}
+#invInfo p{margin:6px 0;font-size:15px;line-height:1.55}#invInfo .fm{font-size:17px;font-weight:600;color:#993556}
+.warn{margin-bottom:12px;font-size:15px;line-height:1.55}
+</style>
+</head>
+<body>
+<header class="top">
+<div class="brand"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" stroke-width="4" stroke-linecap="round" aria-hidden="true"><path d="M6 52 H58 M32 6 V58" stroke="#9aa6b4" stroke-width="2.5"/><path d="M12 10 Q32 80 52 10" stroke="#378ADD"/><circle cx="32" cy="45" r="4" fill="#7F77DD" stroke="none"/></svg><span>Función cuadrática</span><a class="volver" href="../index.html#simulaciones" target="_top">← Órbita Matemática</a></div>
+
+</header>
+<main>
+<section class="band">
+<div class="work">
+<div>
+<div class="stagehead"><h1>Función cuadrática</h1><div class="legend"><span><i style="background:#378ADD"></i>f(x)</span><span><i style="background:#D85A30"></i>Cortes eje X</span><span><i style="background:#1D9E75"></i>Corte eje Y</span><span><i style="background:#7F77DD"></i>Vértice</span><span><i style="background:#BA7517"></i>Eje de simetría</span><span><i style="background:#D4537E"></i>Inversa</span></div></div>
+<div class="box coef"><div class="eqline"><span class="eqf">f(x) =</span><label><input id="ia" value="1" inputmode="decimal" autocomplete="off" aria-label="Valor de A"><span>x² +</span></label><label><input id="ib" value="-2" inputmode="decimal" autocomplete="off" aria-label="Valor de B"><span>x +</span></label><label><input id="ic" value="-3" inputmode="decimal" autocomplete="off" aria-label="Valor de C"></label><button class="pri" id="bPlot">Graficar</button></div>
+<p class="note" style="margin:6px 0 0">A, B y C pueden ser enteros, decimales con coma (1,5) o fracciones (1/2). <span id="dirty" hidden class="pendTxt">Cambiaste un valor: presiona «Graficar» para actualizar.</span></p><p id="msg" class="errTxt"></p>
+<div class="row" id="pre"><span class="note">Ejemplos:</span><button data-p="1;-2;-3">x² − 2x − 3</button><button data-p="-1;4;0">−x² + 4x</button><button data-p="1;-6;9">x² − 6x + 9</button><button data-p="2;4;5">2x² + 4x + 5</button><button data-p="-0,5;1;4">−0,5x² + x + 4</button><button data-p="0;2;-4">A = 0</button></div></div>
+<div class="fig plain"><svg id="gsv" role="img" aria-label="Plano cartesiano con el gráfico de la función"></svg>
+<div class="ztools"><button id="zIn" aria-label="Acercar">+</button><button id="zOut" aria-label="Alejar">−</button><button id="zFit" aria-label="Encuadrar el gráfico">⤢</button></div><span id="coord" class="coord"></span>
+<p class="hint">Arrastra el plano para moverlo · rueda del mouse o pellizco para zoom</p></div>
+<div class="row" id="showEl"><span class="note">Mostrar:</span><label class="chk"><input type="checkbox" data-k="cor" checked> Cortes con los ejes</label><label class="chk"><input type="checkbox" data-k="ver" checked> Vértice</label><label class="chk"><input type="checkbox" data-k="eje" checked> Eje de simetría</label></div>
+</div>
+<aside class="panel">
+<p class="concept">Una <b>función cuadrática</b> es f(x) = ax² + bx + c con <b>a ≠ 0</b>. Su gráfico es una <b>parábola</b>. Los puntos donde corta al eje X son las <b>soluciones</b> de la ecuación ax² + bx + c = 0.</p>
+<div class="warn" id="warn" hidden></div>
+<div class="box"><h2>Elementos del gráfico</h2><div id="res"></div></div>
+<div class="box" id="invBox" hidden><h2>Función inversa</h2><div class="seg" id="invOpt"></div><div id="invInfo" style="margin-top:10px"></div></div>
+</aside>
+</div>
+</section>
+</main>
+<footer class="pie-sim" style="background:#EAF2FB;color:#163a5f;border-top:3px solid #378ADD;padding:18px max(4vw,16px);font:400 14px/1.55 Lexend,system-ui,sans-serif;margin-top:24px"><strong style="font-weight:600;font-size:15.5px">Fernando J. Aravena Muñoz</strong><br>Licenciado en ciencias exactas<br>Profesor de matemáticas y física<br><span style="color:#5b6675">Temuco, Chile</span></footer>
+<script>
+{
+const $=id=>document.getElementById(id);
+const C={ink:'#16202b',mut:'#5b6675',grid:'#e8edf3',grid2:'#d3dce6',axis:'#4a5563',f:'#378ADD',root:'#D85A30',yi:'#1D9E75',ver:'#7F77DD',eje:'#BA7517',inv:'#D4537E',id:'#8a94a3'};
+const F1=v=>(+v).toFixed(1);
+const nf=(x,d=2)=>{const r=Math.round(x*10**d)/10**d;return(Object.is(r,-0)?0:r).toLocaleString('es-CL',{maximumFractionDigits:d}).replace('-','−');};
+const isInt=x=>Math.abs(x-Math.round(x))<1e-9;
+function fr(x){if(isInt(x))return nf(x);if(isInt(x*100))return nf(x);for(let q=2;q<=60;q++){if(isInt(x*q)){const p=Math.round(x*q);return `${p<0?'−':''}${Math.abs(p)}/${q} ≈ ${nf(x)}`;}}return '≈ '+nf(x);}
+const num=x=>isInt(x*100)?nf(x):'≈ '+nf(x);
+const par=x=>x<0?`(${nf(x)})`:nf(x);
+function parse(v){v=(v||'').trim().replace(/−/g,'-').replace(/\s+/g,'');if(v===''||v==='+'||v==='-')return null;const m=v.match(/^([+-]?\d+(?:[.,]\d+)?)(?:\/([+-]?\d+(?:[.,]\d+)?))?$/);if(!m)return null;const p=parseFloat(m[1].replace(',','.')),q=m[2]?parseFloat(m[2].replace(',','.')):1;if(!q)return null;const r=p/q;return Math.abs(r)>1000?null:r;}
+function poly(a,b,c,v='x'){const t=[];const co=(k,s)=>{if(!k)return;const ab=Math.abs(k),sg=k<0?'−':'+';let body=s&&ab===1?s:nf(ab)+s;t.push([sg,body]);};co(a,v+'²');co(b,v);co(c,'');if(!t.length)return '0';return t.map(([sg,b],i)=>i?` ${sg} ${b}`:(sg==='−'?'−':'')+b).join('');}
+const minus=(v,k)=>k===0?v:k>0?`${v} − ${nf(k)}`:`${v} + ${nf(-k)}`;
+/* ---------- estado ---------- */
+const S={a:1,b:-2,c:-3,plotted:false,dirty:false,inv:'no',show:{cor:true,ver:true,eje:true},view:{cx:0,cy:0,s:40},ptrs:new Map(),pinch:null};
+const f=x=>S.a*x*x+S.b*x+S.c;
+function an(){const{a,b,c}=S,o={a,b,c,lin:a===0};if(!o.lin){o.D=b*b-4*a*c;o.h=-b/(2*a);o.k=c-b*b/(4*a);o.roots=o.D>1e-12?[(-b-Math.sqrt(o.D))/(2*a),(-b+Math.sqrt(o.D))/(2*a)].sort((p,q)=>p-q):Math.abs(o.D)<=1e-12?[o.h]:[];}
+ else o.roots=b!==0?[-c/b]:[];return o;}
+/* ---------- vista ---------- */
+let W=700,H=520;const sv=$('gsv');
+const toS=(x,y)=>[W/2+(x-S.view.cx)*S.view.s,H/2-(y-S.view.cy)*S.view.s];
+const toW=(px,py)=>[S.view.cx+(px-W/2)/S.view.s,S.view.cy-(py-H/2)/S.view.s];
+function fit(){const o=an(),pts=[[0,0],[0,S.c]];o.roots.forEach(r=>pts.push([r,0]));
+ if(!o.lin){pts.push([o.h,o.k]);const d=Math.min(6,Math.max(1.2,Math.sqrt(6/Math.abs(S.a))));pts.push([o.h-d,f(o.h-d)],[o.h+d,f(o.h+d)]);}
+ else{pts.push([-3,f(-3)],[3,f(3)]);}
+ if(S.inv!=='no')pts.slice().forEach(([x,y])=>pts.push([y,x]));
+ let x0=Math.min(...pts.map(p=>p[0])),x1=Math.max(...pts.map(p=>p[0])),y0=Math.min(...pts.map(p=>p[1])),y1=Math.max(...pts.map(p=>p[1]));
+ const ex=Math.max(4,x1-x0),ey=Math.max(4,y1-y0);S.view.cx=(x0+x1)/2;S.view.cy=(y0+y1)/2;S.view.s=Math.max(0.02,Math.min(W/(ex*1.3),H/(ey*1.3)));}
+function niceStep(){const raw=70/S.view.s,p=10**Math.floor(Math.log10(raw)),m=raw/p;return(m<1.5?1:m<3.5?2:m<7.5?5:10)*p;}
+/* ---------- dibujo ---------- */
+const ln=(x1,y1,x2,y2,c,w,dash)=>`<line x1="${F1(x1)}" y1="${F1(y1)}" x2="${F1(x2)}" y2="${F1(y2)}" stroke="${c}" stroke-width="${w}"${dash?` stroke-dasharray="${dash}"`:''}/>`;
+const tx=(x,y,t,c,o={})=>`<text x="${F1(x)}" y="${F1(y)}" font-size="${o.fs||13}" font-weight="${o.fw||500}" fill="${c}" text-anchor="${o.a||'middle'}" dominant-baseline="central" stroke="#fff" stroke-width="${o.sw??4}" paint-order="stroke">${t}</text>`;
+const clampY=v=>Math.max(-4*H,Math.min(5*H,v)),clampX=v=>Math.max(-4*W,Math.min(5*W,v));
+function curve(fn,from,to,c,w,op=1,dash){let d='';for(let px=Math.max(0,from);px<=Math.min(W,to)+1;px+=2){const x=toW(px,0)[0],y=fn(x);const sy=clampY(toS(x,y)[1]);d+=(d?'L':'M')+F1(px)+' '+F1(sy);}return d?`<path d="${d}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round" opacity="${op}"${dash?` stroke-dasharray="${dash}"`:''}/>`:'';}
+function curveInv(t0,t1,c,w){// puntos (f(t), t) para t en [t0,t1] (mundo)
+ const lo=Math.max(t0,toW(0,H)[1]),hi=Math.min(t1,toW(0,0)[1]);if(lo>=hi)return'';const n=Math.max(40,Math.ceil((hi-lo)*S.view.s/2));let d='';
+ for(let i=0;i<=n;i++){const t=lo+(hi-lo)*i/n,p=toS(f(t),t);d+=(i?'L':'M')+F1(clampX(p[0]))+' '+F1(p[1]);}return `<path d="${d}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round"/>`;}
+function dot(x,y,c,lab,pos='a',hollow){const[p,q]=toS(x,y);if(p<-20||p>W+20||q<-20||q>H+20)return'';const off={a:[0,-16,'middle'],b:[0,17,'middle'],bb:[0,34,'middle'],r:[10,-12,'start'],l:[-10,-12,'end'],br:[10,14,'start'],bl:[-10,14,'end']}[pos];
+ return `<circle cx="${F1(p)}" cy="${F1(q)}" r="6" fill="${hollow?'#fff':c}" stroke="${c}" stroke-width="2.5"/>`+(lab?tx(p+off[0],q+off[1],lab,c,{fs:13,fw:600,a:off[2]}):'');}
+const pt=(x,y)=>`(${nf(x)} ; ${nf(y)})`;
+function render(){W=sv.clientWidth||700;H=sv.clientHeight||520;sv.setAttribute('viewBox',`0 0 ${W} ${H}`);let o='';
+ const st=niceStep(),[xa,yb]=toW(0,H),[xb,ya]=toW(W,0),dec=Math.max(0,-Math.floor(Math.log10(st)));
+ const rnd=v=>Math.round(v*10**dec)/10**dec;
+ for(let x=Math.ceil(xa/st)*st;x<=xb;x+=st){const p=toS(x,0)[0];o+=ln(p,0,p,H,C.grid,1);}
+ for(let y=Math.ceil(yb/st)*st;y<=ya;y+=st){const q=toS(0,y)[1];o+=ln(0,q,W,q,C.grid,1);}
+ const[ox,oy]=toS(0,0),axY=Math.max(14,Math.min(H-14,oy)),axX=Math.max(8,Math.min(W-30,ox));
+ o+=(oy>=0&&oy<=H?ln(0,oy,W,oy,C.axis,1.6):'')+(ox>=0&&ox<=W?ln(ox,0,ox,H,C.axis,1.6):'');
+ for(let x=Math.ceil(xa/st)*st;x<=xb;x+=st){if(Math.abs(x)<st/2)continue;const p=toS(x,0)[0];o+=tx(p,axY+(oy>H-14?-12:12),nf(rnd(x),dec),C.mut,{fs:11.5,sw:3});}
+ for(let y=Math.ceil(yb/st)*st;y<=ya;y+=st){if(Math.abs(y)<st/2)continue;const q=toS(0,y)[1];o+=tx(axX+(ox>W-30?-6:-6),q,nf(rnd(y),dec),C.mut,{fs:11.5,a:'end',sw:3});}
+ if(ox>=0&&ox<=W&&oy>=0&&oy<=H)o+=tx(ox-6,oy+11,'0',C.mut,{fs:11.5,a:'end',sw:3});
+ o+=tx(W-10,Math.max(12,Math.min(H-12,oy-12)),'x',C.axis,{fs:14,fw:600,a:'end'})+tx(Math.max(12,Math.min(W-12,ox+12)),12,'y',C.axis,{fs:14,fw:600});
+ if(S.plotted){const A=an();
+  if(S.inv!=='no')o+=(()=>{const p1=toS(xa,xa),p2=toS(xb,xb);return ln(p1[0],p1[1],p2[0],p2[1],C.id,1.6,'6 6')+(()=>{const lo=Math.max(xa,yb),hi=Math.min(xb,ya);if(lo>=hi)return'';const t=lo+(hi-lo)*0.82,q=toS(t,t);return tx(q[0]+8,q[1]+14,'y = x',C.id,{fs:12.5,fw:600,a:'start'});})();})();
+  if(!A.lin&&S.show.eje){const p=toS(A.h,0)[0];o+=ln(p,0,p,H,C.eje,2,'7 6')+tx(p+6,22,`x = ${nf(A.h)}`,C.eje,{fs:13,fw:600,a:'start'});}
+  // curva
+  if(!A.lin&&(S.inv==='der'||S.inv==='izq')){const ph=toS(A.h,0)[0],keepR=S.inv==='der';o+=curve(f,0,W,C.f,3,.25)+curve(f,keepR?ph:0,keepR?W:ph,C.f,3.6);}
+  else o+=curve(f,0,W,C.f,3.4);
+  // inversa
+  if(S.inv!=='no'){if(A.lin){if(S.b!==0){const g=x=>(x-S.c)/S.b;o+=curve(g,0,W,C.inv,3.4);}else{const p=toS(S.c,0)[0];o+=ln(p,0,p,H,C.inv,3.4);}}
+   else{const big=1e6;if(S.inv==='rel')o+=curveInv(-big,big,C.inv,3.4);else if(S.inv==='der')o+=curveInv(A.h,big,C.inv,3.6);else o+=curveInv(-big,A.h,C.inv,3.6);
+    if(S.show.ver)o+=dot(A.k,A.h,C.inv,`(${nf(A.k)} ; ${nf(A.h)})`,'r',true);}}
+  // puntos
+  const yAlsoRoot=A.roots.some(r=>Math.abs(r)<1e-9);
+  if(S.show.cor){A.roots.forEach((r,i)=>{const tag=A.roots.length>1?`x${i?'₂':'₁'}`:'x₀';o+=dot(r,0,C.root,`${tag} = ${nf(r)}`,'bb');});
+   if(!yAlsoRoot&&!(A.lin&&S.b===0))o+=dot(0,S.c,C.yi,`(0 ; ${nf(S.c)})`,S.a>0||(A.lin&&S.b>0)?'r':'r');else if(yAlsoRoot)o+=dot(0,0,C.yi,'',null,true);}
+  if(!A.lin&&S.show.ver)o+=dot(A.h,A.k,C.ver,`V ${pt(A.h,A.k)}`,S.a>0?'b':'a');
+  const eq=`f(x) = ${poly(S.a,S.b,S.c)}`;o+=tx(14,20,eq,C.f,{fs:15,fw:600,a:'start'});if(S.inv!=='no')o+=tx(14,42,invFormula(A).replace(/<[^>]+>/g,''),C.inv,{fs:14,fw:600,a:'start'});}
+ else o+=tx(W/2,H/2-30,'Escribe A, B y C y presiona «Graficar»',C.mut,{fs:16});
+ sv.innerHTML=o;}
+/* ---------- inversa ---------- */
+function invFormula(A){if(A.lin){if(S.b===0)return 'f no tiene inversa (es constante)';const inner=minus('x',S.c);return S.b===1?`f⁻¹(x) = ${inner}`:`f⁻¹(x) = (${inner}) : ${par(S.b)}`;}
+ if(S.inv==='rel')return `Relación inversa: x = ${poly(S.a,S.b,S.c,'y')}`;
+ const sg=S.inv==='der'?'+':'−',rad=S.a>0?minus('x',A.k):(A.k===0?'−x':`${nf(A.k)} − x`),den=Math.abs(S.a),r=den===1?rad:`(${rad}) : ${nf(den)}`;
+ const hh=A.h===0?'':`${nf(A.h)} `;return `f⁻¹(x) = ${hh}${A.h===0&&sg==='+'?'':sg+' '}√(${r})`;}
+function invInfo(A){if(A.lin){if(S.b===0)return `<p>f(x) = ${nf(S.c)} es <b>constante</b>: todos los x tienen la misma imagen, así que <b>no es inyectiva</b> y no tiene función inversa. Su reflejo en la recta y = x es la recta vertical x = ${nf(S.c)}, que no es una función.</p>`;
+  return `<p>Para encontrar la inversa se despeja x en y = ${poly(0,S.b,S.c)} y luego se intercambian x e y:</p><div class="fm">${invFormula(A)}</div><p class="note">El gráfico de f⁻¹ es el reflejo de la recta en y = x. Su pendiente es 1 : ${par(S.b)}.</p>`;}
+ const dom=S.a>0?`x ≥ ${nf(A.k)}`:`x ≤ ${nf(A.k)}`;
+ if(S.inv==='rel')return `<p>Al reflejar la parábola en la recta <b>y = x</b> se obtiene una parábola «acostada». <b>No es una función</b>: una recta vertical la corta en dos puntos. Ocurre porque f no es inyectiva: por ejemplo, f(${nf(A.h-1)}) = f(${nf(A.h+1)}) = ${nf(f(A.h+1))}.</p><p>Para que exista la función inversa hay que <b>restringir el dominio</b> de f a un lado del vértice.</p>`;
+ const side=S.inv==='der'?`x ≥ ${nf(A.h)}`:`x ≤ ${nf(A.h)}`;
+ return `<p>Restringiendo f a <b>${side}</b> (un lado del eje de simetría) la función es inyectiva y tiene inversa. Se despeja x desde la forma con el vértice: y = a(x − h)² + k, con a = ${nf(S.a)}, h = ${nf(A.h)} y k = ${nf(A.k)}.</p><div class="fm">${invFormula(A)}</div><p class="note">Dominio de f⁻¹: ${dom} (el recorrido de f). Recorrido de f⁻¹: ${S.inv==='der'?'y ≥':'y ≤'} ${nf(A.h)}.</p>`;}
+/* ---------- panel ---------- */
+function panel(){const A=an(),{a,b,c}=S,out=[];const row=(col,t,v)=>`<div class="el"><span class="dt" style="background:${col}"></span><div><p class="t">${t}</p><div class="v">${v}</div></div></div>`;
+ $('warn').hidden=!A.lin;
+ if(A.lin){$('warn').innerHTML=`<b>A = 0:</b> el término con x² desaparece, así que <b>no es una ecuación cuadrática</b>. Queda la ecuación <b>lineal</b> ${poly(0,b,c)} = 0 y la función ${b===0?'<b>constante</b>':'<b>lineal (afín)</b>'} f(x) = ${poly(0,b,c)}, cuyo gráfico es una <b>recta</b>.`;
+  out.push(row(C.f,'Función',`f(x) = ${poly(0,b,c)}`));out.push(row(C.f,'Pendiente',`m = ${nf(b)}: ${b>0?'la recta sube':b<0?'la recta baja':'la recta es horizontal'}`));
+  out.push(row(C.root,'Corte con el eje X (solución de la ecuación)',b!==0?`${poly(0,b,c)} = 0 → x = ${fr(-c/b)}<br>Punto ${pt(-c/b,0)}`:c===0?'Toda la recta está sobre el eje X':'No corta al eje X: la ecuación no tiene solución'));
+  out.push(row(C.yi,'Corte con el eje Y',`f(0) = ${nf(c)} → ${pt(0,c)}`));
+  out.push(row(C.ver,'Vértice, concavidad y eje de simetría','No tiene: es una recta, no una parábola.'));}
+ else{const D=A.D;
+  out.push(row(C.f,'Función y ecuación',`f(x) = ${poly(a,b,c)}<br><span class="note">a = ${nf(a)} · b = ${nf(b)} · c = ${nf(c)}</span>`));
+  out.push(row(C.f,'Concavidad',a>0?`a = ${nf(a)} > 0: <b>hacia arriba</b> ∪ (tiene un mínimo)`:`a = ${nf(a)} < 0: <b>hacia abajo</b> ∩ (tiene un máximo)`));
+  const nr=D>1e-12?'Δ > 0: <b>dos soluciones reales</b>, la parábola corta dos veces al eje X':Math.abs(D)<=1e-12?'Δ = 0: <b>una solución real</b> (doble), la parábola toca al eje X en el vértice':'Δ < 0: <b>no hay soluciones reales</b>, la parábola no corta al eje X';
+  out.push(row(C.root,'Discriminante',`Δ = b² − 4ac = ${par(b)}² − 4 · ${par(a)} · ${par(c)} = ${num(D)}<br>${nr}`));
+  let rs;if(D>1e-12){const sq=Math.sqrt(D),exact=isInt(sq*1000)?nf(sq,3):`√${num(D)}`;rs=`x = (−b ± √Δ) : 2a = (${nf(-b)} ± ${exact}) : ${nf(2*a)}<br>x₁ = ${fr(A.roots[0])} · x₂ = ${fr(A.roots[1])}<br>Puntos ${pt(A.roots[0],0)} y ${pt(A.roots[1],0)}`;}
+  else if(Math.abs(D)<=1e-12)rs=`x = −b : 2a = ${fr(A.h)}<br>Punto ${pt(A.h,0)}`;else rs='No hay: √Δ no es un número real.';
+  out.push(row(C.root,'Cortes con el eje X (soluciones de la ecuación = 0)',rs));
+  out.push(row(C.yi,'Corte con el eje Y',`f(0) = c = ${nf(c)} → ${pt(0,c)}`));
+  out.push(row(C.ver,'Vértice',`h = −b : 2a = ${nf(-b)} : ${par(2*a)} = ${fr(A.h)}<br>k = f(h) = ${fr(A.k)}<br>V ${pt(A.h,A.k)}: valor ${a>0?'mínimo':'máximo'} de f`));
+  out.push(row(C.eje,'Eje de simetría',`x = ${fr(A.h)}: recta vertical que pasa por el vértice`));}
+ $('res').innerHTML=out.join('');
+ $('invBox').hidden=!S.plotted;
+ $('invOpt').innerHTML=(A.lin?[['no','Ocultar'],['si','Mostrar f⁻¹']]:[['no','Ocultar'],['rel','Reflejo en y = x'],['der',`Rama x ≥ ${nf(A.h)}`],['izq',`Rama x ≤ ${nf(A.h)}`]]).map(([k,t])=>`<button data-i="${k}" class="${(S.inv===k)||(A.lin&&k==='si'&&S.inv!=='no')?'on':''}">${t}</button>`).join('');
+ $('invInfo').innerHTML=S.inv==='no'?'<p class="note">Elige cómo mostrar la inversa.</p>':invInfo(A);}
+function upd(){panel();render();$('bPlot').classList.toggle('pend',S.dirty);$('dirty').hidden=!S.dirty;}
+/* ---------- controles ---------- */
+function plot(){const a=parse($('ia').value),b=parse($('ib').value),c=parse($('ic').value);const bad=[[a,'ia'],[b,'ib'],[c,'ic']].filter(([v])=>v===null);
+ ['ia','ib','ic'].forEach(id=>$(id).classList.toggle('err',bad.some(x=>x[1]===id)));
+ if(bad.length){$('msg').textContent='Escribe números (enteros, decimales con coma o fracciones como 1/2) entre −1000 y 1000.';return;}
+ $('msg').textContent='';const wasLin=S.a===0;Object.assign(S,{a,b,c,plotted:true,dirty:false});if((a===0)!==wasLin)S.inv='no';if(S.inv==='si'&&a!==0)S.inv='rel';fit();upd();}
+$('bPlot').onclick=plot;['ia','ib','ic'].forEach(id=>{$(id).addEventListener('keydown',e=>{if(e.key==='Enter')plot();});$(id).addEventListener('input',()=>{if(S.plotted){S.dirty=true;$('bPlot').classList.add('pend');$('dirty').hidden=false;}});});
+$('pre').onclick=e=>{const b=e.target.closest('button');if(!b)return;const[a,bb,c]=b.dataset.p.split(';');$('ia').value=a;$('ib').value=bb;$('ic').value=c;plot();};
+$('invOpt').onclick=e=>{const b=e.target.closest('button');if(!b)return;const was=S.inv;S.inv=b.dataset.i;if(was==='no'&&S.inv!=='no'){fit();upd();return;}const A=an();// asegurar que se vea
+ if(S.inv!=='no'){const[x0,y0]=toW(0,H),[x1,y1]=toW(W,0);const need=A.lin?[[0,S.c]]:[[A.k,A.h]];if(need.some(([x,y])=>x<x0||x>x1||y<y0||y>y1))fit();}upd();};
+document.querySelectorAll('#showEl input').forEach(i=>i.onchange=()=>{S.show[i.dataset.k]=i.checked;render();});
+const zoomAt=(fac,px=W/2,py=H/2)=>{const[wx,wy]=toW(px,py);S.view.s=Math.max(0.02,Math.min(4000,S.view.s*fac));S.view.cx=wx-(px-W/2)/S.view.s;S.view.cy=wy+(py-H/2)/S.view.s;render();};
+$('zIn').onclick=()=>zoomAt(1.4);$('zOut').onclick=()=>zoomAt(1/1.4);$('zFit').onclick=()=>{fit();render();};
+sv.addEventListener('wheel',e=>{e.preventDefault();const r=sv.getBoundingClientRect();zoomAt(e.deltaY<0?1.15:1/1.15,e.clientX-r.left,e.clientY-r.top);},{passive:false});
+sv.addEventListener('pointerdown',e=>{sv.setPointerCapture(e.pointerId);S.ptrs.set(e.pointerId,[e.clientX,e.clientY]);if(S.ptrs.size===2){const[p,q]=[...S.ptrs.values()];S.pinch=Math.hypot(p[0]-q[0],p[1]-q[1]);}sv.classList.add('grab');});
+sv.addEventListener('pointermove',e=>{const r=sv.getBoundingClientRect();const w=toW(e.clientX-r.left,e.clientY-r.top);$('coord').textContent=`(${nf(w[0])} ; ${nf(w[1])})`;
+ if(!S.ptrs.has(e.pointerId))return;const prev=S.ptrs.get(e.pointerId);S.ptrs.set(e.pointerId,[e.clientX,e.clientY]);
+ if(S.ptrs.size===2){const[p,q]=[...S.ptrs.values()],d=Math.hypot(p[0]-q[0],p[1]-q[1]);if(S.pinch){zoomAt(d/S.pinch,(p[0]+q[0])/2-r.left,(p[1]+q[1])/2-r.top);}S.pinch=d;return;}
+ S.view.cx-=(e.clientX-prev[0])/S.view.s;S.view.cy+=(e.clientY-prev[1])/S.view.s;render();});
+const up=e=>{S.ptrs.delete(e.pointerId);if(S.ptrs.size<2)S.pinch=null;if(!S.ptrs.size)sv.classList.remove('grab');};sv.addEventListener('pointerup',up);sv.addEventListener('pointercancel',up);
+sv.addEventListener('pointerleave',()=>{$('coord').textContent='';});
+new ResizeObserver(()=>render()).observe(sv);
+S.view={cx:0,cy:0,s:40};upd();
+}
+
+</script>
+<style>
+.mclase{margin-left:4px;font:inherit;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--line,#cbd5e1);background:#fff;color:#163a5f;cursor:pointer;white-space:nowrap}
+.mclase[aria-pressed="true"]{background:#163a5f;color:#fff;border-color:#163a5f}
+@media(min-width:901px){
+body.clase .concept,body.clase .note,body.clase .hint,body.clase .panel details,body.clase .panel .box:has(> details:only-child){display:none!important}
+body.clase .work{grid-template-columns:minmax(0,2.2fr) minmax(280px,1fr)}
+body.clase .fig{height:clamp(420px,76vh,920px)}
+body.clase .stepTxt{font-size:19px}}
+@media(max-width:900px){.mclase{display:none}}
+</style>
+<script>
+(function(){var K='orbita-modo-clase',on=false;try{on=localStorage.getItem(K)==='1';}catch(e){}
+var b=document.createElement('button');b.type='button';b.className='mclase';b.textContent='Modo clase';b.title='Oculta las explicaciones y agranda la figura para proyectar';
+function set(v){on=v;document.body.classList.toggle('clase',on);b.setAttribute('aria-pressed',on?'true':'false');try{localStorage.setItem(K,on?'1':'0');}catch(e){}setTimeout(function(){window.dispatchEvent(new Event('resize'));},30);}
+b.onclick=function(){set(!on);};var h=document.querySelector('.brand')||document.querySelector('header');if(h)h.appendChild(b);set(on);})();
+</script>
+</body>
+</html>
