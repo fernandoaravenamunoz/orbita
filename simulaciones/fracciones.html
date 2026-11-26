@@ -64,6 +64,7 @@ details summary{cursor:pointer;font-weight:600;font-size:17px;min-height:32px}
 .lbl{font-size:13px;color:var(--mut);display:block;margin-bottom:6px}
 @media(max-width:900px){.work{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:600px){.fig{height:360px}.tabs a{padding:6px 9px;font-size:14px}}
+.tools button:disabled{opacity:.45;cursor:not-allowed}
 </style>
 </head>
 <body>
@@ -77,7 +78,7 @@ details summary{cursor:pointer;font-weight:600;font-size:17px;min-height:32px}
 <div>
 <div class="stagehead"><h1>Multiplicación de fracciones</h1><div class="legend"><span><i style="background:var(--teal)"></i>Primer factor: columnas, achurado «/»</span><span><i style="background:var(--coral)"></i>Segundo factor: filas, achurado «\»</span><span><i style="background:var(--vio)"></i>Producto: achurado cruzado</span></div></div>
 <div class="fig"><svg id="msv" role="img" aria-label="Modelo de área de la multiplicación de fracciones"></svg><p class="hint">Modelo de área: cada cuadrado es una unidad</p></div>
-<div class="tools"><button id="mPrev">◀ Paso anterior</button><button id="mNext" class="pri">Paso siguiente ▶</button><button id="mAll">Ver todo</button><button id="mRev" hidden class="pri">Revelar</button><p class="stepTxt" id="mStep"></p></div>
+<div class="tools"><button id="mPrev">◀ Paso anterior</button><button id="mNext" class="pri">Paso siguiente ▶</button><button id="mAll">Ver todo</button><button id="mNew">↻ Nuevo ejemplo</button><button id="mRev" hidden class="pri">Revelar</button><p class="stepTxt" id="mStep"></p></div>
 </div>
 <aside class="panel">
 <p class="concept">Multiplicar <span class="fx"><span>a</span><span>b</span></span> · <span class="fx"><span>c</span><span>d</span></span> es calcular <b>una fracción de otra fracción</b>. La unidad es un cuadrado: el primer factor se marca en columnas, el segundo en filas, y al <b>juntar</b> las dos representaciones, el producto es la zona donde <b>se cruzan</b> los achurados.</p>
@@ -98,7 +99,7 @@ details summary{cursor:pointer;font-weight:600;font-size:17px;min-height:32px}
 <div>
 <div class="stagehead"><h1 id="dTitle">División de fracciones</h1><div class="legend" id="dLeg"></div></div>
 <div class="fig"><svg id="dsv" role="img" aria-label="Recta numérica con la división de fracciones"></svg><p class="hint" id="dHint"></p></div>
-<div class="tools"><button id="dPrev">◀ Paso anterior</button><button id="dNext" class="pri">Paso siguiente ▶</button><button id="dAll">Ver todo</button><button id="dRev" hidden class="pri">Revelar</button><p class="stepTxt" id="dStep"></p></div>
+<div class="tools"><button id="dPrev">◀ Paso anterior</button><button id="dNext" class="pri">Paso siguiente ▶</button><button id="dAll">Ver todo</button><button id="dNew">↻ Nuevo ejemplo</button><button id="dRev" hidden class="pri">Revelar</button><p class="stepTxt" id="dStep"></p></div>
 </div>
 <aside class="panel">
 <p class="concept" id="dConcept"></p>
@@ -136,7 +137,7 @@ function Ln(x1,y1,x2,y2,c,w,o={}){return `<line x1="${F1(x1)}" y1="${F1(y1)}" x2
 
 /* ---------- estado ---------- */
 const S={ma:2,mb:3,mc:3,md:4,mStep:0,mHide:false,mRev:false,
- mode:'cubrir',dp:2,dq:1,dr:3,ds:4,dn:3,dStep:0,dHide:false,dRev:false,anim:0,t0:0};
+ mode:'cubrir',cp:0,dp:2,dq:1,dr:3,ds:4,dn:3,dStep:0,dHide:false,dRev:false,anim:0,t0:0};
 const LIM={ma:()=>[0,2*S.mb],mb:()=>[1,10],mc:()=>[0,2*S.md],md:()=>[1,10],dp:()=>[1,4*S.dq],dq:()=>[1,10],dr:()=>[1,3*S.ds],ds:()=>[1,10],dn:()=>[1,10]};
 const cl=(k)=>{const[a,b]=LIM[k]();S[k]=Math.min(b,Math.max(a,S[k]));};
 function stp(k,l){return `<span class="stp" data-key="${k}"><button data-d="-1" aria-label="Disminuir ${l}">−</button><output id="o_${k}"></output><button data-d="1" aria-label="Aumentar ${l}">+</button></span>`;}
@@ -147,7 +148,7 @@ $('frP').innerHTML=frHTML('dp','dq','numerador del dividendo','denominador del d
 $('frR').innerHTML=frHTML('dr','ds','numerador del divisor','denominador del divisor');
 $('frN').innerHTML=stp('dn','divisor (número natural)');
 document.addEventListener('click',e=>{const b=e.target.closest('.stp button');if(!b)return;const k=b.parentNode.dataset.key;S[k]+=+b.dataset.d;cl(k);['ma','mc','dp','dr'].forEach(cl);
- if(k[0]==='m'){S.mRev=false;S.mA=-1e9;}else{S.dRev=false;S.dA=-1e9;}upd();});
+ if(k[0]==='m'){S.mRev=false;S.mA=-1e9;}else{S.dRev=false;S.dA=-1e9;S.cp=0;S.dStep=0;}upd();});
 
 /* ---------- presets ---------- */
 const MPRE=[['2/3 · 3/4',2,3,3,4],['1/2 · 1/2',1,2,1,2],['3/5 · 2/3',3,5,2,3],['4/5 · 5/4',4,5,5,4],['3/2 · 1/3',3,2,1,3],['0,3 · 0,4',3,10,4,10]];
@@ -156,8 +157,8 @@ $('mPre').onclick=e=>{const b=e.target.closest('button');if(!b)return;const p=MP
 const DPRE={cubrir:[['2 : 3/4',2,1,3,4],['3/4 : 1/8',3,4,1,8],['0,75 : 0,25',3,4,1,4],['5/2 : 1/2',5,2,1,2],['1/2 : 3/4',1,2,3,4],['3 : 2/5',3,1,2,5]],
  repartir:[['3/4 : 3',3,4,3],['2/3 : 4',2,3,4],['5 : 2',5,1,2],['1/2 : 5',1,2,5]]};
 function drawDPre(){$('dPre').innerHTML=DPRE[S.mode].map((p,i)=>`<button data-i="${i}">${p[0]}</button>`).join('');}
-$('dPre').onclick=e=>{const b=e.target.closest('button');if(!b)return;const p=DPRE[S.mode][+b.dataset.i];if(S.mode==='cubrir')[S.dp,S.dq,S.dr,S.ds]=p.slice(1);else[S.dp,S.dq,S.dn]=p.slice(1);S.dStep=0;S.dRev=false;upd();};
-$('dMode').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.mode=b.dataset.m;S.dStep=0;S.dRev=false;drawDPre();upd();};
+$('dPre').onclick=e=>{const b=e.target.closest('button');if(!b)return;const p=DPRE[S.mode][+b.dataset.i];if(S.mode==='cubrir')[S.dp,S.dq,S.dr,S.ds]=p.slice(1);else[S.dp,S.dq,S.dn]=p.slice(1);S.dStep=0;S.cp=0;S.dRev=false;upd();};
+$('dMode').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.mode=b.dataset.m;S.dStep=0;S.cp=0;S.dRev=false;drawDPre();upd();};
 
 /* ---------- pasos ---------- */
 const now=()=>performance.now();
@@ -171,7 +172,11 @@ $('mRev').onclick=()=>{S.mRev=true;upd();};
 $('mHide').onchange=e=>{S.mHide=e.target.checked;S.mRev=false;upd();};
 const dMax=()=>2;
 function setD(s){const old=S.dStep;S.dStep=Math.max(0,Math.min(2,s));S.dA=S.dStep>old?now():-1e9;upd();}
-$('dPrev').onclick=()=>setD(S.dStep-1);$('dNext').onclick=()=>setD(S.dStep+1);$('dAll').onclick=()=>setD(2);
+function dTot(){const D=dData();return D.k+(D.rem>0?1:0);}
+function setCp(c){const T=dTot(),old=S.cp||0;S.cp=Math.max(0,Math.min(T,c));S.dStep=S.cp===0?0:S.cp<T?1:2;S.dA=S.cp>old?now():-1e9;upd();}
+$('dPrev').onclick=()=>S.mode==='cubrir'?setCp((S.cp||0)-1):setD(S.dStep-1);$('dNext').onclick=()=>S.mode==='cubrir'?setCp((S.cp||0)+1):setD(S.dStep+1);$('dAll').onclick=()=>S.mode==='cubrir'?(S.cp=dTot(),S.dStep=2,S.dA=-1e9,upd()):setD(2);
+$('dNew').onclick=()=>{const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));if(S.mode==='cubrir'){let ok=false;while(!ok){S.dq=ri(1,6);S.ds=ri(2,8);S.dp=ri(1,3*S.dq);S.dr=ri(1,S.ds);const Dd=S.dp/S.dq,dv=S.dr/S.ds;ok=Dd>dv*0.6&&Dd/dv<=8&&Dd<=3;}}else{S.dq=ri(1,6);S.dp=ri(1,3*S.dq);S.dn=ri(2,6);}S.cp=0;S.dStep=0;S.dRev=false;S.dA=-1e9;upd();};
+$('mNew').onclick=()=>{const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));S.mb=ri(2,7);S.md=ri(2,7);S.ma=ri(1,S.mb-(Math.random()<.8?1:-1));S.mc=ri(1,S.md-1);S.mStep=0;S.mRev=false;S.mA=-1e9;upd();};
 $('dRev').onclick=()=>{S.dRev=true;S.dA=now();upd();};
 $('dHide').onchange=e=>{S.dHide=e.target.checked;S.dRev=false;upd();};
 S.mA=-1e9;S.dA=-1e9;
@@ -242,21 +247,26 @@ function axis(o,xL,U,M,y,q,s){o.s+=Ln(xL-10,y,xL+U*M+14,y,'var(--ink)',2);
 const hBar=(x,y,w,h,col,pat,op=.13,extra='')=>R(x,y,w,h,col,op,null,0,'rx="3"')+R(x,y,w,h,`url(#${pat})`,1,col,2,`rx="3" ${extra}`);
 function renderDiv(){const sv=$('dsv'),W=sv.clientWidth||600,H=sv.clientHeight||420;sv.setAttribute('viewBox',`0 0 ${W} ${H}`);
  const D=dData(),st=S.dStep,hid=S.dHide&&!S.dRev,o={s:defs('d')},m=Math.max(28,W*0.06);S.anim=false;
- if(S.mode==='cubrir'){const dv=D.r/D.s,Dd=D.p/D.q,M=Math.max(1,Math.ceil(Math.max(Dd,(D.k+1)*dv,dv)-1e-9)),U=(W-2*m)/M,xL=m,yA=H*0.52,hB=34,yR=yA-30-hB,ySm=yA+56;
+ if(S.mode==='cubrir'){const dv=D.r/D.s,Dd=D.p/D.q,Tt=D.k+(D.rem>0?1:0),cp=Math.min(S.cp||0,Tt),M=Math.max(1,Math.ceil(Math.max(Dd,Tt*dv,dv)-1e-9)),U=(W-2*m)/M,xL=m,hB=34,yA=H*0.44,yR=yA-30-hB,yDv=yA+62,ySm=yA+104;
   axis(o,xL,U,M,yA,D.q,D.s);
   o.s+=hBar(xL,yR,U*Dd,hB,C.teal,'dT')+T(xL+U*Dd/2,yR-16,'Dividendo '+Ft(D.p,D.q),C.teal,{fs:16});
-  o.s+=Ln(xL+U*Dd,yR-4,xL+U*Dd,yA,C.teal,1.6,{dash:'5 5',op:.8});
-  // divisor de muestra
-  o.s+=`<g opacity="${st>=1?.45:1}">`+hBar(xL,ySm,U*dv,hB,C.coral,'dC')+`</g>`+T(xL+U*dv+10,ySm+hB/2,'Divisor '+Ft(D.r,D.s),C.coral,{fs:15,a:'start'});
-  const iv=reduce?1:Math.min(650,3800/Math.max(1,D.k)),el=now()-S.dA;
-  if(st>=1){for(let i=0;i<D.k;i++){const pr=st>=2?1:ease(clamp01((el-i*iv*0.8)/iv));const x=xL+(i*U*dv)*pr,y=ySm+(yR-ySm)*pr;
-    o.s+=hBar(x+1,y,U*dv-2,hB,C.coral,'dC',.1);if(pr>=1&&U*dv>=22)o.s+=`<circle cx="${F1(x+U*dv/2)}" cy="${F1(y+hB/2)}" r="10" fill="var(--bg)" stroke="${C.coral}" stroke-width="1.5"/>`+T(x+U*dv/2,y+hB/2,i+1,C.coral,{fs:12,sw:0});}
-   if(st===1)S.anim=el<(D.k*0.8+0.3)*iv+50;}
-  if(st>=2&&!hid&&D.rem>0){const pr=reduce?1:ease(clamp01((now()-S.dA)/700));S.anim=S.anim||pr<1;const x=xL+(D.k*U*dv)*pr,y=ySm+(yR-ySm)*pr;
-   o.s+=R(x+1,y,U*dv-2,hB,'none',0,C.coral,2,'stroke-dasharray="6 5" rx="3"');
-   if(pr>=1){o.s+=R(x+1,y,U*D.rem/D.L-1,hB,C.vio,.35,C.vio,2,'rx="3"');const rs=simp(D.rem,D.L);
-    o.s+=T(Math.min(W-12,x+U*D.rem/D.L/2),y-16,`sobra ${Ft(rs[0],rs[1])} = ${Ft(D.rem,D.R)} del divisor`,C.vio,{fs:14,a:x+U*D.rem/D.L/2>W*0.62?'end':'middle'});}}
-  if(st>=2&&!hid)o.s+=T(W/2,ySm+hB+44,`${Ft(D.p,D.q)} : ${Ft(D.r,D.s)} = ${D.k?D.k:''}${D.rem?(D.k?' + ':'')+Ft(D.rem,D.R):''}`,'var(--ink)',{fs:18});
+  o.s+=Ln(xL+U*Dd,yR-8,xL+U*Dd,yDv+12,C.teal,1.8,{dash:'5 5'});
+  // divisor de muestra (se copia desde aquí)
+  o.s+=hBar(xL,ySm,U*dv,hB,C.coral,'dC')+T(xL+U*dv+10,ySm+hB/2,'Divisor '+Ft(D.r,D.s)+(cp<Tt?' · cópialo y pégalo arriba':''),C.coral,{fs:15,a:'start'});
+  const pr=reduce?1:ease(clamp01((now()-S.dA)/650));if(pr<1)S.anim=true;
+  for(let i=0;i<cp;i++){const last=i===cp-1,p2=last?pr:1,x0=xL+i*U*dv,x=xL+(x0-xL)*p2,y=ySm+(yR-ySm)*p2,inL=Math.max(0,Math.min(dv,Dd-i*dv)),full=inL>=dv-1e-9;
+   if(full||p2<1)o.s+=hBar(x+1,y,U*dv-2,hB,C.coral,'dC',.12);
+   else{o.s+=hBar(x+1,y,U*inL-1,hB,C.coral,'dC',.12)+R(x+U*inL,y,U*(dv-inL)-1,hB,'#fff',1,C.coral,2.2,'rx="3"');
+    o.s+=T(x+U*inL/2,y-16,`dentro: ${Ft(D.rem,D.R)} del divisor`,C.coral,{fs:14,a:x+U*inL/2>W*0.7?'end':'middle'})+T(x+U*inL+U*(dv-inL)/2,y+hB+16,'no cabe',C.coral,{fs:12,fw:500});}
+   if(p2>=1&&full&&U*dv>=22)o.s+=`<circle cx="${F1(x+U*dv/2)}" cy="${F1(y+hB/2)}" r="10" fill="var(--bg)" stroke="${C.coral}" stroke-width="1.5"/>`+T(x+U*dv/2,y+hB/2,i+1,C.coral,{fs:12,sw:0});
+   if(p2>=1&&full)o.s+=Ln(x+U*dv,y+hB,x+U*dv,yDv,C.coral,1.4,{dash:'2 4'});}
+  // línea punteada: cuántas veces cabe
+  const done=cp>=Tt&&cp>0,xEnd=xL+U*Math.min(cp*dv,Dd);
+  if(cp>0){o.s+=Ln(xL,yDv,xEnd,yDv,C.coral,2.4,{dash:'3 6'})+T(xL,yDv-12,'veces que cabe el divisor',C.coral,{fs:12,fw:500,a:'start'});
+   o.s+=Ln(xL,yDv-7,xL,yDv+7,C.coral,2)+T(xL,yDv+20,'0',C.coral,{fs:13});
+   for(let j=1;j<=Math.min(cp,D.k);j++){const x=xL+U*j*dv;o.s+=Ln(x,yDv-7,x,yDv+7,C.coral,2)+T(x,yDv+20,j,C.coral,{fs:14});}
+   if(done&&D.rem>0){const x=xL+U*Dd;o.s+=`<circle cx="${F1(x)}" cy="${F1(yDv)}" r="6" fill="${C.vio}"/>`+T(x,yDv+22,hid?'¿?':`${D.k?D.k+' + ':''}${Ft(D.rem,D.R)}`,C.vio,{fs:15,a:x>W-70?'end':'middle'});}}
+  if(done&&!hid)o.s+=T(W/2,ySm+hB+40,`${Ft(D.p,D.q)} : ${Ft(D.r,D.s)} = ${D.k?D.k:''}${D.rem?(D.k?' + ':'')+Ft(D.rem,D.R):''}`,'var(--ink)',{fs:18});
  }else{const Dd=D.p/D.q,M=Math.max(1,Math.ceil(Dd-1e-9)),gapMax=0,U=(W-2*m)/M,xL=m,yA=H*0.6,hB=40,yB=yA-96,part=Dd/D.n;
   axis(o,xL,U,M,yA,D.q*D.n,0);
   const e=st===0?0:(reduce||st===2?1:ease(clamp01((now()-S.dA)/1100)));if(st===1)S.anim=e<1;
@@ -271,15 +281,19 @@ function updDiv(){const D=dData(),cub=S.mode==='cubrir',hid=S.dHide&&!S.dRev,q='
  ['dp','dq','dr','ds','dn'].forEach(k=>$('o_'+k).textContent=S[k]);$('frR').hidden=!cub;$('frN').hidden=cub;
  document.querySelectorAll('#dMode button').forEach(b=>b.classList.toggle('on',b.dataset.m===S.mode));
  $('dRev').hidden=!(S.dHide&&!S.dRev&&S.dStep===2);
+ $('dPrev').textContent=cub?'◀ Quitar copia':'◀ Paso anterior';$('dNext').textContent=cub?'Copiar y pegar divisor ▶':'Paso siguiente ▶';$('dNext').disabled=cub&&(S.cp||0)>=dTot();
  $('dTitle').textContent=cub?'División de fracciones: cubrir':'División de fracciones: repartir';
- $('dLeg').innerHTML=(cub?[['teal','Dividendo (achurado «/»)'],['coral','Copias del divisor (achurado «\\»)'],['vio','Lo que sobra']]:[['teal','Dividendo'],['coral','Una de las partes']]).map(([c,s])=>`<span><i style="background:var(--${c})"></i>${s}</span>`).join('');
- $('dHint').textContent=cub?'Las copias del divisor se deslizan sobre el dividendo: donde se cruzan los achurados, el dividendo ya está cubierto':'El dividendo se separa en partes iguales';
+ $('dLeg').innerHTML=(cub?[['teal','Dividendo (achurado «/»)'],['coral','Copias del divisor (achurado «\\»); en blanco, lo que no cabe']]:[['teal','Dividendo'],['coral','Una de las partes']]).map(([c,s])=>`<span><i style="background:var(--${c})"></i>${s}</span>`).join('');
+ $('dHint').textContent=cub?'Copia el divisor y pégalo sobre el dividendo, una vez tras otra, hasta que ya no quepa':'El dividendo se separa en partes iguales';
  $('dConcept').innerHTML=cub?'Dividir es preguntar <b>cuántas veces cabe</b> el divisor en el dividendo. Se ponen copias del divisor una tras otra sobre el dividendo, y lo que sobra se mide <b>en divisores</b>, no en unidades.':'Dividir por un número natural es <b>repartir</b> el dividendo en partes iguales. El cociente es el tamaño de <b>una</b> de esas partes.';
  let txt,mets,L;
  if(cub){const{p,q:qq,r,s,L:Lc,P,R:Rr,k,rem}=D,res=simp(P,Rr),rs=simp(rem,Lc);
-  txt=[`Arriba está el dividendo ${F(p,qq)} (achurado verde) y abajo el divisor ${F(r,s)} (achurado naranja). La pregunta es: ¿cuántas veces cabe ${F(r,s)} en ${F(p,qq)}?`,
-   k?`Las copias del divisor suben y se ponen una tras otra <b>sobre</b> el dividendo: caben <b>${k}</b> ${k>1?'veces':'vez'} completa${k>1?'s':''}.${rem?' Pero queda un trozo sin cubrir.':''}`:`El divisor es más largo que el dividendo: <b>no cabe ni una vez completa</b>. El cociente será menor que 1.`,
-   hid?`¿Qué parte <b>del divisor</b> alcanza a cubrir el trozo que sobra? ¿Cuál es el cociente? Anota tu predicción y presiona <b>Revelar</b>.`:(rem?`Una copia más no cabe entera: solo alcanza a cubrir ${F(rem,Rr)} <b>de ella</b>. Cociente: ${k?k+' + ':''}${F(rem,Rr)} = ${simpChain(res[0],res[1])}.`:`No sobra nada: el cociente es exactamente <b>${k}</b>.`)];
+  const cp=S.cp||0,Tt=k+(rem>0?1:0);
+  txt=cp===0?`Arriba está el dividendo ${F(p,qq)} (verde) y abajo el divisor ${F(r,s)} (naranja). ¿Cuántas veces cabe ${F(r,s)} en ${F(p,qq)}? Presiona <b>Copiar y pegar divisor</b>.`
+   :cp<=k&&!(cp===Tt)?`Copia ${cp}: el divisor <b>cabe entero</b>. La línea punteada ya marca <b>${cp}</b>. Sigue pegando copias.`
+   :rem===0?(hid?`La copia ${cp} calza justo. ¿Cuántas veces cupo? Predice y presiona <b>Revelar</b>.`:`La copia ${cp} calza justo con el final del dividendo: el divisor cabe exactamente <b>${k}</b> ${k>1?'veces':'vez'}.`)
+   :hid?`La copia ${cp} <b>no cabe entera</b>: una parte queda dentro (pintada) y otra fuera (en blanco). ¿Qué fracción del divisor quedó dentro? ¿Cuál es el cociente? Predice y presiona <b>Revelar</b>.`
+   :`La copia ${cp} <b>no cabe entera</b>: la parte pintada queda dentro del dividendo y la blanca queda fuera. Dentro cabe ${F(rem,Rr)} del divisor (${rem} de sus ${Rr} partes). La línea punteada termina en <b>${k?k+' + ':''}${F(rem,Rr)} = ${simpChain(res[0],res[1])}</b>.`;
   const st3=x=>S.dStep>=1?x:q;
   mets=[['Cociente',hid?q:simpChain(res[0],res[1])],['Veces completas',st3(k)],['Sobra (de la unidad)',hid?q:(rem?F(rs[0],rs[1]):'0')],['Sobra (del divisor)',hid?q:(rem?F(rem,Rr):'0')]];
   L=[`<b>Pregunta:</b> ¿cuántas veces cabe ${F(r,s)} en ${F(p,qq)}?`,
@@ -294,7 +308,7 @@ function updDiv(){const D=dData(),cub=S.mode==='cubrir',hid=S.dHide&&!S.dRev,q='
   mets=[['Cada parte',hid?q:simpChain(p,qq*n)],['Número de partes',n],['En decimales',hid?q:'≈ '+nf(p/(qq*n))],['Comprobación',hid?q:`${n} · ${F(a,b)} = ${F(p,qq)}`]];
   L=[`<b>Repartir:</b> ${F(p,qq)} : ${n} es dividir ${F(p,qq)} en ${n} partes iguales.`,`Cada unidad queda dividida en ${qq} · ${n} = ${qq*n} trozos; ${F(p,qq)} son ${p*n} de esos trozos y cada parte se lleva ${p}.`,
    `${F(p,qq)} : ${n} = ${F(p,qq)} · ${F(1,n)} = ${hid?q:simpChain(p,qq*n)}`,`Repartir en ${n} partes es lo mismo que calcular ${F(1,n)} de ${F(p,qq)}: la división y la multiplicación por el inverso coinciden.`];}
- $('dStep').innerHTML=`<span style="color:var(--mut)">Paso ${S.dStep+1} de 3 · </span>`+txt[S.dStep];
+ $('dStep').innerHTML=cub?`<span style="color:var(--mut)">Copias pegadas: ${S.cp||0} · </span>`+txt:`<span style="color:var(--mut)">Paso ${S.dStep+1} de 3 · </span>`+txt[S.dStep];
  $('dMets').innerHTML=mets.map(([l,v])=>`<div class="met"><p class="l">${l}</p><p class="v">${v}</p></div>`).join('');
  $('dFm').innerHTML=L.filter(Boolean).map(x=>x.startsWith('<p')?x:`<div>${x}</div>`).join('');
  renderDiv();}

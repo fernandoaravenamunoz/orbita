@@ -275,7 +275,7 @@ const SITIO = {
     {
       nombre: "El número π",
       descripcion: "Desenrolla una circunferencia y cuenta cuántas veces cabe su diámetro en el borde, o acuesta el diámetro sobre la circunferencia. Con una regla y una lupa mides el trozo que sobra y descubres que siempre es 3,14… veces el diámetro.",
-      temas: ["Diámetro", "Perímetro", "Desenrollar", "Acostar el diámetro", "C : d = π"],
+      temas: ["Diámetro", "Perímetro", "Desenrollar", "Acostar el diámetro", "P : d = π"],
       url: "simulaciones/pi.html",
       dibujo: "pi",
       fecha: "2026-11-25"
@@ -303,6 +303,30 @@ const SITIO = {
       url: "simulaciones/galton.html",
       dibujo: "galton",
       fecha: "2026-11-25"
+    },
+    {
+      nombre: "Diagrama de árbol y paseos aleatorios",
+      descripcion: "Lanza una moneda o da pasos a la izquierda, derecha, adelante o atrás con probabilidad p. Construye el árbol, marca una posición final para ver todos los caminos que llegan a ella y calcula probabilidades totales y condicionadas.",
+      temas: ["Diagrama de árbol", "Paseo aleatorio", "Probabilidad condicionada", "Distribución binomial"],
+      url: "simulaciones/arbol-paseos.html",
+      dibujo: "arbol",
+      fecha: "2026-11-26"
+    },
+    {
+      nombre: "Contar con diagramas de árbol",
+      descripcion: "Menús, ropa, filas para una foto, podios, letras, claves y helados: arma el árbol de todas las posibilidades, recorre sus caminos y descubre por qué basta multiplicar las opciones de cada etapa.",
+      temas: ["Principio multiplicativo", "Diagrama de árbol", "Permutaciones", "Combinaciones"],
+      url: "simulaciones/combinaciones-arbol.html",
+      dibujo: "conteo",
+      fecha: "2026-11-26"
+    },
+    {
+      nombre: "Combinatoria",
+      descripcion: "Un curso de 20 estudiantes, los libros de una librería o las letras de una palabra: decide si se usan todos los elementos, si se repiten y si importa el orden. Mira los resultados, el cálculo y por qué se usa esa estrategia.",
+      temas: ["Permutaciones", "Variaciones", "Combinaciones", "Con repetición"],
+      url: "simulaciones/combinatoria.html",
+      dibujo: "combinatoria",
+      fecha: "2026-11-26"
     }
     // Para agregar otra simulación: sube su archivo .html a la carpeta "simulaciones"
     // y copia el bloque de arriba (con su coma).

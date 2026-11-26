@@ -75,6 +75,8 @@ input[type=range]{accent-color:var(--sel);width:100%;height:28px}
 .tbl td:last-child,.tbl th:last-child{color:var(--vio);font-weight:600}
 @media(max-width:600px){.fig{height:500px}.fig .hint{display:none}}
 .big{font-size:clamp(22px,2.6vw,28px);font-weight:600;margin:4px 0}
+.calc{display:grid;gap:10px}.calc div{font-size:21px;line-height:1.35;font-variant-numeric:tabular-nums}.calc .k{display:block;font-size:13px;color:var(--mut);font-weight:600}.calc b{color:var(--sel,#185FA5)}
+.not td{font-size:15px;padding:5px 6px}.not td:first-child{font-size:19px;width:34px;text-align:center}.not td:last-child{text-align:left!important;color:var(--ink)!important;font-weight:400!important}
 </style>
 </head>
 <body>
@@ -91,12 +93,14 @@ input[type=range]{accent-color:var(--sel);width:100%;height:28px}
 <div class="tools"><button id="pPrev">◀ Paso anterior</button><button id="pNext" class="pri">Paso siguiente ▶</button><button id="pAll">Ver todo</button><button id="pAgain">↺ Repetir animación</button><p class="stepTxt" id="pTxt"></p></div>
 </div>
 <aside class="panel">
-<p class="concept">El <b>perímetro</b> de cualquier circunferencia contiene a su <b>diámetro</b> 3 veces y un poco más. Ese número, siempre el mismo sin importar el tamaño, se llama <b>π</b> (pi): <b>C : d = π ≈ 3,14159…</b></p>
+<p class="concept">El <b>perímetro</b> de cualquier circunferencia contiene a su <b>diámetro</b> 3 veces y un poco más. Ese número, siempre el mismo sin importar el tamaño, se llama <b>π</b> (pi): <b>P : d = π ≈ 3,14159…</b></p>
 <div class="box"><h2>Tamaño de la circunferencia</h2>
 <div class="pr"><label for="pR"><b>r</b>radio</label><input type="range" id="pR" min="1" max="6" step="0.1"><input type="text" inputmode="decimal" id="pRt" aria-label="Escribir el radio en cm"></div>
 <p class="note" style="margin-top:8px">Radio entre 1 y 6 cm. La circunferencia se dibuja a escala (mira la marca «1 cm» arriba a la derecha): cambia el radio y repite. El borde cambia, el diámetro cambia… pero la razón entre ellos no.</p>
 </div>
 <div class="mets" id="pMets"></div>
+<div class="box"><h2>Cálculo de la razón P : d</h2><div class="calc" id="pCalc"></div></div>
+<div class="box"><h2>Notación</h2><table class="tbl not"><tr><td><b>r</b></td><td>radio: del centro al borde</td></tr><tr><td><b>d</b></td><td>diámetro: d = 2 · r</td></tr><tr><td><b>P</b></td><td>perímetro: el largo del borde de la circunferencia</td></tr><tr><td><b>s</b></td><td>sobrante: el trozo de borde que no alcanzan a cubrir 3 diámetros</td></tr><tr><td><b>π</b></td><td>pi: la razón P : d, igual para toda circunferencia (≈ 3,14159…)</td></tr><tr><td><b>≈</b></td><td>«aproximadamente igual»: medimos con regla, al milímetro</td></tr></table></div>
 <div class="box"><h2>Tabla de mediciones</h2>
 <table class="tbl" id="pTbl"></table>
 <div class="row"><button id="pAdd" class="pri">Anotar esta medición</button><button id="pClr">Borrar la tabla</button></div>
@@ -160,7 +164,7 @@ function render(){const s=$('psv'),W=s.clientWidth||600,H=s.clientHeight||420;s.
   o+=`<circle cx="${F1(S(ctr)[0])}" cy="${F1(S(ctr)[1])}" r="3.5" fill="var(--ink)"/>`;
   // diámetro en la circunferencia (pasos 0 y 2+)
   if(st===0||st>=2){o+=Ln(S([cx-r,r]),S([cx+r,r]),C.coral,5)+T(S(ctr)[0],S([0,2*r])[1]-12,`d = ${nf(d)} cm`,C.coral,{fs:15});}
-  if(u>=1)o+=Cc*sc<200?T(S([Cc+r,0])[0]+12,yF-10,`← borde desenrollado: C`,C.sel,{fs:14,a:'start'}):T(S([0,0])[0],yF-16,`borde desenrollado: C`,C.sel,{fs:14,a:'start'});
+  if(u>=1)o+=Cc*sc<200?T(S([Cc+r,0])[0]+12,yF-10,`← borde desenrollado: P`,C.sel,{fs:14,a:'start'}):T(S([0,0])[0],yF-16,`borde desenrollado: P`,C.sel,{fs:14,a:'start'});
   else if(u>0)o+=T(S([cx/2,0])[0],yF-16,'borde',C.sel,{fs:13});
   // copias del diámetro
   const yb=yF+12,hb=16;
@@ -181,7 +185,7 @@ function render(){const s=$('psv'),W=s.clientWidth||600,H=s.clientHeight||420;s.
    o+=T(ix+10,iy+16,`Lupa · lectura: ${nf(MS.rem,1)} cm (al mm)`,C.teal,{fs:13,a:'start'})+T(ix+iw-10,iy+16,`≈ ${nf(MS.rem/d,3)} d`,C.teal,{fs:13,a:'end'});}
   // caja de datos
   o+=infoBox(14,14,r,d,MS.C,st>=3)+scaleBar(sc,W);
-  if(st>=3)o+=T(Math.max(200,Math.min(S([Cc/2,0])[0]+40,W-iw0-30)),yb+hb+76,`C ≈ 3 · ${nf(d)} + ${nf(MS.rem,1)} = ${nf(MS.C)} cm → C : d ≈ ${nf(MS.ratio,3)}`,'var(--ink)',{fs:15});
+  if(st>=3)o+=T(Math.max(200,Math.min(S([Cc/2,0])[0]+40,W-iw0-30)),yb+hb+76,`P ≈ 3 · ${nf(d)} + ${nf(MS.rem,1)} = ${nf(MS.C)} cm → P : d ≈ ${nf(MS.ratio,3)}`,'var(--ink)',{fs:19});
  }else{
   const nar=W<560,sc=nar?Math.min((W-60)/(2*RMAX*1.35),(H-260)/(2*RMAX*1.3)):Math.min((W-80)/(2*RMAX*1.9),(H-120)/(2*RMAX*1.32)),cxs=nar?W/2:Math.max(30+RMAX*sc*1.3,W*0.3),cys=100+1.25*RMAX*sc;const S=p=>[cxs+p[0]*sc,cys-p[1]*sc];
   o+=`<circle cx="${F1(cxs)}" cy="${F1(cys)}" r="${F1(r*sc)}" fill="none" stroke="${C.sel}" stroke-width="4"/><circle cx="${F1(cxs)}" cy="${F1(cys)}" r="3.5" fill="var(--ink)"/>`;
@@ -207,7 +211,7 @@ function render(){const s=$('psv'),W=s.clientWidth||600,H=s.clientHeight||420;s.
   o+=infoBox(14,14,r,d,MS.C,st>=3)+scaleBar(sc,W);}
  P.anim=anim;s.innerHTML=o;}
 function scaleBar(sc,W){const x2=W-20,x1=x2-sc;return Ln([x1,34],[x2,34],'var(--ink)',3,{cap:'butt'})+Ln([x1,28],[x1,40],'var(--ink)',1.5)+Ln([x2,28],[x2,40],'var(--ink)',1.5)+T((x1+x2)/2,18,'1 cm','var(--mut)',{fs:12,fw:500});}
-function infoBox(x,y,r,d,Cc,showC){return `<rect x="${x}" y="${y}" width="168" height="${showC?84:62}" rx="10" fill="var(--bg)" stroke="var(--line)" stroke-width="1.5"/>`+T(x+12,y+20,`r = ${nf(r)} cm`,'var(--ink)',{fs:14,fw:500,a:'start'})+T(x+12,y+42,`d = 2r = ${nf(d)} cm`,C.coral,{fs:15,a:'start'})+(showC?T(x+12,y+64,`C ≈ ${nf(Cc)} cm (medido)`,C.sel,{fs:14,a:'start'}):'');}
+function infoBox(x,y,r,d,Cc,showC){return `<rect x="${x}" y="${y}" width="168" height="${showC?84:62}" rx="10" fill="var(--bg)" stroke="var(--line)" stroke-width="1.5"/>`+T(x+12,y+20,`r = ${nf(r)} cm`,'var(--ink)',{fs:14,fw:500,a:'start'})+T(x+12,y+42,`d = 2r = ${nf(d)} cm`,C.coral,{fs:15,a:'start'})+(showC?T(x+12,y+64,`P ≈ ${nf(Cc)} cm (medido)`,C.sel,{fs:14,a:'start'}):'');}
 
 function upd(){const r=P.r,d=2*r,Cc=2*PI*r,st=P.step,des=P.mode==='desenrollar',MS=meas(r);
  document.querySelectorAll('#tabs a').forEach(a=>a.classList.toggle('on',a.dataset.r===P.mode));
@@ -217,21 +221,27 @@ function upd(){const r=P.r,d=2*r,Cc=2*PI*r,st=P.step,des=P.mode==='desenrollar',
  const txt=des?[`Una circunferencia de radio ${nf(r)} cm. Su <b>diámetro</b> mide d = 2r = <b>${nf(d)} cm</b>. ¿Cuántas veces cabrá el diámetro en el borde de la circunferencia?`,
   `La circunferencia <b>rueda</b> por el suelo sin resbalar y va dejando marcado su borde: al dar una vuelta completa, el borde queda <b>estirado como un segmento</b>.`,
   `Ahora copiamos el diámetro sobre ese segmento, una copia tras otra: caben <b>3 copias completas</b>, pero la cuarta ya no cabe.`,
-  `Medimos con la regla, al milímetro, el trozo que sobra: <b>${nf(MS.rem,1)} cm</b>. El borde mide C ≈ 3 · ${nf(d)} + ${nf(MS.rem,1)} = <b>${nf(MS.C)} cm</b>, y C : d ≈ <b>${nf(MS.ratio,3)}</b>: un poco más de 3 diámetros. Ese número es <b>π</b>.`]
+  `Medimos con la regla, al milímetro, el trozo que sobra: <b>${nf(MS.rem,1)} cm</b>. El borde mide P ≈ 3 · ${nf(d)} + ${nf(MS.rem,1)} = <b>${nf(MS.C)} cm</b>, y P : d ≈ <b>${nf(MS.ratio,3)}</b>: un poco más de 3 diámetros. Ese número es <b>π</b>.`]
  :[`Una circunferencia de radio ${nf(r)} cm y su <b>diámetro</b> de <b>${nf(d)} cm</b>. Vamos a «acostar» el diámetro sobre la circunferencia, como si fuera un hilo.`,
   `El diámetro se separa y se curva sobre la circunferencia: cubre un arco que mide lo mismo que el diámetro (1).`,
   `Acostamos dos copias más (2 y 3). Ya cubrimos 3 diámetros de borde… y todavía queda un trocito sin cubrir.`,
-  `Con una huincha medimos, al milímetro, el trozo sin cubrir: <b>${nf(MS.rem,1)} cm</b>. El borde mide C ≈ <b>${nf(MS.C)} cm</b> y C : d ≈ <b>${nf(MS.ratio,3)}</b>: algo más de 3 diámetros, <b>π</b> diámetros.`];
+  `Con una huincha medimos, al milímetro, el trozo sin cubrir: <b>${nf(MS.rem,1)} cm</b>. El borde mide P ≈ <b>${nf(MS.C)} cm</b> y P : d ≈ <b>${nf(MS.ratio,3)}</b>: algo más de 3 diámetros, <b>π</b> diámetros.`];
  $('pTxt').innerHTML=`<span style="color:var(--mut)">Paso ${st+1} de 4 · </span>`+txt[st];
  const q='<b>?</b>',show=st>=3;
- $('pMets').innerHTML=[['Radio r',`${nf(r)} cm`],['Diámetro d = 2r',`${nf(d)} cm`],['Borde medido C',show?`≈ ${nf(MS.C)} cm`:q],['C : d (medido)',show?`≈ ${nf(MS.ratio,3)}`:q]].map(([l,v])=>`<div class="met"><p class="l">${l}</p><p class="v">${v}</p></div>`).join('');
+ $('pMets').innerHTML=[['Radio r',`${nf(r)} cm`],['Diámetro d = 2r',`${nf(d)} cm`],['Perímetro medido P',show?`≈ ${nf(MS.C)} cm`:q],['P : d (medido)',show?`≈ ${nf(MS.ratio,3)}`:q]].map(([l,v])=>`<div class="met"><p class="l">${l}</p><p class="v">${v}</p></div>`).join('');
  $('pAdd').disabled=!show;
- const avg=P.rec.length?P.rec.reduce((s,x)=>s+meas(x).ratio,0)/P.rec.length:0;$('pTbl').innerHTML=P.rec.length?`<tr><th>r (cm)</th><th>d (cm)</th><th>C medido (cm)</th><th>C : d</th></tr>`+P.rec.map(x=>{const m=meas(x);return `<tr><td>${nf(x)}</td><td>${nf(2*x)}</td><td>${nf(m.C)}</td><td>${nf(m.ratio,3)}</td></tr>`;}).join('')+(P.rec.length>=2?`<tr><td colspan="3"><b>Promedio de C : d</b></td><td><b>${nf(avg,3)}</b></td></tr>`:''):'';
- $('pTblNote').innerHTML=P.rec.length>=2?'Aunque la circunferencia cambia de tamaño, <b>C : d</b> siempre da cerca de 3,14. Las pequeñas diferencias se deben a que medimos al milímetro: con mediciones más precisas, todas se acercan a <b>π = 3,14159…</b>':'Llega al último paso y anota la medición. Luego cambia el radio y vuelve a anotar.';
+ const avg=P.rec.length?P.rec.reduce((s,x)=>s+meas(x).ratio,0)/P.rec.length:0;$('pTbl').innerHTML=P.rec.length?`<tr><th>r (cm)</th><th>d (cm)</th><th>P medido (cm)</th><th>P : d</th></tr>`+P.rec.map(x=>{const m=meas(x);return `<tr><td>${nf(x)}</td><td>${nf(2*x)}</td><td>${nf(m.C)}</td><td>${nf(m.ratio,3)}</td></tr>`;}).join('')+(P.rec.length>=2?`<tr><td colspan="3"><b>Promedio de P : d</b></td><td><b>${nf(avg,3)}</b></td></tr>`:''):'';
+ $('pTblNote').innerHTML=P.rec.length>=2?'Aunque la circunferencia cambia de tamaño, <b>P : d</b> siempre da cerca de 3,14. Las pequeñas diferencias se deben a que medimos al milímetro: con mediciones más precisas, todas se acercan a <b>π = 3,14159…</b>':'Llega al último paso y anota la medición. Luego cambia el radio y vuelve a anotar.';
+ $('pCalc').innerHTML=show?`<div><span class="k">Diámetro</span> d = 2 · ${nf(r)} = <b>${nf(d)} cm</b></div>
+ <div><span class="k">Sobrante medido</span> s ≈ <b>${nf(MS.rem,1)} cm</b></div>
+ <div><span class="k">Perímetro</span> P ≈ 3 · d + s = 3 · ${nf(d)} + ${nf(MS.rem,1)} = <b>${nf(MS.C)} cm</b></div>
+ <div><span class="k">¿Qué parte del diámetro es el sobrante?</span> s : d ≈ ${nf(MS.rem,1)} : ${nf(d)} ≈ <b>${nf(MS.rem/d,3)}</b></div>
+ <div><span class="k">Razón</span> P : d ≈ 3 + ${nf(MS.rem/d,3)} ≈ <b>${nf(MS.ratio,3)}</b></div>
+ <p class="note">El sobrante es una <b>medición aproximada</b> (regla al milímetro): para saber qué parte del diámetro es, se divide su largo por el largo del diámetro, s : d. Por eso P : d da cerca de 3,14 y no exactamente π.</p>`:`<p class="note">Llega al último paso para ver el cálculo.</p>`;
  const L=[`<b>Diámetro:</b> d = 2 · r = 2 · ${nf(r)} = ${nf(d)} cm.`,
   `<b>Tres diámetros:</b> 3 · d = 3 · ${nf(d)} = ${nf(3*d)} cm. No alcanzan a cubrir el borde.`,
-  show?`<b>Lo que sobra (medido al mm):</b> ${nf(MS.rem,1)} cm, que es ${nf(MS.rem,1)} : ${nf(d)} ≈ ${nf(MS.rem/d,3)} del diámetro.`:`<b>Lo que sobra:</b> se mide en el último paso.`,
-  show?`<b>Perímetro exacto:</b> C = π · d = 2 · π · r = 2 · π · ${nf(r)} ≈ ${nf(Cc,3)} cm. Nuestra medición (${nf(MS.C)} cm) es muy cercana.`:`<b>Perímetro:</b> C = π · d = 2 · π · r.`,
+  show?`<b>Lo que sobra (medido al mm):</b> ${nf(MS.rem,1)} cm. Para saber qué parte del diámetro es, se divide: s : d = ${nf(MS.rem,1)} : ${nf(d)} ≈ ${nf(MS.rem/d,3)}. Es aproximado, porque la medición con regla también lo es.`:`<b>Lo que sobra:</b> se mide en el último paso.`,
+  show?`<b>Perímetro exacto:</b> P = π · d = 2 · π · r = 2 · π · ${nf(r)} ≈ ${nf(Cc,3)} cm. Nuestra medición (${nf(MS.C)} cm) es muy cercana.`:`<b>Perímetro:</b> P = π · d = 2 · π · r.`,
   `<b>π no es exactamente 3,14:</b> sus decimales siguen sin fin y sin repetirse (π = 3,14159265…). Por eso es un número <b>irracional</b>; en los cálculos usamos aproximaciones como 3,14.`];
  $('pFm').innerHTML=L.map(x=>`<div>${x}</div>`).join('');
  render();}

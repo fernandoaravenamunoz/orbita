@@ -9,7 +9,7 @@ Sitio de material para estudiantes: guías, videos, solucionarios, simulaciones,
 | `datos.js` | Cursos, unidades y todo el material | **Sí, aquí se agrega todo** |
 | `materiales/` | Carpeta para tus PDF (guías y pautas) | Sí, subes archivos aquí |
 | `juegos/` | Páginas de los juegos (Kakoomas, Cálculo mental) | Solo para agregar juegos nuevos |
-| `simulaciones/` | Simulaciones propias en HTML (fracciones, enteros, cuerpos 3D, homotecias, Tales, Euclides, π, ángulos de polígonos, monedas, Galton); se muestran en la sección **Simulaciones** del menú | Solo para agregar simulaciones nuevas |
+| `simulaciones/` | Simulaciones propias en HTML (fracciones, enteros, cuerpos 3D, homotecias, Tales, Euclides, π, ángulos de polígonos, monedas, Galton, árbol y paseos aleatorios, contar con árboles, combinatoria); se muestran en la sección **Simulaciones** del menú | Solo para agregar simulaciones nuevas |
 | `index.html`, `estilos.css`, `app.js` | Estructura, diseño y funcionamiento | No hace falta |
 
 ## Publicar en GitHub Pages (una sola vez)

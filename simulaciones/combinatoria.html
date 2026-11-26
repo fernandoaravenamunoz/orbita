@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Combinatoria · Órbita Matemática</title>
+<meta name="description" content="Simulación de combinatoria: permutaciones, variaciones y combinaciones, con y sin repetición, en contextos de un curso, una librería y las letras de una palabra. Muestra los resultados, los cálculos y la estrategia.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+:root{color-scheme:light;--bg:#ffffff;--ink:#16202b;--mut:#5b6675;--line:#dde4ec;--grid:#edf1f6;--band:#163a5f;--card:#f2f6fb;--sel:#378ADD;--coral:#D85A30;--teal:#1D9E75;--vio:#7F77DD;--amb:#BA7517;--pink:#D4537E}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Lexend,system-ui,sans-serif;overflow-x:clip}
+h1,h2{font-weight:600;line-height:1.1;margin:0;text-wrap:balance}
+button,input{font:inherit;color:inherit}
+button{min-height:40px;padding:6px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);cursor:pointer}
+button:hover{border-color:var(--mut)}button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
+button.on{border-color:var(--sel);color:var(--sel);background:color-mix(in srgb,var(--sel) 10%,transparent)}
+button.pri{background:var(--band);color:#fff;border-color:var(--band)}
+
+input[type=checkbox]{accent-color:var(--sel);width:18px;height:18px}
+.top{background:#EAF2FB;color:#163a5f;border-bottom:3px solid #378ADD;padding:14px max(4vw,16px);display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:18px;flex-wrap:wrap}
+.volver{color:#163a5f;text-decoration:none;font-size:14px;font-weight:500;padding:6px 10px;border:1px solid rgba(22,58,95,.35);border-radius:999px;background:#fff}.volver:hover{border-color:#163a5f}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs a{color:#163a5f;text-decoration:none;padding:8px 12px;border-radius:999px;font-size:15px;opacity:.82}
+.tabs a:hover{opacity:1;background:rgba(22,58,95,.08)}.tabs a.on{opacity:1;background:#163a5f;color:#fff}
+.band{padding:clamp(20px,3vw,44px) max(4vw,16px)}
+.work{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:24px;max-width:1400px;margin:0 auto}
+.stagehead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 18px;margin-bottom:8px}
+.stagehead h1{font-size:clamp(26px,3vw,36px)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--mut)}
+.legend i{display:inline-block;width:16px;height:10px;border-radius:3px;vertical-align:middle;margin-right:6px}
+.fig{position:relative;height:clamp(340px,58vh,600px);border-radius:16px;border:1px solid var(--line);background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;overflow:hidden}
+.fig svg{position:absolute;inset:0;width:100%;height:100%}
+.hint{position:absolute;left:12px;bottom:8px;margin:0;font-size:13px;color:var(--mut);pointer-events:none}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.stepTxt{font-size:15px;color:var(--ink);flex:1 1 100%;background:var(--card);border-radius:12px;padding:10px 14px;margin:0}
+.panel{display:flex;flex-direction:column;gap:16px}
+.box{background:var(--card);border-radius:14px;padding:14px 16px}
+.box h2{font-size:17px;margin-bottom:10px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}.seg button{min-height:36px;padding:4px 12px;font-size:14px}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--mut);margin-top:10px}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px}.row button{min-height:34px;padding:3px 10px;font-size:14px}
+.mets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.met{background:var(--card);border-radius:12px;padding:10px 14px}.met p{margin:0}.met .l{font-size:13px;color:var(--mut)}.met .v{font-size:clamp(19px,2vw,23px);font-weight:600}.met .s{font-size:13px;color:var(--mut)}
+.fm div{font-size:15px;line-height:1.7;padding:4px 0;border-bottom:1px dashed var(--line)}.fm div:last-child{border:0}.fm b{font-weight:600}
+details summary{cursor:pointer;font-weight:600;font-size:17px;min-height:32px}
+.concept{border-left:4px solid var(--vio);background:color-mix(in srgb,var(--vio) 9%,transparent);padding:10px 14px;font-size:15px;margin:0}
+.concept b{color:var(--coral);font-weight:600}
+.note{font-size:13px;color:var(--mut);margin:0}
+.warn{border-left:4px solid var(--amb);background:color-mix(in srgb,var(--amb) 10%,transparent);padding:8px 12px;font-size:14px;margin:0}
+[hidden]{display:none!important}
+.fx{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.08;margin:0 .1em;font-size:.92em}
+.fx>span{padding:0 .2em}.fx>span:first-child{border-bottom:1.6px solid currentColor}
+.frin{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.fr{display:inline-flex;flex-direction:column;align-items:center;gap:4px;padding:6px 8px;border-radius:12px;background:var(--bg)}
+.fr .bar{width:100%;border-top:3px solid currentColor}
+.fr.t{color:var(--teal)}.fr.c{color:var(--coral)}
+.stp{display:inline-flex;align-items:center;gap:4px}
+.stp button{min-height:34px;width:34px;padding:0;font-size:18px;line-height:1;color:var(--ink)}
+.stp output{min-width:2.4ch;text-align:center;font-weight:600;font-size:22px}
+.op{font-size:30px;font-weight:600;color:var(--mut)}
+.lbl{font-size:13px;color:var(--mut);display:block;margin-bottom:6px}
+@media(max-width:900px){.work{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.fig{height:360px}.tabs a{padding:6px 9px;font-size:14px}}
+
+.fig.plain{background-image:none;height:clamp(460px,72vh,720px);background:#FBFCFE}
+.fig canvas{position:absolute;inset:0;width:100%;height:100%}
+@media(max-width:600px){.fig.plain{height:560px}}
+select{min-height:38px;border-radius:10px;border:1px solid var(--line);background:var(--bg);padding:4px 10px;font:inherit;font-size:15px;color:inherit}
+input[type=range]{accent-color:var(--sel);width:100%;height:28px}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}.tbl th{font-weight:500;color:var(--mut);text-align:right;font-size:12.5px;padding:4px 6px;border-bottom:1px solid var(--line)}.tbl td{padding:4px 6px;border-bottom:1px dashed var(--line);text-align:right}
+.tbl td:first-child,.tbl th:first-child{text-align:center}
+.big{font-size:clamp(22px,2.5vw,28px);font-weight:600;margin:8px 0 0}
+.tblw{overflow-x:auto;max-height:420px;overflow-y:auto}
+</style>
+<style>
+.sitCard{background:var(--card);border-radius:14px;padding:14px 16px;margin-bottom:12px}.sitT{font-size:clamp(17px,1.7vw,20px);margin:0;line-height:1.45}.whyT{font-size:15px;color:var(--mut);margin:8px 0 0;line-height:1.5}.whyT b,.sitT b{color:var(--ink)}
+.fig.flow{height:clamp(260px,38vh,340px);background:#fff}
+.resRow{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}.resRow>div{background:var(--card);border-radius:14px;padding:10px 16px;flex:1 1 220px}.resRow .lbl{margin:0}
+.kind{font-size:20px;font-weight:600;margin:2px 0 0;color:#4b44a8}.tot{font-size:clamp(26px,3vw,36px);font-weight:600;margin:0;word-break:break-all}
+.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:4px;max-height:520px;overflow:auto;margin-top:8px}.li.dots{grid-column:1/-1}
+.li{font-size:15px;padding:4px 8px;border-radius:8px;background:#fff;border:1px solid var(--line);font-variant-numeric:tabular-nums}.li small{color:var(--mut);display:inline-block;min-width:2.5em}
+.li.dots{background:none;border:0;font-size:22px;color:var(--mut);text-align:center}.li.dots span{font-size:13px;vertical-align:middle}
+.els{display:flex;flex-wrap:wrap;gap:5px}.el{font-size:13px;padding:3px 8px;border-radius:999px;background:#fff;border:1px solid var(--line)}
+.q{font-size:15px;font-weight:600;margin:12px 0 6px}
+.wIn{font:inherit;font-size:22px;font-weight:600;letter-spacing:3px;text-transform:uppercase;border:1px solid var(--line);border-radius:10px;padding:6px 12px;width:100%;max-width:280px}
+.calcB div{font-size:clamp(18px,1.8vw,22px);line-height:1.5;padding:3px 0;word-break:break-word}.calcB b{color:#4b44a8}
+.seg button:disabled{opacity:.4;cursor:not-allowed}
+</style>
+</head>
+<body>
+<header class="top">
+<div class="brand"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" stroke="#163a5f" stroke-width="3" aria-hidden="true"><rect x="6" y="10" width="14" height="14" rx="3"/><rect x="25" y="10" width="14" height="14" rx="3"/><rect x="44" y="10" width="14" height="14" rx="3"/><path d="M13 32 v8 M32 32 v8 M51 32 v8 M13 40 H51" stroke-linecap="round"/><text x="32" y="58" font-size="16" font-weight="700" fill="#163a5f" stroke="none" text-anchor="middle">n!</text></svg><span>Combinatoria</span><a class="volver" href="../index.html#simulaciones" target="_top">← Órbita Matemática</a></div>
+
+</header>
+<main>
+<section class="band">
+<div class="work">
+<div>
+<div class="stagehead"><h1>¿Importa el orden? ¿Se repite?</h1></div>
+<div class="sitCard"><p class="lbl">Situación</p><p id="sit" class="sitT"></p><p id="why" class="whyT"></p></div>
+<div class="fig plain flow"><svg id="fsv" role="img" aria-label="Diagrama para decidir qué estrategia de conteo usar"></svg></div>
+<div class="resRow"><div><p class="lbl">Estrategia</p><p class="kind" id="kind"></p></div><div><p class="lbl">Total de resultados</p><p class="tot" id="total"></p></div></div>
+<div class="box" style="margin-top:12px"><h2>Resultados</h2><p class="note" id="listH"></p><div class="list" id="list"></div></div>
+</div>
+<aside class="panel">
+<p class="concept">Para contar sin anotar todos los casos, hay que responder tres preguntas: ¿se usan <b>todos</b> los elementos?, ¿importa el <b>orden</b>? y ¿se pueden <b>repetir</b>? La respuesta sale del <b>contexto</b>: los cargos, los lugares o las palabras hacen que el orden importe; los grupos, no.</p>
+<div class="box"><h2>Contexto</h2><div class="seg" id="ctx"><button data-c="curso">🧑‍🎓 Curso</button><button data-c="libros">📚 Librería</button><button data-c="palabra">🔤 Letras de una palabra</button></div>
+<div class="row" id="nRow"><span class="stp" id="nStp"><button data-d="-1" aria-label="Menos elementos">−</button><output id="nOut"></output><button data-d="1" aria-label="Más elementos">+</button></span><span id="nLab" style="color:var(--mut)"></span></div>
+<div id="wRow" style="margin-top:10px"><label class="lbl" for="word">Palabra (hasta 10 letras)</label><input id="word" maxlength="12" autocomplete="off" class="wIn"><div class="row" id="wPre"><button>AMOR</button><button>CASA</button><button>PAPA</button><button>LIBRO</button><button>RATA</button><button>CHILE</button></div></div>
+<p class="lbl" style="margin-top:12px">Elementos <span id="elN"></span></p><div class="els" id="elems"></div></div>
+<div class="box"><h2>Preguntas</h2>
+<p class="q">¿Se usan todos los elementos?</p><div class="seg" id="todos"><button data-v="1">Sí</button><button data-v="0">No, solo algunos</button></div>
+<p class="note" id="todosNote" style="margin-top:6px">Si se usan todos, solo cambia el orden: el orden importa y no hay repetición.</p>
+<p class="q" id="ordQ"></p><div class="seg" id="ord"><button data-v="1">Sí</button><button data-v="0">No</button></div>
+<p class="q" id="repQ"></p><div class="seg" id="rep"><button data-v="1">Sí</button><button data-v="0">No</button></div>
+<div class="row" id="kRow"><span class="stp" id="kStp"><button data-d="-1" aria-label="Menos">−</button><output id="kOut"></output><button data-d="1" aria-label="Más">+</button></span><span id="kLab" style="color:var(--mut)"></span></div>
+</div>
+<div class="box"><h2>Cálculo</h2><div class="calcB" id="calc"></div></div>
+<div class="box"><h2>¿Por qué esta estrategia?</h2><p id="strat" style="margin:0;font-size:15px;line-height:1.6"></p></div>
+</aside>
+</div>
+</section>
+</main>
+<footer class="pie-sim" style="background:#EAF2FB;color:#163a5f;border-top:3px solid #378ADD;padding:18px max(4vw,16px);font:400 14px/1.55 Lexend,system-ui,sans-serif;margin-top:24px"><strong style="font-weight:600;font-size:15.5px">Fernando J. Aravena Muñoz</strong><br>Licenciado en ciencias exactas<br>Profesor de matemáticas y física<br><span style="color:#5b6675">Temuco, Chile</span></footer>
+<script>
+{
+const $=id=>document.getElementById(id);
+const F1=v=>(+v).toFixed(1);
+const C={ink:'#16202b',mut:'#5b6675',line:'#dde4ec',vio:'#7F77DD',amb:'#BA7517',sel:'#378ADD',teal:'#1D9E75',coral:'#D85A30'};
+const B=BigInt;
+const bf=n=>{let r=1n;for(let i=2n;i<=B(n);i++)r*=i;return r;};
+const bfall=(n,k)=>{let r=1n;for(let i=0;i<k;i++)r*=B(n-i);return r;};
+const bcomb=(n,k)=>k<0||k>n?0n:bfall(n,k)/bf(k);
+const fmtB=x=>x.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+const NAMES=['Ana','Benja','Cata','Diego','Ema','Fran','Gabi','Hugo','Isa','Javi','Kevin','Lucas','Maite','Nico','Olivia','Pedro','Rocío','Sofi','Tomás','Vale'];
+const BOOKS=['Papelucho','El Principito','Subterra','Martín Rivas','La Odisea','Frankenstein','Drácula','Mujercitas','Moby Dick','Momo'];
+const CARGOS=['presidente','vicepresidente','secretario','tesorero','delegado de deportes','delegado de cultura'];
+const S={ctx:'curso',n:20,nb:8,word:'AMOR',todos:false,rep:false,ord:true,k:3};
+/* ---------- datos del contexto ---------- */
+function elems(){if(S.ctx==='curso')return NAMES.slice(0,S.n);if(S.ctx==='libros')return BOOKS.slice(0,S.nb);
+ const w=S.word;return S.todos?w.split(''):[...new Set(w.split(''))];}
+function counts(){const m=new Map();S.word.split('').forEach(c=>m.set(c,(m.get(c)||0)+1));return m;}
+function kMax(){const E=elems();return S.rep?6:Math.max(1,Math.min(E.length,8));}
+function fix(){const E=elems();if(S.todos){S.rep=false;S.ord=true;}const km=kMax();S.k=Math.max(1,Math.min(km,S.k));if(!S.rep&&!S.todos&&S.k>E.length)S.k=E.length;}
+function kind(){if(S.todos){if(S.ctx==='palabra'&&[...counts().values()].some(v=>v>1))return 'PR';return 'P';}
+ if(S.ord)return S.rep?'VR':'V';return S.rep?'CR':'C';}
+const KN={P:'Permutación',PR:'Permutación con elementos repetidos',V:'Variación (sin repetición)',VR:'Variación con repetición',C:'Combinación (sin repetición)',CR:'Combinación con repetición'};
+function total(){const E=elems(),n=E.length,k=S.k;switch(kind()){case 'P':return bf(n);case 'PR':{let d=1n;counts().forEach(v=>d*=bf(v));return bf(n)/d;}
+ case 'V':return bfall(n,k);case 'VR':return B(n)**B(k);case 'C':return bcomb(n,k);case 'CR':return bcomb(n+k-1,k);}}
+/* ---------- situación según el contexto ---------- */
+function situation(){const E=elems(),n=E.length,k=S.k,w=S.word,K=kind();
+ if(S.ctx==='curso'){
+  if(S.todos)return{t:`¿De cuántas formas se pueden ordenar los <b>${n} estudiantes</b> en una fila para entrar a la sala?`,why:`Se usan <b>todos</b> los estudiantes y cambiar a dos de lugar da <b>otra fila</b>: el orden importa.`};
+  if(S.ord&&!S.rep)return{t:`Se elige una directiva de <b>${k}</b> cargo${k>1?'s':''} (${CARGOS.slice(0,k).join(', ')}) entre los ${n} estudiantes. ¿De cuántas formas?`,why:`Los cargos son distintos: Ana presidenta y Benja vicepresidente no es lo mismo que Benja presidente y Ana vicepresidenta. Por eso <b>importa el orden</b>. Nadie puede tener dos cargos: <b>no se repite</b>.`};
+  if(!S.ord&&!S.rep)return{t:`Se elige una <b>comisión de ${k}</b> estudiante${k>1?'s':''} para organizar el aniversario. ¿Cuántas comisiones distintas hay?`,why:`En la comisión todos tienen el <b>mismo rol</b>: {Ana, Benja} es la misma comisión que {Benja, Ana}. <b>No importa el orden</b> y nadie aparece dos veces.`};
+  if(S.ord&&S.rep)return{t:`Durante <b>${k} semanas</b> se elige al «estudiante de la semana». Un mismo estudiante puede ganar más de una vez. ¿Cuántos resultados posibles hay?`,why:`Importa <b>qué semana</b> le tocó a cada uno (el orden importa) y un estudiante <b>puede repetirse</b>.`};
+  return{t:`La profesora reparte <b>${k} dulces iguales</b> entre los ${n} estudiantes; a uno le pueden tocar varios. ¿De cuántas formas puede quedar el reparto?`,why:`Los dulces son <b>iguales</b>: solo importa cuántos recibe cada estudiante, no en qué orden se entregaron (<b>no importa el orden</b>), y un estudiante puede recibir más de uno (<b>se repite</b>).`};}
+ if(S.ctx==='libros'){
+  if(S.todos)return{t:`¿De cuántas formas se pueden ordenar los <b>${n} libros</b> en un estante?`,why:`Se usan <b>todos</b> los libros y cambiar dos de lugar da <b>otro orden</b> en el estante.`};
+  if(S.ord&&!S.rep)return{t:`En la vitrina caben <b>${k}</b> de los ${n} libros, puestos en fila de izquierda a derecha. ¿De cuántas formas se puede armar la vitrina?`,why:`Cada lugar de la vitrina es distinto: <b>importa el orden</b>. Un libro no puede estar en dos lugares: <b>no se repite</b>.`};
+  if(!S.ord&&!S.rep)return{t:`Te llevas <b>${k} libros distintos</b> de los ${n} para las vacaciones. ¿Cuántas elecciones distintas hay?`,why:`Solo importa <b>qué libros</b> llevas, no en qué orden los sacaste del estante: <b>no importa el orden</b>.`};
+  if(S.ord&&S.rep)return{t:`Durante <b>${k} meses</b> el club de lectura elige el «libro del mes» entre ${n} títulos, y un título se puede repetir. ¿Cuántas programaciones distintas hay?`,why:`Importa <b>qué mes</b> le toca a cada libro (orden) y un título <b>puede repetirse</b>.`};
+  return{t:`Compras <b>${k} libros</b> para regalar y puedes llevar <b>varias copias</b> del mismo título. ¿Cuántas compras distintas puedes hacer?`,why:`Solo importa cuántas copias de cada título compras, no el orden: <b>no importa el orden</b> y <b>se puede repetir</b>.`};}
+ const dl=[...new Set(w.split(''))],rpt=[...counts().entries()].filter(([,v])=>v>1);
+ if(S.todos)return{t:`¿Cuántos <b>anagramas</b> (con o sin sentido) se forman usando <b>todas las letras</b> de <b>${w}</b>?`,why:`Se usan <b>todas</b> las letras y cambiar su orden da otra palabra: <b>importa el orden</b>.${rpt.length?` Pero ${rpt.map(([c,v])=>`la ${c} aparece ${v} veces`).join(' y ')}: intercambiar letras iguales <b>no</b> da una palabra nueva.`:''}`};
+ if(S.ord&&!S.rep)return{t:`¿Cuántas «palabras» de <b>${k} letras distintas</b> se pueden formar con las letras de <b>${w}</b> (${dl.join(', ')})?`,why:`En una palabra <b>importa el orden</b> de las letras (AM no es MA) y aquí cada letra se usa <b>una sola vez</b>.`};
+ if(!S.ord&&!S.rep)return{t:`Se eligen <b>${k} letras distintas</b> de ${w} (${dl.join(', ')}) para un juego, y solo importa <b>qué letras</b> salieron. ¿Cuántos grupos hay?`,why:`Es un <b>grupo</b> de letras: {A, M} es lo mismo que {M, A}. <b>No importa el orden</b>.`};
+ if(S.ord&&S.rep)return{t:`¿Cuántas <b>claves de ${k} letras</b> se pueden formar con las letras de ${w} (${dl.join(', ')}), si se pueden repetir?`,why:`En una clave <b>importa el orden</b> (AM no es MA) y las letras <b>se pueden repetir</b> (AA es válida).`};
+ return{t:`De una bolsa con fichas ${dl.join(', ')} se sacan <b>${k}</b>, devolviendo cada ficha antes de sacar la siguiente; solo importa <b>qué letras</b> salieron. ¿Cuántos resultados hay?`,why:`Al devolver la ficha, una letra <b>puede repetirse</b>; y como solo importa qué letras salieron, <b>no importa el orden</b>.`};}
+/* ---------- listado (perezoso) ---------- */
+function* gen(desc){const E=elems(),n=E.length,k=S.k,K=kind(),idx=[...Array(n).keys()];if(desc)idx.reverse();
+ if(K==='PR'){const cs=[...counts().entries()].sort((a,b)=>desc?(a[0]<b[0]?1:-1):(a[0]<b[0]?-1:1)),m=cs.map(c=>c[1]);
+  function* r(pre){if(pre.length===n){yield pre.slice();return;}for(let i=0;i<cs.length;i++)if(m[i]>0){m[i]--;pre.push(cs[i][0]);yield* r(pre);pre.pop();m[i]++;}}yield* r([]);return;}
+ const kk=K==='P'?n:k;
+ function* r(pre,start){if(pre.length===kk){yield pre.map(i=>E[i]);return;}
+  for(let t=0;t<n;t++){const i=idx[t];
+   if(K==='C'||K==='CR'){if(t<start)continue;}
+   if((K==='P'||K==='V'||K==='C')&&pre.includes(i))continue;
+   pre.push(i);yield* r(pre,K==='C'?t+1:K==='CR'?t:0);pre.pop();}}
+ yield* r([],0);}
+function take(g,m){const out=[];for(const x of g){out.push(x);if(out.length>=m)break;}return out;}
+function show(tup){const K=kind(),ord=K==='P'||K==='PR'||K==='V'||K==='VR';if(!ord){const E=elems();tup=[...tup].sort((x,y)=>E.indexOf(x)-E.indexOf(y));}
+ if(S.ctx==='palabra'){if(ord)return tup.join('');return '{'+tup.join(', ')+'}';}
+ if(!ord&&K==='CR'){const m=new Map();tup.forEach(x=>m.set(x,(m.get(x)||0)+1));return '{'+[...m.entries()].map(([x,v])=>v>1?`${x} ×${v}`:x).join(', ')+'}';}
+ return ord?'('+tup.join(', ')+')':'{'+tup.join(', ')+'}';}
+/* ---------- diagrama de decisión ---------- */
+function flow(){const sv=$('fsv'),W=sv.clientWidth||700,H=sv.clientHeight||300;sv.setAttribute('viewBox',`0 0 ${W} ${H}`);const K=kind(),nar=W<560;
+ const box=(x,y,w,h,t,on,lf)=>`<rect x="${F1(x-w/2)}" y="${F1(y-h/2)}" width="${F1(w)}" height="${F1(h)}" rx="${lf?10:h/2}" fill="${on?(lf?'#EEEDFE':'#E6F1FB'):'#fff'}" stroke="${on?(lf?C.vio:C.sel):C.line}" stroke-width="${on?2.4:1.4}"/>`+t.split('|').map((s,i,a)=>`<text x="${F1(x)}" y="${F1(y+(i-(a.length-1)/2)*15)}" font-size="${nar?10.5:12.5}" font-weight="${on?600:500}" fill="${on?C.ink:C.mut}" text-anchor="middle" dominant-baseline="central">${s}</text>`).join('');
+ const ed=(x1,y1,x2,y2,lab,on)=>`<path d="M${F1(x1)} ${F1(y1)} C ${F1((x1+x2)/2)} ${F1(y1)}, ${F1((x1+x2)/2)} ${F1(y2)}, ${F1(x2)} ${F1(y2)}" fill="none" stroke="${on?C.sel:C.line}" stroke-width="${on?3:1.6}"/>`+`<text x="${F1((x1+x2)/2)}" y="${F1((y1+y2)/2-8)}" font-size="11" font-weight="600" fill="${on?C.sel:C.mut}" text-anchor="middle" stroke="#fff" stroke-width="3" paint-order="stroke">${lab}</text>`;
+ const c1=W*0.12,c2=W*0.37,c3=W*0.6,c4=W*0.86,bw=Math.min(150,W*0.2),lw=Math.min(170,W*0.25);let o='';
+ const yQ1=H*0.5,yP=H*0.12,yQ2=H*0.62,yA=H*0.4,yB=H*0.84,yL=[H*0.3,H*0.5,H*0.7,H*0.92];
+ const pr=S.ctx==='palabra'&&[...counts().values()].some(v=>v>1);
+ o+=ed(c1+bw/2,yQ1,c2+(c3-c2)*0.55-(lw+30)/2,yP,'sí',S.todos)+ed(c1+bw/2,yQ1,c2-bw/2,yQ2,'no',!S.todos);
+ o+=ed(c2+bw/2,yQ2,c3-bw/2,yA,'sí',!S.todos&&S.ord)+ed(c2+bw/2,yQ2,c3-bw/2,yB,'no',!S.todos&&!S.ord);
+ o+=ed(c3+bw/2,yA,c4-lw/2,yL[0],'sí',K==='VR')+ed(c3+bw/2,yA,c4-lw/2,yL[1],'no',K==='V')+ed(c3+bw/2,yB,c4-lw/2,yL[2],'sí',K==='CR')+ed(c3+bw/2,yB,c4-lw/2,yL[3],'no',K==='C');
+ o+=box(c1,yQ1,bw,54,'¿Se usan|todos los|elementos?',true)+box(c2,yQ2,bw,44,'¿Importa|el orden?',!S.todos)+box(c3,yA,bw,44,'¿Se pueden|repetir?',!S.todos&&S.ord)+box(c3,yB,bw,44,'¿Se pueden|repetir?',!S.todos&&!S.ord);
+ o+=box(c2+ (c3-c2)*0.55,yP,lw+30,40,pr?'Permutación con|letras repetidas':'Permutación|n!',S.todos,true);
+ o+=box(c4,yL[0],lw,40,'Variación con|repetición: nᵏ',K==='VR',true)+box(c4,yL[1],lw,40,'Variación|n! : (n − k)!',K==='V',true)+box(c4,yL[2],lw,40,'Combinación con|repetición',K==='CR',true)+box(c4,yL[3],lw,40,'Combinación|C(n, k)',K==='C',true);
+ sv.innerHTML=o;}
+/* ---------- cálculos ---------- */
+function calc(){const E=elems(),n=E.length,k=S.k,K=kind(),tot=total(),T=fmtB(tot);const prodDesc=(a,m)=>{const f=[...Array(m)].map((_,i)=>a-i);return f.length>8?f.slice(0,4).join(' · ')+' · … · '+f[f.length-1]:f.join(' · ');};
+ let L=[],why='';
+ if(K==='P'){L=[`P(${n}) = ${n}!`,`${n}! = ${prodDesc(n,n)}`,`= <b>${T}</b>`];why=`Para el primer lugar hay ${n} opciones, para el segundo ${n-1} (ya se usó uno), y así hasta 1. Por el principio multiplicativo se multiplican: eso es el factorial ${n}!.`;}
+ if(K==='PR'){const cs=[...counts().entries()].filter(([,v])=>v>1);L=[`P = ${n}! : (${cs.map(([c,v])=>`${v}!`).join(' · ')})`,`= ${fmtB(bf(n))} : ${fmtB(cs.reduce((a,[,v])=>a*bf(v),1n))}`,`= <b>${T}</b>`];why=`Si todas las letras fueran distintas habría ${n}! = ${fmtB(bf(n))} órdenes. Pero ${cs.map(([c,v])=>`las ${v} letras ${c}`).join(' y ')} se pueden intercambiar entre sí sin cambiar la palabra; cada palabra se contó ${cs.map(([,v])=>`${v}!`).join(' · ')} veces, así que se divide.`;}
+ if(K==='V'){L=[`V(${n}, ${k}) = ${n}! : (${n} − ${k})!`,`= ${prodDesc(n,k)}`,`= <b>${T}</b>`];why=`Hay ${n} opciones para el primer lugar, ${n-1} para el segundo… y se multiplican solo ${k} factores, porque se eligen ${k}. Como el orden importa, cada orden cuenta como un resultado distinto.`;}
+ if(K==='VR'){L=[`VR(${n}, ${k}) = ${n}${k>1?sup(k):''}`,`= ${Array(k).fill(n).join(' · ')}`,`= <b>${T}</b>`];why=`En cada una de las ${k} posiciones hay siempre las mismas ${n} opciones, porque se puede repetir. Se multiplican ${k} veces ${n}.`;}
+ if(K==='C'){L=[`C(${n}, ${k}) = ${n}! : (${k}! · (${n} − ${k})!)`,`= (${prodDesc(n,k)}) : (${prodDesc(k,k)})`,`= ${fmtB(bfall(n,k))} : ${fmtB(bf(k))}`,`= <b>${T}</b>`];why=`Primero se cuentan los órdenes, como si importara el orden: ${prodDesc(n,k)} = ${fmtB(bfall(n,k))}. Pero cada grupo de ${k} aparece ahí ${k}! = ${fmtB(bf(k))} veces (sus ${k} elementos en distinto orden). Como el orden no importa, se divide por ${k}!.`;}
+ if(K==='CR'){L=[`CR(${n}, ${k}) = C(${n} + ${k} − 1, ${k}) = C(${n+k-1}, ${k})`,`= (${prodDesc(n+k-1,k)}) : (${prodDesc(k,k)})`,`= <b>${T}</b>`];why=`Cada resultado se puede dibujar con ${k} marcas (●) y ${n-1} separadores (|) entre los ${n} elementos: por ejemplo ●●|●|… Hay ${n+k-1} lugares y se eligen ${k} para las marcas, sin importar el orden: C(${n+k-1}, ${k}).`;}
+ return{L,why};}
+const sup=n=>String(n).split('').map(c=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[+c]).join('');
+/* ---------- interfaz ---------- */
+function upd(){fix();const E=elems(),n=E.length,K=kind(),tot=total(),sit=situation();
+ document.querySelectorAll('#ctx button').forEach(b=>b.classList.toggle('on',b.dataset.c===S.ctx));
+ [['todos',S.todos],['rep',S.rep],['ord',S.ord]].forEach(([id,v])=>document.querySelectorAll(`#${id} button`).forEach(b=>b.classList.toggle('on',(b.dataset.v==='1')===v)));
+ document.querySelectorAll('#rep button,#ord button').forEach(b=>b.disabled=S.todos);
+ $('ordQ').textContent=S.ctx==='curso'?'¿Los elegidos tienen cargos o turnos distintos? (¿importa el orden?)':S.ctx==='libros'?'¿Importa el lugar o el mes de cada libro? (¿importa el orden?)':'¿Importa el orden de las letras?';
+ $('repQ').textContent=S.ctx==='curso'?'¿Un estudiante puede ser elegido más de una vez?':S.ctx==='libros'?'¿Se puede repetir un mismo título?':'¿Se pueden repetir letras?';
+ $('nRow').hidden=S.ctx==='palabra';$('wRow').hidden=S.ctx!=='palabra';$('nOut').textContent=S.ctx==='curso'?S.n:S.nb;$('nLab').textContent=S.ctx==='curso'?'estudiantes en el curso':'libros en la librería';
+ $('kRow').hidden=S.todos;$('kOut').textContent=S.k;$('kLab').textContent=S.ctx==='curso'?(S.ord&&!S.rep?'cargos':S.rep&&S.ord?'semanas':S.rep?'dulces':'integrantes'):S.ctx==='libros'?(S.ord&&!S.rep?'lugares':S.rep&&S.ord?'meses':S.rep?'libros':'libros'):'letras';
+ $('todosNote').hidden=!S.todos;
+ $('elems').innerHTML=(S.ctx==='palabra'?S.word.split(''):E).map(e=>`<span class="el">${S.ctx==='libros'?'📕 ':S.ctx==='curso'?'🧑‍🎓 ':''}${e}</span>`).join('');
+ $('elN').textContent=S.ctx==='palabra'?`${S.word.length} letras${S.todos?'':`; letras distintas: ${[...new Set(S.word.split(''))].length}`}`:`n = ${n}`;
+ $('sit').innerHTML=sit.t;$('why').innerHTML=sit.why;$('kind').textContent=KN[K];
+ $('total').textContent=fmtB(tot);
+ // listado
+ let rows;const big=tot>25n,longRow=(S.todos&&n>8);
+ if(!big)rows=take(gen(false),25).map((t,i)=>[i+1,show(t)]);
+ else{const a=take(gen(false),longRow?6:12),z=take(gen(true),longRow?2:3).reverse();rows=a.map((t,i)=>[i+1,show(t)]).concat([['…','…']]).concat(z.map((t,i)=>[fmtB(tot-B(z.length-1-i)),show(t)]));}
+ $('list').innerHTML=rows.map(([i,t])=>t==='…'?`<div class="li dots">⋮ <span>(${fmtB(tot-B(rows.length-1))} resultados más)</span></div>`:`<div class="li"><small>${typeof i==='number'?i:i}.</small> <span>${t}</span></div>`).join('');
+ $('listH').textContent=big?`Se muestran los primeros y los últimos de ${fmtB(tot)} resultados (orden alfabético).`:`Los ${fmtB(tot)} resultados:`;
+ const{L,why}=calc();$('calc').innerHTML=L.map(x=>`<div>${x}</div>`).join('');$('strat').innerHTML=why;
+ flow();}
+$('ctx').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.ctx=b.dataset.c;upd();};
+['todos','rep','ord'].forEach(id=>$(id).onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)return;S[id]=b.dataset.v==='1';upd();});
+$('nStp').onclick=e=>{const b=e.target.closest('button');if(!b)return;const d=+b.dataset.d;if(S.ctx==='curso')S.n=Math.max(2,Math.min(20,S.n+d));else S.nb=Math.max(2,Math.min(10,S.nb+d));upd();};
+$('kStp').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.k+= +b.dataset.d;upd();};
+$('word').oninput=e=>{const w=e.target.value.toUpperCase().replace(/[ÁÀÄ]/g,'A').replace(/[ÉÈË]/g,'E').replace(/[ÍÌÏ]/g,'I').replace(/[ÓÒÖ]/g,'O').replace(/[ÚÙÜ]/g,'U').replace(/[^A-ZÑ]/g,'').slice(0,10);if(w.length>=2){S.word=w;upd();}};
+$('wPre').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.word=b.textContent;$('word').value=S.word;upd();};
+new ResizeObserver(()=>flow()).observe(document.body);
+$('word').value=S.word;upd();
+}
+
+</script>
+<style>
+.mclase{margin-left:4px;font:inherit;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--line,#cbd5e1);background:#fff;color:#163a5f;cursor:pointer;white-space:nowrap}
+.mclase[aria-pressed="true"]{background:#163a5f;color:#fff;border-color:#163a5f}
+@media(min-width:901px){
+body.clase .concept,body.clase .note,body.clase .hint,body.clase .panel details,body.clase .panel .box:has(> details:only-child){display:none!important}
+body.clase .work{grid-template-columns:minmax(0,2.2fr) minmax(280px,1fr)}
+body.clase .fig{height:clamp(420px,76vh,920px)}
+body.clase .stepTxt{font-size:19px}}
+@media(max-width:900px){.mclase{display:none}}
+</style>
+<script>
+(function(){var K='orbita-modo-clase',on=false;try{on=localStorage.getItem(K)==='1';}catch(e){}
+var b=document.createElement('button');b.type='button';b.className='mclase';b.textContent='Modo clase';b.title='Oculta las explicaciones y agranda la figura para proyectar';
+function set(v){on=v;document.body.classList.toggle('clase',on);b.setAttribute('aria-pressed',on?'true':'false');try{localStorage.setItem(K,on?'1':'0');}catch(e){}setTimeout(function(){window.dispatchEvent(new Event('resize'));},30);}
+b.onclick=function(){set(!on);};var h=document.querySelector('.brand')||document.querySelector('header');if(h)h.appendChild(b);set(on);})();
+</script>
+</body>
+</html>

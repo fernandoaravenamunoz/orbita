@@ -127,6 +127,9 @@ const CFG={
  par:{n:'Paralelas y secantes',phi:0,unit:'cm',lines:[{d:4.8,n:'r'},{d:1.6,n:'s'},{d:-4.8,n:'t'}],
   sec:[{anc:[[0,-7],[2,0.2]],names:['A','B','C']},{anc:[[0,-1],[2,-1+9.6*R2]],names:['D','E','F']}],snap:.5,
   txt:'Tres paralelas r, s y t cortan a dos secantes. Los segmentos AB y BC de una secante son proporcionales a DE y EF de la otra.'},
+ par4:{n:'Cuatro paralelas',phi:0,unit:'cm',lines:[{d:6,n:'r'},{d:3,n:'s'},{d:-1,n:'t'},{d:-6,n:'u'}],
+  sec:[{anc:[[0,-7],[3,0.7]],names:['A','B','C','D']},{anc:[[0,-1],[3,-1+12*R2]],names:['E','F','G','H']}],snap:.5,
+  txt:'Cuatro paralelas r, s, t y u cortan a dos secantes. Los tres segmentos de una secante son proporcionales a los tres segmentos correspondientes de la otra: AB : BC : CD = EF : FG : GH.'},
  tri:{n:'Triángulo con una paralela',phi:0,unit:'cm',apex:{d:8,s:0,n:'A'},lines:[{d:4},{d:0}],
   sec:[{anc:['V',[1,-6]],names:['B′','B']},{anc:['V',[1,3]],names:['C′','C']}],snap:.5,
   txt:'En el triángulo ABC, el segmento B′C′ es paralelo a BC. Las paralelas B′C′ y BC cortan a los lados AB y AC en segmentos proporcionales, y además B′C′ : BC es la misma razón.'},
@@ -181,6 +184,7 @@ function geom(){const c=TL.c,{X}=frame(c),P={},secs=[];
 function seg(G,a,b){const A=G.P[a],B=G.P[b];return{k:[a,b].sort().join('|'),a,b,len:dist(A.X,B.X)};}
 const share=(G,a,b)=>a!==b&&G.P[a].on.some(x=>G.P[b].on.includes(x));
 function props(G){const c=TL.c,[s0,s1]=c.sec.map(s=>s.names),S=(a,b)=>seg(G,a,b);
+ if(!c.apex&&s0.length===4){const[A,B,Cc,D]=s0,[E,Fp,G2,Hh]=s1;return[[S(A,B),S(B,Cc),S(E,Fp),S(Fp,G2)],[S(B,Cc),S(Cc,D),S(Fp,G2),S(G2,Hh)],[S(A,B),S(Cc,D),S(E,Fp),S(G2,Hh)],[S(A,Cc),S(Cc,D),S(E,G2),S(G2,Hh)],[S(A,B),S(A,D),S(E,Fp),S(E,Hh)]];}
  if(!c.apex){const[A,B,Cc]=s0,[D,E,Fp]=s1;return[[S(A,B),S(B,Cc),S(D,E),S(E,Fp)],[S(A,B),S(A,Cc),S(D,E),S(D,Fp)],[S(B,Cc),S(A,Cc),S(E,Fp),S(D,Fp)],[S(A,B),S(D,E),S(B,Cc),S(E,Fp)]];}
  const V=c.apex.n,dv=c.apex.d,ord=[0,1].sort((i,j)=>Math.abs(c.lines[i].d-dv)-Math.abs(c.lines[j].d-dv)),[i1,i2]=ord,between=Math.sign(c.lines[0].d-dv)!==Math.sign(c.lines[1].d-dv);
  const P1=s0[i1],P2=s0[i2],Q1=s1[i1],Q2=s1[i2],L=[];

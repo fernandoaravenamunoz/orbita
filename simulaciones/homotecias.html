@@ -87,7 +87,7 @@ input[type=range]{accent-color:var(--sel);width:100%;height:28px}
 <div class="work">
 <div>
 <div class="stagehead"><h1>Homotecia de centro O y razón k</h1><div class="legend"><span><i style="background:color-mix(in srgb,var(--teal) 35%,transparent);border:1px solid var(--teal)"></i>Figura original</span><span><i style="background:var(--coral)"></i>Imagen</span><span><i style="background:var(--mut)"></i>Rayos desde O</span></div></div>
-<div class="fig plain"><svg id="hsv" role="img" aria-label="Homotecia de una figura"></svg><p class="hint" id="hHint">Arrastra el centro O, la figura o sus vértices · cada cuadro mide 1 cm</p></div>
+<div class="fig plain"><svg id="hsv" role="img" aria-label="Homotecia de una figura"></svg><p class="hint" id="hHint">Arrastra O, la figura o sus vértices · arrastra el fondo para mover el plano · rueda o pellizco para el zoom</p></div>
 <div class="tools" id="hTools"><button id="hShow" class="pri" hidden>Mostrar la imagen</button><p class="stepTxt" id="hTxt"></p></div>
 </div>
 <aside class="panel">
@@ -100,7 +100,7 @@ input[type=range]{accent-color:var(--sel);width:100%;height:28px}
 <div class="box"><h2>Razón de homotecia</h2>
 <div class="sl"><label for="hk">k</label><input type="range" id="hk" min="-3" max="3" step="0.1"><output id="hkO"></output></div>
 <div class="row" id="hkPre" style="margin-top:4px"></div>
-<div class="row" style="margin-top:6px"><button id="hFit">Encuadrar</button><label class="chk" style="margin:0"><input type="checkbox" id="hAuto"> Encuadrar automáticamente</label></div>
+<div class="row" style="margin-top:6px"><button id="hZi" aria-label="Acercar">＋</button><button id="hZo" aria-label="Alejar">−</button><button id="hFit">Encuadrar</button><label class="chk" style="margin:0"><input type="checkbox" id="hAuto"> Encuadrar automáticamente</label></div>
 <p class="note" style="margin-top:4px">Con el encuadre fijo, la cuadrícula no cambia al mover k: así se ve cuánto crece o se achica la figura.</p>
 <label class="chk"><input type="checkbox" id="hRays" checked> Mostrar rayos desde O</label>
 <label class="chk"><input type="checkbox" id="hCamC"> Mostrar la cámara oscura (orificio en O)</label>
@@ -116,7 +116,7 @@ input[type=range]{accent-color:var(--sel);width:100%;height:28px}
 <div class="work">
 <div>
 <div class="stagehead"><h1>Homotecia vectorial</h1><div class="legend" id="vLeg"></div></div>
-<div class="fig plain"><svg id="vsv" role="img" aria-label="Homotecia vectorial en el plano cartesiano"></svg><p class="hint">Arrastra O, A, B o C a otro punto de la cuadrícula</p></div>
+<div class="fig plain"><svg id="vsv" role="img" aria-label="Homotecia vectorial en el plano cartesiano"></svg><p class="hint">Arrastra O, A, B o C · arrastra el fondo para mover el plano · rueda o pellizco para el zoom</p></div>
 <div class="tools"><p class="stepTxt" id="vTxt"></p></div>
 </div>
 <aside class="panel">
@@ -127,7 +127,7 @@ input[type=range]{accent-color:var(--sel);width:100%;height:28px}
 <label class="chk"><input type="checkbox" id="vAB" checked> Mostrar el vector AB y su imagen A′B′</label>
 <label class="chk"><input type="checkbox" id="vTwo"> Aplicar una segunda homotecia con el mismo centro</label>
 <div class="sl" id="vk2Row" hidden><label for="vk2">k₂</label><input type="range" id="vk2" min="-3" max="3" step="0.25"><output id="vk2O"></output></div>
-<div class="row"><button id="vReset">Restablecer puntos</button><button id="vFit">Encuadrar</button></div>
+<div class="row"><button id="vReset">Restablecer puntos</button><button id="vZi" aria-label="Acercar">＋</button><button id="vZo" aria-label="Alejar">−</button><button id="vFit">Encuadrar</button></div>
 </div>
 <div class="box"><h2>Coordenadas</h2><table class="tbl" id="vTbl"></table></div>
 <div class="mets" id="vMets"></div>
@@ -186,7 +186,9 @@ document.querySelectorAll('#hFigR,#hFigG').forEach(el=>el.onclick=e=>{const b=e.
 const KP=[3,2,1.5,1,0.5,1/3,0,-1/3,-0.5,-1,-2];
 $('hkPre').innerHTML=KP.map(k=>`<button data-k="${k}">k = ${kS(k)}</button>`).join('');
 $('hkPre').onclick=e=>{const b=e.target.closest('button');if(!b)return;H.k=+b.dataset.k;H.rev=false;H.guess=null;upd();};
-$('hFit').onclick=()=>{H.refit=true;upd();};$('hAuto').onchange=e=>{H.auto=e.target.checked;H.refit=true;upd();};
+$('hFit').onclick=()=>{H.refit=true;upd();};
+const hUser=()=>{H.auto=false;$('hAuto').checked=false;H.refit=false;};setTimeout(()=>panZoom('hsv',HV,H,hUser),0);
+$('hZi').onclick=()=>{zoomAt(HV,'hsv',null,1.25);hUser();upd();};$('hZo').onclick=()=>{zoomAt(HV,'hsv',null,0.8);hUser();upd();};$('hAuto').onchange=e=>{H.auto=e.target.checked;H.refit=true;upd();};
 $('hk').oninput=e=>{H.k=Math.round(+e.target.value*10)/10;H.rev=false;H.guess=null;upd();};
 $('hRays').onchange=e=>{H.rays=e.target.checked;upd();};
 $('hCamC').onchange=e=>{H.cam=e.target.checked;upd();};
@@ -207,6 +209,15 @@ function grid(M,W,Hh,axes){const a=M.w([0,Hh]),b=M.w([W,0]),st=M.sc>=14?1:M.sc>=
  return o;}
 function svs(id){const s=$(id),W=s.clientWidth||600,Hh=s.clientHeight||420;s.setAttribute('viewBox',`0 0 ${W} ${Hh}`);return{s,W,Hh};}
 
+/* ---------- mover y hacer zoom en el plano ---------- */
+function panTo(VW,d,p){const sc=VW.v.sc;VW.v.cx=d.c0[0]-(p[0]-d.p0[0])/sc;VW.v.cy=d.c0[1]+(p[1]-d.p0[1])/sc;}
+function zoomAt(VW,id,p,f){const sv=$(id),W=sv.clientWidth||600,Hh=sv.clientHeight||420;if(!VW.v)return;if(!p)p=[W/2,Hh/2];const w=mk(VW,W,Hh).w(p),sc=Math.max(2.5,Math.min(220,VW.v.sc*f));VW.v.sc=sc;VW.v.cx=w[0]-(p[0]-W/2)/sc;VW.v.cy=w[1]+(p[1]-Hh/2-12)/sc;}
+function panZoom(id,VW,st,onUser){const s=$(id);s.style.cursor='grab';s.style.touchAction='none';
+ s.addEventListener('wheel',e=>{e.preventDefault();const r=s.getBoundingClientRect();zoomAt(VW,id,[e.clientX-r.left,e.clientY-r.top],Math.exp(-e.deltaY*0.0015));onUser();upd();},{passive:false});
+ const P=new Map();let d0=0;
+ s.addEventListener('pointerdown',e=>{P.set(e.pointerId,[e.clientX,e.clientY]);if(P.size===2){const[a,b]=[...P.values()];d0=Math.hypot(a[0]-b[0],a[1]-b[1]);st.drag=null;}},true);
+ s.addEventListener('pointermove',e=>{if(!P.has(e.pointerId))return;P.set(e.pointerId,[e.clientX,e.clientY]);if(P.size===2&&d0>0){const[a,b]=[...P.values()],d=Math.hypot(a[0]-b[0],a[1]-b[1]),r=s.getBoundingClientRect();zoomAt(VW,id,[(a[0]+b[0])/2-r.left,(a[1]+b[1])/2-r.top],d/d0);d0=d;st.drag=null;onUser();upd();}},true);
+ const end=e=>{P.delete(e.pointerId);if(P.size<2)d0=0;};s.addEventListener('pointerup',end,true);s.addEventListener('pointercancel',end,true);}
 /* ---------- homotecia ---------- */
 const HV={v:null};
 function renderH(){const{s,W,Hh}=svs('hsv'),Wd=world(),{f,orig,img,ko,ki}=Wd,k=H.k,O=H.O,hid=H.hide&&!H.rev;
@@ -262,8 +273,8 @@ function dragSetup(id,state,onDown,onMove,onUp){const s=$(id);s.addEventListener
  const up=()=>{if(!state.drag)return;onUp&&onUp();state.drag=null;upd();};s.addEventListener('pointerup',up);s.addEventListener('pointercancel',up);}
 const snap=v=>Math.round(v*2)/2;
 dragSetup('hsv',H,(h,p)=>{const w=H.M.w(p);if(h==='O')return{t:'O'};if(h&&h[0]==='v')return{t:'v',i:+h.slice(1)};if(h==='fig')return{t:'fig',off:[w[0]-H.pos[0],w[1]-H.pos[1]]};
-  if(H.hide&&!H.rev){H.guess=w;upd();}return null;},
- p=>{const w=H.M.w(p),d=H.drag;if(d.t==='O')H.O=[snap(w[0]),snap(w[1])];else if(d.t==='v')H.geo[H.fig][d.i]=[snap(w[0])-H.pos[0],snap(w[1])-H.pos[1]];else H.pos=[snap(w[0]-d.off[0]),snap(w[1]-d.off[1])];H.rev=H.rev&&!(H.hide);if(H.hide){H.guess=null;}upd();});
+  if(H.hide&&!H.rev){H.guess=w;upd();return null;}return{t:'pan',p0:p,c0:[HV.v.cx,HV.v.cy]};},
+ p=>{const w=H.M.w(p),d=H.drag;if(d.t==='pan'){panTo(HV,d,p);H.auto=false;$('hAuto').checked=false;upd();return;}if(d.t==='O')H.O=[snap(w[0]),snap(w[1])];else if(d.t==='v')H.geo[H.fig][d.i]=[snap(w[0])-H.pos[0],snap(w[1])-H.pos[1]];else H.pos=[snap(w[0]-d.off[0]),snap(w[1]-d.off[1])];H.rev=H.rev&&!(H.hide);if(H.hide){H.guess=null;}upd();});
 
 /* ---------- vectorial ---------- */
 const V={O:[0,0],A:[1,1],B:[4,1],C:[2,3],k:2,k2:-0.5,two:false,ab:true,drag:null};
@@ -271,6 +282,8 @@ const VV={v:null};
 $('vkPre').innerHTML=KP.map(k=>`<button data-k="${k}">k₁ = ${kS(k)}</button>`).join('');
 $('vkPre').onclick=e=>{const b=e.target.closest('button');if(!b)return;V.k=+b.dataset.k;upd();};
 $('vFit').onclick=()=>{V.refit=true;upd();};
+const vUser=()=>{V.refit=false;};setTimeout(()=>panZoom('vsv',VV,V,vUser),0);
+$('vZi').onclick=()=>{zoomAt(VV,'vsv',null,1.25);upd();};$('vZo').onclick=()=>{zoomAt(VV,'vsv',null,0.8);upd();};
 $('vk').oninput=e=>{V.k=+e.target.value;upd();};$('vk2').oninput=e=>{V.k2=+e.target.value;upd();};
 $('vAB').onchange=e=>{V.ab=e.target.checked;upd();};$('vTwo').onchange=e=>{V.two=e.target.checked;upd();};
 $('vReset').onclick=()=>{Object.assign(V,{O:[0,0],A:[1,1],B:[4,1],C:[2,3],refit:true});upd();};
@@ -311,7 +324,7 @@ function updV(){const k=V.k,ks=['A','B','C'],P=ks.map(n=>V[n]),P1=P.map(p=>hom(p
  $('vFm').innerHTML=L.map(x=>`<div>${x}</div>`).join('');
  $('vTxt').innerHTML=`<b>${ty}.</b> Cada vector OP se multiplica por k₁ = ${kS(k)}: ${k<0?'cambia de sentido y ':''}${Math.abs(k)>1?'se alarga':Math.abs(k)<1?'se acorta':'mantiene su largo'}${k===0?' hasta anularse':''}.`;
  renderV();}
-dragSetup('vsv',V,h=>h?{t:h}:null,p=>{const w=V.M.w(p);V[V.drag.t]=[Math.round(w[0]),Math.round(w[1])];upd();});
+dragSetup('vsv',V,(h,p)=>h?{t:h}:{t:'pan',p0:p,c0:[VV.v.cx,VV.v.cy]},p=>{if(V.drag.t==='pan'){panTo(VV,V.drag,p);upd();return;}const w=V.M.w(p);V[V.drag.t]=[Math.round(w[0]),Math.round(w[1])];upd();});
 
 /* ---------- rutas ---------- */
 let view='homotecia';
