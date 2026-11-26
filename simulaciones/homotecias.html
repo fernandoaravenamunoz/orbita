@@ -248,9 +248,20 @@ function renderH(){const{s,W,Hh}=svs('hsv'),Wd=world(),{f,orig,img,ko,ki}=Wd,k=H
  {const L=segList();if(![...L.F,...L.O].includes(H.seg))H.seg='OA';
   // zonas para tocar cada segmento de la figura original
   [...L.F,...L.O].forEach(cd=>{const q=segPts(cd,ko,ki);if(dist(q.a,q.b)<1e-6)return;o+=`<line x1="${F1(S(q.a)[0])}" y1="${F1(S(q.a)[1])}" x2="${F1(S(q.b)[0])}" y2="${F1(S(q.b)[1])}" stroke="transparent" stroke-width="14" data-h="s:${cd}" style="cursor:pointer"/>`;});
-  const q=segPts(H.seg,ko,ki),mid=(a,b)=>S([(a[0]+b[0])/2,(a[1]+b[1])/2]),off=(a,b,s0)=>{const A=S(a),B=S(b),dx=B[0]-A[0],dy=B[1]-A[1],L2=Math.hypot(dx,dy)||1;return[-dy/L2*s0,dx/L2*s0];};
-  if(!hid&&dist(q.a2,q.b2)>1e-6){o+=Ln(S(q.a2),S(q.b2),C.coral,6,{op:.9});const m=mid(q.a2,q.b2),d=off(q.a2,q.b2,18);o+=T(m[0]+d[0],m[1]+d[1],`${q.n2} = ${nf(dist(q.a2,q.b2))}`,C.coral,{fs:14});}
-  if(dist(q.a,q.b)>1e-6){o+=Ln(S(q.a),S(q.b),C.teal,6,{op:.95});const m=mid(q.a,q.b),d=off(q.a,q.b,-18);o+=T(m[0]+d[0],m[1]+d[1],`${q.n} = ${nf(dist(q.a,q.b))}`,C.teal,{fs:14});}}
+  const q=segPts(H.seg,ko,ki);
+  // Normal común (tomada del segmento original): la cota del original va a un lado y la de la imagen al otro,
+  // así nunca se tapan, aunque los segmentos estén uno sobre otro (OA y OA′, o k = 1).
+  const nrm=(()=>{let A=S(q.a),B=S(q.b);if(dist(q.a,q.b)<1e-6){A=S(q.a2);B=S(q.b2);}const dx=B[0]-A[0],dy=B[1]-A[1],L2=Math.hypot(dx,dy)||1;let n=[-dy/L2,dx/L2];if(n[1]>0||(Math.abs(n[1])<1e-6&&n[0]<0))n=[-n[0],-n[1]];return n;})();
+  const cota=(a,b,col,txt,side,lev)=>{const A=S(a),B=S(b),L2=dist(A,B);if(L2<2)return '';const n=[nrm[0]*side,nrm[1]*side],d=24+lev*26,u=[(B[0]-A[0])/L2,(B[1]-A[1])/L2];
+   const A1=[A[0]+n[0]*d,A[1]+n[1]*d],B1=[B[0]+n[0]*d,B[1]+n[1]*d];let s='';
+   s+=Ln([A[0]+n[0]*5,A[1]+n[1]*5],[A1[0]+n[0]*5,A1[1]+n[1]*5],col,1.2,{op:.7})+Ln([B[0]+n[0]*5,B[1]+n[1]*5],[B1[0]+n[0]*5,B1[1]+n[1]*5],col,1.2,{op:.7});
+   s+=Ln(A1,B1,col,1.8);const tk=(P)=>Ln([P[0]-(u[0]+n[0])*5,P[1]-(u[1]+n[1])*5],[P[0]+(u[0]+n[0])*5,P[1]+(u[1]+n[1])*5],col,2);s+=tk(A1)+tk(B1);
+   const m=[(A1[0]+B1[0])/2,(A1[1]+B1[1])/2],w=txt.length*7.9+16;
+   s+=`<rect x="${F1(m[0]-w/2)}" y="${F1(m[1]-12)}" width="${F1(w)}" height="24" rx="12" fill="#fff" stroke="${col}" stroke-width="1.5" pointer-events="none"/>`+T(m[0],m[1]+1,txt,col,{fs:14,sw:0});return s;};
+  if(!hid&&dist(q.a2,q.b2)>1e-6)o+=Ln(S(q.a2),S(q.b2),C.coral,9,{op:.85});
+  if(dist(q.a,q.b)>1e-6)o+=Ln(S(q.a),S(q.b),C.teal,4.5,{op:1});
+  let cc='';if(!hid&&dist(q.a2,q.b2)>1e-6)cc+=cota(q.a2,q.b2,C.coral,`${q.n2} = ${nf(dist(q.a2,q.b2))}`,1,0);
+  if(dist(q.a,q.b)>1e-6)cc+=cota(q.a,q.b,C.teal,`${q.n} = ${nf(dist(q.a,q.b))}`,-1,0);H.cc=cc;}
  const cen=p=>p.reduce((s,q)=>[s[0]+q[0]/p.length,s[1]+q[1]/p.length],[0,0]),co=cen(ko),ci=cen(ki);
  const lab=(P,c0,name,col)=>{const sp=S(P),sc=S(c0),dx=sp[0]-sc[0],dy=sp[1]-sc[1],L=Math.hypot(dx,dy)||1;return T(sp[0]+dx/L*16,sp[1]+dy/L*16,name,col,{fs:15});};
  ko.forEach((P,i)=>{o+=`<circle cx="${F1(S(P)[0])}" cy="${F1(S(P)[1])}" r="3.5" fill="${C.teal}" pointer-events="none"/>`+lab(P,co,NAMES[i],C.teal);});
@@ -259,7 +270,7 @@ function renderH(){const{s,W,Hh}=svs('hsv'),Wd=world(),{f,orig,img,ko,ki}=Wd,k=H
  const so=S(O);o+=`<circle cx="${F1(so[0])}" cy="${F1(so[1])}" r="13" fill="var(--ink)" fill-opacity=".08" stroke="none" data-h="O" style="cursor:grab"/><circle cx="${F1(so[0])}" cy="${F1(so[1])}" r="5.5" fill="var(--ink)" pointer-events="none"/>`+T(so[0]-14,so[1]-14,'O','var(--ink)',{fs:17});
  if(H.guess){const g=S(H.guess);o+=`<circle cx="${F1(g[0])}" cy="${F1(g[1])}" r="7" fill="none" stroke="${C.vio}" stroke-width="2.5" pointer-events="none"/>`+Ln([g[0]-10,g[1]],[g[0]+10,g[1]],C.vio,2)+Ln([g[0],g[1]-10],[g[0],g[1]+10],C.vio,2)+T(g[0]+14,g[1]-12,'A′ ?',C.vio,{a:'start'});
   if(!hid)o+=Ln(g,S(ki[0]),C.vio,1.6,{dash:'3 4'});}
- s.innerHTML=o;H.M=M;}
+ s.innerHTML=o+(H.cc||'');H.M=M;}
 function typeOf(k){if(k===0)return['Caso degenerado','Toda la figura se reduce al punto O.'];if(k===1)return['Identidad','La imagen coincide con la figura original.'];if(k===-1)return['Inversa · simetría central','Misma medida, al otro lado de O y girada en 180°.'];
  const d=k>0?'Directa':'Inversa',t=Math.abs(k)>1?'ampliación':'reducción';return[`${d} · ${t}`,k>0?`La imagen queda al mismo lado de O y es una ${t}.`:`La imagen queda al lado opuesto de O, girada en 180°, y es una ${t}.`];}
 function updH(){const{f,orig,img,ko,ki}=world(),k=H.k,O=H.O,hid=H.hide&&!H.rev,q='<b>?</b>';

@@ -407,8 +407,8 @@ const SITIO = {
     },
     {
       nombre: "Transformaciones isométricas",
-      descripcion: "Traslada, refleja y rota un punto, un segmento, una figura y un velero en el plano cartesiano. Mueve con el mouse el vector, el eje de reflexión o el centro de rotación y observa las coordenadas, la regla y las propiedades que se conservan.",
-      temas: ["Traslación", "Reflexión", "Rotación", "Plano cartesiano"],
+      descripcion: "Traslada, refleja (respecto de un eje o de un punto) y rota un punto, un segmento, una figura y un velero en el plano cartesiano. Mueve con el mouse el vector, el eje o el centro y observa las coordenadas, la regla y las propiedades que se conservan. Incluye la composición de hasta cuatro transformaciones y la isometría que resulta.",
+      temas: ["Traslación", "Reflexión axial y central", "Rotación", "Composición"],
       url: "simulaciones/isometrias.html",
       dibujo: "isometrias",
       fecha: "2026-11-26"
@@ -431,7 +431,7 @@ const SITIO = {
     },
     {
       nombre: "Trigonometría en el triángulo rectángulo",
-      descripcion: "Un triángulo rectángulo con lados enteros: elige un ángulo y mira su seno, coseno y tangente con el cateto opuesto, el cateto adyacente y la hipotenusa. Arrastra los vértices sin perder el ángulo recto y compara las razones en triángulos semejantes.",
+      descripcion: "Un triángulo rectángulo con lados enteros: elige un ángulo y mira su seno, coseno y tangente con el cateto opuesto, el cateto adyacente y la hipotenusa. Arrastra los vértices sin perder el ángulo recto, propón tus propios triángulos y compara sus razones para ver si son semejantes.",
       temas: ["Seno, coseno y tangente", "Cateto opuesto y adyacente", "Razones recíprocas", "Semejanza"],
       url: "simulaciones/trigonometria.html",
       dibujo: "trigonometria",

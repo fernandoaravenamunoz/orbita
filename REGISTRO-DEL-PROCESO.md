@@ -153,6 +153,21 @@ Fernando subió 19 PDF y 7 infografías del sitio Weebly.
   - **Error corregido:** los vértices de las figuras geométricas no aparecían para arrastrarlos.
 - **Entrega:** se empaquetó el sitio completo (`orbita-sitio-completo.zip`) junto con este registro.
 
+## Etapa 6: ajustes a tres simulaciones (26-11)
+
+- **Homotecias:** las medidas del segmento destacado y de su imagen se muestran en cotas paralelas, una a cada lado. Así no se tapan cuando los segmentos quedan uno sobre otro, como OA y OA′.
+- **Trigonometría, triángulos semejantes:**
+  - △1 se edita escribiendo sus catetos.
+  - △2 y △3 se pueden ampliar desde △1 con una razón k, tener medidas propias (con decimales) u ocultarse.
+  - Las razones de cada triángulo aparecen como fracción: sen α = cat. op./hip. = 3/5 = 0,6 («≈» si el decimal no es exacto).
+  - La conclusión dice si cada triángulo es semejante a △1, si lo es con los catetos intercambiados o si no lo es.
+  - Ejemplos: «Tres semejantes», «Uno no es semejante» y «Catetos intercambiados».
+- **Transformaciones isométricas:**
+  - **Reflexión central** (simetría puntual) respecto del origen o de un centro libre.
+  - **Pestaña «Composición»:** hasta cuatro transformaciones seguidas, con imágenes intermedias, animación paso a paso, tabla de coordenadas y la isometría que resulta (traslación, rotación, reflexión o reflexión con deslizamiento).
+  - Muestra si el orden de los pasos cambia el resultado («Invertir el orden») e incluye seis ejemplos.
+  - Con coordenadas decimales se usa punto y coma: (0,5; 5).
+
 ---
 
 ## Pendientes conocidos

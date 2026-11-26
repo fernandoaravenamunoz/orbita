@@ -80,34 +80,47 @@ input[type=range]{accent-color:var(--sel);width:100%;height:28px}
 .calc{font-size:clamp(19px,1.9vw,23px);font-weight:600;color:#4b44a8}
 .isot td{text-align:left!important;font-size:15px}.isot td:nth-child(2){text-align:center!important;color:var(--mut)}
 .fig.plain{height:clamp(460px,70vh,740px);background:#fff}
+.cstep{border-left:4px solid var(--c);background:#fff;border-radius:10px;padding:8px 10px;margin-top:10px}
+.cstep .sh{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.cstep .sh b{color:var(--c);font-size:17px;min-width:1.4em}
+.cstep .sh select{flex:1 1 150px}.cstep .sh button{min-height:32px;width:34px;padding:0;font-size:15px}
+.cstep .sp{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin-top:8px;font-size:15px}
+.cstep input{width:62px;font:inherit;font-size:15px;padding:3px 7px;border:1.5px solid var(--line);border-radius:8px;text-align:center}
+.cstep select{min-height:34px;font-size:14.5px}
+.rl{font-size:15px;padding:4px 0;border-bottom:1px dashed var(--line)}.rl b{color:var(--c)}
+.res{margin-top:10px;border-radius:10px;padding:10px 12px;background:color-mix(in srgb,#D85A30 9%,#fff);border-left:4px solid #D85A30}
+.res .calc{color:#A3401C}
 </style>
 </head>
 <body>
 <header class="top">
 <div class="brand"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" stroke="#163a5f" stroke-width="3" stroke-linejoin="round" aria-hidden="true"><path d="M8 44 L24 14 L30 44 Z" fill="#d6ece4"/><path d="M56 44 L40 14 L34 44 Z" fill="#f6ddd3"/><path d="M32 6 V58" stroke-dasharray="4 4"/></svg><span>Transformaciones isométricas</span><a class="volver" href="../index.html#simulaciones" target="_top">← Órbita Matemática</a></div>
-
+<nav class="tabs" id="tabs"><a href="#transformacion" data-r="transformacion">Una transformación</a><a href="#composicion" data-r="composicion">Composición</a></nav>
 </header>
 <main>
 <section class="band">
 <div class="work">
 <div>
-<div class="stagehead"><h1 id="title"></h1><div class="legend"><span><i style="background:#1D9E75"></i>Original</span><span><i style="background:#D85A30"></i>Imagen (′)</span><span><i style="background:#7F77DD"></i>Vector, eje o centro</span></div></div>
+<div class="stagehead"><h1 id="title"></h1><div class="legend" id="leg"></div></div>
 <div class="fig plain"><svg id="isv" role="img" aria-label="Plano cartesiano con una transformación isométrica"></svg><p class="hint" id="hint"></p></div>
-<div class="tools"><button id="bAnim" class="pri">▶ Animar la transformación</button><label class="chk" style="margin:0"><input type="checkbox" id="cons" checked> Construcción</label><label class="chk" style="margin:0"><input type="checkbox" id="coords" checked> Coordenadas</label></div>
+<div class="tools"><button id="bAnim" class="pri">▶ Animar la transformación</button><label class="chk" style="margin:0"><input type="checkbox" id="cons" checked> Construcción</label><label class="chk" style="margin:0"><input type="checkbox" id="coords" checked> Coordenadas</label><label class="chk" style="margin:0" id="midW"><input type="checkbox" id="mid" checked> Imágenes intermedias</label></div>
 </div>
 <aside class="panel">
-<p class="concept">Una <b>transformación isométrica</b> mueve una figura sin cambiar su forma ni su tamaño: las medidas de los lados y de los ángulos se conservan. Las tres básicas son la <b>traslación</b>, la <b>reflexión</b> y la <b>rotación</b>.</p>
+<p class="concept" id="concept"></p>
 <div class="box"><h2>1. ¿Qué transformamos?</h2><div class="seg" id="obj"><button data-o="punto">• Un punto</button><button data-o="segmento">― Un segmento</button><button data-o="figura">▲ Una figura</button><button data-o="objeto">⛵ Un objeto</button></div>
 <div class="seg" id="figSel" style="margin-top:8px"><button data-f="tri">Triángulo</button><button data-f="cua">Cuadrilátero</button></div></div>
-<div class="box"><h2>2. Transformación</h2><div class="seg" id="trs"><button data-t="tras">Traslación</button><button data-t="refl">Reflexión</button><button data-t="rot">Rotación</button></div>
+<div class="box" id="trBox"><h2>2. Transformación</h2><div class="seg" id="trs"><button data-t="tras">Traslación</button><button data-t="refl">Reflexión axial</button><button data-t="cent">Reflexión central</button><button data-t="rot">Rotación</button></div>
 <div id="pTras" style="margin-top:10px"><p class="note">El vector v se define con su inicio y su punta: arrástralos en el plano.</p></div>
 <div id="pRefl" style="margin-top:10px"><span class="lbl">Eje de reflexión</span><div class="seg" id="axSel"><button data-a="x">Eje X</button><button data-a="y">Eje Y</button><button data-a="yx">y = x</button><button data-a="ymx">y = −x</button><button data-a="libre">Eje libre</button></div></div>
-<div id="pRot" style="margin-top:10px"><span class="lbl">Centro de rotación</span><div class="seg" id="cSel"><button data-c="o">Origen (0, 0)</button><button data-c="libre">Centro libre</button></div>
-<span class="lbl" style="margin-top:10px">Ángulo (positivo = antihorario): <b id="angO"></b></span><input type="range" id="angR" min="-180" max="360" step="5">
+<div id="pCen" style="margin-top:10px"><span class="lbl" id="cLbl">Centro de rotación</span><div class="seg" id="cSel"><button data-c="o">Origen (0, 0)</button><button data-c="libre">Centro libre</button></div></div>
+<div id="pRot" style="margin-top:10px"><span class="lbl">Ángulo (positivo = antihorario): <b id="angO"></b></span><input type="range" id="angR" min="-180" max="360" step="5">
 <div class="row" id="angPre"><button data-g="90">90°</button><button data-g="180">180°</button><button data-g="270">270°</button><button data-g="-90">−90°</button><button data-g="45">45°</button></div></div>
 </div>
-<div class="box"><h2>Regla</h2><div id="rule"></div></div>
-<div class="box"><h2>Coordenadas</h2><table class="tbl isot" id="tbl"></table></div>
+<div class="box" id="compBox" hidden><h2>2. Secuencia de transformaciones</h2><p class="note">Se aplican en orden: la imagen de cada paso es la figura de partida del siguiente. Puedes escribir los valores o arrastrar en el plano los vectores, ejes y centros.</p>
+<div id="steps"></div>
+<div class="row"><button id="addStep">＋ Agregar transformación</button><button id="revSteps">⇅ Invertir el orden</button></div>
+<span class="lbl" style="margin-top:12px">Ejemplos</span><div class="row" id="cex" style="margin-top:0"><button data-e="par">Dos reflexiones, ejes paralelos</button><button data-e="sec">Dos reflexiones, ejes que se cortan</button><button data-e="rr">Dos rotaciones</button><button data-e="cc">Dos reflexiones centrales</button><button data-e="tt">Dos traslaciones</button><button data-e="ord">¿Importa el orden?</button></div></div>
+<div class="box"><h2 id="ruleH">Regla</h2><div id="rule"></div></div>
+<div class="box"><h2>Coordenadas</h2><div class="tblw"><table class="tbl isot" id="tbl"></table></div></div>
 <div class="box"><details open><summary>Propiedades</summary><div class="fm" id="props"></div></details></div>
 </aside>
 </div>
@@ -121,69 +134,148 @@ const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const nf=(x,d=2)=>{const r=Math.round(x*10**d)/10**d;return(Object.is(r,-0)?0:r).toLocaleString('es-CL',{maximumFractionDigits:d});};
 const sN=x=>{const r=Math.round(x*100)/100;return r<0?'−'+nf(-r):nf(r);};
 const F1=v=>(+v).toFixed(1);
+/* con coma decimal, el separador de coordenadas pasa a ser punto y coma: (0,5; 5) */
+const fx=t=>String(t).replace(/\(([^()]*\d,\d[^()]*)\)/g,(m,a)=>'('+a.replace(/, /g,'; ')+')');
 const C={teal:'#1D9E75',coral:'#D85A30',vio:'#7F77DD',amb:'#BA7517',sel:'#378ADD',ink:'#16202b',mut:'#5b6675',line:'#dde4ec',grid:'#edf1f6'};
+const SC=['#378ADD','#7F77DD','#BA7517','#D4537E'];
+const PR=['','′','″','‴','⁗'];
 const sub=(a,b)=>[a[0]-b[0],a[1]-b[1]],add=(a,b)=>[a[0]+b[0],a[1]+b[1]],mul=(a,k)=>[a[0]*k,a[1]*k],dot=(a,b)=>a[0]*b[0]+a[1]*b[1],len=a=>Math.hypot(a[0],a[1]);
 const OBJ={punto:{n:'Punto',lab:['P']},segmento:{n:'Segmento',lab:['A','B']},figura:{n:'Figura geométrica',lab:['A','B','C','D']},objeto:{n:'Objeto cotidiano',lab:['A','B','C']}};
-const TR={tras:'Traslación',refl:'Reflexión',rot:'Rotación'};
+const TR={tras:'Traslación',refl:'Reflexión axial',cent:'Reflexión central',rot:'Rotación'};
+const TRd={tras:'una traslación',refl:'una reflexión axial',cent:'una reflexión central',rot:'una rotación'};
 // velero relativo al ancla
 const BOAT={hull:[[-2,0],[2,0],[1.4,-1],[-1.4,-1]],sail:[[0.25,0.4],[0.25,3.8],[2.1,0.7]],sail2:[[-0.25,0.6],[-0.25,3],[-1.6,0.7]],flag:[[0,4],[0,3.4],[-0.9,3.72]],mast:[[0,-0.2],[0,4]],keys:[[-2,0],[2,0],[0,4]]};
-const S={obj:'figura',fig:'tri',tr:'tras',P:{punto:[[-4,3]],segmento:[[-7,2],[-3,4]],tri:[[-7,1],[-3,1],[-6,4]],cua:[[-8,1],[-3,1],[-4,4],[-7,3]],objeto:[-5,1]},
- vt:[-9,-5],vh:[-1,-8],axis:'y',E1:[1,-6],E2:[1,6],Cc:[0,0],cpre:'o',ang:90,cons:true,coords:true,t:1,t0:0,anim:false,drag:null};
+const S={mode:'simple',obj:'figura',fig:'tri',tr:'tras',P:{punto:[[-4,3]],segmento:[[-7,2],[-3,4]],tri:[[-7,1],[-3,1],[-6,4]],cua:[[-8,1],[-3,1],[-4,4],[-7,3]],objeto:[-5,1]},
+ vt:[-9,-5],vh:[-1,-8],axis:'y',E1:[1,-6],E2:[1,6],Cc:[0,0],cpre:'o',ang:90,cons:true,coords:true,mid:true,t:1,t0:0,anim:false,drag:null,
+ steps:[{t:'refl',ax:'y',c:0,v:[3,0],o:[0,0],g:90},{t:'rot',ax:'x',c:0,v:[3,0],o:[0,0],g:90}],ct:2};
 function keyPts(){if(S.obj==='objeto')return BOAT.keys.map(p=>add(p,S.P.objeto));if(S.obj==='figura')return S.P[S.fig];return S.P[S.obj];}
 function axisLine(){if(S.axis==='x')return[[0,0],[1,0]];if(S.axis==='y')return[[0,0],[0,1]];if(S.axis==='yx')return[[0,0],[1,1]];if(S.axis==='ymx')return[[0,0],[1,-1]];return[S.E1,S.E2];}
 function center(){return S.cpre==='o'?[0,0]:S.Cc;}
-function T(p,t=S.t){if(S.tr==='tras'){return add(p,mul(sub(S.vh,S.vt),t));}
- if(S.tr==='refl'){const[a,b]=axisLine(),d0=sub(b,a),L=len(d0)||1,d=mul(d0,1/L),pr=add(a,mul(d,dot(sub(p,a),d))),pe=sub(p,pr);return add(pr,mul(pe,1-2*t));}
- const c=center(),th=S.ang*t*Math.PI/180,q=sub(p,c);return add(c,[q[0]*Math.cos(th)-q[1]*Math.sin(th),q[0]*Math.sin(th)+q[1]*Math.cos(th)]);}
+/* ---------- transformaciones básicas (t ∈ [0, 1] para animar) ---------- */
+function reflT(p,a,b,t){const d0=sub(b,a),L=len(d0)||1,d=mul(d0,1/L),pr=add(a,mul(d,dot(sub(p,a),d))),pe=sub(p,pr);return add(pr,mul(pe,1-2*t));}
+function rotT(p,c,g,t){const th=g*t*Math.PI/180,q=sub(p,c);return add(c,[q[0]*Math.cos(th)-q[1]*Math.sin(th),q[0]*Math.sin(th)+q[1]*Math.cos(th)]);}
+function centT(p,c,t){return add(p,mul(sub(c,p),2*t));}
+function T(p,t=S.t){if(S.tr==='tras')return add(p,mul(sub(S.vh,S.vt),t));
+ if(S.tr==='refl'){const[a,b]=axisLine();return reflT(p,a,b,t);}
+ if(S.tr==='cent')return centT(p,center(),t);
+ return rotT(p,center(),S.ang,t);}
+/* ---------- pasos de la composición ---------- */
+function stepAxis(st){const c=st.c;return{x:[[0,0],[1,0]],y:[[0,0],[0,1]],yx:[[0,0],[1,1]],ymx:[[0,0],[1,-1]],v:[[c,0],[c,1]],h:[[0,c],[1,c]]}[st.ax];}
+function stepF(st,p,t=1){if(st.t==='tras')return add(p,mul(st.v,t));if(st.t==='refl'){const[a,b]=stepAxis(st);return reflT(p,a,b,t);}if(st.t==='cent')return centT(p,st.o,t);return rotT(p,st.o,st.g,t);}
+const compose=(steps,p)=>steps.reduce((q,st)=>stepF(st,q,1),p);
+function axName(st){return{x:'el eje X',y:'el eje Y',yx:'la recta y = x',ymx:'la recta y = −x',v:`la recta x = ${sN(st.c)}`,h:`la recta y = ${sN(st.c)}`}[st.ax];}
+function stepDesc(st){if(st.t==='tras')return`Traslación según v = (${sN(st.v[0])}, ${sN(st.v[1])})`;if(st.t==='refl'){const a=axName(st);return`Reflexión respecto ${a.startsWith('el ')?'del '+a.slice(3):'de '+a}`;}if(st.t==='cent')return`Reflexión central respecto de O (${sN(st.o[0])}, ${sN(st.o[1])})`;return`Rotación de ${sN(st.g)}° en torno a O (${sN(st.o[0])}, ${sN(st.o[1])})`;}
+const trR=(a,b)=>`(x, y) → (${a===0?'x':`x ${a<0?'−':'+'} ${nf(Math.abs(a))}`}, ${b===0?'y':`y ${b<0?'−':'+'} ${nf(Math.abs(b))}`})`;
+function stepRule(st){if(st.t==='tras')return trR(st.v[0],st.v[1]);
+ if(st.t==='refl'){const c=st.c;return{x:'(x, y) → (x, −y)',y:'(x, y) → (−x, y)',yx:'(x, y) → (y, x)',ymx:'(x, y) → (−y, −x)',v:c===0?'(x, y) → (−x, y)':`(x, y) → (${sN(2*c)} − x, y)`,h:c===0?'(x, y) → (x, −y)':`(x, y) → (x, ${sN(2*c)} − y)`}[st.ax];}
+ const[h,k]=st.o;if(st.t==='cent')return h===0&&k===0?'(x, y) → (−x, −y)':`(x, y) → (${sN(2*h)} − x, ${sN(2*k)} − y)`;
+ return rotRule(h,k,st.g);}
+function rotRule(h,k,ang){const g=((ang%360)+360)%360;
+ if(h===0&&k===0){const m={90:'(x, y) → (−y, x)',180:'(x, y) → (−x, −y)',270:'(x, y) → (y, −x)',0:'(x, y) → (x, y)'};if(m[g])return m[g];}
+ if(g===0)return'(x, y) → (x, y)';
+ if([90,180,270].includes(g))return{90:`(x, y) → (${sN(h+k)} − y, x ${k-h<0?'−':'+'} ${nf(Math.abs(k-h))})`,180:`(x, y) → (${sN(2*h)} − x, ${sN(2*k)} − y)`,270:`(x, y) → (y ${h-k<0?'−':'+'} ${nf(Math.abs(h-k))}, ${sN(h+k)} − x)`}[g];
+ return`x′ = ${sN(h)} + (x − ${sN(h)}) · cos ${sN(ang)}° − (y − ${sN(k)}) · sen ${sN(ang)}°`;}
+/* identifica la isometría que resulta de la composición */
+const EPS=1e-7,z=x=>Math.abs(x)<EPS?0:x;
+function lineEq(P,u){if(Math.abs(u[0])<EPS)return`x = ${sN(P[0])}`;if(Math.abs(u[1])<EPS)return`y = ${sN(P[1])}`;const m=u[1]/u[0],n=z(P[1]-m*P[0]);const mt=Math.abs(m-1)<EPS?'x':Math.abs(m+1)<EPS?'−x':`${sN(m)}x`;return`y = ${mt}${n===0?'':` ${n<0?'−':'+'} ${nf(Math.abs(n))}`}`;}
+function classify(steps){const f=p=>compose(steps,p),o=f([0,0]),e1=sub(f([1,0]),o),e2=sub(f([0,1]),o),M=[[e1[0],e2[0]],[e1[1],e2[1]]],t=o,det=M[0][0]*M[1][1]-M[0][1]*M[1][0];
+ if(det>0){if(Math.abs(M[0][0]-1)<EPS&&Math.abs(M[1][1]-1)<EPS&&Math.abs(M[0][1])<EPS&&Math.abs(M[1][0])<EPS){
+   if(len(t)<EPS)return{k:'id',n:'Identidad',d:'Cada punto vuelve a su lugar: la figura final coincide con la original.'};
+   return{k:'tras',n:`Traslación según v = (${sN(t[0])}, ${sN(t[1])})`,d:'Todos los puntos se mueven según el mismo vector.',v:t};}
+  let g=Math.atan2(M[1][0],M[0][0])*180/Math.PI;g=Math.round(g*1e6)/1e6;if(g<=-180)g+=360;
+  const A=[[1-M[0][0],-M[0][1]],[-M[1][0],1-M[1][1]]],dA=A[0][0]*A[1][1]-A[0][1]*A[1][0],c=[z((A[1][1]*t[0]-A[0][1]*t[1])/dA),z((-A[1][0]*t[0]+A[0][0]*t[1])/dA)];
+  if(Math.abs(Math.abs(g)-180)<1e-6)return{k:'cent',n:`Reflexión central respecto de O (${sN(c[0])}, ${sN(c[1])})`,d:'Es lo mismo que una rotación de 180° en torno a ese punto.',c,g:180};
+  return{k:'rot',n:`Rotación de ${sN(g)}° en torno a O (${sN(c[0])}, ${sN(c[1])})`,d:`Sentido ${g>0?'antihorario':'horario'}.`,c,g};}
+ const phi=Math.atan2(M[1][0],M[0][0]),u=[Math.cos(phi/2),Math.sin(phi/2)],tp=dot(t,u),tn=sub(t,mul(u,tp)),P=mul(tn,.5);
+ if(Math.abs(tp)<EPS)return{k:'refl',n:`Reflexión respecto de la recta ${lineEq(P,u)}`,d:'Una sola reflexión axial lleva la figura original a la final.',P,u};
+ const w=mul(u,tp);return{k:'desl',n:`Reflexión con deslizamiento`,d:`Reflexión respecto de la recta ${lineEq(P,u)} seguida de una traslación paralela a ella, según (${sN(w[0])}, ${sN(w[1])}). No equivale a una sola transformación básica.`,P,u,w};}
+function sameMap(a,b){return[[0,0],[1,0],[0,1]].every(p=>len(sub(compose(a,p),compose(b,p)))<1e-6);}
 /* ---------- vista ---------- */
 let V={};
 function view(W,H){const sc=Math.max(14,Math.min(W/22,H/16));V={W,H,sc,s:p=>[W/2+p[0]*sc,H/2-p[1]*sc],w:q=>[(q[0]-W/2)/sc,-(q[1]-H/2)/sc]};}
 const Ln=(a,b,c,w,o={})=>`<line x1="${F1(a[0])}" y1="${F1(a[1])}" x2="${F1(b[0])}" y2="${F1(b[1])}" stroke="${c}" stroke-width="${w}" stroke-linecap="round" ${o.dash?`stroke-dasharray="${o.dash}"`:''} opacity="${o.op??1}"/>`;
-const Tx=(p,t,c,o={})=>`<text x="${F1(p[0])}" y="${F1(p[1])}" font-size="${o.fs||14}" font-weight="${o.fw||600}" fill="${c}" text-anchor="${o.a||'middle'}" dominant-baseline="central" stroke="#fff" stroke-width="3.5" paint-order="stroke">${t}</text>`;
+const Tx=(p,t,c,o={})=>`<text x="${F1(p[0])}" y="${F1(p[1])}" font-size="${o.fs||14}" font-weight="${o.fw||600}" fill="${c}" text-anchor="${o.a||'middle'}" dominant-baseline="central" stroke="#fff" stroke-width="3.5" paint-order="stroke">${fx(t)}</text>`;
 const Pg=(pts,fill,stroke,w,o={})=>`<polygon points="${pts.map(p=>F1(p[0])+','+F1(p[1])).join(' ')}" fill="${fill}" fill-opacity="${o.fo??.25}" stroke="${stroke}" stroke-width="${w}" stroke-linejoin="round" ${o.h?`data-h="${o.h}" style="cursor:move"`:''} ${o.dash?`stroke-dasharray="${o.dash}"`:''}/>`;
 function arrow(a,b,c,w,o={}){const d=sub(b,a),L=len(d)||1,u=mul(d,1/L),n=[-u[1],u[0]],h=Math.min(12,L*.4),p1=add(b,add(mul(u,-h),mul(n,h*.45))),p2=add(b,add(mul(u,-h),mul(n,-h*.45)));return Ln(a,add(b,mul(u,-h*.6)),c,w,o)+`<polygon points="${[b,p1,p2].map(p=>F1(p[0])+','+F1(p[1])).join(' ')}" fill="${c}" opacity="${o.op??1}"/>`;}
+const hit=(p,h,r=16)=>`<circle cx="${F1(p[0])}" cy="${F1(p[1])}" r="${r}" fill="transparent" data-h="${h}" style="cursor:grab"/>`;
 function grid(){const{W,H,sc,s}=V;let o='';const xm=Math.ceil(W/2/sc),ym=Math.ceil(H/2/sc);
  for(let x=-xm;x<=xm;x++){const a=s([x,-ym]),b=s([x,ym]);o+=Ln(a,b,x===0?C.ink:C.grid,x===0?1.6:1);if(x&&x%2===0&&sc>=16)o+=Tx(s([x,0]).map((v,i)=>i?v+13:v),x<0?'−'+(-x):x,C.mut,{fs:10,fw:500});}
  for(let y=-ym;y<=ym;y++){const a=s([-xm,y]),b=s([xm,y]);o+=Ln(a,b,y===0?C.ink:C.grid,y===0?1.6:1);if(y&&y%2===0&&sc>=16)o+=Tx(s([0,y]).map((v,i)=>i?v:v-12),y<0?'−'+(-y):y,C.mut,{fs:10,fw:500});}
  return o+Tx(add(s([xm-.4,0]),[0,-12]),'x',C.mut,{fs:12})+Tx(add(s([0,ym-.4]),[12,0]),'y',C.mut,{fs:12});}
-function drawObj(f,col,img,hDrag){const{s}=V;let o='';const pts=keyPts().map(f),lab=OBJ[S.obj].lab,pr=img?'′':'';
- if(S.obj==='punto'){const p=s(pts[0]);o+=`<circle cx="${F1(p[0])}" cy="${F1(p[1])}" r="7" fill="${col}"/>`+(hDrag?`<circle cx="${F1(p[0])}" cy="${F1(p[1])}" r="16" fill="transparent" data-h="v:0" style="cursor:grab"/>`:'');}
+function drawObj(f,col,pr,hDrag,op={}){const{s}=V;let o='';const pts=keyPts().map(f),lab=OBJ[S.obj].lab,img=pr!=='',fo=op.fo??1,coords=op.coords??S.coords;
+ const g0=op.ghost?' opacity=".75"':'';o+=`<g${g0}>`;
+ if(S.obj==='punto'){const p=s(pts[0]);o+=`<circle cx="${F1(p[0])}" cy="${F1(p[1])}" r="7" fill="${col}"/>`+(hDrag?hit(p,'v:0'):'');}
  else if(S.obj==='segmento'){const a=s(pts[0]),b=s(pts[1]);o+=Ln(a,b,col,4.5);if(hDrag)o+=`<line x1="${F1(a[0])}" y1="${F1(a[1])}" x2="${F1(b[0])}" y2="${F1(b[1])}" stroke="transparent" stroke-width="16" data-h="body" style="cursor:move"/>`;
-  pts.forEach((q,i)=>{const p=s(q);o+=`<circle cx="${F1(p[0])}" cy="${F1(p[1])}" r="6" fill="${col}"/>`+(hDrag?`<circle cx="${F1(p[0])}" cy="${F1(p[1])}" r="15" fill="transparent" data-h="v:${i}" style="cursor:grab"/>`:'');});}
- else if(S.obj==='figura'){const P=pts.map(s);o+=Pg(P,col,col,2.6,{h:hDrag?'body':''});P.forEach((p,i)=>{o+=`<circle cx="${F1(p[0])}" cy="${F1(p[1])}" r="5.5" fill="${col}"/>`+(hDrag?`<circle cx="${F1(p[0])}" cy="${F1(p[1])}" r="14" fill="transparent" data-h="v:${i}" style="cursor:grab"/>`:'');});}
+  pts.forEach((q,i)=>{const p=s(q);o+=`<circle cx="${F1(p[0])}" cy="${F1(p[1])}" r="6" fill="${col}"/>`+(hDrag?hit(p,'v:'+i,15):'');});}
+ else if(S.obj==='figura'){const P=pts.map(s);o+=Pg(P,col,col,2.6,{h:hDrag?'body':'',fo:.25*fo});P.forEach((p,i)=>{o+=`<circle cx="${F1(p[0])}" cy="${F1(p[1])}" r="5.5" fill="${col}"/>`+(hDrag?hit(p,'v:'+i,14):'');});}
  else{const A=S.P.objeto,g=poly=>poly.map(p=>s(f(add(p,A))));
-  o+=Pg(g(BOAT.hull),img?'#F2B9A3':'#8B5E3C',col,2,{fo:.9,h:hDrag?'body':''})+Pg(g(BOAT.sail),'#fff',col,2,{fo:1,h:hDrag?'body':''})+Pg(g(BOAT.sail2),'#fff',col,2,{fo:1,h:hDrag?'body':''})+Pg(g(BOAT.flag),img?C.coral:'#E24B4A',col,1.5,{fo:1});
+  o+=Pg(g(BOAT.hull),img?(op.hull||'#F2B9A3'):'#8B5E3C',col,2,{fo:.9,h:hDrag?'body':''})+Pg(g(BOAT.sail),'#fff',col,2,{fo:1,h:hDrag?'body':''})+Pg(g(BOAT.sail2),'#fff',col,2,{fo:1,h:hDrag?'body':''})+Pg(g(BOAT.flag),img?col:'#E24B4A',col,1.5,{fo:1});
   const m=g(BOAT.mast);o+=Ln(m[0],m[1],col,3);
   pts.forEach(q=>{const p=s(q);o+=`<circle cx="${F1(p[0])}" cy="${F1(p[1])}" r="4.5" fill="${col}"/>`;});}
  // etiquetas
  const cen=pts.reduce((a,p)=>add(a,mul(p,1/pts.length)),[0,0]);
  pts.forEach((q,i)=>{const p=s(q),d=sub(q,cen),L=len(d)||1,off=S.obj==='punto'?[14,-14]:[d[0]/L*16,-d[1]/L*16];o+=Tx(add(p,off),lab[i]+pr,col,{fs:15});
-  if(S.coords)o+=Tx(add(p,[off[0]*1.15,off[1]+(off[1]>=0?15:-15)]),`(${sN(q[0])}, ${sN(q[1])})`,col,{fs:11,fw:500});});
- return o;}
-function render(){const sv=$('isv'),W=sv.clientWidth||700,H=sv.clientHeight||520;sv.setAttribute('viewBox',`0 0 ${W} ${H}`);view(W,H);const{s}=V;
+  if(coords)o+=Tx(add(p,[off[0]*1.15,off[1]+(off[1]>=0?15:-15)]),`(${sN(q[0])}, ${sN(q[1])})`,col,{fs:11,fw:500});});
+ return o+'</g>';}
+function centerMark(c,col,name,h){const{s}=V,p=s(c);return `<circle cx="${F1(p[0])}" cy="${F1(p[1])}" r="7" fill="${col}"/>`+Tx(add(p,[12,14]),`${name} (${sN(c[0])}, ${sN(c[1])})`,col,{fs:13,a:'start'})+(h?hit(p,h,17):'');}
+function lineThrough(a,b,col,o={}){const{s}=V,d=sub(b,a),u=mul(d,1/(len(d)||1)),far=40;return Ln(s(add(a,mul(u,-far))),s(add(a,mul(u,far))),col,o.w||3,{dash:'10 6',op:o.op??1});}
+/* construcciones de un paso (de p a su imagen) */
+function consRefl(p,a,b,t,col){const{s}=V,d=sub(b,a),u=mul(d,1/(len(d)||1)),pr=add(a,mul(u,dot(sub(p,a),u))),F=reflT(p,a,b,1),P=s(p);let o=Ln(P,s(F),col,1.4,{dash:'5 5',op:.8});
+ if(len(sub(p,pr))>.3){const n=mul(sub(p,pr),1/len(sub(p,pr))),k=0.35,c1=s(add(pr,mul(u,k))),c2=s(add(add(pr,mul(u,k)),mul(n,k))),c3=s(add(pr,mul(n,k)));o+=`<polyline points="${[c1,c2,c3].map(x=>F1(x[0])+','+F1(x[1])).join(' ')}" fill="none" stroke="${col}" stroke-width="1.3"/>`;
+  [p,F].forEach(zz=>{const mid=s(mul(add(zz,pr),.5)),nn=[u[0]*.22*V.sc,-u[1]*.22*V.sc];o+=Ln(add(mid,nn),sub(mid,nn),col,1.6);});}return o;}
+function consCent(p,c,col){const{s}=V,F=centT(p,c,1);if(len(sub(p,c))<.2)return '';let o=Ln(s(p),s(F),col,1.4,{dash:'5 5',op:.8});
+ const d=sub(c,p),L=len(d),u=mul(d,1/L),n=[-u[1],u[0]];[mul(add(p,c),.5),mul(add(F,c),.5)].forEach(m=>{const q=s(m),nn=[n[0]*.22*V.sc,-n[1]*.22*V.sc],ee=[u[0]*.09*V.sc,-u[1]*.09*V.sc];o+=Ln(add(add(q,nn),ee),add(sub(q,nn),ee),col,1.6)+Ln(sub(add(q,nn),ee),sub(sub(q,nn),ee),col,1.6);});return o;}
+function consRot(p,c,g,t,col,arcLab){const{s}=V,Cs=s(c),r=len(sub(p,c));if(r<.2)return '';const q=rotT(p,c,g,t);let o=Ln(Cs,s(p),col,1.2,{dash:'4 5',op:.7})+Ln(Cs,s(q),col,1.2,{dash:'4 5',op:.7});
+ if(arcLab){const a0=Math.atan2(p[1]-c[1],p[0]-c[0]),th=g*t*Math.PI/180,rr=Math.min(r,2.2)*V.sc,N=24;let d='';for(let j=0;j<=N;j++){const a=a0+th*j/N;d+=(j?'L':'M')+F1(Cs[0]+rr*Math.cos(a))+' '+F1(Cs[1]-rr*Math.sin(a));}
+  o+=`<path d="${d}" fill="none" stroke="${col}" stroke-width="2"/>`;const am=a0+th/2;o+=Tx([Cs[0]+(rr+16)*Math.cos(am),Cs[1]-(rr+16)*Math.sin(am)],`${nf(g*t,0)}°`,col,{fs:14});}return o;}
+/* ---------- dibujo: una transformación ---------- */
+function renderSimple(){const{s}=V;
  S.anim=false;if(S.t<1&&!reduce){S.t=Math.min(1,(performance.now()-S.t0)/1400);S.anim=S.t<1;}else S.t=1;
  let o=grid();const kp=keyPts();
- // parámetros
  if(S.tr==='tras'){const a=s(S.vt),b=s(S.vh);o+=arrow(a,b,C.vio,3.5)+Tx(add(a,[0,-18]),`v = (${sN(S.vh[0]-S.vt[0])}, ${sN(S.vh[1]-S.vt[1])})`,C.vio,{fs:14});
-  o+=`<circle cx="${F1(a[0])}" cy="${F1(a[1])}" r="6" fill="#fff" stroke="${C.vio}" stroke-width="2.5"/><circle cx="${F1(a[0])}" cy="${F1(a[1])}" r="16" fill="transparent" data-h="vt" style="cursor:grab"/><circle cx="${F1(b[0])}" cy="${F1(b[1])}" r="16" fill="transparent" data-h="vh" style="cursor:grab"/>`;}
- if(S.tr==='refl'){const[a,b]=axisLine(),d=sub(b,a),L=len(d)||1,u=mul(d,1/L),far=40,p1=s(add(a,mul(u,-far))),p2=s(add(a,mul(u,far)));o+=Ln(p1,p2,C.vio,3,{dash:'10 6'});
-  if(S.axis==='libre'){[['E1',S.E1],['E2',S.E2]].forEach(([k,p])=>{const q=s(p);o+=`<circle cx="${F1(q[0])}" cy="${F1(q[1])}" r="7" fill="#fff" stroke="${C.vio}" stroke-width="2.5"/><circle cx="${F1(q[0])}" cy="${F1(q[1])}" r="16" fill="transparent" data-h="${k}" style="cursor:grab"/>`;});}
+  o+=`<circle cx="${F1(a[0])}" cy="${F1(a[1])}" r="6" fill="#fff" stroke="${C.vio}" stroke-width="2.5"/>`+hit(a,'vt')+hit(b,'vh');}
+ if(S.tr==='refl'){const[a,b]=axisLine(),d=sub(b,a),u=mul(d,1/(len(d)||1));o+=lineThrough(a,b,C.vio);
+  if(S.axis==='libre'){[['E1',S.E1],['E2',S.E2]].forEach(([k,p])=>{const q=s(p);o+=`<circle cx="${F1(q[0])}" cy="${F1(q[1])}" r="7" fill="#fff" stroke="${C.vio}" stroke-width="2.5"/>`+hit(q,k);});}
   o+=Tx(add(s(add(a,mul(u,S.axis==='libre'?0:5.5))),[16,-12]),'eje L',C.vio,{fs:14,a:'start'});}
- if(S.tr==='rot'){const c=s(center());o+=`<circle cx="${F1(c[0])}" cy="${F1(c[1])}" r="7" fill="${C.vio}"/>`+Tx(add(c,[14,14]),`O (${sN(center()[0])}, ${sN(center()[1])})`,C.vio,{fs:13,a:'start'});
-  if(S.cpre==='libre')o+=`<circle cx="${F1(c[0])}" cy="${F1(c[1])}" r="17" fill="transparent" data-h="c" style="cursor:grab"/>`;}
- // construcciones
- if(S.cons){kp.forEach((p,i)=>{const q=T(p,S.t),P=s(p),Q=s(q);
-  if(S.tr==='tras'&&S.t>0)o+=arrow(P,Q,C.vio,1.6,{dash:'5 5',op:.8});
-  if(S.tr==='refl'){const[a,b]=axisLine(),d=sub(b,a),u=mul(d,1/(len(d)||1)),pr=add(a,mul(u,dot(sub(p,a),u))),F=T(p,1),M=s(pr);o+=Ln(P,s(F),C.vio,1.4,{dash:'5 5',op:.8});
-   if(len(sub(p,pr))>.3){const n=mul(sub(p,pr),1/len(sub(p,pr))),k=0.35,c1=s(add(pr,mul(u,k))),c2=s(add(add(pr,mul(u,k)),mul(n,k))),c3=s(add(pr,mul(n,k)));o+=`<polyline points="${[c1,c2,c3].map(x=>F1(x[0])+','+F1(x[1])).join(' ')}" fill="none" stroke="${C.vio}" stroke-width="1.3"/>`;
-    [p,F].forEach(z=>{const mid=s(mul(add(z,pr),.5)),nn=[u[0]*.22*V.sc,-u[1]*.22*V.sc];o+=Ln(add(mid,nn),sub(mid,nn),C.vio,1.6);});}}
-  if(S.tr==='rot'){const c=center(),Cs=s(c),r=len(sub(p,c));if(r<.2)return;o+=Ln(Cs,P,C.vio,1.2,{dash:'4 5',op:.7})+Ln(Cs,Q,C.vio,1.2,{dash:'4 5',op:.7});
-   if(i===0){const a0=Math.atan2(p[1]-c[1],p[0]-c[0]),th=S.ang*S.t*Math.PI/180,rr=Math.min(r,2.2)*V.sc,N=24;let d='';for(let j=0;j<=N;j++){const a=a0+th*j/N;d+=(j?'L':'M')+F1(Cs[0]+rr*Math.cos(a))+' '+F1(Cs[1]-rr*Math.sin(a));}
-    o+=`<path d="${d}" fill="none" stroke="${C.vio}" stroke-width="2"/>`;const am=a0+th/2;o+=Tx([Cs[0]+(rr+16)*Math.cos(am),Cs[1]-(rr+16)*Math.sin(am)],`${nf(S.ang*S.t,0)}°`,C.vio,{fs:14});}}});}
- o+=drawObj(p=>p,C.teal,false,true);
- o+=drawObj(p=>T(p,S.t),C.coral,true,false);
- sv.innerHTML=o;}
-/* ---------- interacción ---------- */
+ if(S.tr==='rot'||S.tr==='cent')o+=centerMark(center(),C.vio,'O',S.cpre==='libre'?'c':'');
+ if(S.cons){kp.forEach((p,i)=>{const q=T(p,S.t);
+  if(S.tr==='tras'&&S.t>0)o+=arrow(s(p),s(q),C.vio,1.6,{dash:'5 5',op:.8});
+  if(S.tr==='refl'){const[a,b]=axisLine();o+=consRefl(p,a,b,S.t,C.vio);}
+  if(S.tr==='cent')o+=consCent(p,center(),C.vio);
+  if(S.tr==='rot')o+=consRot(p,center(),S.ang,S.t,C.vio,i===0);});}
+ o+=drawObj(p=>p,C.teal,'',true);
+ o+=drawObj(p=>T(p,S.t),C.coral,'′',false);
+ return o;}
+/* ---------- dibujo: composición ---------- */
+function renderComp(){const{s}=V,N=S.steps.length;
+ S.anim=false;if(S.ct<N&&!reduce){S.ct=Math.min(N,(performance.now()-S.t0)/1200);S.anim=S.ct<N;}else S.ct=N;
+ let o=grid();const kp=keyPts();
+ // imágenes de cada etapa
+ const stage=[kp];S.steps.forEach((st,i)=>stage.push(stage[i].map(p=>stepF(st,p,1))));
+ const cur=Math.min(N-1,Math.floor(S.ct)),fr=S.ct-cur;
+ // elementos de cada paso: vector, eje o centro
+ S.steps.forEach((st,i)=>{const col=SC[i],act=i<=cur||S.ct>=N,op=act?1:.35,nm=`${i+1}`;
+  if(st.t==='tras'){const a0=stage[i][0],b0=add(a0,st.v),a=s(a0),b=s(b0);o+=`<g opacity="${op}">`+arrow(a,b,col,3.2)+Tx(add(mul(add(a,b),.5),[0,-16]),`v${'₁₂₃₄'[i]} = (${sN(st.v[0])}, ${sN(st.v[1])})`,col,{fs:13})+'</g>'+hit(b,'sv:'+i);}
+  if(st.t==='refl'){const[a,b]=stepAxis(st),d=sub(b,a),u=mul(d,1/(len(d)||1));o+=`<g opacity="${op}">`+lineThrough(a,b,col,{w:2.6})+Tx(add(s(add(a,mul(u,st.ax==='v'||st.ax==='h'?6:5.5+i*.8))),[12,-12]),`L${'₁₂₃₄'[i]}`,col,{fs:14,a:'start'})+'</g>';
+   if(st.ax==='v'||st.ax==='h'){const A=s(add(a,mul(u,-40))),B=s(add(a,mul(u,40)));o+=`<line x1="${F1(A[0])}" y1="${F1(A[1])}" x2="${F1(B[0])}" y2="${F1(B[1])}" stroke="transparent" stroke-width="16" data-h="sa:${i}" style="cursor:${st.ax==='v'?'ew-resize':'ns-resize'}"/>`;}}
+  if(st.t==='rot'||st.t==='cent')o+=`<g opacity="${op}">`+centerMark(st.o,col,`O${'₁₂₃₄'[i]}`,'')+'</g>'+hit(s(st.o),'sc:'+i,17);});
+ // construcciones del paso en curso (o del último si terminó)
+ if(S.cons){const i=S.ct>=N?-1:cur,t=fr;
+  const show=(j,tt)=>{const st=S.steps[j],col=SC[j];stage[j].forEach((p,k)=>{
+   if(st.t==='tras'&&tt>0)o+=arrow(s(p),s(stepF(st,p,tt)),col,1.4,{dash:'5 5',op:.7});
+   if(st.t==='refl'){const[a,b]=stepAxis(st);o+=consRefl(p,a,b,tt,col);}
+   if(st.t==='cent')o+=consCent(p,st.o,col);
+   if(st.t==='rot')o+=consRot(p,st.o,st.g,tt,col,k===0);});};
+  if(i>=0)show(i,t);else show(N-1,1);}
+ // figuras
+ o+=drawObj(p=>p,C.teal,'',true,{coords:S.coords});
+ for(let j=0;j<N;j++){const done=S.ct>=j+1,partial=!done&&j===cur;if(!done&&!partial)continue;const last=j===N-1;if(!last&&!S.mid&&done)continue;
+  const f=p=>{let q=p;for(let m=0;m<j;m++)q=stepF(S.steps[m],q,1);return stepF(S.steps[j],q,partial?fr:1);};
+  o+=drawObj(f,last?C.coral:SC[j],PR[j+1]||'⁽'+(j+1)+'⁾',false,{coords:last&&S.coords&&done,fo:last?1:.6,hull:last?'#F2B9A3':'#fff',ghost:!last});}
+ return o;}
+function render(){const sv=$('isv'),W=sv.clientWidth||700,H=sv.clientHeight||520;sv.setAttribute('viewBox',`0 0 ${W} ${H}`);view(W,H);
+ sv.innerHTML=S.mode==='comp'?renderComp():renderSimple();}
+/* ---------- interacción en el plano ---------- */
 const sv=$('isv');const snap=v=>Math.round(v);
 sv.addEventListener('pointerdown',e=>{const h=e.target.getAttribute&&e.target.getAttribute('data-h');if(!h)return;const r=sv.getBoundingClientRect(),w=V.w([e.clientX-r.left,e.clientY-r.top]);
  S.drag={h,w0:w,start:JSON.parse(JSON.stringify({P:S.P,vt:S.vt,vh:S.vh,E1:S.E1,E2:S.E2,Cc:S.Cc}))};sv.setPointerCapture(e.pointerId);e.preventDefault();});
@@ -191,51 +283,113 @@ sv.addEventListener('pointermove',e=>{const d=S.drag;if(!d)return;const r=sv.get
  const h=d.h;if(h==='vt')S.vt=pt;else if(h==='vh')S.vh=pt;else if(h==='E1'){if(pt[0]!==S.E2[0]||pt[1]!==S.E2[1])S.E1=pt;}else if(h==='E2'){if(pt[0]!==S.E1[0]||pt[1]!==S.E1[1])S.E2=pt;}else if(h==='c')S.Cc=pt;
  else if(h==='body'){if(S.obj==='objeto')S.P.objeto=add(d.start.P.objeto,[dx,dy]);else{const k=S.obj==='figura'?S.fig:S.obj;S.P[k]=d.start.P[k].map(p=>add(p,[dx,dy]));}}
  else if(h.startsWith('v:')){const i=+h.slice(2),k=S.obj==='figura'?S.fig:S.obj;S.P[k][i]=pt;}
- S.t=1;upd();});
+ else if(h.startsWith('sc:'))S.steps[+h.slice(3)].o=pt;
+ else if(h.startsWith('sa:')){const st=S.steps[+h.slice(3)];st.c=st.ax==='v'?pt[0]:pt[1];}
+ else if(h.startsWith('sv:')){const i=+h.slice(3);let q=keyPts()[0];for(let m=0;m<i;m++)q=stepF(S.steps[m],q,1);S.steps[i].v=[Math.round(w[0]-q[0]),Math.round(w[1]-q[1])];}
+ S.t=1;S.ct=S.steps.length;if(h.startsWith('s'))syncInputs();upd();});
 const up=()=>{S.drag=null;};sv.addEventListener('pointerup',up);sv.addEventListener('pointercancel',up);
-/* ---------- panel ---------- */
-$('obj').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.obj=b.dataset.o;S.t=1;upd();};
+/* ---------- panel: una transformación ---------- */
+$('obj').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.obj=b.dataset.o;S.t=1;S.ct=S.steps.length;upd();};
 $('figSel').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.fig=b.dataset.f;upd();};
 $('trs').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.tr=b.dataset.t;S.t=1;upd();};
 $('axSel').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.axis=b.dataset.a;upd();};
 $('cSel').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.cpre=b.dataset.c;upd();};
 $('angR').oninput=e=>{S.ang=+e.target.value;S.t=1;upd();};
 $('angPre').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.ang=+b.dataset.g;S.t=1;upd();};
-$('cons').onchange=e=>{S.cons=e.target.checked;render();};$('coords').onchange=e=>{S.coords=e.target.checked;render();};
-$('bAnim').onclick=()=>{S.t=0;S.t0=performance.now();upd();};
+$('cons').onchange=e=>{S.cons=e.target.checked;render();};$('coords').onchange=e=>{S.coords=e.target.checked;render();};$('mid').onchange=e=>{S.mid=e.target.checked;render();};
+$('bAnim').onclick=()=>{S.t=0;S.ct=0;S.t0=performance.now();upd();};
 function area2(P){let s=0;for(let i=0;i<P.length;i++){const a=P[i],b=P[(i+1)%P.length];s+=a[0]*b[1]-b[0]*a[1];}return s;}
-function rule(){if(S.tr==='tras'){const a=S.vh[0]-S.vt[0],b=S.vh[1]-S.vt[1];return{f:`(x, y) → (x ${a<0?'−':'+'} ${nf(Math.abs(a))}, y ${b<0?'−':'+'} ${nf(Math.abs(b))})`,t:`Cada punto se mueve según el vector v = (${sN(a)}, ${sN(b)}): ${Math.abs(a)} ${a>=0?'a la derecha':'a la izquierda'} y ${Math.abs(b)} ${b>=0?'hacia arriba':'hacia abajo'}.`};}
+function rule(){if(S.tr==='tras'){const a=S.vh[0]-S.vt[0],b=S.vh[1]-S.vt[1];return{f:trR(a,b),t:`Cada punto se mueve según el vector v = (${sN(a)}, ${sN(b)}): ${a===0?'nada en horizontal':`${nf(Math.abs(a))} ${a>0?'a la derecha':'a la izquierda'}`} y ${b===0?'nada en vertical':`${nf(Math.abs(b))} ${b>0?'hacia arriba':'hacia abajo'}`}.`};}
  if(S.tr==='refl'){const m={x:['(x, y) → (x, −y)','Reflexión respecto del eje X: se conserva x y cambia el signo de y.'],y:['(x, y) → (−x, y)','Reflexión respecto del eje Y: cambia el signo de x y se conserva y.'],yx:['(x, y) → (y, x)','Reflexión respecto de la recta y = x: se intercambian las coordenadas.'],ymx:['(x, y) → (−y, −x)','Reflexión respecto de la recta y = −x: se intercambian y cambian de signo.']};
   if(m[S.axis])return{f:m[S.axis][0],t:m[S.axis][1]};const[a,b]=axisLine();
-  if(a[0]===b[0])return{f:`(x, y) → (${2*a[0]===0?'':nf(2*a[0])+' '}${2*a[0]===0?'−x':'− x'}, y)`,t:`El eje es la recta vertical x = ${sN(a[0])}: x' = 2 · ${sN(a[0])} − x.`};
-  if(a[1]===b[1])return{f:`(x, y) → (x, ${2*a[1]===0?'−y':nf(2*a[1])+' − y'})`,t:`El eje es la recta horizontal y = ${sN(a[1])}: y' = 2 · ${sN(a[1])} − y.`};
+  if(a[0]===b[0])return{f:a[0]===0?'(x, y) → (−x, y)':`(x, y) → (${sN(2*a[0])} − x, y)`,t:`El eje es la recta vertical x = ${sN(a[0])}: x′ = 2 · ${sN(a[0])} − x.`};
+  if(a[1]===b[1])return{f:a[1]===0?'(x, y) → (x, −y)':`(x, y) → (x, ${sN(2*a[1])} − y)`,t:`El eje es la recta horizontal y = ${sN(a[1])}: y′ = 2 · ${sN(a[1])} − y.`};
   return{f:'Cada punto y su imagen: misma distancia al eje, sobre una perpendicular',t:'El eje L es la simetral de cada segmento PP′: lo corta en su punto medio y en ángulo recto.'};}
- const c=center(),g=((S.ang%360)+360)%360,[h,k]=c;
- if(c[0]===0&&c[1]===0){const m={90:'(x, y) → (−y, x)',180:'(x, y) → (−x, −y)',270:'(x, y) → (y, −x)',0:'(x, y) → (x, y)'};if(m[g])return{f:m[g],t:`Rotación de ${S.ang}° en torno al origen, en sentido ${S.ang>=0?'antihorario (positivo)':'horario (negativo)'}.`};}
- if([90,180,270].includes(g)){const f={90:`(x, y) → (${sN(h+k)} − y, x ${k-h<0?'−':'+'} ${nf(Math.abs(k-h))})`,180:`(x, y) → (${sN(2*h)} − x, ${sN(2*k)} − y)`,270:`(x, y) → (y ${h-k<0?'−':'+'} ${nf(Math.abs(h-k))}, ${sN(h+k)} − x)`}[g];return{f,t:`Rotación de ${S.ang}° en torno a O (${sN(h)}, ${sN(k)}): se traslada O al origen, se rota y se vuelve.`};}
- return{f:`x′ = ${sN(h)} + (x − ${sN(h)}) · cos ${S.ang}° − (y − ${sN(k)}) · sen ${S.ang}°`,t:`Con un ángulo que no es múltiplo de 90°, las coordenadas de la imagen se calculan con seno y coseno (se muestran aproximadas).`};}
-function upd(){document.querySelectorAll('#obj button').forEach(b=>b.classList.toggle('on',b.dataset.o===S.obj));
+ const c=center(),[h,k]=c;
+ if(S.tr==='cent'){if(h===0&&k===0)return{f:'(x, y) → (−x, −y)',t:'Reflexión central respecto del origen: cambian de signo las dos coordenadas. Es lo mismo que una rotación de 180° en torno al origen.'};
+  return{f:`(x, y) → (${sN(2*h)} − x, ${sN(2*k)} − y)`,t:`O (${sN(h)}, ${sN(k)}) es el punto medio de cada segmento PP′: x′ = 2 · ${sN(h)} − x e y′ = 2 · ${sN(k)} − y.`};}
+ const g=((S.ang%360)+360)%360,f=rotRule(h,k,S.ang);
+ if(h===0&&k===0&&[0,90,180,270].includes(g))return{f,t:`Rotación de ${S.ang}° en torno al origen, en sentido ${S.ang>=0?'antihorario (positivo)':'horario (negativo)'}.`};
+ if([90,180,270].includes(g))return{f,t:`Rotación de ${S.ang}° en torno a O (${sN(h)}, ${sN(k)}): se traslada O al origen, se rota y se vuelve.`};
+ return{f,t:`Con un ángulo que no es múltiplo de 90°, las coordenadas de la imagen se calculan con seno y coseno (se muestran aproximadas).`};}
+function lengthsProp(kp,img,lab,pr){if(kp.length<2)return null;const seg=[];for(let i=0;i<kp.length;i++){const j=(i+1)%kp.length;if(kp.length===2&&i===1)break;seg.push([i,j]);}
+ return `<b>Se conservan las medidas:</b> `+seg.map(([i,j])=>`${lab[i]}${lab[j]} = ${lab[i]}${pr}${lab[j]}${pr} = ${nf(len(sub(kp[i],kp[j])))}`).join(' · ');}
+function orientProp(kp,img,lab,pr){if(kp.length<3)return null;const a1=area2(kp),a2=area2(img),same=Math.sign(a1)===Math.sign(a2);
+ return {same,t:`<b>Orientación:</b> ${kp.map((_,i)=>lab[i]).join('')} va en sentido ${a1>0?'antihorario':'horario'} y ${kp.map((_,i)=>lab[i]+pr).join('')} en sentido ${a2>0?'antihorario':'horario'}: ${same?'la orientación <b>se conserva</b>.':'la orientación <b>se invierte</b> (la imagen queda «dada vuelta», como en un espejo).'}`};}
+/* ---------- panel: composición ---------- */
+const STEP0={tras:()=>({v:[3,0]}),refl:()=>({ax:'y',c:0}),rot:()=>({o:[0,0],g:90}),cent:()=>({o:[0,0]})};
+const mkStep=(t,o={})=>Object.assign({t,ax:'y',c:0,v:[3,0],o:[0,0],g:90},o);
+const ANG=[90,180,270,-90,-180,45,-45,60,120,30];
+const pnum=v=>{const x=parseFloat(String(v).trim().replace('−','-').replace(',','.'));return isFinite(x)?Math.round(x*100)/100:null;};
+const inp=(i,f,v)=>`<input data-i="${i}" data-f="${f}" inputmode="decimal" autocomplete="off" value="${sN(v).replace('−','-')}">`;
+function buildSteps(){const N=S.steps.length;
+ $('steps').innerHTML=S.steps.map((st,i)=>{let p='';
+  if(st.t==='tras')p=`v = (${inp(i,'v0',st.v[0])} , ${inp(i,'v1',st.v[1])})`;
+  if(st.t==='refl')p=`Eje: <select data-i="${i}" data-f="ax">${[['x','Eje X'],['y','Eje Y'],['yx','y = x'],['ymx','y = −x'],['v','Recta vertical x = c'],['h','Recta horizontal y = c']].map(([k,n])=>`<option value="${k}"${st.ax===k?' selected':''}>${n}</option>`).join('')}</select>`+(st.ax==='v'||st.ax==='h'?` c = ${inp(i,'c',st.c)}`:'');
+  if(st.t==='rot')p=`Centro O = (${inp(i,'o0',st.o[0])} , ${inp(i,'o1',st.o[1])}) · Ángulo: <select data-i="${i}" data-f="g">${[...new Set([...ANG,st.g])].map(g=>`<option value="${g}"${st.g===g?' selected':''}>${sN(g)}°</option>`).join('')}</select>`;
+  if(st.t==='cent')p=`Centro O = (${inp(i,'o0',st.o[0])} , ${inp(i,'o1',st.o[1])})`;
+  return `<div class="cstep" style="--c:${SC[i]}"><div class="sh"><b>${i+1}.</b><select data-i="${i}" data-f="t" aria-label="Transformación ${i+1}">${Object.keys(TR).map(k=>`<option value="${k}"${st.t===k?' selected':''}>${TR[k]}</option>`).join('')}</select>
+   <button data-a="up" data-i="${i}" aria-label="Subir" ${i===0?'disabled':''}>↑</button><button data-a="down" data-i="${i}" aria-label="Bajar" ${i===N-1?'disabled':''}>↓</button><button data-a="del" data-i="${i}" aria-label="Quitar" ${N<=1?'disabled':''}>✕</button></div><div class="sp">${p}</div></div>`;}).join('');
+ $('addStep').disabled=N>=4;$('revSteps').disabled=N<2;}
+function syncInputs(){document.querySelectorAll('#steps input').forEach(el=>{if(document.activeElement===el)return;const st=S.steps[+el.dataset.i],f=el.dataset.f;
+ const v=f==='v0'?st.v[0]:f==='v1'?st.v[1]:f==='o0'?st.o[0]:f==='o1'?st.o[1]:st.c;el.value=sN(v).replace('−','-');});}
+$('steps').addEventListener('input',e=>{const el=e.target,i=+el.dataset.i,f=el.dataset.f,st=S.steps[i];if(!st||el.tagName!=='INPUT')return;const x=pnum(el.value);if(x===null)return;
+ if(f==='v0')st.v=[x,st.v[1]];else if(f==='v1')st.v=[st.v[0],x];else if(f==='o0')st.o=[x,st.o[1]];else if(f==='o1')st.o=[st.o[0],x];else if(f==='c')st.c=x;S.ct=S.steps.length;upd();});
+$('steps').addEventListener('change',e=>{const el=e.target,i=+el.dataset.i,f=el.dataset.f,st=S.steps[i];if(!st)return;
+ if(el.tagName==='SELECT'){if(f==='t')S.steps[i]=mkStep(el.value,STEP0[el.value]());else if(f==='ax')st.ax=el.value;else if(f==='g')st.g=+el.value;buildSteps();}else syncInputs();S.ct=S.steps.length;upd();});
+$('steps').addEventListener('click',e=>{const b=e.target.closest('button[data-a]');if(!b)return;const i=+b.dataset.i,a=b.dataset.a,L=S.steps;
+ if(a==='up'&&i>0)[L[i-1],L[i]]=[L[i],L[i-1]];if(a==='down'&&i<L.length-1)[L[i+1],L[i]]=[L[i],L[i+1]];if(a==='del'&&L.length>1)L.splice(i,1);S.ct=L.length;buildSteps();upd();});
+$('addStep').onclick=()=>{if(S.steps.length>=4)return;const order=['tras','rot','refl','cent'],t=order[S.steps.length%4];S.steps.push(mkStep(t,STEP0[t]()));S.ct=S.steps.length;buildSteps();upd();};
+$('revSteps').onclick=()=>{S.steps.reverse();S.ct=0;S.t0=performance.now();buildSteps();upd();};
+$('cex').onclick=e=>{const b=e.target.closest('button');if(!b)return;const k=b.dataset.e;S.obj=S.obj==='punto'?'figura':S.obj;
+ S.steps={par:[mkStep('refl',{ax:'v',c:-1}),mkStep('refl',{ax:'v',c:2})],sec:[mkStep('refl',{ax:'y'}),mkStep('refl',{ax:'yx'})],rr:[mkStep('rot',{o:[0,0],g:90}),mkStep('rot',{o:[2,0],g:90})],
+  cc:[mkStep('cent',{o:[0,0]}),mkStep('cent',{o:[3,1]})],tt:[mkStep('tras',{v:[4,1]}),mkStep('tras',{v:[2,-5]})],ord:[mkStep('rot',{o:[0,0],g:90}),mkStep('tras',{v:[6,0]})]}[k];
+ S.ct=0;S.t0=performance.now();buildSteps();upd();};
+/* ---------- textos ---------- */
+function upd(){const comp=S.mode==='comp';
+ document.querySelectorAll('#tabs a').forEach(a=>a.classList.toggle('on',a.dataset.r===(comp?'composicion':'transformacion')));
+ document.querySelectorAll('#obj button').forEach(b=>b.classList.toggle('on',b.dataset.o===S.obj));
  document.querySelectorAll('#trs button').forEach(b=>b.classList.toggle('on',b.dataset.t===S.tr));
  document.querySelectorAll('#figSel button').forEach(b=>b.classList.toggle('on',b.dataset.f===S.fig));$('figSel').hidden=S.obj!=='figura';
  document.querySelectorAll('#axSel button').forEach(b=>b.classList.toggle('on',b.dataset.a===S.axis));
  document.querySelectorAll('#cSel button').forEach(b=>b.classList.toggle('on',b.dataset.c===S.cpre));
  document.querySelectorAll('#angPre button').forEach(b=>b.classList.toggle('on',+b.dataset.g===S.ang));
- $('pTras').hidden=S.tr!=='tras';$('pRefl').hidden=S.tr!=='refl';$('pRot').hidden=S.tr!=='rot';$('angR').value=S.ang;$('angO').textContent=`${S.ang}°`;
- $('title').textContent=`${TR[S.tr]} de ${S.obj==='punto'?'un punto':S.obj==='segmento'?'un segmento':S.obj==='figura'?(S.fig==='tri'?'un triángulo':'un cuadrilátero'):'un objeto: el velero'}`;
- $('hint').textContent=(S.tr==='tras'?'Arrastra el inicio o la punta del vector v':S.tr==='refl'?(S.axis==='libre'?'Arrastra los dos puntos que definen el eje L':'Elige el eje o usa «Eje libre» para moverlo'):S.cpre==='libre'?'Arrastra el centro de rotación O':'Elige «Centro libre» para mover el centro O')+' · arrastra la figura original (verde) o sus vértices';
- const R=rule();$('rule').innerHTML=`<div class="calc">${R.f}</div><p style="margin:6px 0 0;font-size:15px">${R.t}</p>`;
+ $('trBox').hidden=comp;$('compBox').hidden=!comp;$('midW').hidden=!comp;
+ $('pTras').hidden=S.tr!=='tras';$('pRefl').hidden=S.tr!=='refl';$('pCen').hidden=!(S.tr==='rot'||S.tr==='cent');$('pRot').hidden=S.tr!=='rot';$('angR').value=S.ang;$('angO').textContent=`${S.ang}°`;
+ $('cLbl').textContent=S.tr==='cent'?'Centro de simetría':'Centro de rotación';
+ $('concept').innerHTML=comp?'Una <b>composición</b> de transformaciones aplica una transformación tras otra: la imagen del primer paso es la figura del segundo, y así sucesivamente. Como cada paso es isométrico, el resultado también lo es, y siempre equivale a <b>una sola isometría</b>: una traslación, una rotación, una reflexión o una reflexión con deslizamiento.'
+  :'Una <b>transformación isométrica</b> mueve una figura sin cambiar su forma ni su tamaño: las medidas de los lados y de los ángulos se conservan. Las básicas son la <b>traslación</b>, la <b>reflexión</b> (axial, respecto de una recta, o central, respecto de un punto) y la <b>rotación</b>.';
+ const objT=S.obj==='punto'?'un punto':S.obj==='segmento'?'un segmento':S.obj==='figura'?(S.fig==='tri'?'un triángulo':'un cuadrilátero'):'un objeto: el velero';
+ $('title').textContent=comp?'Composición de transformaciones':`${TR[S.tr]} de ${objT}`;
+ $('leg').innerHTML=(comp?[['#1D9E75','Original'],...S.steps.map((st,i)=>[SC[i],i===S.steps.length-1?`Paso ${i+1}`:`Paso ${i+1} e imagen`]),['#D85A30','Imagen final']]:[['#1D9E75','Original'],['#D85A30','Imagen (′)'],['#7F77DD','Vector, eje o centro']]).map(([c,t])=>`<span><i style="background:${c}"></i>${t}</span>`).join('');
+ $('hint').textContent=comp?'Arrastra la figura original (verde) o sus vértices, y también los vectores, los centros y los ejes x = c o y = c de cada paso':
+  (S.tr==='tras'?'Arrastra el inicio o la punta del vector v':S.tr==='refl'?(S.axis==='libre'?'Arrastra los dos puntos que definen el eje L':'Elige el eje o usa «Eje libre» para moverlo'):S.cpre==='libre'?'Arrastra el centro O':'Elige «Centro libre» para mover el centro O')+' · arrastra la figura original (verde) o sus vértices';
  const kp=keyPts(),lab=OBJ[S.obj].lab;
- $('tbl').innerHTML=`<tr><th>Original</th><th></th><th>Imagen</th></tr>`+kp.map((p,i)=>{const q=T(p,1);return `<tr><td><b style="color:${C.teal}">${lab[i]}</b> (${sN(p[0])}, ${sN(p[1])})</td><td>→</td><td><b style="color:${C.coral}">${lab[i]}′</b> (${sN(q[0])}, ${sN(q[1])})</td></tr>`;}).join('');
- // propiedades
- let pr=[];if(kp.length>=2){const seg=[];for(let i=0;i<kp.length;i++){const j=(i+1)%kp.length;if(kp.length===2&&i===1)break;seg.push([i,j]);}
-  pr.push(`<b>Se conservan las medidas:</b> `+seg.map(([i,j])=>`${lab[i]}${lab[j]} = ${lab[i]}′${lab[j]}′ = ${nf(len(sub(kp[i],kp[j])))}`).join(' · '));}
- if(kp.length>=3){const a1=area2(kp),a2=area2(kp.map(p=>T(p,1))),same=Math.sign(a1)===Math.sign(a2);pr.push(`<b>Orientación:</b> ${kp.map((_,i)=>lab[i]).join('')} va en sentido ${a1>0?'antihorario':'horario'} y ${kp.map((_,i)=>lab[i]+'′').join('')} en sentido ${a2>0?'antihorario':'horario'}: ${same?'la orientación <b>se conserva</b>.':'la orientación <b>se invierte</b> (la imagen queda «dada vuelta», como en un espejo).'}`);}
- pr.push(S.tr==='tras'?'En una traslación todos los puntos se mueven la misma distancia, en la misma dirección y sentido.':S.tr==='refl'?'En una reflexión, los puntos del eje quedan fijos y cada punto queda a la misma distancia del eje que su imagen.':'En una rotación, cada punto queda a la misma distancia del centro O que su imagen, y el ángulo POP′ es el ángulo de giro.');
- $('props').innerHTML=pr.map(x=>`<div>${x}</div>`).join('');
+ if(!comp){const R=rule();$('ruleH').textContent='Regla';$('rule').innerHTML=`<div class="calc">${R.f}</div><p style="margin:6px 0 0;font-size:15px">${R.t}</p>`;
+  const img=kp.map(p=>T(p,1));
+  $('tbl').innerHTML=`<tr><th>Original</th><th></th><th>Imagen</th></tr>`+kp.map((p,i)=>`<tr><td><b style="color:${C.teal}">${lab[i]}</b> (${sN(p[0])}, ${sN(p[1])})</td><td>→</td><td><b style="color:${C.coral}">${lab[i]}′</b> (${sN(img[i][0])}, ${sN(img[i][1])})</td></tr>`).join('');
+  const pr=[lengthsProp(kp,img,lab,'′')];const or=orientProp(kp,img,lab,'′');if(or)pr.push(or.t);
+  pr.push(S.tr==='tras'?'En una traslación todos los puntos se mueven la misma distancia, en la misma dirección y sentido.':S.tr==='refl'?'En una reflexión axial, los puntos del eje quedan fijos y cada punto queda a la misma distancia del eje que su imagen.':S.tr==='cent'?'En una reflexión central, O es el <b>punto medio</b> de cada segmento PP′: P y P′ quedan a la misma distancia de O, en lados opuestos. Es igual a una rotación de 180° en torno a O, por eso conserva la orientación. El único punto fijo es O.':'En una rotación, cada punto queda a la misma distancia del centro O que su imagen, y el ángulo POP′ es el ángulo de giro.');
+  $('props').innerHTML=pr.filter(Boolean).map(x=>`<div>${x}</div>`).join('');}
+ else{const N=S.steps.length,res=classify(S.steps),stages=[kp];S.steps.forEach((st,i)=>stages.push(stages[i].map(p=>stepF(st,p,1))));
+  $('ruleH').textContent='Paso a paso';
+  $('rule').innerHTML=S.steps.map((st,i)=>`<div class="rl" style="--c:${SC[i]}"><b>${i+1}. ${stepDesc(st)}</b><br>${stepRule(st)}</div>`).join('')+`<div class="res"><p class="note" style="margin:0 0 2px">Resultado de la composición</p><div class="calc">${res.n}</div><p style="margin:4px 0 0;font-size:15px">${res.d}</p></div>`;
+  $('tbl').innerHTML=`<tr><th>Original</th>${S.steps.map((_,i)=>`<th style="color:${i===N-1?C.coral:SC[i]}">Paso ${i+1}</th>`).join('')}</tr>`+kp.map((p,k)=>`<tr><td><b style="color:${C.teal}">${lab[k]}</b> (${sN(p[0])}, ${sN(p[1])})</td>${S.steps.map((_,i)=>{const q=stages[i+1][k];return `<td><b style="color:${i===N-1?C.coral:SC[i]}">${lab[k]}${PR[i+1]}</b> (${sN(q[0])}, ${sN(q[1])})</td>`;}).join('')}</tr>`).join('');
+  const img=stages[N],pf=PR[N],pr=[lengthsProp(kp,img,lab,pf)],nR=S.steps.filter(st=>st.t==='refl').length,or=orientProp(kp,img,lab,pf);
+  if(or)pr.push(or.t+` Hay ${nR===0?'ninguna reflexión axial':nR===1?'una reflexión axial':nR+' reflexiones axiales'} en la secuencia: cada una invierte la orientación, así que ${nR%2?'un número impar la deja invertida':'un número par la deja como estaba'}. <span style="color:var(--mut)">(La reflexión central no la invierte.)</span>`);
+  if(N>=2){const rev=[...S.steps].reverse(),same=sameMap(S.steps,rev);pr.push(`<b>¿Importa el orden?</b> ${same?'En este caso <b>no</b>: aplicar los pasos al revés da la misma figura final.':`En este caso <b>sí</b>: al revés se obtiene ${classify(rev).n.replace(/^./,c=>c.toLowerCase())}. Prueba con «Invertir el orden».`} En general, la composición de transformaciones no es conmutativa.`);}
+  const tips={par:'Dos reflexiones con ejes paralelos equivalen a una <b>traslación</b>: perpendicular a los ejes y del doble de la distancia entre ellos.',sec:'Dos reflexiones con ejes que se cortan equivalen a una <b>rotación</b> en torno al punto de corte, del doble del ángulo entre los ejes.',rr:'Dos rotaciones equivalen a una rotación cuyo ángulo es la suma de los ángulos (o a una traslación, si la suma es múltiplo de 360°).',cc:'Dos reflexiones centrales equivalen a una <b>traslación</b> según el doble del vector que va del primer centro al segundo.',tt:'Dos traslaciones equivalen a una traslación según la suma de los vectores.'};
+  const two=N===2&&S.steps,ty=two?two.map(s=>s.t).join('-'):'';
+  if(ty==='refl-refl'){const[a,b]=two.map(stepAxis),d1=sub(a[1],a[0]),d2=sub(b[1],b[0]);pr.push(Math.abs(d1[0]*d2[1]-d1[1]*d2[0])<EPS?tips.par:tips.sec);}
+  else if(ty==='rot-rot')pr.push(tips.rr);else if(ty==='cent-cent')pr.push(tips.cc);else if(ty==='tras-tras')pr.push(tips.tt);
+  $('props').innerHTML=pr.filter(Boolean).map(x=>`<div>${x}</div>`).join('');}
+ ['rule','tbl','props'].forEach(id=>{const e=$(id);e.innerHTML=fx(e.innerHTML);});
  render();}
+function route(){S.mode=(location.hash||'').slice(1)==='composicion'?'comp':'simple';S.t=1;S.ct=S.steps.length;buildSteps();upd();}
+window.addEventListener('hashchange',route);
 (function loop(){if(S.anim)render();requestAnimationFrame(loop);})();
 new ResizeObserver(()=>render()).observe(document.body);
-upd();
+route();
 }
 
 </script>

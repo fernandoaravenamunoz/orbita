@@ -79,7 +79,18 @@ input[type=range]{accent-color:var(--sel);width:100%;height:28px}
 <style>
 .razs .rz{font-size:clamp(18px,1.7vw,21px);padding:6px 0;border-bottom:1px dashed var(--line);display:flex;align-items:center;flex-wrap:wrap;gap:6px}.razs .rz:last-child{border:0}.razs .nm{font-weight:600;min-width:84px}
 .st td,.st th{font-size:13.5px;white-space:nowrap}.ok{color:#0F6E56;font-weight:600}
-.fig.plain{height:clamp(420px,64vh,700px);background:#fff}.fig.plain.tall{height:clamp(480px,70vh,760px)}
+.fig.plain{height:clamp(420px,64vh,700px);background:#fff}.fig.plain.tall{height:clamp(380px,52vh,640px)}
+.srz{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-bottom:10px}
+.srz .cd{background:var(--card);border-radius:12px;padding:8px 12px;border-top:4px solid var(--c)}
+.srz .hd{font-size:13px;color:var(--mut);margin:0 0 4px}.srz .hd b{color:var(--c);font-size:16px}
+.srz .ln{font-size:15px;padding:2px 0;display:flex;align-items:center;flex-wrap:wrap;gap:3px}
+.srz .ln .fx{font-size:.88em}.srz .ln .w .fx{font-size:.68em;color:var(--mut)}.srz .ln .fx>span{padding:0 .12em}
+.tdef{border-left:4px solid var(--c);padding:6px 0 6px 12px;margin-top:12px}
+.tdef h3{font-size:16px;margin:0 0 6px;color:var(--c);font-weight:600}
+.inp{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:8px;font-size:15px}
+.inp input{width:78px;font:inherit;font-size:16px;padding:4px 8px;border:1.5px solid var(--line);border-radius:9px;background:#fff}
+.inp input.bad{border-color:#A32D2D}
+.st .fx{font-size:.85em}
 #psol .fm div{padding:3px 0;font-size:15.5px}.no{color:#A32D2D;font-weight:600}
 </style>
 </head>
@@ -111,16 +122,24 @@ input[type=range]{accent-color:var(--sel);width:100%;height:28px}
 <section id="vS" class="band" hidden>
 <div class="work">
 <div>
-<div class="stagehead"><h1>Triángulos semejantes</h1><div class="legend"><span><i style="background:#1D9E75"></i>△1 (k = 1)</span><span><i style="background:#378ADD"></i>△2</span><span><i style="background:#7F77DD"></i>△3</span></div></div>
+<div class="stagehead"><h1>Triángulos semejantes</h1><div class="legend"><span><i style="background:#1D9E75"></i>△1</span><span><i style="background:#378ADD"></i>△2</span><span><i style="background:#7F77DD"></i>△3</span></div></div>
+<div class="srz" id="srz"></div>
 <div class="fig plain tall"><svg id="ssv" role="img" aria-label="Tres triángulos rectángulos semejantes con el mismo ángulo"></svg></div>
 <div class="tools"><div class="seg" id="sep"><button data-s="0">Superpuestos</button><button data-s="1">Separados</button></div></div>
 <div class="box" style="margin-top:12px"><h2>Comparación de razones</h2><div class="tblw"><table class="tbl st" id="stbl"></table></div><p id="sconc" style="margin:10px 0 0;font-size:15px"></p></div>
 </div>
 <aside class="panel">
-<p class="concept">Los tres triángulos tienen un ángulo recto y el mismo ángulo <b>α</b>: son <b>semejantes</b>. Sus lados son distintos, pero sus <b>razones trigonométricas son iguales</b>.</p>
-<div class="box"><h2>Razones de semejanza</h2><p class="note">△1 es el triángulo de la otra pestaña (catetos a y b). Con k = 0 el triángulo se oculta.</p>
-<span class="lbl" style="margin-top:10px">△2: k = <b id="k2o"></b></span><input type="range" id="k2" min="0" max="4" step="0.5">
-<span class="lbl" style="margin-top:10px">△3: k = <b id="k3o"></b></span><input type="range" id="k3" min="0" max="4" step="0.5"></div>
+<p class="concept">Si dos triángulos rectángulos tienen el mismo ángulo agudo <b>α</b>, son <b>semejantes</b>: sus lados son distintos, pero sus <b>razones trigonométricas son iguales</b>. Propón tus propios triángulos y compruébalo: si las razones no coinciden, los ángulos tampoco.</p>
+<div class="box"><h2>Triángulos</h2><p class="note">△1 es el triángulo de la pestaña «Razones trigonométricas» (aquí también puedes cambiar sus catetos). △2 y △3 se pueden obtener ampliando △1 con una razón k, o puedes escribir tus propias medidas.</p>
+<div class="tdef" style="--c:#1D9E75"><h3>△1</h3><div class="inp"><label>CO = <input id="t0co" inputmode="decimal" autocomplete="off"></label><label>CA = <input id="t0ca" inputmode="decimal" autocomplete="off"></label></div></div>
+<div class="tdef" style="--c:#378ADD"><h3>△2</h3><div class="seg" id="tm1"><button data-m="k">Ampliar △1 (razón k)</button><button data-m="own">Mis medidas</button><button data-m="off">Ocultar</button></div>
+<div id="tk1" style="margin-top:8px"><span class="lbl">k = <b id="k2o"></b></span><input type="range" id="k2" min="0.5" max="4" step="0.5"></div>
+<div class="inp" id="to1"><label>CO = <input id="t1co" inputmode="decimal" autocomplete="off"></label><label>CA = <input id="t1ca" inputmode="decimal" autocomplete="off"></label></div></div>
+<div class="tdef" style="--c:#7F77DD"><h3>△3</h3><div class="seg" id="tm2"><button data-m="k">Ampliar △1 (razón k)</button><button data-m="own">Mis medidas</button><button data-m="off">Ocultar</button></div>
+<div id="tk2" style="margin-top:8px"><span class="lbl">k = <b id="k3o"></b></span><input type="range" id="k3" min="0.5" max="4" step="0.5"></div>
+<div class="inp" id="to2"><label>CO = <input id="t2co" inputmode="decimal" autocomplete="off"></label><label>CA = <input id="t2ca" inputmode="decimal" autocomplete="off"></label></div></div>
+<p class="note" style="margin-top:10px">Escribe los catetos con coma decimal (por ejemplo 4,5). La hipotenusa se calcula con Pitágoras.</p>
+<span class="lbl" style="margin-top:12px">Ejemplos</span><div class="row" id="tex" style="margin-top:0"><button data-e="sem">Tres semejantes</button><button data-e="nos">Uno no es semejante</button><button data-e="inv">Catetos intercambiados</button></div></div>
 <div class="box"><h2>¿Por qué son iguales?</h2><p style="margin:0;font-size:15px;line-height:1.6">Si △2 es △1 ampliado k veces, sus lados son k · CO, k · CA y k · H. Entonces sen α = k · CO : k · H = CO : H. Lo mismo pasa con coseno y tangente. Por eso se puede calcular la altura de un árbol o de un edificio con un triángulo pequeño que tenga el mismo ángulo.</p></div>
 </aside>
 </div>
@@ -153,7 +172,7 @@ const F1=v=>(+v).toFixed(1);
 const C={ink:'#16202b',mut:'#5b6675',line:'#dde4ec',grid:'#edf1f6',CO:'#D85A30',CA:'#1D9E75',H:'#378ADD',vio:'#7F77DD',amb:'#BA7517'};
 const gcd=(a,b)=>b?gcd(b,a%b):a;
 const TRIPLES=[[3,4],[4,3],[5,12],[8,15],[6,8],[7,24],[20,21],[9,12],[12,5]];
-const S={view:'razones',a:3,b:4,ang:'A',E:6,drag:null,moved:0,k2:2,k3:3,sep:true,snap:0.1,ptype:'todos',prob:null};
+const S={view:'razones',a:3,b:4,ang:'A',E:6,drag:null,moved:0,T:[null,{m:'k',k:2,co:6,ca:8},{m:'k',k:3,co:9,ca:12}],sep:true,snap:0.1,ptype:'todos',prob:null};
 const hyp=()=>Math.hypot(S.a,S.b),isInt=x=>Math.abs(x-Math.round(x))<1e-9;
 function role(){const A=S.ang==='A';return{CO:A?S.a:S.b,CA:A?S.b:S.a,coN:A?'BC':'AC',caN:A?'AC':'BC',g:A?'α':'β'};}
 function fr(n,d){if(isInt(n)&&isInt(d)){const g=gcd(Math.round(n),Math.round(d)),p=Math.round(n)/g,q=Math.round(d)/g;return q===1?`${p}`:`<span class="fx"><span>${p}</span><span>${q}</span></span>`;}return `<span class="fx"><span>${nf(n,2)}</span><span>${nf(d,2)}</span></span>`;}
@@ -188,24 +207,33 @@ function renderR(){const sv=$('rsv'),W=sv.clientWidth||700,H=sv.clientHeight||50
   if(dr)o+=`<circle cx="${F1(p[0])}" cy="${F1(p[1])}" r="20" fill="transparent" data-h="${n}" style="cursor:${n==='A'?'ew-resize':'ns-resize'}"/>`;});
  if(isInt(c)&&isInt(S.a)&&isInt(S.b))o+=Tx([14,18],`✓ Los tres lados son enteros: ${S.a}, ${S.b} y ${nf(c)}`,C.CA,{a:'start',fs:14});
  sv.innerHTML=o.replace(/= ≈/g,'≈');}
+/* ---------- triángulos semejantes ---------- */
+const COLS=['#1D9E75','#378ADD','#7F77DD'];
+function tri(i){if(i===0)return{co:S.a,ca:S.b,vis:true,k:1};const t=S.T[i];if(t.m==='off')return{vis:false};if(t.m==='k')return{co:t.k*S.a,ca:t.k*S.b,vis:t.k>0,k:t.k};return{co:t.co,ca:t.ca,vis:t.co>0&&t.ca>0,own:true};}
+const ex2=x=>Math.abs(x*100-Math.round(x*100))<1e-6;
+function pq(n,d){let p=Math.round(n*100),q=Math.round(d*100);const g=gcd(Math.abs(p),Math.abs(q))||1;return[p/g,q/g];}
+function hInfo(co,ca){const h=Math.hypot(co,ca);if(ex2(h))return{s:nf(h,2),ex:true,v:h};return{s:`√${nf(co*co+ca*ca,4)}`,ex:false,v:h};}
+const FX=(a,b)=>`<span class="fx"><span>${a}</span><span>${b}</span></span>`;
+/* n/d con números: fracción, simplificada y decimal (= si es exacto, ≈ si no) */
+function frac(n,d,nS,dS,exact){let o=FX(nS,dS);const v=n/d;if(!exact)return o+` ≈ ${nf(v,4)}`;const[p,q]=pq(n,d);
+ if(q===1)return o+` = ${p}`;if(!(nS===String(p)&&dS===String(q)))o+=` = ${FX(p,q)}`;let r=q;while(r%2===0)r/=2;while(r%5===0)r/=5;const fin=r===1&&ex2(v*100);return o+` ${fin?'=':'≈'} ${nf(v,4)}`;}
+function ratios(t){const h=hInfo(t.co,t.ca),co=nf(t.co,2),ca=nf(t.ca,2);return{h,sen:frac(t.co,h.v,co,h.s,h.ex),cos:frac(t.ca,h.v,ca,h.s,h.ex),tan:frac(t.co,t.ca,co,ca,true),ang:Math.atan2(t.co,t.ca)*180/Math.PI};}
 function renderS(){const sv=$('ssv'),W=sv.clientWidth||700,H=sv.clientHeight||500;sv.setAttribute('viewBox',`0 0 ${W} ${H}`);
- const c=hyp(),cols=['#1D9E75','#378ADD','#7F77DD'],ksAll=[1,S.k2,S.k3],vis=[0,1,2].filter(i=>ksAll[i]>0),kmax=Math.max(...vis.map(i=>ksAll[i]));let o='';
- // leyenda con las razones de cada triángulo (arriba)
- const top=24+vis.length*22,nar=W<560;
- vis.forEach((i,j)=>{const k=ksAll[i],a=k*S.a,b=k*S.b,h=k*c,y=18+j*22,r=(n,d,nm)=>{const f=simp(n,d).replace('/',' : '),o0=`${nf(n,2)} : ${nf(d,2)}`;return `${nm} α = ${o0}`+(isInt(c)?(f!==o0?` = ${f}`:''):` ≈ ${nf(n/d,4)}`);};
-  o+=Tx([10,y],`△${i+1}: `+(nar?r(a,h,'sen'):`${r(a,h,'sen')}   ·   ${r(b,h,'cos')}   ·   ${r(a,b,'tan')}`),cols[i],{a:'start',fs:nar?12.5:14});});
+ const vis=[0,1,2].filter(i=>tri(i).vis),T3=[0,1,2].map(tri),coM=Math.max(...vis.map(i=>T3[i].co)),caM=Math.max(...vis.map(i=>T3[i].ca));let o='';
+ const angs=vis.map(i=>Math.atan2(T3[i].co,T3[i].ca)),same=angs.every(a=>Math.abs(a-angs[0])<1e-9);
  const lbl=(A,B,t,col,side)=>{const m=[(A[0]+B[0])/2,(A[1]+B[1])/2],dx=B[0]-A[0],dy=B[1]-A[1],L=Math.hypot(dx,dy)||1,n=[-dy/L*side,dx/L*side];return Tx([m[0]+n[0]*14,m[1]+n[1]*14],t,col,{fs:13});};
- const tri=(i,A,Cc,B,k)=>{let t=`<polygon points="${[A,Cc,B].map(p=>F1(p[0])+','+F1(p[1])).join(' ')}" fill="${cols[i]}" fill-opacity="${S.sep?.14:.08}" stroke="${cols[i]}" stroke-width="3" stroke-linejoin="round"/>`;
-  t+=`<polyline points="${F1(Cc[0]-11)},${F1(Cc[1])} ${F1(Cc[0]-11)},${F1(Cc[1]-11)} ${F1(Cc[0])},${F1(Cc[1]-11)}" fill="none" stroke="${cols[i]}" stroke-width="1.6"/>`;
-  t+=Tx([B[0]+8,(B[1]+Cc[1])/2],`CO = ${nf(k*S.a,2)}`,cols[i],{a:'start',fs:13});
-  if(S.sep)t+=Tx([(A[0]+Cc[0])/2,Cc[1]+16],`CA = ${nf(k*S.b,2)}`,cols[i],{fs:13});
-  t+=lbl(A,B,`H = ${nf(k*c,2)}`,cols[i],-1);return t;};
- if(!S.sep){const sc=Math.min((W-150)/(S.b*kmax),(H-top-70)/(S.a*kmax)),Ax=60,Ay=H-45,s=p=>[Ax+p[0]*sc,Ay-p[1]*sc];
-  [...vis].sort((i,j)=>ksAll[j]-ksAll[i]).forEach(i=>{const k=ksAll[i];o+=tri(i,s([0,0]),s([k*S.b,0]),s([k*S.b,k*S.a]),k);});
-  o+=Tx([s([kmax*S.b/2,0])[0],H-24],`CA: ${vis.map(i=>nf(ksAll[i]*S.b,2)).join(' · ')}`,C.mut,{fs:13});
-  o+=arc(s([0,0]),40,0,Math.atan2(S.a,S.b),C.amb,'α')+Tx([s([0,0])[0]-12,s([0,0])[1]+16],'A',C.ink,{fs:16});}
- else{const gap=1.6,tot=vis.reduce((t,i)=>t+ksAll[i]*S.b,0)+(vis.length-1)*gap+1.4,sc=Math.min((W-90)/tot,(H-top-70)/(S.a*kmax));let x=24;
-  vis.forEach(i=>{const k=ksAll[i],Ay=H-40,A=[x,Ay],Cc=[x+k*S.b*sc,Ay],B=[x+k*S.b*sc,Ay-k*S.a*sc];o+=tri(i,A,Cc,B,k)+arc(A,Math.min(30,k*S.b*sc*.3),0,Math.atan2(S.a,S.b),C.amb,'')+Tx([(A[0]+Cc[0]+B[0])/3+6,(A[1]+Cc[1]+B[1])/3+6],`△${i+1}`,cols[i],{fs:14});x+=k*S.b*sc+gap*sc;});}
+ const draw=(i,A,Cc,B,t,showCA)=>{const c=COLS[i];let s=`<polygon points="${[A,Cc,B].map(p=>F1(p[0])+','+F1(p[1])).join(' ')}" fill="${c}" fill-opacity="${S.sep?.14:.08}" stroke="${c}" stroke-width="3" stroke-linejoin="round"/>`;
+  s+=`<polyline points="${F1(Cc[0]-11)},${F1(Cc[1])} ${F1(Cc[0]-11)},${F1(Cc[1]-11)} ${F1(Cc[0])},${F1(Cc[1]-11)}" fill="none" stroke="${c}" stroke-width="1.6"/>`;
+  s+=Tx([B[0]+8,(B[1]+Cc[1])/2],`CO = ${nf(t.co,2)}`,c,{a:'start',fs:13});if(showCA)s+=Tx([(A[0]+Cc[0])/2,Cc[1]+16],`CA = ${nf(t.ca,2)}`,c,{fs:13});
+  s+=lbl(A,B,`H = ${hInfo(t.co,t.ca).s.replace(/^√.*/,'≈ '+nf(Math.hypot(t.co,t.ca),2))}`,c,-1);return s;};
+ if(!S.sep){const sc=Math.min((W-150)/caM,(H-80)/coM),Ax=60,Ay=H-45,s=p=>[Ax+p[0]*sc,Ay-p[1]*sc];
+  [...vis].sort((i,j)=>T3[j].co*T3[j].ca-T3[i].co*T3[i].ca).forEach(i=>{const t=T3[i];o+=draw(i,s([0,0]),s([t.ca,0]),s([t.ca,t.co]),t,false);});
+  o+=Tx([s([caM/2,0])[0],H-24],`CA: ${vis.map(i=>nf(T3[i].ca,2)).join(' · ')}`,C.mut,{fs:13});
+  if(same)o+=arc(s([0,0]),40,0,angs[0],C.amb,'α');else vis.forEach((i,j)=>o+=arc(s([0,0]),34+j*16,0,angs[j],COLS[i],''));
+  o+=Tx([s([0,0])[0]-12,s([0,0])[1]+16],'A',C.ink,{fs:16});}
+ else{const tot=vis.reduce((t,i)=>t+T3[i].ca,0),gp=72,sc=Math.min((W-120-(vis.length-1)*gp)/tot,(H-100)/coM);let x=28;
+  vis.forEach((i,j)=>{const t=T3[i],Ay=H-56,A=[x,Ay],Cc=[x+t.ca*sc,Ay],B=[x+t.ca*sc,Ay-t.co*sc];o+=draw(i,A,Cc,B,t,true)+arc(A,Math.min(30,t.ca*sc*.3),0,angs[j],same?C.amb:COLS[i],'')+Tx([(A[0]+Cc[0]+B[0])/3+6,(A[1]+Cc[1]+B[1])/3+6],`△${i+1}`,COLS[i],{fs:14});
+   o+=Tx([A[0],Ay+36],`α ≈ ${nf(angs[j]*180/Math.PI,2)}°`,same?C.amb:COLS[i],{fs:12.5,a:'start'});x+=t.ca*sc+gp;});}
  sv.innerHTML=o;}
 /* ---------- interacción ---------- */
 const rsv=$('rsv');
@@ -216,8 +244,38 @@ rsv.addEventListener('pointerup',()=>{if(S.drag&&S.moved<3){S.ang=S.drag;}S.drag
 $('tri').onclick=e=>{const b=e.target.closest('button');if(!b)return;[S.a,S.b]=b.dataset.t.split(',').map(Number);S.E=0;upd();};
 $('angSel').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.ang=b.dataset.g;upd();};
 $('stepSel').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.snap=+b.dataset.s;if(S.snap>=0.5){S.a=Math.max(S.snap,Math.round(S.a/S.snap)*S.snap);S.b=Math.max(S.snap,Math.round(S.b/S.snap)*S.snap);}upd();};
-$('k2').oninput=e=>{S.k2=+e.target.value;upd();};$('k3').oninput=e=>{S.k3=+e.target.value;upd();};
+$('k2').oninput=e=>{S.T[1].k=+e.target.value;upd();};$('k3').oninput=e=>{S.T[2].k=+e.target.value;upd();};
+[1,2].forEach(i=>{$('tm'+i).onclick=e=>{const b=e.target.closest('button');if(!b)return;const t=S.T[i];if(b.dataset.m==='own'&&t.m==='k'){t.co=Math.round(t.k*S.a*100)/100;t.ca=Math.round(t.k*S.b*100)/100;}t.m=b.dataset.m;upd();};});
+const pnum=v=>{const x=parseFloat(String(v).trim().replace(',','.'));return isFinite(x)&&x>0&&x<=100?Math.round(x*100)/100:null;};
+[0,1,2].forEach(i=>['co','ca'].forEach(f=>{const el=$(`t${i}${f}`);el.addEventListener('input',()=>{const x=pnum(el.value);el.classList.toggle('bad',x===null);if(x===null)return;
+ if(i===0){if(f==='co')S.a=x;else S.b=x;}else S.T[i][f]=x;upd();});el.addEventListener('blur',()=>{el.classList.remove('bad');upd();});}));
+$('tex').onclick=e=>{const b=e.target.closest('button');if(!b)return;const k=b.dataset.e;
+ if(k==='sem'){S.a=3;S.b=4;S.T[1]={m:'k',k:2,co:6,ca:8};S.T[2]={m:'own',k:3,co:4.5,ca:6};}
+ if(k==='nos'){S.a=3;S.b=4;S.T[1]={m:'own',k:2,co:6,ca:8};S.T[2]={m:'own',k:3,co:5,ca:12};}
+ if(k==='inv'){S.a=3;S.b=4;S.T[1]={m:'own',k:2,co:8,ca:6};S.T[2]={m:'off',k:3,co:9,ca:12};}
+ upd();};
 $('sep').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.sep=b.dataset.s==='1';upd();};
+/* ---------- panel de semejantes ---------- */
+function setIn(id,v){const el=$(id);if(document.activeElement!==el){el.value=nf(v,2);el.classList.remove('bad');}}
+function updS(){const T3=[0,1,2].map(tri),vis=[0,1,2].filter(i=>T3[i].vis);
+ setIn('t0co',S.a);setIn('t0ca',S.b);
+ [1,2].forEach(i=>{const t=S.T[i];document.querySelectorAll(`#tm${i} button`).forEach(b=>b.classList.toggle('on',b.dataset.m===t.m));$('tk'+i).hidden=t.m!=='k';$('to'+i).hidden=t.m!=='own';
+  if(t.m==='own'){setIn(`t${i}co`,t.co);setIn(`t${i}ca`,t.ca);}});
+ $('k2o').textContent=nf(S.T[1].k,2);$('k3o').textContent=nf(S.T[2].k,2);$('k2').value=S.T[1].k;$('k3').value=S.T[2].k;
+ const R=T3.map(t=>t.vis?ratios(t):null);
+ $('srz').innerHTML=vis.map(i=>{const t=T3[i],r=R[i],w=(a,b)=>`<span class="w">${FX(a,b)}</span>`;return `<div class="cd" style="--c:${COLS[i]}"><p class="hd"><b>△${i+1}</b> · CO = ${nf(t.co,2)}, CA = ${nf(t.ca,2)}, H = ${r.h.ex?r.h.s:r.h.s+' ≈ '+nf(r.h.v,2)} · α ≈ ${nf(r.ang,2)}°</p>
+  <div class="ln">sen α = ${w('cat. op.','hip.')} = ${r.sen}</div><div class="ln">cos α = ${w('cat. ady.','hip.')} = ${r.cos}</div><div class="ln">tan α = ${w('cat. op.','cat. ady.')} = ${r.tan}</div></div>`;}).join('');
+ $('stbl').innerHTML=`<tr><th>Triángulo</th><th>CO</th><th>CA</th><th>H</th><th>α</th><th>sen α</th><th>cos α</th><th>tan α</th></tr>`+[0,1,2].map(i=>{const t=T3[i],nm=i===0?'△1':`△${i+1}${S.T[i].m==='k'?` (k = ${nf(S.T[i].k,2)})`:S.T[i].m==='own'?' (propio)':''}`;
+  if(!t.vis)return `<tr><td style="color:${COLS[i]};font-weight:600">${nm}</td><td colspan="7" style="color:#5b6675">oculto</td></tr>`;const r=R[i];
+  return `<tr><td style="color:${COLS[i]};font-weight:600">${nm}</td><td>${nf(t.co,2)}</td><td>${nf(t.ca,2)}</td><td>${r.h.ex?r.h.s:'≈ '+nf(r.h.v,2)}</td><td>${nf(r.ang,2)}°</td><td>${r.sen}</td><td>${r.cos}</td><td>${r.tan}</td></tr>`;}).join('');
+ // conclusión
+ const ref=T3[0],tg=t=>t.co/t.ca,eq=(x,y)=>Math.abs(x-y)<1e-9*Math.max(1,Math.abs(y)),ot=vis.filter(i=>i>0);let html='';
+ if(!ot.length)html=`Muestra △2 o △3 para comparar sus razones con las de △1.`;
+ else if(ot.every(i=>eq(tg(T3[i]),tg(ref)))){html=`<span class="ok">✓ ${vis.length===3?'Los tres triángulos':'Los dos triángulos'} tienen el mismo ángulo α ≈ ${nf(R[0].ang,2)}°: son semejantes.</span> `+ot.map(i=>`△${i+1} = ${nf(Math.hypot(T3[i].co,T3[i].ca)/Math.hypot(ref.co,ref.ca),4)} · △1`).join(' y ')+`. Por eso tienen las mismas razones: sen α = ${nf(ref.co/Math.hypot(ref.co,ref.ca),4)}, cos α = ${nf(ref.ca/Math.hypot(ref.co,ref.ca),4)} y tan α = ${nf(tg(ref),4)}. Al multiplicar todos los lados por k, cada razón queda <b>k · CO : k · H = CO : H</b>: el factor se simplifica. Las razones trigonométricas dependen <b>solo del ángulo</b>, no del tamaño del triángulo.`;}
+ else{html=ot.map(i=>{const t=T3[i],r=R[i];if(eq(tg(t),tg(ref)))return `<span class="ok">✓ △${i+1} es semejante a △1</span> (mismo ángulo α ≈ ${nf(r.ang,2)}°, razón ${nf(Math.hypot(t.co,t.ca)/Math.hypot(ref.co,ref.ca),4)}): sus razones son iguales.`;
+   if(eq(tg(t),1/tg(ref)))return `<span class="ok">✓ △${i+1} es semejante a △1, pero con los catetos intercambiados</span>: su ángulo α (≈ ${nf(r.ang,2)}°) es el ángulo β de △1. Por eso sen α de △${i+1} = cos α de △1 = ${nf(ref.ca/Math.hypot(ref.co,ref.ca),4)}: sus razones «se cruzan».`;
+   return `<span class="no">✗ △${i+1} no es semejante a △1</span>: su ángulo α mide ≈ ${nf(r.ang,2)}°, no ${nf(R[0].ang,2)}°. Basta comparar una razón: tan α = ${nf(t.co,2)} : ${nf(t.ca,2)} ≈ ${nf(tg(t),4)} y en △1 tan α = ${nf(ref.co,2)} : ${nf(ref.ca,2)} = ${nf(tg(ref),4)}. Si los catetos no son proporcionales, el ángulo cambia y las razones también.`;}).join('<br>');}
+ $('sconc').innerHTML=html;}
 /* ---------- panel ---------- */
 function upd(){const R=role(),c=hyp(),g=R.g,cH=isInt(c)?nf(c):nf(c,2);
  document.querySelectorAll('#angSel button').forEach(b=>b.classList.toggle('on',b.dataset.g===S.ang));document.querySelectorAll('#stepSel button').forEach(b=>b.classList.toggle('on',+b.dataset.s===S.snap));
@@ -226,7 +284,7 @@ function upd(){const R=role(),c=hyp(),g=R.g,cH=isInt(c)?nf(c):nf(c,2);
  $('mets').innerHTML=[['Cateto BC = a',nf(S.a)],['Cateto AC = b',nf(S.b)],['Hipotenusa AB = c',cTxt()],[`Ángulo ${g} (en ${S.ang})`,`${nf(deg(),2)}°`]].map(([l,v])=>`<div class="met"><p class="l">${l}</p><p class="v">${v}</p></div>`).join('');
  const co=`<b style="color:${C.CO}">CO</b>`,ca=`<b style="color:${C.CA}">CA</b>`,hh=`<b style="color:${C.H}">H</b>`;
  $('roles').innerHTML=`Para el ángulo <b>${g}</b> (en el vértice ${S.ang}): cateto opuesto ${co} = ${R.coN} = ${nf(R.CO)}; cateto adyacente ${ca} = ${R.caN} = ${nf(R.CA)}; hipotenusa ${hh} = AB = ${cTxt()}.`.replace(/= ≈/g,'≈');
- const row=(nm,num,den,nN,dN)=>`<div class="rz"><span class="nm">${nm} ${g}</span> = <span class="fx"><span>${nN}</span><span>${dN}</span></span> = <span class="fx"><span>${nf(num,2)}</span><span>${isInt(den)?nf(den):nf(den,2)}</span></span>${(()=>{if(!isInt(c)&&(nN===hh||dN===hh))return '';const f=simp(num,den);return f&&f!==`${nf(num,2)}/${nf(den,2)}`.replace(/,/g,'.')?` = ${f.replace(/(\d+)\/(\d+)/,'<span class="fx"><span>$1</span><span>$2</span></span>')}`:'';})()} ≈ <b>${nf(num/den,4)}</b></div>`;
+ const row=(nm,num,den,nN,dN)=>`<div class="rz"><span class="nm">${nm} ${g}</span> = <span class="fx"><span>${nN}</span><span>${dN}</span></span> = <span class="fx"><span>${nf(num,2)}</span><span>${isInt(den)?nf(den):nf(den,2)}</span></span>${(()=>{if(!isInt(c)&&(nN===hh||dN===hh))return '';const f=simp(num,den);return f&&f!==`${nf(num,2)}/${nf(den,2)}`.replace(/,/g,'.')?` = ${f.replace(/(\d+)\/(\d+)/,'<span class="fx"><span>$1</span><span>$2</span></span>')}`:'';})()} ${(()=>{const ok=ex2(num)&&ex2(den);if(!ok)return '≈';const[p,q]=pq(num,den);let r=q;while(r%2===0)r/=2;while(r%5===0)r/=5;return r===1&&ex2(num/den*100)?'=':'≈';})()} <b>${nf(num/den,4)}</b></div>`;
  $('raz').innerHTML=row('sen',R.CO,c,co,hh)+row('cos',R.CA,c,ca,hh)+row('tan',R.CO,R.CA,co,ca);
  $('rec').innerHTML=row('cosec',c,R.CO,hh,co)+row('sec',c,R.CA,hh,ca)+row('cotg',R.CA,R.CO,ca,co)+`<p class="note" style="margin-top:6px">Cada razón recíproca es la inversa de una razón básica: cosec ${g} = 1 : sen ${g}, sec ${g} = 1 : cos ${g}, cotg ${g} = 1 : tan ${g}. Por ejemplo, sen ${g} · cosec ${g} = ${nf(R.CO/c,4)} · ${nf(c/R.CO,4)} = 1.</p>`;
  const s1=R.CO/c,c1=R.CA/c,o=S.ang==='A'?'β':'α';
@@ -235,10 +293,7 @@ function upd(){const R=role(),c=hyp(),g=R.g,cH=isInt(c)?nf(c):nf(c,2);
   `<b>tan ${g} = sen ${g} : cos ${g}</b> = ${nf(s1,4)} : ${nf(c1,4)} = ${nf(s1/c1,4)}.`,
   `<b>Ángulos complementarios:</b> ${g} + ${o} = 90°. El cateto opuesto a ${g} es el adyacente a ${o}: por eso sen ${g} = cos ${o} y cos ${g} = sen ${o}.`].map(x=>`<div>${x}</div>`).join('');
  // semejantes
- $('k2o').textContent=nf(S.k2,2);$('k3o').textContent=nf(S.k3,2);$('k2').value=S.k2;$('k3').value=S.k3;
- const ks=[1,S.k2,S.k3],cols=['#1D9E75','#378ADD','#7F77DD'];
- $('stbl').innerHTML=`<tr><th>Triángulo</th><th>CO</th><th>CA</th><th>H</th><th>sen α</th><th>cos α</th><th>tan α</th></tr>`+ks.map((k,i)=>{if(k===0)return `<tr><td style="color:${cols[i]};font-weight:600">△${i+1} (k = 0)</td><td colspan="6" style="color:#5b6675">oculto</td></tr>`;const a=k*S.a,b=k*S.b,h=k*c;return `<tr><td style="color:${cols[i]};font-weight:600">△${i+1} (k = ${nf(k,2)})</td><td>${nf(a,2)}</td><td>${nf(b,2)}</td><td>${nf(h,2)}</td><td>${nf(a,2)} : ${nf(h,2)} = <b>${nf(a/h,4)}</b></td><td>${nf(b,2)} : ${nf(h,2)} = <b>${nf(b/h,4)}</b></td><td>${nf(a,2)} : ${nf(b,2)} = <b>${nf(a/b,4)}</b></td></tr>`;}).join('');
- $('sconc').innerHTML=`<span class="ok">✓ En ${ks.filter(k=>k>0).length===3?'los tres triángulos':'todos los triángulos visibles'} sen α = ${nf(S.a/c,4)}, cos α = ${nf(S.b/c,4)} y tan α = ${nf(S.a/S.b,4)}.</span> Al multiplicar todos los lados por k, cada razón queda <b>k · CO : k · H = CO : H</b>: el factor se simplifica. Las razones trigonométricas dependen <b>solo del ángulo</b>, no del tamaño del triángulo.`;
+ updS();
  if(S.view==='razones')renderR();else if(S.view==='semejantes')renderS();}
 function route(){const h=(location.hash||'').slice(1);S.view=h==='semejantes'||h==='problemas'?h:'razones';document.querySelectorAll('#tabs a').forEach(a=>a.classList.toggle('on',a.dataset.r===S.view));$('vR').hidden=S.view!=='razones';$('vS').hidden=S.view!=='semejantes';$('vP').hidden=S.view!=='problemas';if(S.view==='problemas'){if(!S.prob)newProb();else pupd();}else upd();}
 /* ---------- problemas ---------- */
