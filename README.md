@@ -1,6 +1,6 @@
 # Órbita Matemática
 
-Sitio de material para estudiantes: guías, videos, solucionarios, simulaciones, Observatorio (difusión científica) y entrega de tareas.
+Sitio de material para estudiantes: guías, resúmenes, infografías, videos, solucionarios, simulaciones, Observatorio (difusión científica) y entrega de tareas.
 
 ## Archivos
 
@@ -33,6 +33,7 @@ Sitio de material para estudiantes: guías, videos, solucionarios, simulaciones,
 { tipo: "guia", titulo: "Guía productos notables", url: "materiales/1medio-u2-productos-notables.pdf", fecha: "2026-11-10" },
 ```
 
+- **Resumen o infografía:** igual que una guía, pero con `tipo: "resumen"` o `tipo: "infografia"` (la infografía puede ser .svg, .png o .pdf). Dentro de cada unidad el sitio las agrupa: resúmenes, infografías, guías y solucionarios.
 - **Video:** sube el video a YouTube como *no listado* y pega su enlace en `url` con `tipo: "video"`.
 - **Simulación PhET:** abre la simulación en español, copia la dirección y usa `tipo: "simulacion"`.
 - **Simulación propia (HTML), sección Simulaciones:** sube el `.html` a la carpeta `simulaciones/` y copia un bloque de la lista `simulaciones` en `datos.js` (`nombre`, `descripcion`, `temas`, `url`, `dibujo`).

@@ -6,12 +6,14 @@
   "use strict";
 
   const TIPOS = {
+    resumen:      { plural: "Resúmenes",              singular: "Resumen",      icono: "R", accion: "Abrir resumen" },
+    infografia:   { plural: "Infografías y mapas",    singular: "Infografía",   icono: "I", accion: "Ver infografía" },
     guia:         { plural: "Guías de reforzamiento", singular: "Guía",         icono: "G", accion: "Abrir guía" },
     video:        { plural: "Videos",                 singular: "Video",        icono: "V", accion: "Ver video" },
     solucionario: { plural: "Solucionarios y pautas", singular: "Solucionario", icono: "S", accion: "Ver pauta" },
     simulacion:   { plural: "Simulaciones",           singular: "Simulación",   icono: "Σ", accion: "Abrir simulación" }
   };
-  const ORDEN_TIPOS = ["guia", "video", "solucionario", "simulacion"];
+  const ORDEN_TIPOS = ["resumen", "infografia", "guia", "video", "solucionario", "simulacion"];
   const MESES = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
 
   const $ = (sel) => document.querySelector(sel);
@@ -240,7 +242,7 @@
         <div class="contenedor">
           ${cabeceraSeccion("§ 01", "Explorar", "Seis rutas por el sitio")}
           <div class="accesos">
-            <a class="acceso" href="#cursos"><span class="acceso__icono">01</span><h3>Material por curso</h3><p>Guías, videos, pautas y simulaciones ordenados por unidad.</p></a>
+            <a class="acceso" href="#cursos"><span class="acceso__icono">01</span><h3>Material por curso</h3><p>Resúmenes, guías, pautas, videos y simulaciones ordenados por unidad.</p></a>
             <a class="acceso" href="#simulaciones"><span class="acceso__icono">02</span><h3>Simulaciones</h3><p>Herramientas interactivas para girar, desarmar y medir.</p></a>
             <a class="acceso" href="#juegos"><span class="acceso__icono">03</span><h3>Juegos</h3><p>Desafíos de cálculo mental, como los Kakoomas matemáticos.</p></a>
             <a class="acceso" href="#difusion"><span class="acceso__icono">04</span><h3>Observatorio</h3><p>Artículos y videos sobre matemáticas y ciencias.</p></a>
@@ -309,7 +311,7 @@
       return `
         <details class="unidad" ${i === 0 || mats.length ? "open" : ""}>
           <summary>${(() => { const pu = partesUnidad(u.nombre); return `${pu.num ? `<span class="unidad__num">${pu.num}</span>` : ""}<span class="unidad__nombre">${esc(pu.texto)}</span>`; })()} <span class="insignia ${mats.length ? "" : "insignia--vacia"}">${mats.length ? `${mats.length} ${mats.length === 1 ? "recurso" : "recursos"}` : "Pronto"}</span></summary>
-          <div class="unidad__cuerpo">${porTipo || `<div class="vacio">${planetaVacio}<p>Aún no hay guías en esta unidad.</p></div>`}</div>
+          <div class="unidad__cuerpo">${porTipo || `<div class="vacio">${planetaVacio}<p>Aún no hay material en esta unidad.</p></div>`}</div>
         </details>`;
     }).join("") : `<div class="vacio">${planetaVacio}<p>Pronto habrá material para este curso.</p></div>`;
 
@@ -329,14 +331,14 @@
       : `<div class="vacio">${planetaVacio}<p>Pronto habrá simulaciones y videos para este curso.</p></div>`;
 
     return `
-      ${cabecera("§ 01", esc(c.seccion), `${esc(c.asignatura)} · ${esc(c.nombre)}`, [unidades.length ? `${unidades.length} unidad${unidades.length === 1 ? "" : "es"}` : "", `${totalDocs} ${totalDocs === 1 ? "guía o pauta" : "guías y pautas"}`, `${recursos.length} ${recursos.length === 1 ? "simulación o video" : "simulaciones y videos"}`].filter(Boolean).join(" · "), `<a href="#cursos">← Todos los cursos</a>`)}
+      ${cabecera("§ 01", esc(c.seccion), `${esc(c.asignatura)} · ${esc(c.nombre)}`, [unidades.length ? `${unidades.length} unidad${unidades.length === 1 ? "" : "es"}` : "", `${totalDocs} ${totalDocs === 1 ? "documento" : "documentos"}`, `${recursos.length} ${recursos.length === 1 ? "simulación o video" : "simulaciones y videos"}`].filter(Boolean).join(" · "), `<a href="#cursos">← Todos los cursos</a>`)}
       <div class="franja-modular" aria-hidden="true"></div>
       <nav class="saltos contenedor" aria-label="Secciones del curso">
-        <a href="#curso-${encodeURIComponent(c.id)}" data-salto="sec-unidades">Guías por unidad</a>
+        <a href="#curso-${encodeURIComponent(c.id)}" data-salto="sec-unidades">Material por unidad</a>
         <a href="#curso-${encodeURIComponent(c.id)}" data-salto="sec-multimedia">Simulaciones y videos <span class="insignia ${recursos.length ? "" : "insignia--vacia"}">${recursos.length}</span></a>
       </nav>
       <section class="seccion seccion--curso" id="sec-unidades"><div class="contenedor">
-        ${cabeceraSeccion("§ A", "Guías por unidad", "Guías de reforzamiento y solucionarios")}
+        ${cabeceraSeccion("§ A", "Material por unidad", "Resúmenes, infografías, guías y solucionarios")}
         ${cuerpo}
       </div></section>
       <section class="seccion seccion--curso" id="sec-multimedia"><div class="contenedor">

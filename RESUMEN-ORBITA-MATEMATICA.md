@@ -38,6 +38,8 @@ simulaciones/                 19 simulaciones propias en HTML (fracciones, enter
 materiales/1medio/            15 PDF
 materiales/2medio/            10 PDF
 materiales/7basico/           4 PDF
+materiales/fisica1m/          10 PDF y 3 infografías SVG (ondas, sonido, luz, universo)
+materiales/fisica2m/          11 PDF y 3 infografías SVG (movimiento, fuerza, trabajo y energía)
 materiales/miniaturas/        v01–v25.jpg (miniaturas de los videos del Observatorio)
 materiales/curiosa/           oc01–oc10.svg (ilustraciones de Órbita Curiosa)
 ```
@@ -50,14 +52,18 @@ materiales/curiosa/           oc01–oc10.svg (ilustraciones de Órbita Curiosa)
 | `#simulaciones` | Simulaciones | Herramientas interactivas propias (`datos.js → simulaciones`), en tarjetas con lámina, temas y botón «Abrir simulación» (por decisión del profesor, sin curso ni OA). Hoy: Operando con fracciones, La recta de los enteros, Cuerpos geométricos 3D, Homotecias, Teorema de Tales, Teorema de Euclides, El número π, Ángulos de los polígonos, Lanzamiento de monedas y Tabla de Galton |
 | `#cursos` / `#curso-ID` | Cursos | Por curso: **Guías por unidad** y una sección aparte de **Simulaciones y videos** |
 | `#juegos` / `#juego-ID` | Juegos | Estilo arcade (cartuchos J01–J10); es la única sección con estética de videojuego |
-| `#difusion` | Observatorio | Divulgación científica: 25 videos de YouTube con miniatura local y créditos, más 2 artículos, agrupados por categoría |
+| `#difusion` | Observatorio | Divulgación científica: 41 videos de YouTube (25 con miniatura local; los 16 de física del sitio antiguo usan la miniatura de YouTube) y 2 artículos, agrupados por categoría (incluye «Física: ondas y sonido», «Física: la Tierra y el universo» y «Física: movimiento y fuerza») |
 | `#curiosa` | Órbita Curiosa | 10 fichas de investigaciones excéntricas o con Ig Nobel, filtrables por Física o Matemáticas |
 | `#tareas` | Entregar tarea | Formulario de Google; `formularioTareas` en `datos.js` **todavía está vacío** |
 
 ### Cursos (`datos.js → cursos`)
 
 - **Matemática:** 7° básico (5 unidades), 8° básico (vacío), I° medio (4 unidades), II° medio (4 unidades), III° y IV° medio (vacíos).
-- **Física:** I° y II° medio (vacíos).
+- **Física** (contenido del antiguo sitio profe-fernando.weebly.com, revisado y rehecho en el formato oficial de las guías: oficio 612×936, Carlito/Caladea, fondo de órbitas; generadores en Python con reportlab):
+  - I° medio: U1 Ondas y sonido (resúmenes de ondas y de sonido, dos guías de alternativas, pauta, dos infografías), U2 La luz (resumen e infografía del espectro), U3 Dinámica terrestre (vacía), U4 El universo (resúmenes de sistema solar y universo, estructuras cósmicas, estrellas y galaxias). Simulaciones PhET: Onda en una cuerda, Ondas sonoras, Óptica geométrica.
+  - II° medio: U1 El movimiento (resúmenes de escalares y vectores, MRU y MRUA; guías de MRU, MRUA y alternativas; solucionario; mapa conceptual e infografías de tipos de movimiento y de caída libre), U2 Fuerza (resúmenes de leyes de Newton y tipos de fuerza), U3 Trabajo y energía (guía y solucionario), U4 vacía. Simulaciones PhET: El hombre móvil (versión CheerpJ), Fuerzas y movimiento: fundamentos, Energía en la pista de patinaje: fundamentos.
+  - Correcciones principales respecto de los originales: encabezados de otro liceo eliminados; objetivos que decían «ondas» en guías de movimiento; normal ≠ reacción del peso; problema resuelto de tensión (a = 4 m/s², T = 48 N); solucionario de trabajo y energía (unidades, ejercicios 14, 18, 19, 24); datos del Sol, del universo y de los planetas; nebulosa planetaria no es explosión; respuestas mal copiadas en la guía de MRUA; alternativas sin respuesta correcta.
+- Tipos de material por unidad: `resumen`, `infografia` (SVG), `guia`, `solucionario` (además de `video` y `simulacion`, que van a la sección multimedia).
 - Los niveles se muestran sin letra A/B/C, solo con el punto azul.
 - **Simulaciones:**
   - 7° básico: GeoGebra, suma de ángulos de un triángulo.
@@ -150,6 +156,7 @@ materiales/curiosa/           oc01–oc10.svg (ilustraciones de Órbita Curiosa)
 - **Video o simulación:** usa un recurso con `tipo: "video"` o `tipo: "simulacion"` y el link normal; el sitio lo integra solo.
 - **Simulación nueva:** pon el `.html` en `simulaciones/` y agrega un bloque al arreglo `simulaciones`.
 - **Juego nuevo:** pon el `.html` en `juegos/` y agrega `{ nombre, descripcion, url }` al arreglo `juegos`.
+- **Resumen o infografía:** igual que una guía, con `tipo: "resumen"` o `tipo: "infografia"` (la infografía puede ser .svg, .png o .pdf).
 - **Observatorio:** agrega un objeto con `tipo` (`video` o `articulo`), `categoria`, `titulo`, `fuente`, `url`, `fecha`, `descripcion` y, si es video, una miniatura.
 - **Órbita Curiosa:** agrega un objeto al arreglo `curiosa` con los campos de §4.
 - Después de agregar PDF o páginas, conviene regenerar `sitemap.xml`.
@@ -168,7 +175,7 @@ materiales/curiosa/           oc01–oc10.svg (ilustraciones de Órbita Curiosa)
 1. **Formulario de tareas:** pegar el link de Google Forms en `formularioTareas` (`datos.js`).
 2. **Borrar del repositorio** dos archivos antiguos que ya no se usan: `materiales/Guía Sistemas de ecuaciones.pdf` y `materiales/ejemplo-guia.pdf`.
 3. Completar Search Console (§7).
-4. Cargar contenido de los cursos vacíos: 8° básico, III° y IV° medio, Física I° y II° medio.
+4. Cargar contenido de los cursos vacíos: 8° básico, III° y IV° medio; Física I° U3 (dinámica terrestre) y II° U4.
 
 ## 9. Ideas mencionadas, sin hacer
 

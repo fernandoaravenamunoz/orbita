@@ -155,8 +155,85 @@ const SITIO = {
     { id: "4medio", seccion: "Educación Media", nombre: "IV° Medio", asignatura: "Matemática", unidades: [] },
 
     // ===== FÍSICA =====
-    { id: "fisica1m", seccion: "Física", nombre: "I° Medio", asignatura: "Física", unidades: [] },
-    { id: "fisica2m", seccion: "Física", nombre: "II° Medio", asignatura: "Física", unidades: [] }
+    {
+      id: "fisica1m", seccion: "Física", nombre: "I° Medio", asignatura: "Física",
+      unidades: [
+        {
+          nombre: "Unidad 1 · Ondas y sonido",
+          materiales: [
+            { tipo: "resumen", titulo: "Resumen: ondas", url: "materiales/fisica1m/u1-ondas-resumen.pdf", fecha: "2026-11-26", descripcion: "Clasificación, elementos, fenómenos ondulatorios y ondas estacionarias. OA 9." },
+            { tipo: "infografia", titulo: "Infografía: ondas", url: "materiales/fisica1m/u1-ondas-infografia.svg", fecha: "2026-11-26", descripcion: "Qué es una onda, sus elementos, tipos y fenómenos en una sola lámina." },
+            { tipo: "guia", titulo: "Guía de ejercicios: ondas", url: "materiales/fisica1m/u1-ondas-preguntas.pdf", fecha: "2026-11-26", descripcion: "Preguntas de selección múltiple con frecuencia, periodo, longitud de onda y fenómenos. OA 9." },
+            { tipo: "resumen", titulo: "Resumen: el sonido", url: "materiales/fisica1m/u1-sonido-resumen.pdf", fecha: "2026-11-26", descripcion: "Tono, intensidad y timbre, rapidez del sonido, eco, efecto Doppler, resonancia y el oído. OA 10." },
+            { tipo: "infografia", titulo: "Infografía: el sonido", url: "materiales/fisica1m/u1-sonido-infografia.svg", fecha: "2026-11-26", descripcion: "Mapa del sonido: características, rapidez, rango audible y fenómenos." },
+            { tipo: "guia", titulo: "Guía de ejercicios: el sonido", url: "materiales/fisica1m/u1-sonido-preguntas.pdf", fecha: "2026-11-26", descripcion: "Preguntas de selección múltiple sobre el sonido y sus fenómenos. OA 10." },
+            { tipo: "solucionario", titulo: "Pauta: guías de ondas y de sonido", url: "materiales/fisica1m/u1-ondas-sonido-pauta.pdf", fecha: "2026-11-26", descripcion: "Respuestas con una justificación breve para cada pregunta." }
+          ]
+        },
+        {
+          nombre: "Unidad 2 · La luz",
+          materiales: [
+            { tipo: "resumen", titulo: "Resumen: la luz", url: "materiales/fisica1m/u2-luz-resumen.pdf", fecha: "2026-11-26", descripcion: "Historia, espectro, reflexión, refracción, dispersión, espejos y lentes. OA 11." },
+            { tipo: "infografia", titulo: "Infografía: el espectro electromagnético", url: "materiales/fisica1m/u2-espectro-electromagnetico.svg", fecha: "2026-11-26", descripcion: "De las ondas de radio a los rayos gamma: longitudes de onda, fuentes y usos." }
+          ]
+        },
+        { nombre: "Unidad 3 · Dinámica terrestre", materiales: [] },
+        {
+          nombre: "Unidad 4 · El universo",
+          materiales: [
+            { tipo: "resumen", titulo: "Resumen: el sistema solar y el universo", url: "materiales/fisica1m/u4-sistema-solar-universo.pdf", fecha: "2026-11-26", descripcion: "Modelos geocéntrico y heliocéntrico, planetas, origen del sistema solar y zona de habitabilidad. OA 14 · OA 15." },
+            { tipo: "resumen", titulo: "Resumen: estructuras cósmicas", url: "materiales/fisica1m/u4-estructuras-cosmicas.pdf", fecha: "2026-11-26", descripcion: "Cometas, asteroides, meteoroides, meteoritos y nebulosas. OA 15." },
+            { tipo: "resumen", titulo: "Resumen: las estrellas", url: "materiales/fisica1m/u4-estrellas.pdf", fecha: "2026-11-26", descripcion: "El Sol, nacimiento y clasificación de las estrellas, diagrama H-R, vida y muerte estelar y cúmulos. OA 15." },
+            { tipo: "resumen", titulo: "Resumen: las galaxias", url: "materiales/fisica1m/u4-galaxias.pdf", fecha: "2026-11-26", descripcion: "Formación, tipos según la secuencia de Hubble y estructura del universo a gran escala. OA 15." }
+          ]
+        }
+      ],
+      recursos: [
+        { tipo: "simulacion", titulo: "Onda en una cuerda (PhET)", unidad: "Unidad 1 · Ondas y sonido", url: "https://phet.colorado.edu/es/simulations/wave-on-a-string", fecha: "2026-11-26", descripcion: "Cambia amplitud, frecuencia, tensión y amortiguamiento. ¿Qué cambia con un extremo fijo o uno suelto? ¿Reconoces cresta, valle y longitud de onda?" },
+        { tipo: "simulacion", titulo: "Ondas sonoras (PhET)", unidad: "Unidad 1 · Ondas y sonido", url: "https://phet.colorado.edu/es/simulations/sound-waves", fecha: "2026-11-26", descripcion: "Ajusta la frecuencia y la amplitud de un parlante, observa la onda de presión y la interferencia entre dos fuentes." },
+        { tipo: "simulacion", titulo: "Óptica geométrica (PhET)", unidad: "Unidad 2 · La luz", url: "https://phet.colorado.edu/es/simulations/geometric-optics", fecha: "2026-11-26", descripcion: "Mueve un objeto frente a una lente o un espejo y observa cómo cambia la imagen." }
+      ]
+    },
+    {
+      id: "fisica2m", seccion: "Física", nombre: "II° Medio", asignatura: "Física",
+      unidades: [
+        {
+          nombre: "Unidad 1 · El movimiento",
+          materiales: [
+            { tipo: "resumen", titulo: "Resumen: magnitudes escalares y vectoriales", url: "materiales/fisica2m/u1-escalares-vectores-resumen.pdf", fecha: "2026-11-26", descripcion: "Sistema de referencia, trayectoria, distancia, desplazamiento, rapidez y velocidad. OA 9." },
+            { tipo: "infografia", titulo: "Mapa conceptual: el movimiento", url: "materiales/fisica2m/u1-movimiento-mapa.svg", fecha: "2026-11-26", descripcion: "Los conceptos para describir el movimiento y cómo se relacionan." },
+            { tipo: "resumen", titulo: "Resumen: movimiento rectilíneo uniforme (MRU)", url: "materiales/fisica2m/u1-mru-resumen.pdf", fecha: "2026-11-26", descripcion: "Gráficos posición-tiempo y velocidad-tiempo, pendiente y ecuación de itinerario. OA 9." },
+            { tipo: "guia", titulo: "Guía de ejercicios: MRU", url: "materiales/fisica2m/u1-mru-ejercicios.pdf", fecha: "2026-11-26", descripcion: "Problemas de desarrollo con conversión de unidades, encuentros y gráficos. OA 9." },
+            { tipo: "resumen", titulo: "Resumen: MRUA, caída libre y lanzamiento vertical", url: "materiales/fisica2m/u1-mrua-resumen.pdf", fecha: "2026-11-26", descripcion: "Aceleración, ecuaciones y gráficos del MRUA, y movimiento vertical con a = g. OA 9." },
+            { tipo: "infografia", titulo: "Infografía: tipos de movimiento rectilíneo", url: "materiales/fisica2m/u1-tipos-de-movimiento.svg", fecha: "2026-11-26", descripcion: "MRU, MRUA y caída libre: características, ecuaciones y gráficos." },
+            { tipo: "infografia", titulo: "Infografía: caída libre y lanzamiento vertical", url: "materiales/fisica2m/u1-caida-libre-lanzamiento.svg", fecha: "2026-11-26", descripcion: "Los tres casos del movimiento vertical con su sistema de referencia y ecuaciones." },
+            { tipo: "guia", titulo: "Guía de ejercicios: MRUA", url: "materiales/fisica2m/u1-mrua-ejercicios.pdf", fecha: "2026-11-26", descripcion: "Problemas de desarrollo con su respuesta para verificar. OA 9." },
+            { tipo: "guia", titulo: "Guía de alternativas: MRU, MRUA y caída libre", url: "materiales/fisica2m/u1-mrua-alternativas.pdf", fecha: "2026-11-26", descripcion: "Preguntas de selección múltiple con interpretación de gráficos. OA 9." },
+            { tipo: "solucionario", titulo: "Solucionario: guía de MRU y guía de alternativas", url: "materiales/fisica2m/u1-movimiento-solucionario.pdf", fecha: "2026-11-26", descripcion: "Resultados de la guía de MRU y pauta justificada de la guía de alternativas." }
+          ]
+        },
+        {
+          nombre: "Unidad 2 · Fuerza",
+          materiales: [
+            { tipo: "resumen", titulo: "Resumen: fuerza y leyes de Newton", url: "materiales/fisica2m/u2-leyes-newton-resumen.pdf", fecha: "2026-11-26", descripcion: "Fuerza neta, las tres leyes de Newton y el diagrama de cuerpo libre. OA 10." },
+            { tipo: "resumen", titulo: "Resumen: tipos de fuerza", url: "materiales/fisica2m/u2-tipos-de-fuerza-resumen.pdf", fecha: "2026-11-26", descripcion: "Peso, normal, roce y tensión, con un problema resuelto de bloques unidos por una cuerda. OA 10." }
+          ]
+        },
+        {
+          nombre: "Unidad 3 · Trabajo y energía",
+          materiales: [
+            { tipo: "guia", titulo: "Guía de ejercicios: fuerza, trabajo y energía", url: "materiales/fisica2m/u3-fuerza-trabajo-energia.pdf", fecha: "2026-11-26", descripcion: "Leyes de Newton, trabajo mecánico, potencia y energía cinética, potencial y mecánica. OA 10 · OA 11." },
+            { tipo: "solucionario", titulo: "Solucionario: fuerza, trabajo y energía", url: "materiales/fisica2m/u3-fuerza-trabajo-energia-solucionario.pdf", fecha: "2026-11-26", descripcion: "Resultados y desarrollo breve de los 27 ejercicios." }
+          ]
+        },
+        { nombre: "Unidad 4 · La Tierra y el universo", materiales: [] }
+      ],
+      recursos: [
+        { tipo: "simulacion", titulo: "El hombre móvil (PhET)", unidad: "Unidad 1 · El movimiento", url: "https://phet.colorado.edu/sims/cheerpj/moving-man/latest/moving-man.html?simulation=moving-man&locale=es", fecha: "2026-11-26", descripcion: "Mueve al personaje y observa los gráficos de posición, velocidad y aceleración. Usa velocidades pequeñas (de 0,25 a 4 m/s); hacia la izquierda los valores son negativos. Puede tardar en cargar." },
+        { tipo: "simulacion", titulo: "Fuerzas y movimiento: fundamentos (PhET)", unidad: "Unidad 2 · Fuerza", url: "https://phet.colorado.edu/es/simulations/forces-and-motion-basics", fecha: "2026-11-26", descripcion: "Aplica fuerzas a distintos objetos, con y sin roce, y observa la fuerza neta y la aceleración." },
+        { tipo: "simulacion", titulo: "Energía en la pista de patinaje: fundamentos (PhET)", unidad: "Unidad 3 · Trabajo y energía", url: "https://phet.colorado.edu/es/simulations/energy-skate-park-basics", fecha: "2026-11-26", descripcion: "Observa cómo se transforman la energía cinética y la potencial de un patinador, con y sin roce." }
+      ]
+    }
   ],
 
   /* ---------------------------------------------------------------
@@ -586,6 +663,23 @@ const SITIO = {
     // —— Ciencia ——
     { tipo: "video", categoria: "Ciencia", titulo: "Un aspecto curioso del principio de Arquímedes", fuente: "The Action Lab en Español", duracion: "7:01", url: "https://www.youtube.com/watch?v=JM2s08gNork", fecha: "2026-11-08", miniatura: "materiales/miniaturas/v07.jpg", descripcion: "Un experimento con balanzas y agua que pone a prueba la flotación." },
     { tipo: "video", categoria: "Ciencia", titulo: "Qué son las ondas gravitacionales que predijo Einstein", fuente: "BBC Mundo", duracion: "5:33", url: "https://www.youtube.com/watch?v=0fHkEolNWFc", fecha: "2026-11-08", miniatura: "materiales/miniaturas/v21.jpg", descripcion: "Qué son y cómo se confirmaron cien años después de ser predichas." },
+    // —— Física (videos del sitio profe-fernando.weebly.com) ——
+    { tipo: "video", categoria: "Física: ondas y sonido", titulo: "Ondas longitudinales y transversales", fuente: "Sol Badguy", url: "https://www.youtube.com/watch?v=-_PMqqEnr7E", fecha: "2026-11-26", descripcion: "Diferencia entre las ondas en que el medio vibra en la misma dirección de la propagación y aquellas en que vibra perpendicular a ella." },
+    { tipo: "video", categoria: "Física: ondas y sonido", titulo: "Experimentos con cubeta de ondas", fuente: "Lavoisier2001", url: "https://www.youtube.com/watch?v=3-tymln0b1U", fecha: "2026-11-26", descripcion: "Reflexión, refracción, difracción e interferencia observadas en ondas sobre el agua." },
+    { tipo: "video", categoria: "Física: ondas y sonido", titulo: "Las ondas: características", fuente: "merryxstopy", url: "https://www.youtube.com/watch?v=jzQSJsjtrAk", fecha: "2026-11-26", descripcion: "Amplitud, longitud de onda, periodo y frecuencia explicados con ejemplos." },
+    { tipo: "video", categoria: "Física: ondas y sonido", titulo: "Taller: ondas, sonido y música", fuente: "Parque de las Ciencias Granada", url: "https://www.youtube.com/watch?v=NU9aeHLmD-Q", fecha: "2026-11-26", descripcion: "Un taller que relaciona las ondas sonoras con los instrumentos musicales." },
+    { tipo: "video", categoria: "Física: ondas y sonido", titulo: "Tubo de Rubens: ver el sonido con fuego", fuente: "Manuel Ramírez Panatt", url: "https://www.youtube.com/watch?v=yo9j773CCu8", fecha: "2026-11-26", descripcion: "Las llamas de un tubo con gas muestran las ondas estacionarias que produce un sonido." },
+    { tipo: "video", categoria: "Física: ondas y sonido", titulo: "Experimento de resonancia: frecuencia y sonido", fuente: "Arturoblcvs", url: "https://www.youtube.com/watch?v=jBpJTB1kvmw", fecha: "2026-11-26", descripcion: "Una placa que vibra con distintas frecuencias forma figuras con la arena que tiene encima." },
+    { tipo: "video", categoria: "Física: ondas y sonido", titulo: "Cómo ver tu voz", fuente: "ExpCaseros", url: "https://www.youtube.com/watch?v=6kmRmQF7erw", fecha: "2026-11-26", descripcion: "Un experimento casero para ver las vibraciones que produce la voz." },
+    { tipo: "video", categoria: "Física: la Tierra y el universo", titulo: "Movimientos de la Tierra y sus consecuencias", fuente: "efi-ciencia red", url: "https://www.youtube.com/watch?v=QL3ZlE3JCJI", fecha: "2026-11-26", descripcion: "Rotación, traslación, precesión y nutación, y lo que provocan: el día, la noche y las estaciones." },
+    { tipo: "video", categoria: "Física: la Tierra y el universo", titulo: "Las fases de la Luna", fuente: "GEOenciclopedia", url: "https://www.youtube.com/watch?v=sdAt_VtXClg", fecha: "2026-11-26", descripcion: "Por qué la Luna cambia de aspecto a lo largo del mes." },
+    { tipo: "video", categoria: "Física: la Tierra y el universo", titulo: "¿Por qué solo vemos una cara de la Luna?", fuente: "El Robot de Platón", url: "https://www.youtube.com/watch?v=1oTiIx16MUI", fecha: "2026-11-26", descripcion: "La rotación sincrónica de la Luna explicada paso a paso." },
+    { tipo: "video", categoria: "Física: la Tierra y el universo", titulo: "Tipos de eclipses", fuente: "cielosdespejados", url: "https://www.youtube.com/watch?v=fqCbgSyg7RY", fecha: "2026-11-26", descripcion: "Eclipses de Sol y de Luna: cómo y cuándo se producen." },
+    { tipo: "video", categoria: "Física: la Tierra y el universo", titulo: "Planetas habitables comparados con la Tierra", fuente: "CAMENGAT", url: "https://www.youtube.com/watch?v=CERzZYdnEqg", fecha: "2026-11-26", descripcion: "Exoplanetas ubicados en la zona de habitabilidad de sus estrellas." },
+    { tipo: "video", categoria: "Física: movimiento y fuerza", titulo: "MRU y MRUA", fuente: "Atanael Varela López", url: "https://www.youtube.com/watch?v=xQk_Dpuc0NE", fecha: "2026-11-26", descripcion: "Los dos tipos de movimiento rectilíneo y sus diferencias." },
+    { tipo: "video", categoria: "Física: movimiento y fuerza", titulo: "Las leyes de Newton", fuente: "FECYT ciencia", url: "https://www.youtube.com/watch?v=1jw4dw6iXkQ", fecha: "2026-11-26", descripcion: "Las tres leyes de Newton con ejemplos cotidianos." },
+    { tipo: "video", categoria: "Ciencia", titulo: "CERN, la ciencia que enorgullece a Europa", fuente: "El Futuro Es Apasionante de Vodafone", url: "https://www.youtube.com/watch?v=yyCbvWLtoZw", fecha: "2026-11-26", descripcion: "Qué es el Gran Colisionador de Hadrones y qué estudia la física de partículas." },
+    { tipo: "video", categoria: "Ciencia", titulo: "¿Qué es el bosón de Higgs?", fuente: "Instituto de Física Teórica IFT", url: "https://www.youtube.com/watch?v=gmpvP4x3tI8", fecha: "2026-11-26", descripcion: "La partícula que explica por qué otras partículas tienen masa." },
     // —— Repaso y orientación ——
     { tipo: "video", categoria: "Repaso y orientación", titulo: "Qué son las medidas de posición y sus tipos", fuente: "unProfesor", duracion: "17:16", url: "https://www.youtube.com/watch?v=QggfcNEJYb8", fecha: "2026-11-08", miniatura: "materiales/miniaturas/v01.jpg", descripcion: "Cuartiles, deciles y percentiles explicados paso a paso." },
     { tipo: "video", categoria: "Repaso y orientación", titulo: "El NEM y el Ranking explicados fácil", fuente: "Preu Cpech", duracion: "5:40", url: "https://www.youtube.com/watch?v=EAjvye10XEY", fecha: "2026-11-08", miniatura: "materiales/miniaturas/v08.jpg", descripcion: "Cómo influyen tus notas de enseñanza media en la postulación a la universidad." },
