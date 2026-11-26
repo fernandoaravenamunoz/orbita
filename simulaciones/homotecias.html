@@ -75,6 +75,7 @@ input[type=range]{accent-color:var(--sel);width:100%;height:28px}
 .tbl{width:100%;border-collapse:collapse;font-size:14px}.tbl th{font-weight:500;color:var(--mut);text-align:left;font-size:12.5px;padding:4px 6px;border-bottom:1px solid var(--line)}.tbl td{padding:6px;border-bottom:1px dashed var(--line);white-space:nowrap}
 .tbl td:first-child{font-weight:600}.tbl .t{color:var(--teal)}.tbl .c{color:var(--coral)}.tbl .v{color:var(--vio)}
 .kbig{font-size:13px;font-weight:500;color:var(--mut)}
+.segInfo p{margin:8px 0 0;font-size:15px;line-height:1.5}
 </style>
 </head>
 <body>
@@ -87,7 +88,7 @@ input[type=range]{accent-color:var(--sel);width:100%;height:28px}
 <div class="work">
 <div>
 <div class="stagehead"><h1>Homotecia de centro O y razón k</h1><div class="legend"><span><i style="background:color-mix(in srgb,var(--teal) 35%,transparent);border:1px solid var(--teal)"></i>Figura original</span><span><i style="background:var(--coral)"></i>Imagen</span><span><i style="background:var(--mut)"></i>Rayos desde O</span></div></div>
-<div class="fig plain"><svg id="hsv" role="img" aria-label="Homotecia de una figura"></svg><p class="hint" id="hHint">Arrastra O, la figura o sus vértices · arrastra el fondo para mover el plano · rueda o pellizco para el zoom</p></div>
+<div class="fig plain"><svg id="hsv" role="img" aria-label="Homotecia de una figura"></svg><p class="hint" id="hHint">Arrastra O (se pega a los vértices de la figura), la figura o sus vértices · toca un segmento para destacarlo · arrastra el fondo para mover el plano · rueda o pellizco para el zoom</p></div>
 <div class="tools" id="hTools"><button id="hShow" class="pri" hidden>Mostrar la imagen</button><p class="stepTxt" id="hTxt"></p></div>
 </div>
 <aside class="panel">
@@ -106,6 +107,7 @@ input[type=range]{accent-color:var(--sel);width:100%;height:28px}
 <label class="chk"><input type="checkbox" id="hCamC"> Mostrar la cámara oscura (orificio en O)</label>
 <label class="chk"><input type="checkbox" id="hHide"> Predecir: ocultar la imagen y marcar dónde quedará A′</label>
 </div>
+<div class="box"><h2>Segmento destacado</h2><p class="note" style="margin-top:0">Elige un segmento (o tócalo en la figura): se destaca junto con su correspondiente en la imagen y se muestran sus medidas.</p><span class="lbl2" style="margin-top:6px">Lados y segmentos de la figura</span><div class="seg" id="hSegF"></div><span class="lbl2">Desde el centro O</span><div class="seg" id="hSegO"></div><div id="hSegInfo" class="segInfo"></div></div>
 <div class="mets" id="hMets"></div>
 <div class="box"><details open><summary>Medidas y propiedades</summary><div class="fm" id="hFm"></div></details></div>
 </aside>
@@ -173,7 +175,7 @@ const FIGS={
  pentagono:{n:'Pentágono',geo:true,base:reg(5,1.6)}
 };
 const NAMES='ABCDE';
-const H={fig:'estrella',O:[-5,-1],pos:[-1.5,0.3],k:2,rays:true,cam:false,hide:false,rev:false,guess:null,geo:{},view:null,drag:null,anim:false};
+const H={seg:'OA',fig:'estrella',O:[-5,-1],pos:[-1.5,0.3],k:2,rays:true,cam:false,hide:false,rev:false,guess:null,geo:{},view:null,drag:null,anim:false};
 Object.keys(FIGS).forEach(k=>{if(FIGS[k].geo)H.geo[k]=FIGS[k].base.map(p=>[...p]);});
 function figParts(){const f=FIGS[H.fig];if(f.geo)return{parts:[{pts:H.geo[H.fig],col:'teal'}],keys:H.geo[H.fig].map((_,i)=>[0,i]),main:0,mainN:'la figura'};return f;}
 function world(){const f=figParts(),[px,py]=H.pos,O=H.O,k=H.k;
@@ -189,6 +191,7 @@ $('hkPre').onclick=e=>{const b=e.target.closest('button');if(!b)return;H.k=+b.da
 $('hFit').onclick=()=>{H.refit=true;upd();};
 const hUser=()=>{H.auto=false;$('hAuto').checked=false;H.refit=false;};setTimeout(()=>panZoom('hsv',HV,H,hUser),0);
 $('hZi').onclick=()=>{zoomAt(HV,'hsv',null,1.25);hUser();upd();};$('hZo').onclick=()=>{zoomAt(HV,'hsv',null,0.8);hUser();upd();};$('hAuto').onchange=e=>{H.auto=e.target.checked;H.refit=true;upd();};
+$('hSegF').onclick=$('hSegO').onclick=e=>{const b=e.target.closest('button');if(!b)return;H.seg=b.dataset.s;upd();};
 $('hk').oninput=e=>{H.k=Math.round(+e.target.value*10)/10;H.rev=false;H.guess=null;upd();};
 $('hRays').onchange=e=>{H.rays=e.target.checked;upd();};
 $('hCamC').onchange=e=>{H.cam=e.target.checked;upd();};
@@ -220,6 +223,11 @@ function panZoom(id,VW,st,onUser){const s=$(id);s.style.cursor='grab';s.style.to
  const end=e=>{P.delete(e.pointerId);if(P.size<2)d0=0;};s.addEventListener('pointerup',end,true);s.addEventListener('pointercancel',end,true);}
 /* ---------- homotecia ---------- */
 const HV={v:null};
+function segList(){const f=figParts(),n=f.keys.length,geo=!!FIGS[H.fig].geo,F=[];
+ if(geo){for(let i=0;i<n;i++)F.push(NAMES[i]+NAMES[(i+1)%n]);}else{for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)F.push(NAMES[i]+NAMES[j]);}
+ return{F,O:Array.from({length:n},(_,i)=>'O'+NAMES[i])};}
+function segPts(code,ko,ki){const ix=c=>NAMES.indexOf(c);if(code[0]==='O'){const i=ix(code[1]);return{a:H.O,b:ko[i],a2:H.O,b2:ki[i],n:'O'+code[1],n2:'O'+code[1]+'′'};}
+ const i=ix(code[0]),j=ix(code[1]);return{a:ko[i],b:ko[j],a2:ki[i],b2:ki[j],n:code,n2:code[0]+'′'+code[1]+'′'};}
 function renderH(){const{s,W,Hh}=svs('hsv'),Wd=world(),{f,orig,img,ko,ki}=Wd,k=H.k,O=H.O,hid=H.hide&&!H.rev;
  const pts=[O,...orig.flat()];if(!hid)pts.push(...img.flat());else pts.push(...ki);if(H.guess)pts.push(H.guess);
  if(H.lw!==W){H.lw=W;H.refit=true;}H.anim=(H.drag||!(H.auto||H.refit))?false:fitView(HV,pts,W,Hh,70,false);if(!H.anim)H.refit=false;if(!HV.v)fitView(HV,pts,W,Hh,70,true);const M=mk(HV,W,Hh),S=M.s;
@@ -234,14 +242,20 @@ function renderH(){const{s,W,Hh}=svs('hsv'),Wd=world(),{f,orig,img,ko,ki}=Wd,k=H
   else{const ext=0.7,at=d=>[O[0]+u[0]*d,O[1]+u[1]*d],st=k>=0?O:at(k*dP-ext),en=at(Math.max(dP,k>0?k*dP:0)+ext);
    o+=Ln(S(st),S(en),'var(--mut)',1.2,{dash:'5 6',op:.65});}});}
  const sty=(c,im)=>`fill="${C[c]}" fill-opacity="${im?.5:.18}" stroke="${C[c]}" stroke-width="${im?2.4:1.6}" stroke-linejoin="round"`;
- orig.forEach((p,i)=>o+=`<polygon points="${PS(p.map(S))}" ${sty(f.parts[i].col,false)} ${i===0||!f.geo?'data-h="fig" style="cursor:move"':''}/>`);
+ orig.forEach((p,i)=>o+=`<polygon points="${PS(p.map(S))}" ${sty(f.parts[i].col,false)} ${i===0||!FIGS[H.fig].geo?'data-h="fig" style="cursor:move"':''}/>`);
  if(!hid){img.forEach((p,i)=>o+=`<polygon points="${PS(p.map(S))}" ${sty(f.parts[i].col,true)} pointer-events="none"/>`);
-  if(ko.length){const A=ko[0],A2=ki[0];o+=Ln(S(O),S(A),C.teal,3.2,{op:.8})+Ln(S(O),S(A2),C.coral,3.2,{op:.45});}}
+}
+ {const L=segList();if(![...L.F,...L.O].includes(H.seg))H.seg='OA';
+  // zonas para tocar cada segmento de la figura original
+  [...L.F,...L.O].forEach(cd=>{const q=segPts(cd,ko,ki);if(dist(q.a,q.b)<1e-6)return;o+=`<line x1="${F1(S(q.a)[0])}" y1="${F1(S(q.a)[1])}" x2="${F1(S(q.b)[0])}" y2="${F1(S(q.b)[1])}" stroke="transparent" stroke-width="14" data-h="s:${cd}" style="cursor:pointer"/>`;});
+  const q=segPts(H.seg,ko,ki),mid=(a,b)=>S([(a[0]+b[0])/2,(a[1]+b[1])/2]),off=(a,b,s0)=>{const A=S(a),B=S(b),dx=B[0]-A[0],dy=B[1]-A[1],L2=Math.hypot(dx,dy)||1;return[-dy/L2*s0,dx/L2*s0];};
+  if(!hid&&dist(q.a2,q.b2)>1e-6){o+=Ln(S(q.a2),S(q.b2),C.coral,6,{op:.9});const m=mid(q.a2,q.b2),d=off(q.a2,q.b2,18);o+=T(m[0]+d[0],m[1]+d[1],`${q.n2} = ${nf(dist(q.a2,q.b2))}`,C.coral,{fs:14});}
+  if(dist(q.a,q.b)>1e-6){o+=Ln(S(q.a),S(q.b),C.teal,6,{op:.95});const m=mid(q.a,q.b),d=off(q.a,q.b,-18);o+=T(m[0]+d[0],m[1]+d[1],`${q.n} = ${nf(dist(q.a,q.b))}`,C.teal,{fs:14});}}
  const cen=p=>p.reduce((s,q)=>[s[0]+q[0]/p.length,s[1]+q[1]/p.length],[0,0]),co=cen(ko),ci=cen(ki);
  const lab=(P,c0,name,col)=>{const sp=S(P),sc=S(c0),dx=sp[0]-sc[0],dy=sp[1]-sc[1],L=Math.hypot(dx,dy)||1;return T(sp[0]+dx/L*16,sp[1]+dy/L*16,name,col,{fs:15});};
  ko.forEach((P,i)=>{o+=`<circle cx="${F1(S(P)[0])}" cy="${F1(S(P)[1])}" r="3.5" fill="${C.teal}" pointer-events="none"/>`+lab(P,co,NAMES[i],C.teal);});
  if(!hid)ki.forEach((P,i)=>{o+=`<circle cx="${F1(S(P)[0])}" cy="${F1(S(P)[1])}" r="3.5" fill="${C.coral}" pointer-events="none"/>`+lab(P,ci,NAMES[i]+'′',C.coral);});
- if(f.geo)H.geo[H.fig].forEach((q,i)=>{const p=S([q[0]+H.pos[0],q[1]+H.pos[1]]);o+=`<circle cx="${F1(p[0])}" cy="${F1(p[1])}" r="11" fill="${C.teal}" fill-opacity=".18" stroke="${C.teal}" stroke-width="1.5" data-h="v${i}" style="cursor:grab"/>`;});
+ if(FIGS[H.fig].geo)H.geo[H.fig].forEach((q,i)=>{const p=S([q[0]+H.pos[0],q[1]+H.pos[1]]);o+=`<circle cx="${F1(p[0])}" cy="${F1(p[1])}" r="11" fill="${C.teal}" fill-opacity=".18" stroke="${C.teal}" stroke-width="1.5" data-h="v${i}" style="cursor:grab"/>`;});
  const so=S(O);o+=`<circle cx="${F1(so[0])}" cy="${F1(so[1])}" r="13" fill="var(--ink)" fill-opacity=".08" stroke="none" data-h="O" style="cursor:grab"/><circle cx="${F1(so[0])}" cy="${F1(so[1])}" r="5.5" fill="var(--ink)" pointer-events="none"/>`+T(so[0]-14,so[1]-14,'O','var(--ink)',{fs:17});
  if(H.guess){const g=S(H.guess);o+=`<circle cx="${F1(g[0])}" cy="${F1(g[1])}" r="7" fill="none" stroke="${C.vio}" stroke-width="2.5" pointer-events="none"/>`+Ln([g[0]-10,g[1]],[g[0]+10,g[1]],C.vio,2)+Ln([g[0],g[1]-10],[g[0],g[1]+10],C.vio,2)+T(g[0]+14,g[1]-12,'A′ ?',C.vio,{a:'start'});
   if(!hid)o+=Ln(g,S(ki[0]),C.vio,1.6,{dash:'3 4'});}
@@ -254,9 +268,12 @@ function updH(){const{f,orig,img,ko,ki}=world(),k=H.k,O=H.O,hid=H.hide&&!H.rev,q
  $('hShow').hidden=!hid;const[ty,td]=typeOf(k);
  const A=ko[0],A2=ki[0],B=ko[1],B2=ki[1],m=f.main,p0=per(orig[m]),p1=per(img[m]),a0=area(orig[m]),a1=area(img[m]);
  $('hTxt').innerHTML=hid?(H.guess?`Marcaste tu predicción. Presiona <b>Mostrar la imagen</b> para comprobar.`:`Con k = ${kS(k)}, ¿dónde quedará A′? <b>Toca la cuadrícula</b> para marcar tu predicción.`):
-  (H.guess?`Tu predicción quedó a <b>${nf(dist(H.guess,A2),1)} cm</b> de A′. `:'')+`<b>${ty}.</b> ${td}${H.cam&&k<0?' Igual que en una cámara oscura: los rayos que salen de la vela cruzan el orificio O y forman en la pantalla una imagen invertida.':''}${H.cam&&k>=0?' <span style="color:var(--mut)">(La cámara oscura necesita k negativo: el orificio queda entre el objeto y su imagen.)</span>':''}`;
- $('hMets').innerHTML=[['Razón k',`${kS(k)} <span class="kbig">${hid?'':ty.toLowerCase()}</span>`],['OA′ : OA',hid?q:`${nf(dist(O,A2))} : ${nf(dist(O,A))} = ${kS(Math.abs(k))}`],['Perímetro',hid?q:`× ${kS(Math.abs(k))}`],['Área',hid?q:`× ${k2S(k)}`]].map(([l,v])=>`<div class="met"><p class="l">${l}</p><p class="v">${v}</p></div>`).join('');
- const L=[`<b>Distancias desde O:</b> OA = ${nf(dist(O,A))} cm y OA′ = ${hid?q:nf(dist(O,A2))+' cm'}. Entonces OA′ = |k| · OA = ${kS(Math.abs(k))} · ${nf(dist(O,A))}${hid?'':' = '+nf(Math.abs(k)*dist(O,A))+' cm'}.`];
+  (H.guess?`Tu predicción quedó a <b>${nf(dist(H.guess,A2),1)} cm</b> de A′. `:'')+(orig.flat().some(P=>dist(P,O)<1e-9)?'<span style="color:var(--mut)">O está sobre un vértice de la figura: ese punto queda fijo (es su propia imagen). </span>':'')+`<b>${ty}.</b> ${td}${H.cam&&k<0?' Igual que en una cámara oscura: los rayos que salen de la vela cruzan el orificio O y forman en la pantalla una imagen invertida.':''}${H.cam&&k>=0?' <span style="color:var(--mut)">(La cámara oscura necesita k negativo: el orificio queda entre el objeto y su imagen.)</span>':''}`;
+ {const L=segList(),btn=cd=>`<button data-s="${cd}" class="${cd===H.seg?'on':''}">${cd}</button>`;$('hSegF').innerHTML=L.F.map(btn).join('');$('hSegO').innerHTML=L.O.map(btn).join('');
+  if(![...L.F,...L.O].includes(H.seg))H.seg='OA';const q=segPts(H.seg,ko,ki),l0=dist(q.a,q.b),l1=dist(q.a2,q.b2);
+  $('hSegInfo').innerHTML=l0<1e-6?`<p>El segmento ${q.n} mide 0: O está sobre el punto ${H.seg[1]}. Elige otro segmento.</p>`:`<p><b style="color:var(--teal)">${q.n} = ${nf(l0)} cm</b>${hid?'':` &nbsp;→&nbsp; <b style="color:var(--coral)">${q.n2} = ${nf(l1)} cm</b>`}</p>`+(hid?'':`<p>${q.n2} : ${q.n} = ${nf(l1)} : ${nf(l0)} = <b>${kS(Math.abs(k))}</b> = |k|${H.seg[0]==='O'?(k<0?'. Como k es negativo, '+q.n2+' apunta al lado contrario de '+q.n+'.':''):'. Además, '+q.n2+' es paralelo a '+q.n+'.'}</p>`);}
+ $('hMets').innerHTML=[['Razón k',`${kS(k)} <span class="kbig">${hid?'':ty.toLowerCase()}</span>`],['OA′ : OA',hid?q:(dist(O,A)<1e-9?'O = A (fijo)':`${nf(dist(O,A2))} : ${nf(dist(O,A))} = ${kS(Math.abs(k))}`)],['Perímetro',hid?q:`× ${kS(Math.abs(k))}`],['Área',hid?q:`× ${k2S(k)}`]].map(([l,v])=>`<div class="met"><p class="l">${l}</p><p class="v">${v}</p></div>`).join('');
+ const L=[dist(O,A)<1e-9?`<b>Distancias desde O:</b> O está sobre el punto A, así que A no se mueve (A′ = A). Elige en «Segmento destacado» los segmentos OB u OC para comparar distancias desde O.`:`<b>Distancias desde O:</b> OA = ${nf(dist(O,A))} cm y OA′ = ${hid?q:nf(dist(O,A2))+' cm'}. Entonces OA′ = |k| · OA = ${kS(Math.abs(k))} · ${nf(dist(O,A))}${hid?'':' = '+nf(Math.abs(k)*dist(O,A))+' cm'}.`];
  if(!hid&&k!==0){L.push(`<b>Lados:</b> AB = ${nf(dist(A,B))} cm y A′B′ = ${nf(dist(A2,B2))} cm. Todos los lados se multiplican por |k| = ${kS(Math.abs(k))}, y cada lado de la imagen es <b>paralelo</b> a su lado original.`);
   L.push(`<b>Perímetro</b> ${deN(f.mainN)}: ${nf(p0)} cm → ${nf(p1)} cm. Cociente ${nf(p1)} : ${nf(p0)} = ${kS(Math.abs(k))} = |k|.`);
   L.push(`<b>Área</b> ${deN(f.mainN)}: ${nf(a0)} cm² → ${nf(a1)} cm². Cociente ${nf(a1)} : ${nf(a0)} = ${k2S(k)} = k². <span style="color:var(--mut)">El área no se multiplica por k, sino por k², porque se amplían el largo y el ancho.</span>`);
@@ -272,9 +289,9 @@ function dragSetup(id,state,onDown,onMove,onUp){const s=$(id);s.addEventListener
  s.addEventListener('pointermove',e=>{if(!state.drag)return;const r=s.getBoundingClientRect();state.moved++;onMove([e.clientX-r.left,e.clientY-r.top]);});
  const up=()=>{if(!state.drag)return;onUp&&onUp();state.drag=null;upd();};s.addEventListener('pointerup',up);s.addEventListener('pointercancel',up);}
 const snap=v=>Math.round(v*2)/2;
-dragSetup('hsv',H,(h,p)=>{const w=H.M.w(p);if(h==='O')return{t:'O'};if(h&&h[0]==='v')return{t:'v',i:+h.slice(1)};if(h==='fig')return{t:'fig',off:[w[0]-H.pos[0],w[1]-H.pos[1]]};
+dragSetup('hsv',H,(h,p)=>{const w=H.M.w(p);if(h&&h.startsWith('s:')){H.seg=h.slice(2);upd();return null;}if(h==='O')return{t:'O'};if(h&&h[0]==='v')return{t:'v',i:+h.slice(1)};if(h==='fig')return{t:'fig',off:[w[0]-H.pos[0],w[1]-H.pos[1]]};
   if(H.hide&&!H.rev){H.guess=w;upd();return null;}return{t:'pan',p0:p,c0:[HV.v.cx,HV.v.cy]};},
- p=>{const w=H.M.w(p),d=H.drag;if(d.t==='pan'){panTo(HV,d,p);H.auto=false;$('hAuto').checked=false;upd();return;}if(d.t==='O')H.O=[snap(w[0]),snap(w[1])];else if(d.t==='v')H.geo[H.fig][d.i]=[snap(w[0])-H.pos[0],snap(w[1])-H.pos[1]];else H.pos=[snap(w[0]-d.off[0]),snap(w[1]-d.off[1])];H.rev=H.rev&&!(H.hide);if(H.hide){H.guess=null;}upd();});
+ p=>{const w=H.M.w(p),d=H.drag;if(d.t==='pan'){panTo(HV,d,p);H.auto=false;$('hAuto').checked=false;upd();return;}if(d.t==='O'){let best=null,bd=16;world().orig.flat().forEach(P=>{const sp=H.M.s(P),dd=Math.hypot(sp[0]-p[0],sp[1]-p[1]);if(dd<bd){bd=dd;best=P;}});H.O=best?[best[0],best[1]]:[snap(w[0]),snap(w[1])];H.Osnap=!!best;}else if(d.t==='v')H.geo[H.fig][d.i]=[snap(w[0])-H.pos[0],snap(w[1])-H.pos[1]];else H.pos=[snap(w[0]-d.off[0]),snap(w[1]-d.off[1])];H.rev=H.rev&&!(H.hide);if(H.hide){H.guess=null;}upd();});
 
 /* ---------- vectorial ---------- */
 const V={O:[0,0],A:[1,1],B:[4,1],C:[2,3],k:2,k2:-0.5,two:false,ab:true,drag:null};
