@@ -188,11 +188,7 @@ const SITIO = {
           ]
         }
       ],
-      recursos: [
-        { tipo: "simulacion", titulo: "Onda en una cuerda (PhET)", unidad: "Unidad 1 · Ondas y sonido", url: "https://phet.colorado.edu/es/simulations/wave-on-a-string", fecha: "2026-11-26", descripcion: "Cambia amplitud, frecuencia, tensión y amortiguamiento. ¿Qué cambia con un extremo fijo o uno suelto? ¿Reconoces cresta, valle y longitud de onda?" },
-        { tipo: "simulacion", titulo: "Ondas sonoras (PhET)", unidad: "Unidad 1 · Ondas y sonido", url: "https://phet.colorado.edu/es/simulations/sound-waves", fecha: "2026-11-26", descripcion: "Ajusta la frecuencia y la amplitud de un parlante, observa la onda de presión y la interferencia entre dos fuentes." },
-        { tipo: "simulacion", titulo: "Óptica geométrica (PhET)", unidad: "Unidad 2 · La luz", url: "https://phet.colorado.edu/es/simulations/geometric-optics", fecha: "2026-11-26", descripcion: "Mueve un objeto frente a una lente o un espejo y observa cómo cambia la imagen." }
-      ]
+      recursos: []
     },
     {
       id: "fisica2m", seccion: "Física", nombre: "II° Medio", asignatura: "Física",
@@ -235,11 +231,7 @@ const SITIO = {
         },
         { nombre: "Unidad 4 · La Tierra y el universo", materiales: [] }
       ],
-      recursos: [
-        { tipo: "simulacion", titulo: "El hombre móvil (PhET)", unidad: "Unidad 1 · El movimiento", url: "https://phet.colorado.edu/sims/cheerpj/moving-man/latest/moving-man.html?simulation=moving-man&locale=es", fecha: "2026-11-26", descripcion: "Mueve al personaje y observa los gráficos de posición, velocidad y aceleración. Usa velocidades pequeñas (de 0,25 a 4 m/s); hacia la izquierda los valores son negativos. Puede tardar en cargar." },
-        { tipo: "simulacion", titulo: "Fuerzas y movimiento: fundamentos (PhET)", unidad: "Unidad 2 · Fuerza", url: "https://phet.colorado.edu/es/simulations/forces-and-motion-basics", fecha: "2026-11-26", descripcion: "Aplica fuerzas a distintos objetos, con y sin roce, y observa la fuerza neta y la aceleración." },
-        { tipo: "simulacion", titulo: "Energía en la pista de patinaje: fundamentos (PhET)", unidad: "Unidad 3 · Trabajo y energía", url: "https://phet.colorado.edu/es/simulations/energy-skate-park-basics", fecha: "2026-11-26", descripcion: "Observa cómo se transforman la energía cinética y la potencial de un patinador, con y sin roce." }
-      ]
+      recursos: []
     }
   ],
 
