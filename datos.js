@@ -217,13 +217,6 @@ const SITIO = {
           materiales: [
             { tipo: "resumen", titulo: "Resumen: fuerza y leyes de Newton", url: "materiales/fisica2m/u2-leyes-newton-resumen.pdf", fecha: "2026-11-26", descripcion: "Fuerza neta, las tres leyes de Newton y el diagrama de cuerpo libre. OA 10." },
             { tipo: "resumen", titulo: "Resumen: tipos de fuerza", url: "materiales/fisica2m/u2-tipos-de-fuerza-resumen.pdf", fecha: "2026-11-26", descripcion: "Peso, normal, roce y tensión, con un problema resuelto de bloques unidos por una cuerda. OA 10." }
-            { tipo: "guia", titulo: "Guía leyes de Newton", url: "materiales/fisica2m/u2-fuerzas-leyes-newton-1.pdf", fecha: "2026-11-26" },
-            { tipo: "guia", titulo: "Evaluación formativa 1 · Fuerzas", url: "materiales/fisica2m/u2-fuerzas-formativa-1.pdf", fecha: "2026-11-26" },
-            { tipo: "guia", titulo: "Solucionario formativa 1 · Fuerzas", url: "materiales/fisica2m/u2-fuerzas-formativa-1-solucionario.pdf", fecha: "2026-11-26" },
-            { tipo: "guia", titulo: "Evaluación formativa 2 · Fuerzas", url: "materiales/fisica2m/u2-fuerzas-formativa-2.pdf", fecha: "2026-11-26" },
-            { tipo: "guia", titulo: "Solucionario formativa 2 · Fuerzas", url: "materiales/fisica2m/u2-fuerzas-formativa-2-solucionario.pdf", fecha: "2026-11-26" },
-            { tipo: "guia", titulo: "Guía de repaso · Poleas", url: "materiales/fisica2m/u2-fuerzas-poleas-repaso.pdf", fecha: "2026-11-26" },
-            { tipo: "guia", titulo: "Solucionario repaso · Poleas", url: "materiales/fisica2m/u2-fuerzas-poleas-repaso-solucionario.pdf", fecha: "2026-11-26" },
           ]
         },
         {
