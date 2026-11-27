@@ -407,8 +407,8 @@ const SITIO = {
     },
     {
       nombre: "Transformaciones isométricas",
-      descripcion: "Traslada, refleja (respecto de un eje o de un punto) y rota un punto, un segmento, una figura y un velero en el plano cartesiano. Mueve con el mouse el vector, el eje o el centro y observa las coordenadas, la regla y las propiedades que se conservan. Incluye la composición de hasta cuatro transformaciones y la isometría que resulta.",
-      temas: ["Traslación", "Reflexión axial y central", "Rotación", "Composición"],
+      descripcion: "Traslada, refleja y rota un punto, un segmento, una figura y un velero en el plano cartesiano. Mueve con el mouse el vector, el eje de reflexión o el centro de rotación y observa las coordenadas, la regla y las propiedades que se conservan.",
+      temas: ["Traslación", "Reflexión", "Rotación", "Plano cartesiano"],
       url: "simulaciones/isometrias.html",
       dibujo: "isometrias",
       fecha: "2026-11-26"
@@ -431,7 +431,7 @@ const SITIO = {
     },
     {
       nombre: "Trigonometría en el triángulo rectángulo",
-      descripcion: "Un triángulo rectángulo con lados enteros: elige un ángulo y mira su seno, coseno y tangente con el cateto opuesto, el cateto adyacente y la hipotenusa. Arrastra los vértices sin perder el ángulo recto, propón tus propios triángulos y compara sus razones para ver si son semejantes.",
+      descripcion: "Un triángulo rectángulo con lados enteros: elige un ángulo y mira su seno, coseno y tangente con el cateto opuesto, el cateto adyacente y la hipotenusa. Arrastra los vértices sin perder el ángulo recto y compara las razones en triángulos semejantes.",
       temas: ["Seno, coseno y tangente", "Cateto opuesto y adyacente", "Razones recíprocas", "Semejanza"],
       url: "simulaciones/trigonometria.html",
       dibujo: "trigonometria",
@@ -451,6 +451,54 @@ const SITIO = {
       temas: ["Ecuación cuadrática", "Vértice y eje de simetría", "Discriminante", "Función inversa"],
       url: "simulaciones/cuadratica.html",
       dibujo: "cuadratica",
+      fecha: "2026-11-26"
+    },
+    {
+      nombre: "Onda en una cuerda (PhET)",
+      descripcion: "Simulación de PhET (Universidad de Colorado). Cambia la amplitud, la frecuencia, la tensión y el amortiguamiento, y compara un extremo fijo con uno suelto. Abre en el sitio de PhET.",
+      temas: ["Ondas", "Amplitud y frecuencia", "Reflexión"],
+      url: "https://phet.colorado.edu/sims/html/wave-on-a-string/latest/wave-on-a-string_es.html",
+      dibujo: "phetOnda",
+      fecha: "2026-11-26"
+    },
+    {
+      nombre: "Ondas sonoras (PhET)",
+      descripcion: "Simulación de PhET. Ajusta la frecuencia y la amplitud de un parlante, observa la onda de presión y la interferencia entre dos fuentes. Abre en el sitio de PhET.",
+      temas: ["Sonido", "Frecuencia", "Interferencia"],
+      url: "https://phet.colorado.edu/sims/html/sound-waves/latest/sound-waves_es.html",
+      dibujo: "phetSonido",
+      fecha: "2026-11-26"
+    },
+    {
+      nombre: "Óptica geométrica (PhET)",
+      descripcion: "Simulación de PhET. Mueve un objeto frente a una lente o un espejo y observa cómo cambian el tamaño y la posición de la imagen. Abre en el sitio de PhET.",
+      temas: ["Luz", "Lentes y espejos", "Formación de imágenes"],
+      url: "https://phet.colorado.edu/sims/html/geometric-optics/latest/geometric-optics_es.html",
+      dibujo: "phetOptica",
+      fecha: "2026-11-26"
+    },
+    {
+      nombre: "El hombre móvil (PhET)",
+      descripcion: "Simulación de PhET. Mueve al personaje y observa cómo se construyen los gráficos de posición, velocidad y aceleración. Funciona mejor en el computador y puede tardar en cargar. Abre en el sitio de PhET.",
+      temas: ["MRU y MRUA", "Gráficos x-t y v-t", "Velocidad y aceleración"],
+      url: "https://phet.colorado.edu/sims/cheerpj/moving-man/latest/moving-man.html?simulation=moving-man&locale=es",
+      dibujo: "phetMovil",
+      fecha: "2026-11-26"
+    },
+    {
+      nombre: "Fuerzas y movimiento: fundamentos (PhET)",
+      descripcion: "Simulación de PhET. Aplica fuerzas a distintos objetos, con y sin roce, y observa la fuerza neta y la aceleración. Abre en el sitio de PhET.",
+      temas: ["Fuerza neta", "Leyes de Newton", "Roce"],
+      url: "https://phet.colorado.edu/sims/html/forces-and-motion-basics/latest/forces-and-motion-basics_es.html",
+      dibujo: "phetFuerza",
+      fecha: "2026-11-26"
+    },
+    {
+      nombre: "Energía en la pista de patinaje (PhET)",
+      descripcion: "Simulación de PhET. Observa cómo se transforman la energía cinética y la potencial de un patinador, con y sin roce. Abre en el sitio de PhET.",
+      temas: ["Energía cinética", "Energía potencial", "Conservación de la energía"],
+      url: "https://phet.colorado.edu/sims/html/energy-skate-park-basics/latest/energy-skate-park-basics_es.html",
+      dibujo: "phetEnergia",
       fecha: "2026-11-26"
     }
     // Para agregar otra simulación: sube su archivo .html a la carpeta "simulaciones"
