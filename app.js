@@ -326,25 +326,28 @@
           <div class="item__acciones">${botonMaterial(m, t.accion)}</div>
         </article>`;
     };
-    const multimedia = recursos.length
+    const hayRecursos = recursos.length > 0;
+    const multimedia = hayRecursos
       ? `<div class="lista">${recursos.map(tarjetaRecurso).join("")}</div>`
-      : `<div class="vacio">${planetaVacio}<p>Pronto habrá simulaciones y videos para este curso.</p></div>`;
+      : "";
 
     return `
-      ${cabecera("§ 01", esc(c.seccion), `${esc(c.asignatura)} · ${esc(c.nombre)}`, [unidades.length ? `${unidades.length} unidad${unidades.length === 1 ? "" : "es"}` : "", `${totalDocs} ${totalDocs === 1 ? "documento" : "documentos"}`, `${recursos.length} ${recursos.length === 1 ? "simulación o video" : "simulaciones y videos"}`].filter(Boolean).join(" · "), `<a href="#cursos">← Todos los cursos</a>`)}
+      ${cabecera("§ 01", esc(c.seccion), `${esc(c.asignatura)} · ${esc(c.nombre)}`, [unidades.length ? `${unidades.length} unidad${unidades.length === 1 ? "" : "es"}` : "", `${totalDocs} ${totalDocs === 1 ? "documento" : "documentos"}`, hayRecursos ? `${recursos.length} ${recursos.length === 1 ? "simulación o video" : "simulaciones y videos"}` : ""].filter(Boolean).join(" · "), `<a href="#cursos">← Todos los cursos</a>`)}
       <div class="franja-modular" aria-hidden="true"></div>
+      ${hayRecursos ? `
       <nav class="saltos contenedor" aria-label="Secciones del curso">
         <a href="#curso-${encodeURIComponent(c.id)}" data-salto="sec-unidades">Material por unidad</a>
-        <a href="#curso-${encodeURIComponent(c.id)}" data-salto="sec-multimedia">Simulaciones y videos <span class="insignia ${recursos.length ? "" : "insignia--vacia"}">${recursos.length}</span></a>
-      </nav>
+        <a href="#curso-${encodeURIComponent(c.id)}" data-salto="sec-multimedia">Simulaciones y videos <span class="insignia">${recursos.length}</span></a>
+      </nav>` : ""}
       <section class="seccion seccion--curso" id="sec-unidades"><div class="contenedor">
         ${cabeceraSeccion("§ A", "Material por unidad", "Resúmenes, infografías, guías y solucionarios")}
         ${cuerpo}
       </div></section>
+      ${hayRecursos ? `
       <section class="seccion seccion--curso" id="sec-multimedia"><div class="contenedor">
         ${cabeceraSeccion("§ B", "Simulaciones y videos", "Para explorar y repasar a tu ritmo")}
         ${multimedia}
-      </div></section>`;
+      </div></section>` : ""}`;
   }
 
   function vistaDifusion() {
